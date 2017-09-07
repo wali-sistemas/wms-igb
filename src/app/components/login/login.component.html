@@ -1,0 +1,23 @@
+<div class="login-bg">
+</div>
+<form #loginForm="ngForm" (ngSubmit)="onSubmit()" *ngIf="!identity">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <img class="img-responsive center" src="assets/images/logo.png"/>
+        <div class="form-group">
+          <input type="text" class="form-control input-lg" placeholder="Usuario" autocomplete="off"
+            [(ngModel)]="user.username" name="username" autocorrect="off" autocapitalize="none"/>
+        </div>
+        <div class="form-group">
+          <input type="password" class="form-control input-lg" placeholder="Contraseña"
+            [(ngModel)]="user.password" name="password"/>
+        </div>
+        <div class="alert alert-danger" role="alert" *ngIf="errorMessage">{{errorMessage}}</div>
+        <div class="form-group">
+          <input type="submit" class="btn btn-block btn-lg btn-danger" value="Ingresar" />
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

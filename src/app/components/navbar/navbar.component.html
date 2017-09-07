@@ -1,0 +1,24 @@
+<nav class="topnav visible-md visible-lg">
+  <a [routerLink]="['/home']" class="topnav-logo"><img src="/assets/images/logo.png"/></a>
+  <a href="#" class="active">Sistema</a>
+  <a href="#" [routerLink]="['/purchase-orders']">Recepción</a>
+  <a href="#">Reabastecimiento</a>
+  <a href="#">Órdenes</a>
+  <a href="#">Inventario</a>
+  <span class="salir-desktop" (click)="cerrarSesion()">Salir <span class="glyphicon glyphicon-log-out"></span></span>
+</nav>
+<nav class="topnav visible-xs visible-sm">
+  <a [routerLink]="['/home']" class="topnav-logo"><img src="/assets/images/logo.png"/></a>
+  <span id="menu-icon" class="topnav-menu glyphicon glyphicon-menu-hamburger" (click)="alternateNav()"></span>
+</nav>
+<div id="myNav" class="overlay visible-xs visible-sm">
+  <!-- Overlay content -->
+  <div class="overlay-content">
+    <a [class.overlay-children]="true" href="#" class="active">Sistema</a>
+    <a [class.overlay-children]="false" [routerLink]="['/purchase-orders']">Recepción</a>
+    <a [class.overlay-children]="false" href="#">Reabastecimiento</a>
+    <a [class.overlay-children]="true" href="#">Órdenes</a>
+    <a [class.overlay-children]="true" href="#">Inventario</a>
+  </div>
+  <span class="salir" (click)="cerrarSesion()">Salir <span class="glyphicon glyphicon-log-out"></span></span>
+</div>

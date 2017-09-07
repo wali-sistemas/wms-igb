@@ -1,0 +1,22 @@
+<igb-navbar></igb-navbar>
+<div class="container content">
+  <h3>Órdenes de compra abiertas</h3>
+  <div class="row">
+    <div class="col-xs-12">
+      <form>
+        <input type="text" class="form-control input-lg" name="filter" placeholder="escribe para filtrar" [(ngModel)]="filter" (keyup)="filterOrders()"/>
+      </form>
+    </div>
+  </div><br />
+  <div class="row">
+    <div class="col-xs-6 col-md-3" *ngFor="let order of filteredOrders">
+      <div class="order" (click)="seleccionarOrden(order.docNum)">
+        <div class="order-number">{{order.docNum}}</div>
+        <div class="order-items"><span class="badge">{{order.items}}</span></div>
+        <div class="order-docdate">{{order.docDate}}</div>
+        <div class="order-cardcode">{{order.cardCode}}</div>
+        <div class="order-cardname">{{order.cardName}}</div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,92 @@
+.content {
+  margin-top: 60px;
+}
+
+.order {
+  height: 200px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+  /*max-height: 100px;
+  overflow-y: hidden;*/
+}
+
+.order:hover {
+  cursor: pointer;
+  box-shadow: 2px 2px 4px rgb(200, 200, 200);
+}
+
+.order.unauthorized {
+  border: 1px solid #ededed;
+  color: #e0e0e0;
+  cursor: not-allowed;
+}
+
+.order.unauthorized .badge {
+  background-color: #e0e0e0;
+}
+
+.order.selected {
+  border: 1px solid rgb(180, 0, 0);
+  background-color: rgba(180, 0, 0, 0.2)
+}
+
+.order .order-number::before {
+  content: 'Órden #';
+}
+
+.order .order-number {
+  font-size: 18px;
+  position: absolute;
+  top: 5px;
+  width: 80%;
+  text-align: center;
+}
+
+.order .order-items::before {
+  font-weight: bold;
+  font-size: 11px;
+  content: 'Refs: ';
+}
+
+.order .order-items {
+  position: absolute;
+  top: 35px;
+  width: 80%;
+  /*text-align: center;*/
+  left: 20px;
+}
+
+.order .order-docdate {
+  position: absolute;
+  top: 35px;
+  right: 20px;
+}
+
+.order .order-cardcode::before {
+  font-weight: bold;
+  font-size: 11px;
+  content: 'Documento: ';
+  display: block;
+}
+
+.order .order-cardcode {
+  border-top: 1px solid #ddd;
+  position: absolute;
+  top: 60px;
+  width: 80%;
+  left: 20px;
+}
+
+.order .order-cardname::before {
+  font-weight: bold;
+  font-size: 11px;
+  content: 'Nombre: ';
+  display: block;
+}
+
+.order .order-cardname {
+  position: absolute;
+  top: 100px;
+  width: 80%;
+  left: 20px;
+}

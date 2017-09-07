@@ -1,0 +1,57 @@
+.content {
+  margin-top: 60px;
+}
+
+.glyphicon-download {
+  transform: rotate(90deg);
+}
+
+.order-number {
+  font-size: 24px;
+}
+
+.order-customer {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 24px;
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  text-align: center;
+}
+
+.tab-pane {
+  padding-top: 5px;
+}
+
+.item-pending {
+  height: 120px;
+  text-align: left;
+  padding: 3px;
+  margin-bottom: 5px;
+  border: 1px solid #ccc;
+}
+
+.item-name {
+  font-size: 11px;
+  word-wrap: break-word;
+}
+
+.partial {
+  border: 1px solid #f0ad4e;
+}
+
+.partial .badge {
+  background-color: #f0ad4e;
+}
+
+.line-completed {
+  cursor: not-allowed;
+  color: #aaa;
+  border: 1px solid #ededed;
+}
+
+.line-completed .badge {
+  background-color: #aaa;
+}

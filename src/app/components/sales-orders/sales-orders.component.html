@@ -1,0 +1,60 @@
+<igb-navbar></igb-navbar>
+<div id="modal_users" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <form>
+          <select name="selectedUser" class="form-control input-lg" [(ngModel)]="selectedUser" *ngIf="assignableUsers && assignableUsers.length > 0">
+            <option disabled selected style="display:none" value="">Selecciona un empleado</option>
+            <option *ngFor="let employee of assignableUsers" [value]="employee.username">{{employee.completeName}}</option>
+          </select>
+          <br />
+          <p>Estás a punto de asignar {{selectedOrders.size}} órdenes para picking. ¿Deseas continuar?</p>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-lg" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary btn-lg" (click)="assignOrders()">Asignar</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<div class="container content">
+  <h3>Órdenes de venta pendientes</h3>
+  <div class="row">
+    <div class="col-xs-12">
+      <form>
+        <div class="input-group">
+          <span class="input-group-btn" *ngIf="selectedOrders && selectedOrders.size > 0">
+            <button type="button" class="btn btn-default btn-lg" (click)="listAssignableEmployees()">
+              <span class="badge">{{selectedOrders.size}}</span>
+              <!--<span class="glyphicon glyphicon-hand-right"></span>-->
+              <span class="glyphicon glyphicon-user"></span>
+            </button>
+          </span>
+          <input type="text" class="form-control input-lg" name="filter" placeholder="escribe para filtrar" [(ngModel)]="filter" (keyup)="filterOrders(false)" />
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-default btn-lg" (click)="toggleEye()">
+              <span class="glyphicon" [ngClass]="{'glyphicon-eye-open': !showApprovedOnly, 'glyphicon-eye-close': showApprovedOnly}"></span>
+            </button>
+          </span>
+        </div>
+        <!-- /input-group -->
+      </form>
+    </div>
+  </div><br />
+  <div class="row">
+    <div class="col-xs-6 col-md-3" *ngFor="let order of filteredOrders">
+      <div class="order" [class.unauthorized]="order.confirmed === 'N'" [class.selected]="selectedOrders.has(order.docNum)" (click)="selectOrder(order)">
+        <div class="order-number">{{order.docNum}}</div>
+        <div class="order-items"><span class="badge">{{order.items}}</span></div>
+        <div class="order-docdate">{{order.docDate}}</div>
+        <div class="order-cardcode">{{order.cardCode}}</div>
+        <div class="order-cardname">{{order.cardName}}</div>
+      </div>
+    </div>
+  </div>
+</div>
