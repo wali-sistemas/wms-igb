@@ -8,11 +8,11 @@ import { PurchaseOrderLine } from '../../models/purchase-order-line';
 declare var $: any;
 
 @Component({
-  templateUrl: './purchase-order.component.html',
-  styleUrls: ['./purchase-order.component.css'],
+  templateUrl: './sales-order.component.html',
+  styleUrls: ['./sales-order.component.css'],
   providers: [UserService, PurchaseOrdersService]
 })
-export class PurchaseOrderComponent implements OnInit {
+export class SalesOrderComponent implements OnInit {
   public identity;
   public token;
   public quantity: number;

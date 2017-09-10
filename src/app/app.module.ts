@@ -10,6 +10,7 @@ import { NavBarComponent } from './components/navbar/navbar.component';
 import { PurchaseOrdersComponent } from './components/purchase-orders/purchase-orders.component';
 import { PurchaseOrderComponent } from './components/purchase-orders/purchase-order.component';
 import { SalesOrdersComponent } from './components/sales-orders/sales-orders.component';
+import { SalesOrderComponent } from './components/sales-orders/sales-order.component';
 
 import { routing, appRoutingProviders } from './app.routing';
 
@@ -21,7 +22,8 @@ import { routing, appRoutingProviders } from './app.routing';
     NavBarComponent,
     PurchaseOrdersComponent,
     PurchaseOrderComponent,
-    SalesOrdersComponent
+    SalesOrdersComponent,
+    SalesOrderComponent
   ],
   imports: [
     BrowserModule,
