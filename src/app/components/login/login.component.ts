@@ -1,22 +1,27 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { User } from '../../models/user.model';
+import { Company } from '../../models/company';
 import { UserService } from '../../services/user.service';
+import { GenericService } from '../../services/generic';
 
 @Component({
   selector: 'login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
-  providers: [UserService]
+  providers: [UserService, GenericService]
 })
 export class LoginComponent implements OnInit {
   public errorMessage: string;
   public identity;
   public token;
   public user: User;
+  public companies: Array<Company>;
+  public selectedCompany: string = '';
 
-  constructor(private _userService: UserService, private _route: ActivatedRoute, private _router: Router) {
+  constructor(private _userService: UserService, private _genericService: GenericService, private _route: ActivatedRoute, private _router: Router) {
     this.user = new User('', '', '', '', '', '', true);
+    this.companies = new Array<Company>();
   }
 
   ngOnInit() {
@@ -26,17 +31,28 @@ export class LoginComponent implements OnInit {
     if (this.identity !== null) {
       this._router.navigate(['/home']);
     }
+    this.loadAvailableCompanies();
+  }
+
+  private loadAvailableCompanies() {
+    this._genericService.listAvailableCompanies().subscribe(
+      response => {
+        this.companies = response;
+        console.log('se encontraron las siguientes empresas para hacer login: ', this.companies);
+      }, error => { console.error(error); }
+    );
   }
 
   public onSubmit() {
     this.errorMessage = null;
-    this._userService.signIn(this.user).subscribe(
+    this._userService.signIn(this.user, this.selectedCompany).subscribe(
       response => {
         if (response.code === 0) {
           this.identity = response.user;
           localStorage.setItem('igb.identity', JSON.stringify(this.identity));
+          localStorage.setItem('igb.selectedCompany', this.selectedCompany);
+
           this.user = new User('', '', '', '', '', '', true);
-          console.log('navegando a /home');
           this._router.navigate(['/home']);
         } else {
           this.errorMessage = response.message;

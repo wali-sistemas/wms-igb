@@ -42,6 +42,7 @@ export class NavBarComponent implements OnInit {
 
   cerrarSesion() {
     localStorage.removeItem('igb.identity');
+    localStorage.removeItem('igb.selectedCompany');
     localStorage.clear();
     this.identity = null;
     this._router.navigate(['/']);

@@ -19,6 +19,23 @@
   height: 100%;
 }
 
+select {
+  padding-top: 12px;
+  padding-bottom: 10px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding-left: 10px;
+  font-size: 18px;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+select[disabled] {
+  color: #999;
+  background-color: #eee;
+}
+
 @media only screen and (min-width: 768px) {
   .modal-dialog {
     margin-top: 130px;

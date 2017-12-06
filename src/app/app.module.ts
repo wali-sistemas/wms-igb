@@ -11,6 +11,7 @@ import { PurchaseOrdersComponent } from './components/purchase-orders/purchase-o
 import { PurchaseOrderComponent } from './components/purchase-orders/purchase-order.component';
 import { SalesOrdersComponent } from './components/sales-orders/sales-orders.component';
 import { SalesOrderComponent } from './components/sales-orders/sales-order.component';
+import { PickingComponent } from './components/picking/picking.component';
 
 import { routing, appRoutingProviders } from './app.routing';
 
@@ -23,7 +24,8 @@ import { routing, appRoutingProviders } from './app.routing';
     PurchaseOrdersComponent,
     PurchaseOrderComponent,
     SalesOrdersComponent,
-    SalesOrderComponent
+    SalesOrderComponent,
+    PickingComponent
   ],
   imports: [
     BrowserModule,

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { SalesOrdersService } from '../../services/sales-orders.service';
-import { PurchaseOrder } from '../../models/purchase-order';
+import { SalesOrder, SalesOrderLine } from '../../models/sales-order';
 
 declare var $: any;
 
@@ -14,8 +14,8 @@ declare var $: any;
 export class SalesOrdersComponent implements OnInit {
   public identity;
   public token;
-  public orders: Array<PurchaseOrder>;
-  public filteredOrders: Array<PurchaseOrder>;
+  public orders: Array<SalesOrder>;
+  public filteredOrders: Array<SalesOrder>;
   public filter: string = '';
   public searchFilter: string;
   public showApprovedOnly: boolean = true;
@@ -26,8 +26,8 @@ export class SalesOrdersComponent implements OnInit {
   constructor(private _userService: UserService,
     private _salesOrdersService: SalesOrdersService,
     private _route: ActivatedRoute, private _router: Router) {
-    this.orders = new Array<PurchaseOrder>();
-    this.filteredOrders = new Array<PurchaseOrder>();
+    this.orders = new Array<SalesOrder>();
+    this.filteredOrders = new Array<SalesOrder>();
     this.selectedOrders = new Map<number, any>();
   }
 
@@ -38,13 +38,19 @@ export class SalesOrdersComponent implements OnInit {
     if (this.identity === null) {
       this._router.navigate(['/']);
     }
+    console.log(this.identity);
     this.listOpenOrders();
   }
 
   private listOpenOrders() {
+    this.orders = new Array<SalesOrder>();
+    this.filteredOrders = new Array<SalesOrder>();
+    this.selectedOrders = new Map<number, any>();
+
     this._salesOrdersService.listOpenOrders(this.showApprovedOnly).subscribe(
       response => {
         this.orders = response;
+        console.log('loaded orders: ', this.orders);
         //TODO: validar ordenes asignadas
         this.filterOrders(true);
       },
@@ -77,14 +83,35 @@ export class SalesOrdersComponent implements OnInit {
   }
 
   public assignOrders() {
-    console.log('asignando ordenes');
-    $('#modal_users').modal('hide');
+    if (!this.selectedUser) {
+      //TODO: show error message
+      console.error('debes seleccionar un empleado');
+      return;
+    }
+    if (this.selectedOrders.size === 0) {
+      //TODO: show error message
+      console.error('debes seleccionar al menos una orden para asignar');
+      return;
+    }
+    let assignment = {
+      "assignedBy": this.identity.username,
+      "employeeId": this.selectedUser,
+      "orders": Array.from(this.selectedOrders.keys()).map(Number)
+    };
+
+    this._salesOrdersService.assignOrders(assignment).subscribe(
+      result => {
+        $('#modal_users').modal('hide');
+        this.listOpenOrders();
+        this.selectedUser = '';
+      }, error => { console.error(error); }
+    );
   }
 
   public filterOrders(force) {
     if (this.filter != this.searchFilter || force) {
       this.searchFilter = this.filter.toLowerCase();
-      this.filteredOrders = new Array<PurchaseOrder>();
+      this.filteredOrders = new Array<SalesOrder>();
       for (let i = 0; i < this.orders.length; i++) {
         let ord = this.orders[i];
         if (ord.docNum.toLowerCase().includes(this.searchFilter)

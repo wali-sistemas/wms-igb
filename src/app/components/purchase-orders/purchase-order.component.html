@@ -49,7 +49,7 @@
       </div>
       <div class="modal-footer">
         <div id="botones" *ngIf="!creatingSAPDocument">
-          <button type="button" class="btn btn-primary btn-lg" (click)="confirmReception()">Finalizar</button>
+          <button type="button" class="btn btn-primary btn-lg" (click)="confirmReception()">Sí, finalizar</button>
           <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cancelar</button>
         </div>
         <div id="botones" *ngIf="creatingSAPDocument">
@@ -130,7 +130,7 @@
           <div class="row">
             <div class="col-xs-6" *ngFor="let line of order.lines">
               <div class="item-pending" [class.partial]="line.partial" [class.line-completed]="line.quantity === 0">
-                <div>{{line.itemCode}} [{{line.lineNum}}]<span class="badge pull-right">{{line.quantity}}</span></div>
+                <div>{{line.itemCode}} <span title="SAP lineNum={{line.lineNum}}">[{{line.lineNum}}]</span><span class="badge pull-right">{{line.quantity}}</span></div>
                 <div class="item-name">{{line.itemName}}</div>
               </div>
             </div>

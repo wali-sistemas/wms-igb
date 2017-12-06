@@ -31,15 +31,16 @@
           <span class="input-group-btn" *ngIf="selectedOrders && selectedOrders.size > 0">
             <button type="button" class="btn btn-default btn-lg" (click)="listAssignableEmployees()">
               <span class="badge">{{selectedOrders.size}}</span>
-              <!--<span class="glyphicon glyphicon-hand-right"></span>-->
-              <span class="glyphicon glyphicon-user"></span>
-            </button>
+          <!--<span class="glyphicon glyphicon-hand-right"></span>-->
+          <span class="glyphicon glyphicon-user"></span>
+          </button>
           </span>
-          <input type="text" class="form-control input-lg" name="filter" placeholder="escribe para filtrar" [(ngModel)]="filter" (keyup)="filterOrders(false)" />
+          <input type="text" class="form-control input-lg" name="filter" placeholder="escribe para filtrar" [(ngModel)]="filter" (keyup)="filterOrders(false)"
+          />
           <span class="input-group-btn">
             <button type="button" class="btn btn-default btn-lg" (click)="toggleEye()">
               <span class="glyphicon" [ngClass]="{'glyphicon-eye-open': !showApprovedOnly, 'glyphicon-eye-close': showApprovedOnly}"></span>
-            </button>
+          </button>
           </span>
         </div>
         <!-- /input-group -->
@@ -49,7 +50,8 @@
   <div class="row">
     <div class="col-xs-6 col-md-3" *ngFor="let order of filteredOrders">
       <div class="order" [class.unauthorized]="order.confirmed === 'N'" [class.selected]="selectedOrders.has(order.docNum)" (click)="selectOrder(order)">
-        <div class="order-number">{{order.docNum}}</div>
+        <div class="order-number">{{order.docNum}} <span *ngIf="order.assignedPickingEmployee" class="assigned-employee"><span class="glyphicon glyphicon-user"></span>          {{order.assignedPickingEmployee}}</span>
+        </div>
         <div class="order-items"><span class="badge">{{order.items}}</span></div>
         <div class="order-docdate">{{order.docDate}}</div>
         <div class="order-cardcode">{{order.cardCode}}</div>

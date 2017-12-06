@@ -13,6 +13,12 @@
           <input type="password" class="form-control input-lg" placeholder="Contraseña"
             [(ngModel)]="user.password" name="password"/>
         </div>
+        <div>
+          <select id="company" name="selectedCompany" [(ngModel)]="selectedCompany">
+            <option style="display: none" selected value="" disabled>Selecciona la empresa</option>
+            <option *ngFor="let company of companies" value="{{company.companyId}}">{{company.companyName}}</option>
+          </select>
+        </div>
         <div class="alert alert-danger" role="alert" *ngIf="errorMessage">{{errorMessage}}</div>
         <div class="form-group">
           <input type="submit" class="btn btn-block btn-lg btn-danger" value="Ingresar" />

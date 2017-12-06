@@ -171,6 +171,7 @@ export class PurchaseOrderComponent implements OnInit {
   }
 
   public confirmReception() {
+    this.generalErrorMessage = null;
     console.log('aqui se debe invocar el ws para crear la entrada');
     this.creatingSAPDocument = true;
     let documentLines = [];
@@ -191,9 +192,14 @@ export class PurchaseOrderComponent implements OnInit {
     console.log(document);
     this._purchaseOrdersService.createDocument(document).subscribe(
       response => {
+        this.creatingSAPDocument = false;
         $('#modal_confirm_reception').modal('hide');
-        localStorage.removeItem('igb.reception');
-        this._router.navigate(['/purchase-orders']);
+        if (response.code === 0) {
+          localStorage.removeItem('igb.reception');
+          this._router.navigate(['/purchase-orders']);
+        } else {
+          this.generalErrorMessage = response.content;
+        }
       }, error => { console.error(error); }
     );
   }
