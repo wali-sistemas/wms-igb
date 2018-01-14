@@ -5,7 +5,7 @@ import { SalesOrdersService } from '../../services/sales-orders.service';
 import { StockTransferService } from '../../services/stock-transfer.service';
 import { BinLocationService } from '../../services/bin-locations.service';
 import { BinLocation } from '../../models/bin-location';
-import { SalesOrder } from 'app/models/sales-order';
+import { SalesOrder } from '../../models/sales-order';
 
 declare var $: any;
 
@@ -105,7 +105,14 @@ export class PickingComponent implements OnInit {
                 this.nextBinStock = result[0][4];
                 this.nextBinLocationCode = result[0][5];
                 this.nextItemName = result[0][6];
-            }, error => { console.error(error); }
+            }, error => {
+                console.error(error);
+                if (error.code == '-1') {
+
+                } else {
+
+                }
+            }
         );
     }
 
@@ -142,7 +149,6 @@ export class PickingComponent implements OnInit {
                 username: this.identity.username,
                 warehouseCode: '01' //TODO: parametrizar whscode
             }
-            //TODO: limpiar formulario en caso de traslado exitoso
             $('#modal_transfer_process').modal({
                 backdrop: 'static',
                 keyboard: false,
