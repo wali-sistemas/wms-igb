@@ -7,6 +7,7 @@ import { PurchaseOrdersComponent } from './components/purchase-orders/purchase-o
 import { PurchaseOrderComponent } from './components/purchase-orders/purchase-order.component';
 import { SalesOrdersComponent } from './components/sales-orders/sales-orders.component';
 import { PickingComponent } from './components/picking/picking.component';
+import { PackingComponent } from './components/packing/packing.component';
 
 const appRoutes: Routes = [
     { path: '', component: LoginComponent },
@@ -14,7 +15,8 @@ const appRoutes: Routes = [
     { path: 'purchase-orders', component: PurchaseOrdersComponent },
     { path: 'purchase-order/:docNum', component: PurchaseOrderComponent },
     { path: 'sales-orders', component: SalesOrdersComponent },
-    { path: 'picking', component: PickingComponent }
+    { path: 'picking', component: PickingComponent },
+    { path: 'packing', component: PackingComponent }
 ];
 
 export const appRoutingProviders: any[] = [];

@@ -28,4 +28,13 @@ export class BinLocationService {
             .map(res => res.json());
     }
 
+    public listAvailablePackedCarts() {
+        const headers = new Headers({
+            'Content-Type': 'application/json',
+            'X-Company-Name': localStorage.getItem('igb.selectedCompany')
+        });
+        return this._http.get(this.url + 'binlocation/picking-carts', { headers: headers })
+            .map(res => res.json());
+    }
+
 }

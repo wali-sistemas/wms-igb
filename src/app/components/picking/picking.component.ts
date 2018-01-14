@@ -4,7 +4,7 @@ import { UserService } from '../../services/user.service';
 import { SalesOrdersService } from '../../services/sales-orders.service';
 import { BinLocationService } from '../../services/bin-locations.service';
 import { BinLocation } from '../../models/bin-location';
-import { SalesOrder } from 'app/models/sales-order';
+import { SalesOrder } from '../../models/sales-order';
 
 declare var $: any;
 
