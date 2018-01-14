@@ -14,7 +14,6 @@ export class UserService {
   }
 
   signIn(userToLogin, selectedCompany) {
-    console.log(userToLogin);
     let params = '{"username":"' + userToLogin.username + '","password":"' + userToLogin.password + '", "selectedCompany":"' + selectedCompany + '"}';
     const headers = new Headers({ 'Content-Type': 'application/json' });
     return this._http.post(this.url + 'user/login', params, { headers: headers })

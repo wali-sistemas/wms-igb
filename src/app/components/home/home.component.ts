@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
-//import { User } from '../../models/user.model';
 import { UserService } from '../../services/user.service';
 
 @Component({
@@ -12,10 +11,8 @@ import { UserService } from '../../services/user.service';
 export class HomeComponent implements OnInit {
   public errorMessage: string;
   public identity;
-  //public user: User;
 
   constructor(private _userService: UserService, private _route: ActivatedRoute, private _router: Router) {
-    //this.user = new User('', '', '', '', '', '', true);
   }
 
   ngOnInit() {

@@ -1,5 +1,23 @@
 <igb-navbar></igb-navbar>
 
+<div id="modal_transfer_process" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0"
+                        aria-valuemax="100" style="width: 100%">
+                        <span class="sr-only">Procesando transferencia</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
 <div id="modal_config" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -60,7 +78,6 @@
                         </button>
                     </span>
                 </div>
-
                 <div class="alert alert-danger" role="alert" *ngIf="errorMessageBinLocation">
                     {{errorMessageBinLocation}}
                 </div>
@@ -96,7 +113,7 @@
                                     </button>
                                 </span>
                                 <input id="input_pickedQuantity" type="text" class="form-control input-lg" name="filter" placeholder="confirma la cantidad"
-                                    [(ngModel)]="pickedItemQuantity">
+                                    [(ngModel)]="pickedItemQuantity" autocomplete="off">
                                 <span class="input-group-btn">
                                     <button class="btn btn-primary btn-lg" type="button" (click)="confirmItemQuantity()" [disabled]="nextItemQuantity != pickedItemQuantity">
                                         <span class="glyphicon glyphicon-ok"></span>
@@ -105,12 +122,14 @@
                             </div>
                         </div>
                     </form>
+                    <div class="col-xs-12">
+                        <div class="alert alert-danger" role="alert" *ngIf="errorMessageBinTransfer">
+                            {{errorMessageBinTransfer}}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <br>
-    <div class="row" *ngIf="confirmingItemQuantity">
-
-    </div>
 </div>

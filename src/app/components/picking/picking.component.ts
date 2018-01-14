@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { SalesOrdersService } from '../../services/sales-orders.service';
+import { StockTransferService } from '../../services/stock-transfer.service';
 import { BinLocationService } from '../../services/bin-locations.service';
 import { BinLocation } from '../../models/bin-location';
 import { SalesOrder } from 'app/models/sales-order';
@@ -11,7 +12,7 @@ declare var $: any;
 @Component({
     templateUrl: './picking.component.html',
     styleUrls: ['./picking.component.css'],
-    providers: [UserService, SalesOrdersService, BinLocationService]
+    providers: [UserService, SalesOrdersService, BinLocationService, StockTransferService]
 })
 export class PickingComponent implements OnInit {
     public identity;
@@ -34,12 +35,14 @@ export class PickingComponent implements OnInit {
     public confirmBinCode: string = '';
     public confirmingItemQuantity = false;
     public errorMessageBinLocation: string = '';
+    public errorMessageBinTransfer: string = '';
     public availableCarts: Array<BinLocation>;
     public assignedOrders: Array<SalesOrder>;
 
     constructor(private _userService: UserService,
         private _salesOrderService: SalesOrdersService,
         private _binLocationService: BinLocationService,
+        private _stockTransferService: StockTransferService,
         private _route: ActivatedRoute,
         private _router: Router) {
         this.availableCarts = new Array<BinLocation>();
@@ -135,15 +138,32 @@ export class PickingComponent implements OnInit {
                 binAbsTo: this.selectedCart,
                 quantity: this.nextItemQuantity,
                 itemCode: this.nextItemCode,
+                orderNumber: this.selectedOrder,
+                username: this.identity.username,
                 warehouseCode: '01' //TODO: parametrizar whscode
             }
-            //TODO: mostrar backdrop mientras se procesa el traslado y limpiar formulario en caso de traslado exitoso
+            //TODO: limpiar formulario en caso de traslado exitoso
+            $('#modal_transfer_process').modal({
+                backdrop: 'static',
+                keyboard: false,
+                show: true
+            });
             console.log('itemTransfer: ', itemTransfer);
-            this._binLocationService.transferSingleItem(itemTransfer).subscribe(
+            this.errorMessageBinTransfer = '';
+            this._stockTransferService.transferSingleItem(itemTransfer).subscribe(
                 response => {
                     console.info(response);
+                    if (response.code === 0) {
+                        //Clears bin location, item code and quantity fields; then loads cart inventory and next item
+                        this.resetForm();
+                    } else {
+                        this.errorMessageBinTransfer = response.content;
+                    }
+                    $('#modal_transfer_process').modal('hide');
                 }, error => {
-                    console.error(error);
+                    console.error(JSON.parse(error._body).content);
+                    this.errorMessageBinTransfer = JSON.parse(error._body).content;
+                    $('#modal_transfer_process').modal('hide');
                 }
             );
         }
@@ -171,6 +191,10 @@ export class PickingComponent implements OnInit {
         this.nextItemCode = '';
         this.nextItemName = '';
         this.nextItemQuantity = null;
+
+        //clean selected location
+        this.confirmingItemQuantity = false;
+        this.confirmBinCode = '';
 
         //reload selected cart inventory
         this.loadCartInventory();
