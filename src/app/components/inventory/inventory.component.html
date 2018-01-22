@@ -1,0 +1,79 @@
+<igb-navbar></igb-navbar>
+
+<div id="modalConfirmacion" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <p class="justify-component">
+          Recuerde que se vaciara la ubicación para poder realizar el inventario.
+        </p>
+        <p class="justify-component">
+          <span class="glyphicon glyphicon-warning-sign" style="color: #f0ad4e"></span> Esta seguro(@) que desea realizar un inventario a la ubicación <b>{{location}}</b>.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-lg" data-dismiss="modal">No</button>
+        <button type="button" class="btn btn-primary btn-lg" (click)="createInventory()">Sí</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container content">
+  <div class="row">
+    <div class="col-xs-12 col-sm-6 col-sm-offset-3 margin-bottom-5">
+      <div class="input-group">
+        <input type="text" class="form-control input-lg" placeholder="Ubicación" [(ngModel)]="location" autocomplete="off" name="location" autocorrect="off" autocapitalize="none">
+        <span class="input-group-btn">
+            <button class="btn btn-default btn-lg" type="button">Aleatoria</button>
+          </span>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12 col-sm-6 col-sm-offset-3 margin-bottom-5 right-component">
+      <button class="btn btn-primary btn-lg" (click)="preparateCreateInventory()">Crear</button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="alert alert-danger" role="alert" *ngIf="messageError != null && messageError.length > 0">
+      <p>{{messageError}}</p>
+    </div>
+    <div class="alert alert-info" role="alert" *ngIf="messageInfo != null && messageInfo.length > 0">
+      <p>{{messageInfo}}</p>
+    </div>
+  </div>
+  <form #itemForm="ngForm" (ngSubmit)="addItem()">
+    <div class="row">
+      <div class="col-xs-12 col-sm-4 col-sm-offset-3 margin-bottom-5">
+        <input type="text" class="form-control input-lg" placeholder="Ítem" [(ngModel)]="item" autocomplete="off" name="item" autocorrect="off" autocapitalize="none">
+      </div>
+      <div class="col-xs-12 col-sm-2">
+        <div class="input-group">
+          <input type="text" class="form-control input-lg" placeholder="Cantidad" [(ngModel)]="quantity" autocomplete="off" name="quantity" autocorrect="off" autocapitalize="none">
+          <span class="input-group-btn">
+            <button class="btn btn-default btn-lg" type="submit">
+              <span class="glyphicon glyphicon-plus"></span>
+          </button>
+          </span>
+        </div>
+      </div>
+    </div>
+  </form>
+  <hr/>
+  <div class="row" *ngIf="idInventory">
+    <div class="col-xs-12 col-sm-6 col-sm-offset-3">
+      <b>Ultima referencia</b>
+    </div>
+    <div class="col-xs-12 col-sm-6 col-sm-offset-3" *ngIf="itemVisible && itemVisible.itemCode && itemVisible.itemCode.length > 0">
+      {{itemVisible.itemCode}}
+    </div>
+  </div>
+  <div class="row" *ngIf="idInventory">
+    <div class="col-xs-12 col-sm-6 col-sm-offset-3">
+      <button class="btn btn-default btn-lg" type="button">
+        <span class="glyphicon glyphicon-book" (click)="addItem()"></span> Historico
+      </button>
+    </div>
+  </div>
+</div>
