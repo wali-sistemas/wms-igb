@@ -16,9 +16,7 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log('iniciando componente de home');
     this.identity = this._userService.getItentity();
-    //TODO: validar vigencia del token/identity
     if (this.identity === null) {
       this._router.navigate(['/']);
     }
@@ -26,6 +24,7 @@ export class HomeComponent implements OnInit {
 
   cerrarSesion() {
     localStorage.removeItem('igb.identity');
+    localStorage.removeItem('igb.selectedCompany');
     localStorage.clear();
     this.identity = null;
     this._router.navigate(['/']);

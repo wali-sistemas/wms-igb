@@ -46,7 +46,7 @@ export class SalesOrdersComponent implements OnInit {
     this.orders = new Array<SalesOrder>();
     this.filteredOrders = new Array<SalesOrder>();
     this.selectedOrders = new Map<String, any>();
-
+    
     this._salesOrdersService.listOpenOrders(this.showApprovedOnly).subscribe(
       response => {
         this.orders = response;

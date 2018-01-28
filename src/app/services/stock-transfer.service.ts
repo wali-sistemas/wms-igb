@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers } from '@angular/http';
-import { GLOBAL } from './global';
+import { GLOBAL, HEADERS } from './global';
 
 @Injectable()
 export class StockTransferService {
@@ -11,11 +11,7 @@ export class StockTransferService {
     }
 
     public transferSingleItem(itemTransfer) {
-        const headers = new Headers({
-            'Content-Type': 'application/json',
-            'X-Company-Name': localStorage.getItem('igb.selectedCompany')
-        });
-        return this._http.post(this.url + 'stocktransfer/picking', itemTransfer, { headers: headers })
+        return this._http.post(this.url + 'stocktransfer/picking', itemTransfer, { headers: HEADERS })
             .map(res => res.json());
     }
 
