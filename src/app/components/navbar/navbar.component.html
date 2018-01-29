@@ -5,7 +5,7 @@
   <a href="#" routerLinkActive="active">Reabastecimiento</a>
   <a href="#" routerLinkActive="active" [routerLink]="['/sales-orders']">Órdenes</a>
   <a routerLinkActive="active" [routerLink]="['/picking']" href="#">Picking</a>
-  <a href="#" routerLinkActive="active">Inventario</a>
+  <a href="#" routerLinkActive="active" [routerLink]="['/inventory']">Inventario</a>
   <span class="salir-desktop" (click)="cerrarSesion()">Salir <span class="glyphicon glyphicon-log-out"></span></span>
 </nav>
 <nav class="topnav visible-xs visible-sm">
@@ -15,7 +15,7 @@
 <div id="myNav" class="overlay visible-xs visible-sm">
   <!-- Overlay content -->
   <div class="overlay-content">
-    <a routerLinkActive="active" href="#" >Sistema</a>
+    <a routerLinkActive="active" href="#">Sistema</a>
     <a routerLinkActive="active" [routerLink]="['/purchase-orders']">Recepción</a>
     <a routerLinkActive="active" href="#">Reabastecimiento</a>
     <a routerLinkActive="active" [routerLink]="['/sales-orders']" href="#">Asignar órdenes</a>

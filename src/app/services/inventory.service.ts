@@ -12,13 +12,33 @@ export class InventoryService {
     this.url = GLOBAL.url;
   }
 
+  public inventoryOpen(warehouse) {
+    const headers = new Headers({
+      'Content-Type': 'application/json',
+      'X-Company-Name': localStorage.getItem('igb.selectedCompany')
+    });
+
+    return this._http.get(this.url + 'inventory/inventoryopen/' + warehouse, { headers: headers })
+      .map(res => res.json());
+  }
+
   public addItem(inventory) {
     const headers = new Headers({
       'Content-Type': 'application/json',
       'X-Company-Name': localStorage.getItem('igb.selectedCompany')
     });
 
-    return this._http.post(this.url + 'addItem', JSON.stringify(inventory), { headers: headers })
+    return this._http.post(this.url + 'inventory/addItem', JSON.stringify(inventory), { headers: headers })
+      .map(res => res.json());
+  }
+
+  public inventoryHistory(warehouse, idInventory) {
+    const headers = new Headers({
+      'Content-Type': 'application/json',
+      'X-Company-Name': localStorage.getItem('igb.selectedCompany')
+    });
+
+    return this._http.get(this.url + 'inventory/inventoryhistory/' + warehouse + "/" + idInventory, { headers: headers })
       .map(res => res.json());
   }
 }

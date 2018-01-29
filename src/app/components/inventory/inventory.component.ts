@@ -20,13 +20,38 @@ export class InventoryComponent implements OnInit {
   public item: string;
   public itemTmp: any;
   public itemVisible: any;
+  public differences: Array<any>;
+  public history: Array<any>;
 
   constructor(private _stockTransferService: StockTransferService, private _inventoryService: InventoryService) {
+    this.itemTmp = {
+      idInventory: null,
+      item: null,
+      quantity: null
+    };
+    this.itemVisible = this.itemTmp;
+    this.differences = new Array<any>();
+    this.history = new Array<any>();
   }
 
   ngOnInit() {
     console.log('iniciando componente de inventario');
     //Buscar si hay un conteo iniciado
+    this.validateInventoryOpen();
+  }
+
+  public validateInventoryOpen() {
+    this._inventoryService.inventoryOpen('01').subscribe(
+      response => {
+        console.log(response);
+        if (response !== -1) {
+          this.idInventory = response.id;
+          this.location = response.location;
+        }
+      }, error => {
+        console.log(error);
+      }
+    );
   }
 
   public preparateCreateInventory() {
@@ -69,12 +94,13 @@ export class InventoryComponent implements OnInit {
 
     this.itemVisible = {
       idInventory: this.idInventory,
-      itemCode: this.item,
+      item: this.item,
       quantity: this.quantity
     }
 
     this.item = '';
     this.quantity = null;
+    this.itemTmp = this.itemVisible;
 
     console.log(this.itemVisible);
     this.saveAddItem();
@@ -88,5 +114,52 @@ export class InventoryComponent implements OnInit {
 
       }
     );
+  }
+
+  public inventoryHistory() {
+    if (this.history != null && this.history.length > 0) {
+      console.log('Cerrando historial');
+      this.history = new Array<any>();
+    } else {
+      console.log('Obteniendo historial');
+      this._inventoryService.inventoryHistory('01', this.idInventory).subscribe(
+        response => {
+          console.log(response);
+          if (response !== -1) {
+            this.history = response;
+          }
+        }, error => {
+          console.log(error);
+        }
+      );
+    }
+  }
+
+  public finishInventory() {
+    this._stockTransferService.finishInventory(this.idInventory).subscribe(
+      response => {
+        console.log(response);
+        this.differences = response;
+        if (this.differences != null && this.differences.length > 0) {
+          $('#modalDiferencias').modal('show');
+        }
+        console.log(this.differences);
+      }, error => {
+        console.log(error);
+      }
+    );
+  }
+
+  public cleanData() {
+    this.idInventory = null;
+    this.quantity = null;
+    this.messageError = null;
+    this.messageInfo = null;
+    this.location = null;
+    this.item = null;
+    this.itemTmp = null;
+    this.itemVisible = null;
+    this.differences = new Array<any>();
+    $('#modalDiferencias').modal('hide');
   }
 }

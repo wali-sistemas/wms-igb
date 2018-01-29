@@ -21,4 +21,14 @@ export class StockTransferService {
     return this._http.get(this.url + 'stocktransfer/clean-location' + '/' + warehouse + '/' + location, { headers: headers })
       .map(res => res.json());
   }
+
+  public finishInventory(idInventory) {
+    const headers = new Headers({
+      'Content-Type': 'application/json',
+      'X-Company-Name': localStorage.getItem('igb.selectedCompany')
+    });
+
+    return this._http.get(this.url + 'stocktransfer/finishInventory/' + idInventory, { headers: headers })
+      .map(res => res.json());
+  }
 }
