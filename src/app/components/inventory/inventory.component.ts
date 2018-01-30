@@ -16,6 +16,7 @@ export class InventoryComponent implements OnInit {
   public quantity: number;
   public messageError: string;
   public messageInfo: string;
+  public messageProgress: string;
   public location: string;
   public item: string;
   public itemTmp: any;
@@ -35,6 +36,8 @@ export class InventoryComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.messageProgress = 'Validando si hay inventarios pendientes.';
+    $('#modal_process').modal('show');
     console.log('iniciando componente de inventario');
     //Buscar si hay un conteo iniciado
     this.validateInventoryOpen();
@@ -48,8 +51,10 @@ export class InventoryComponent implements OnInit {
           this.idInventory = response.id;
           this.location = response.location;
         }
+        $('#modal_process').modal('hide');
       }, error => {
         console.log(error);
+        $('#modal_process').modal('hide');
       }
     );
   }
@@ -65,6 +70,8 @@ export class InventoryComponent implements OnInit {
   }
 
   public createInventory() {
+    this.messageProgress = 'Creando un nuevo inventario, espere por favor.';
+    $('#modal_process').modal('show');
     this._stockTransferService.openInventory('01', this.location).subscribe(
       response => {
         console.log(response);
@@ -76,9 +83,11 @@ export class InventoryComponent implements OnInit {
           $('#modalConfirmacion').modal('hide');
           this.messageInfo = 'Se creo correctamente el inventario';
         }
+        $('#modal_process').modal('hide');
       }, error => {
         this.messageError = 'No fue posible iniciar el inventario solicitado.';
         console.log(error);
+        $('#modal_process').modal('hide');
       }
     );
   }
@@ -117,9 +126,12 @@ export class InventoryComponent implements OnInit {
   }
 
   public inventoryHistory() {
+    this.messageProgress = 'Procesando su petición.';
+    $('#modal_process').modal('show');
     if (this.history != null && this.history.length > 0) {
       console.log('Cerrando historial');
       this.history = new Array<any>();
+      $('#modal_process').modal('hide');
     } else {
       console.log('Obteniendo historial');
       this._inventoryService.inventoryHistory('01', this.idInventory).subscribe(
@@ -128,14 +140,18 @@ export class InventoryComponent implements OnInit {
           if (response !== -1) {
             this.history = response;
           }
+          $('#modal_process').modal('hide');
         }, error => {
           console.log(error);
+          $('#modal_process').modal('hide');
         }
       );
     }
   }
 
   public finishInventory() {
+    this.messageProgress = 'Finalizando el inventario, espere por favor..';
+    $('#modal_process').modal('show');
     this._stockTransferService.finishInventory(this.idInventory).subscribe(
       response => {
         console.log(response);
@@ -144,8 +160,10 @@ export class InventoryComponent implements OnInit {
           $('#modalDiferencias').modal('show');
         }
         console.log(this.differences);
+        $('#modal_process').modal('hide');
       }, error => {
         console.log(error);
+        $('#modal_process').modal('hide');
       }
     );
   }
@@ -160,6 +178,9 @@ export class InventoryComponent implements OnInit {
     this.itemTmp = null;
     this.itemVisible = null;
     this.differences = new Array<any>();
+    this.history = new Array<any>();
     $('#modalDiferencias').modal('hide');
+    $('#modal_process').modal('hide');
+    this.validateInventoryOpen();
   }
 }
