@@ -1,25 +1,59 @@
 <igb-navbar></igb-navbar>
 
+<div id="modal_change_picking_method" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p>Ya no hay más ítems pendientes por picking en la órden seleccionada. Se cambiará a modo de selección múltiple</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-lg" (click)="changePickingMethod()">Aceptar</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<div id="modal_transfer_process" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0"
+                        aria-valuemax="100" style="width: 100%">
+                        <span class="sr-only">Procesando transferencia</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
 <div id="modal_config" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <form>
                 <div class="modal-body">
                     <h4>Selecciona la forma de picking que prefieras</h4>
-                    <input id="radio_multiple" type="radio" name="pickingMethod" [(ngModel)]="pickingMethod" value="multiple">
-                    <label for="radio_multiple"> Múltiple (how many?)</label>
+                    <input id="radio_multiple" type="radio" name="selectedPickingMethod" [(ngModel)]="selectedPickingMethod" value="multiple">
+                    <label for="radio_multiple"> Múltiple</label>
                     <br>
-                    <input id="radio_single" type="radio" name="pickingMethod" [(ngModel)]="pickingMethod" value="single">
+                    <input id="radio_single" type="radio" name="selectedPickingMethod" [(ngModel)]="selectedPickingMethod" value="single">
                     <label for="radio_single"> Por órden</label>
                     <br>
-                    <select class="form-control input-lg" *ngIf="pickingMethod == 'single'" [(ngModel)]="selectedOrder" name="selectedOrder">
+                    <select class="form-control input-lg" *ngIf="selectedPickingMethod == 'single'" [(ngModel)]="selectedOrder" name="selectedOrder">
                         <option style="display:none" disabled value="">Selecciona una órden</option>
                         <option *ngFor="let order of assignedOrders" value="{{order.docNum}}">{{order.docNum}} - {{order.cardName}}</option>
                     </select>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary btn-lg" (click)="chooseOrder()">Guardar</button>
+                    <button type="submit" class="btn btn-primary btn-lg" (click)="choosePickingMethod()" [disabled]="selectedPickingMethod == pickingMethod || (selectedPickingMethod === 'single' && selectedOrder === '')">Guardar</button>
                 </div>
             </form>
         </div>
@@ -38,7 +72,7 @@
 
     <div class="row" *ngIf="availableCarts.length > 0">
         <div class="col-xs-12">
-            <select class="form-control input-lg" [(ngModel)]="selectedCart" (change)="loadCartInventory()">
+            <select class="form-control input-lg" [(ngModel)]="selectedCart" (change)="loadAvailablePickingCarts()">
                 <option style="display:none" disabled value="0">Selecciona un carrito</option>
                 <option *ngFor="let cart of availableCarts" value="{{cart.binAbs}}">{{cart.binName}} ({{cart.items}})</option>
             </select>
@@ -60,7 +94,6 @@
                         </button>
                     </span>
                 </div>
-
                 <div class="alert alert-danger" role="alert" *ngIf="errorMessageBinLocation">
                     {{errorMessageBinLocation}}
                 </div>
@@ -75,7 +108,7 @@
                     <div class="col-xs-12">
                         <h4>({{nextItemCode}}) {{nextItemName}}</h4>
                     </div>
-                    <form>
+                    <form (submit)="confirmItemCode()">
                         <div class="col-xs-12" *ngIf="!pickedItemCodeValidated">
                             <div class="input-group">
                                 <input type="text" class="form-control input-lg" name="filter" placeholder="escanea la referencia" [(ngModel)]="pickedItemCode">
@@ -87,7 +120,7 @@
                             </div>
                         </div>
                     </form>
-                    <form>
+                    <form (submit)="confirmItemQuantity()">
                         <div class="col-xs-12" *ngIf="pickedItemCodeValidated">
                             <div class="input-group">
                                 <span class="input-group-btn">
@@ -96,7 +129,7 @@
                                     </button>
                                 </span>
                                 <input id="input_pickedQuantity" type="text" class="form-control input-lg" name="filter" placeholder="confirma la cantidad"
-                                    [(ngModel)]="pickedItemQuantity">
+                                    [(ngModel)]="pickedItemQuantity" autocomplete="off">
                                 <span class="input-group-btn">
                                     <button class="btn btn-primary btn-lg" type="button" (click)="confirmItemQuantity()" [disabled]="nextItemQuantity != pickedItemQuantity">
                                         <span class="glyphicon glyphicon-ok"></span>
@@ -105,12 +138,14 @@
                             </div>
                         </div>
                     </form>
+                    <div class="col-xs-12">
+                        <div class="alert alert-danger" role="alert" *ngIf="errorMessageBinTransfer">
+                            {{errorMessageBinTransfer}}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <br>
-    <div class="row" *ngIf="confirmingItemQuantity">
-
-    </div>
 </div>

@@ -8,6 +8,7 @@ export class SalesOrder {
     public cardCode: String;
     public cardName: String;
     public assignedPickingEmployee: String;
+    public confirmed: String;
     public items: Number;
     public lines: Array<SalesOrderLine>;
     constructor() { }

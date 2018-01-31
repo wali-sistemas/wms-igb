@@ -19,7 +19,7 @@ export class SalesOrdersComponent implements OnInit {
   public filter: string = '';
   public searchFilter: string;
   public showApprovedOnly: boolean = true;
-  public selectedOrders: Map<number, any>;
+  public selectedOrders: Map<String, String>;
   public assignableUsers: Array<any>;
   public selectedUser: string = '';
 
@@ -28,7 +28,7 @@ export class SalesOrdersComponent implements OnInit {
     private _route: ActivatedRoute, private _router: Router) {
     this.orders = new Array<SalesOrder>();
     this.filteredOrders = new Array<SalesOrder>();
-    this.selectedOrders = new Map<number, any>();
+    this.selectedOrders = new Map<String, String>();
   }
 
   ngOnInit() {
@@ -45,8 +45,8 @@ export class SalesOrdersComponent implements OnInit {
   private listOpenOrders() {
     this.orders = new Array<SalesOrder>();
     this.filteredOrders = new Array<SalesOrder>();
-    this.selectedOrders = new Map<number, any>();
-
+    this.selectedOrders = new Map<String, any>();
+    
     this._salesOrdersService.listOpenOrders(this.showApprovedOnly).subscribe(
       response => {
         this.orders = response;
@@ -60,7 +60,7 @@ export class SalesOrdersComponent implements OnInit {
     );
   }
 
-  public selectOrder(order) {
+  public selectOrder(order: SalesOrder) {
     //this._router.navigate(['/sale-order/', docNum]);
     if (order.confirmed === 'N') {
       return;
@@ -68,7 +68,7 @@ export class SalesOrdersComponent implements OnInit {
     if (this.selectedOrders.has(order.docNum)) {
       this.selectedOrders.delete(order.docNum);
     } else {
-      this.selectedOrders.set(order.docNum, null);
+      this.selectedOrders.set(order.docNum, order.cardCode);
     }
   }
 
@@ -93,11 +93,14 @@ export class SalesOrdersComponent implements OnInit {
       console.error('debes seleccionar al menos una orden para asignar');
       return;
     }
+
     let assignment = {
       "assignedBy": this.identity.username,
       "employeeId": this.selectedUser,
-      "orders": Array.from(this.selectedOrders.keys()).map(Number)
+      "orders": Array.from(this.selectedOrders.entries())//.map(Number)
     };
+
+    console.log(assignment);
 
     this._salesOrdersService.assignOrders(assignment).subscribe(
       result => {
