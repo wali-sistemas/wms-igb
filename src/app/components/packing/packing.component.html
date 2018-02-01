@@ -34,19 +34,19 @@
             <br>    
             <label for="radio_single"> Seleccionar cliente</label>
             <br>
-            <select class="form-control input-lg" [(ngModel)]="selectedCustomer" name="selectedCustomer">
+            <select class="form-control input-lg" [(ngModel)]="selectedCustomer" name="selectedCustomer" (change)="loadOrdersCostumers()">
                 <option style="display:none" disabled value="">Selecciona un cliente</option>
-                <option *ngFor="let customer of assignedCustomer" value="{{customer.customerId}}"> {{customer.customerName}}</option>
+                <option *ngFor="let customer of costumerOrders" value="{{customer.cardCode}}"> {{customer.cardName}}</option>
             </select>
-        <div *ngIf="selectedCostumer">
+        <div *ngIf="assignedOrders.length > 0">
             <label for="radio_single"> Seleccionar orden</label>
             <br>
-            <select class="form-control input-lg"  [(ngModel)]="selectedOrder" name="selectedOrder">
+            <select class="form-control input-lg"  [(ngModel)]="selectedOrder" name="selectedOrder" (change)="showItemsOrder()">
                 <option style="display:none" disabled value="">Selecciona una órden</option>
                 <option *ngFor="let order of assignedOrders" value="{{order.orderNumber}}">{{order.orderNumber}} - {{order.cardName}}</option>
             </select>
-            <span *ngIf="packingMethod === 'multiple' && assignedOrders.length > 0"> ({{assignedOrders.length}} órdenes)</span>
-            <span *ngIf="pakingMethod === 'single'"> (órden #{{selectedOrder}})</span>
+            <!-- <span *ngIf="packingMethod === 'multiple' && assignedOrders.length > 0"> ({{assignedOrders.length}} órdenes)</span>
+            <span *ngIf="pakingMethod === 'single'"> (órden #{{selectedOrder}})</span> -->
         </div>
     </h3>
 
@@ -76,7 +76,7 @@
     <br>  -->
 
     
-    <div class="row" *ngIf="confirmingItemQuantity">
+    <div class="row" *ngIf="this.packingOrderItem.length > 0">
         <div class="col-xs-12">
             <div class="confirm-item">
                 <div class="row">
@@ -86,9 +86,15 @@
                     <form>
                         <div class="col-xs-12" *ngIf="!packedItemCodeValidated">
                             <div class="input-group">
-                                <input type="text" class="form-control input-lg" name="filter" placeholder="escanea la referencia" [(ngModel)]="packedItemCode">
+                                <input type="text" class="form-control input-lg" 
+                                        name="filter" 
+                                        placeholder="escanea la referencia" 
+                                        [(ngModel)]="packedItemCode">
                                 <span class="input-group-btn">
-                                    <button class="btn btn-primary btn-lg" type="button" (click)="confirmItemCode()" [disabled]="nextItemCode != packedItemCode">
+                                    <button class="btn btn-primary btn-lg" 
+                                            type="button" 
+                                            (click)="confirmItemCode()" 
+                                            [disabled]="nextItemCode != packedItemCode">
                                         <span class="glyphicon glyphicon-ok"></span>
                                     </button>
                                 </span>
@@ -103,11 +109,16 @@
                                         Toma {{nextItemQuantity}} unidades
                                     </button>
                                 </span>
-                                <input id="input_packedQuantity" type="text" class="form-control input-lg" name="filter" placeholder="confirma la cantidad"
+                                <input id="input_packedQuantity" type="text" 
+                                        class="form-control input-lg" 
+                                        name="filter" 
+                                        placeholder="confirma la cantidad"
                                     [(ngModel)]="packedItemQuantity">
                                 <span class="input-group-btn">
-                                    <button class="btn btn-primary btn-lg" type="button" (click)="confirmItemQuantity()" [disabled]="nextItemQuantity != packedItemQuantity">
-                                        <span class="glyphicon glyphicon-ok"></span>
+                                    <button class="btn btn-primary btn-lg" type="button" 
+                                    (click)="confirmItemQuantity()" 
+                                    [disabled]="nextItemQuantity != packedItemQuantity">
+                                        <span class="glyphicon glyphicon-ok"> ok</span>
                                     </button>
                                 </span>
                             </div>
@@ -118,20 +129,42 @@
         </div>
     </div>
     <br>
-    <div class="row" *ngIf="confirmingItemQuantity">
+    <div class="row" *ngIf="packedItemQuantityValidated">
 
     <div>
             <br>    
             <label> Cajas</label>
             <br>
-            
-
-            <br>
             <span class="input-group-btn">
-                    <button class="btn btn-primary btn-lg" type="button" (click)="confirmItemQuantity()" [disabled]="nextItemQuantity != packedItemQuantity">
+                    <button class="btn btn-primary btn-lg" type="button" 
+                    (click)="addBox()" 
+                    [disabled]="!isPossibleAddNewBox">
                         <span class="glyphicon glyphicon-ok">Nueva caja</span>
                     </button>
                 </span>
+            <br>
+            
+            <div>
+                <div *ngFor="let box of packingOrderBox" style=" border-style:solid; height:2cm; width:2cm;
+                border-color:black;">
+                    <label>{{box.boxShowName}}</label>
+                    <label>{{box.numberItems}}</label>
+                </div>
+                <div>
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary btn-lg" type="button" (click)="addItemBox()" [disabled]="nextItemQuantity != packedItemQuantity">
+                            <span class="glyphicon glyphicon-ok">Empacar en caja actual</span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+            
+
+            
+            <br>
+            <div>
+                    <label for="radio_single"> Finalizar empaque</label>
+            </div>
 
     </div>
         <span class="input-group-btn">

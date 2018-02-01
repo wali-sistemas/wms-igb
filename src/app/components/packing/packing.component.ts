@@ -1,4 +1,5 @@
-import { PackingOrder } from './../../models/packing-order';
+import { PackingOrdeBox } from './../../models/PackingOrderBox';
+import { PackingOrder, PackingOrderItem, PackingOrderItemBin } from './../../models/packing-order';
 import { SalesOrder } from './../../models/sales-order';
 import { Customer } from './../../models/customer';
 import { Component, OnInit } from '@angular/core';
@@ -7,6 +8,7 @@ import { UserService } from '../../services/user.service';
 import { SalesOrdersService } from '../../services/sales-orders.service';
 import { PickingOrders } from '../../services/picking-orders';
 import { BinLocation } from '../../models/bin-location';
+import { forEach } from '@angular/router/src/utils/collection';
 
 
 declare var $: any;
@@ -25,12 +27,14 @@ export class PackingComponent implements OnInit {
     public selectedCustomer: string = '';
 
     public indexItemOrderSelected = 0;
+    public indexItemOrderBinSelected = 0;
     public nextItemCode: String = '';
     public nextItemQuantity: number;
     public packedItemCode: string = '';
     public packedItemQuantity: number;
     public packedItemCodeValidated = false;
     public packedItemQuantityValidated = false;
+    public isPossibleAddNewBox = false;
 
     public confirmingItemQuantity = false;
     public errorMessageBinLocation: string = '';
@@ -39,6 +43,8 @@ export class PackingComponent implements OnInit {
     public assignedCustomer: Array<Customer>;
     public assignedOrders: Array<PackingOrder>;
     public packingOrderInUI: PackingOrder;
+    public packingOrderItem: Array<PackingOrderItem>;
+    public packingOrderBox: Array<PackingOrdeBox>;
 
     constructor(private _userService: UserService,
         private _salesOrderService: SalesOrdersService,
@@ -47,6 +53,9 @@ export class PackingComponent implements OnInit {
         private _router: Router) {
         this.availableCarts = new Array<BinLocation>();
         this.assignedCustomer = new Array<Customer>();
+        this.assignedOrders = new Array<PackingOrder>();
+        this.packingOrderItem = new Array<PackingOrderItem>();
+        this.packingOrderBox = new Array<PackingOrdeBox>();
     }
 
     ngOnInit() {
@@ -63,7 +72,7 @@ export class PackingComponent implements OnInit {
 
     private loadCostumerOrders() {
         this.costumerOrders = new Array<PackingOrder>();
-        this._packingOrders.listAvailableCostumerOrders().subscribe(
+        /*this._packingOrders.listAvailableCostumerOrders().subscribe(
             result => {
                 console.log('packing orders:', result);
                 for (let i = 0; i < result.length; i++) {
@@ -77,9 +86,31 @@ export class PackingComponent implements OnInit {
                 }
                 
             }, error => { console.error(error); }           
-        );
+        );*/
         
-        let order: PackingOrder = new PackingOrder();
+        let packingOrderDummy : PackingOrder = new PackingOrder();
+        packingOrderDummy.packingOrderId = 1;
+        packingOrderDummy.orderNumber = "200";
+        packingOrderDummy.cardCode = "1.cardCode";
+        packingOrderDummy.cardName = "el primero";
+        packingOrderDummy.status = "Para empacar";
+        let packingItem: PackingOrderItem = new PackingOrderItem();
+        packingItem.itemCode = "IEMCODE00001";
+        packingItem.packingOrderItemId = 1;
+        packingItem.packingOrderItemId = 1;
+        let orderItemBin: PackingOrderItemBin = new PackingOrderItemBin();
+        orderItemBin.binAbs = "abs1";
+        orderItemBin.binCode = "IEMCODE00001";
+        orderItemBin.packingOrderItemBinId = 1;
+        orderItemBin.packingOrdItemId = 1;
+        orderItemBin.pickedQty = 10;
+        orderItemBin.packedQty = 0;
+        packingItem.itemsBin = new Array<PackingOrderItemBin>();
+        packingOrderDummy.itemsOrders = new Array<PackingOrderItem>();
+        packingItem.itemsBin.push(orderItemBin);
+        packingOrderDummy.itemsOrders.push(packingItem);
+
+        /*let order: PackingOrder = new PackingOrder();
         console.log('kkkkkkkkkkkkkkkkkkkkkkk');
             order.orderNumber = "la primera";
             
@@ -94,9 +125,10 @@ export class PackingComponent implements OnInit {
             customerArra.customerId = "1.primero"; 
             customerArra.customerName = "el primero";
             this.assignedCustomer.push(customerArra);
-
+        */
         //      se ordenan las ordenes por cliente
-        var sortedClient: Array<PackingOrder> = this.costumerOrders.sort(function(a:PackingOrder, b:PackingOrder) {
+        this.costumerOrders.push( packingOrderDummy );
+        /*var sortedClient: Array<PackingOrder> = this.costumerOrders.sort(function(a:PackingOrder, b:PackingOrder) {
             
             if (a.cardCode > b.cardCode) {
                return 1;
@@ -107,9 +139,38 @@ export class PackingComponent implements OnInit {
             return 0;
         });
 
-        this.costumerOrders = sortedClient;
+        this.costumerOrders = sortedClient;*/
     }
 
+    public loadOrdersCostumers(){
+
+        this.assignedOrders = new Array<PackingOrder>();
+        this.costumerOrders.forEach(element => {
+            if (element.cardCode === this.selectedCustomer){
+                this.assignedOrders.push(element);
+            }
+        });
+    }
+
+    public showItemsOrder(){
+        var recorridoItems = 0;
+        this.assignedOrders.forEach(element =>{
+            this.packingOrderItem = element.itemsOrders; 
+            element.itemsOrders.forEach(element2 => {
+                if (recorridoItems === 0 ){
+                    this.nextItemCode = element2.itemCode;
+                    
+                    recorridoItems++;
+                }
+            });
+        });
+        this.loadNextItem();
+    }
+
+    /**
+     * Se cargan las cantidades de cada item
+     * 
+     */ 
     private loadNextItem() {
 
         if (this.selectedOrderInUI != this.selectedOrder){
@@ -118,14 +179,20 @@ export class PackingComponent implements OnInit {
                 if (packingOrderSelected.orderNumber === this.selectedOrder){
                     this.packingOrderInUI = packingOrderSelected
                     this.nextItemCode = packingOrderSelected.itemsOrders[this.indexItemOrderSelected].itemCode;
+                    console.log(" la cantidad es"+packingOrderSelected.itemsOrders[this.indexItemOrderSelected].itemsBin[this.indexItemOrderBinSelected].pickedQty);
+                    this.nextItemQuantity = packingOrderSelected.itemsOrders[this.indexItemOrderSelected].itemsBin[this.indexItemOrderBinSelected].pickedQty;
                     this.selectedOrderInUI = packingOrderSelected.orderNumber;
+                    this.isPossibleAddNewBox = true
                     // debe limpiar cajas y cantidad de items
                 }
             }
             this.indexItemOrderSelected++;
+            this.indexItemOrderBinSelected++;
         } else {
             this.nextItemCode = this.packingOrderInUI.itemsOrders[this.indexItemOrderSelected].itemCode;
+            this.nextItemQuantity = this.packingOrderInUI.itemsOrders[this.indexItemOrderSelected].itemsBin[this.indexItemOrderBinSelected].pickedQty;
             this.indexItemOrderSelected++;
+            this.indexItemOrderBinSelected++;
         }
     }
 
@@ -149,30 +216,19 @@ export class PackingComponent implements OnInit {
         }
     }
 
-    /*public confirmItemQuantity() {
-        console.log('confirmando cantidad para trasladar item, ' + this.nextItemQuantity + ', ' + this.packedItemQuantity);
+    public confirmItemQuantity() {
+        console.log('confirmando cantidad para empacar item, ' + this.nextItemQuantity + ', ' + this.packedItemQuantity);
+        //      se deben sacar las cantidades de order item bin
+        //let packingOrderItemSelected : PackingOrderItem = this.selectedOrder.get 
         if (this.nextItemQuantity == this.packedItemQuantity) {
             this.packedItemQuantityValidated = true;
-            //transfer items to cart
-            //change order??
-            let itemTransfer = {
-                binAbsFrom: this.nextBinAbs,
-                binAbsTo: this.selectedCart,
-                quantity: this.nextItemQuantity,
-                itemCode: this.nextItemCode,
-                warehouseCode: '01' //TODO: parametrizar whscode
-            }
-            //TODO: mostrar backdrop mientras se procesa el traslado y limpiar formulario en caso de traslado exitoso
-            console.log('itemTransfer: ', itemTransfer);
-            this._binLocationService.transferSingleItem(itemTransfer).subscribe(
-                response => {
-                    console.info(response);
-                }, error => {
-                    console.error(error);
-                }
-            );
         }
-    }*/
+    }
+    
+    public addItemBox(){
+        //      se coloca el item en la ultima caja
+        this.packingOrderBox[this.packingOrderBox.length-1].packingOrderItemBin.push();
+    }
 
     public loadCartInventory() {
         console.log('loading inventory for location ' + this.selectedCart);
@@ -202,5 +258,16 @@ export class PackingComponent implements OnInit {
     public chooseOrder() {
         $('#modal_config').modal('hide');
         this.loadNextItem();
+    }
+
+
+    public addBox(){
+        let newBox :  PackingOrdeBox =  new PackingOrdeBox();
+        newBox.boxShowName = "Caja N";
+        this.packingOrderBox.push(newBox);
+    }
+
+    public deleteBox(){
+
     }
 }

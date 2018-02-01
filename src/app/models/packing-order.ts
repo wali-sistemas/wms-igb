@@ -15,7 +15,7 @@ export class PackingOrderItem{
     public packingOrderItemId: number;
     public packingOrderId: number;
     public itemCode: String;
-    public itemsBin: Array<PackingOrderItemBin>
+    public itemsBin: Array<PackingOrderItemBin>;
     constructor() { }
 
 }
@@ -23,7 +23,7 @@ export class PackingOrderItem{
 export class PackingOrderItemBin {
 
     public packingOrderItemBinId: number;
-    public pakingOrderItemId: number;
+    public packingOrdItemId: number;
     public binCode: String;
     public binAbs: String;
     public pickedQty: number;
