@@ -2,7 +2,7 @@ import { Headers } from '@angular/http';
 
 export let GLOBAL = {
     //url: 'http://wali.igbcolombia.com:8080/igb/res/'
-    url: 'http://192.168.1.6:8080/igb/res/'
+    url: 'http://192.168.1.122:8080/igb/res/'
 };
 
 export let HEADERS = new Headers({

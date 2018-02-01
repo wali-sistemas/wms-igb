@@ -11,22 +11,12 @@ export class StockTransferService {
   }
 
   public openInventory(warehouse, location) {
-    const headers = new Headers({
-      'Content-Type': 'application/json',
-      'X-Company-Name': localStorage.getItem('igb.selectedCompany')
-    });
-
-    return this._http.get(this.url + 'stocktransfer/clean-location' + '/' + warehouse + '/' + location, { headers: headers })
+    return this._http.get(this.url + 'stocktransfer/clean-location' + '/' + warehouse + '/' + location, { headers: HEADERS })
       .map(res => res.json());
   }
 
   public finishInventory(idInventory) {
-    const headers = new Headers({
-      'Content-Type': 'application/json',
-      'X-Company-Name': localStorage.getItem('igb.selectedCompany')
-    });
-
-    return this._http.get(this.url + 'stocktransfer/finishInventory/' + idInventory, { headers: headers })
+    return this._http.get(this.url + 'stocktransfer/finishInventory/' + idInventory, { headers: HEADERS })
       .map(res => res.json());
   }
   

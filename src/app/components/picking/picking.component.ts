@@ -101,12 +101,16 @@ export class PickingComponent implements OnInit {
         this.assignedOrders = new Array<SalesOrder>();
         this._salesOrderService.listUserOrders(this.identity.username).subscribe(
             result => {
-                console.log('assigned orders:', result);
-                for (let i = 0; i < result.length; i++) {
-                    let order: SalesOrder = new SalesOrder();
-                    order.docNum = result[i][0];
-                    order.cardName = result[i][1];
-                    this.assignedOrders.push(order);
+                if (result.code == 0) {
+                    console.log('assigned orders:', result.content);
+                    for (let i = 0; i < result.content.length; i++) {
+                        let order: SalesOrder = new SalesOrder();
+                        order.docNum = result.content[i][0];
+                        order.cardName = result.content[i][1];
+                        this.assignedOrders.push(order);
+                    }
+                } else {
+                    this._router.navigate(['home']);
                 }
             }, error => {
                 console.error(error);
@@ -149,10 +153,11 @@ export class PickingComponent implements OnInit {
     }
 
     private closeOrderAssignation(username, orderNumber) {
+        console.log('closing picking assignation for ' + (orderNumber == null ? 'all orders' : 'order ' + orderNumber));
         this._pickingService.finishPicking(username, orderNumber).subscribe(
             result => {
-                console.log(result);
-                this._router.navigate(['/']);
+                console.log('finished closing order picking assignation. ', result);
+                this._router.navigate(['home']);
             }, error => { console.error(error); }
         );
     }
