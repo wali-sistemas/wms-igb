@@ -14,6 +14,7 @@ export class SalesOrdersService {
   }
 
   public listOpenOrders(showApprovedOnly) {
+    console.log('listing open orders with headers: ', HEADERS);
     return this._http.get(this.url + 'picking/list/orders?showAll=' + !showApprovedOnly, { headers: HEADERS })
       .map(res => res.json());
   }
