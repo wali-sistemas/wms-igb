@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Response, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
-import { GLOBAL, HEADERS } from './global';
+import { GLOBAL, IGBHeaders } from './global';
 
 @Injectable()
 export class PurchaseOrdersService {
@@ -13,17 +13,20 @@ export class PurchaseOrdersService {
   }
 
   public listOpenOrders() {
-    return this._http.get(this.url + 'reception/list/orders', { headers: HEADERS })
+    let igbHeaders = new IGBHeaders().loadHeaders();
+    return this._http.get(this.url + 'reception/list/orders', { headers: igbHeaders })
       .map(res => res.json());
   }
 
   public loadOrder(docNum) {
-    return this._http.get(this.url + 'reception/load/order/' + docNum, { headers: HEADERS })
+    let igbHeaders = new IGBHeaders().loadHeaders();
+    return this._http.get(this.url + 'reception/load/order/' + docNum, { headers: igbHeaders })
       .map(res => res.json());
   }
 
   public createDocument(document) {
-    return this._http.post(this.url + 'reception/receive-items', JSON.stringify(document), { headers: HEADERS })
+    let igbHeaders = new IGBHeaders().loadHeaders();
+    return this._http.post(this.url + 'reception/receive-items', JSON.stringify(document), { headers: igbHeaders })
       .map(res => res.json());
   }
 }

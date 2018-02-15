@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers } from '@angular/http';
-import { GLOBAL, HEADERS } from './global';
+import { GLOBAL, IGBHeaders } from './global';
 
 @Injectable()
 export class InventoryService {
@@ -11,17 +11,20 @@ export class InventoryService {
   }
 
   public inventoryOpen(warehouse) {
-    return this._http.get(this.url + 'inventory/inventoryopen/' + warehouse, { headers: HEADERS })
+    let igbHeaders = new IGBHeaders().loadHeaders();
+    return this._http.get(this.url + 'inventory/inventoryopen/' + warehouse, { headers: igbHeaders })
       .map(res => res.json());
   }
 
   public addItem(inventory) {
-    return this._http.post(this.url + 'inventory/addItem', JSON.stringify(inventory), { headers: HEADERS })
+    let igbHeaders = new IGBHeaders().loadHeaders();
+    return this._http.post(this.url + 'inventory/addItem', JSON.stringify(inventory), { headers: igbHeaders })
       .map(res => res.json());
   }
 
   public inventoryHistory(warehouse, idInventory) {
-    return this._http.get(this.url + 'inventory/inventoryhistory/' + warehouse + "/" + idInventory, { headers: HEADERS })
+    let igbHeaders = new IGBHeaders().loadHeaders();
+    return this._http.get(this.url + 'inventory/inventoryhistory/' + warehouse + "/" + idInventory, { headers: igbHeaders })
       .map(res => res.json());
   }
 }

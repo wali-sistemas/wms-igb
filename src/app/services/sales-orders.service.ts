@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers } from '@angular/http';
 import { HttpHeaders } from '@angular/common/http';
-import 'rxjs/add/operator/map';
-import { Observable } from 'rxjs/Observable';
-import { GLOBAL, HEADERS } from './global';
+import { GLOBAL, IGBHeaders } from './global';
 
 @Injectable()
 export class SalesOrdersService {
@@ -14,27 +12,30 @@ export class SalesOrdersService {
   }
 
   public listOpenOrders(showApprovedOnly) {
-    console.log('listing open orders with headers: ', HEADERS);
-    return this._http.get(this.url + 'picking/list/orders?showAll=' + !showApprovedOnly, { headers: HEADERS })
+    let igbHeaders = new IGBHeaders().loadHeaders();
+    return this._http.get(this.url + 'picking/list/orders?showAll=' + !showApprovedOnly, { headers: igbHeaders })
       .map(res => res.json());
   }
 
   public assignOrders(assignment) {
-    return this._http.post(this.url + 'picking/assign', JSON.stringify(assignment), { headers: HEADERS })
+    let igbHeaders = new IGBHeaders().loadHeaders();
+    return this._http.post(this.url + 'picking/assign', JSON.stringify(assignment), { headers: igbHeaders })
       .map(res => res.json());
   }
 
   public getNextPickingItem(username, orderNumber) {
+    let igbHeaders = new IGBHeaders().loadHeaders();
     let orderNumberFilter = '';
     if (orderNumber) {
       orderNumberFilter = '?orderNumber=' + orderNumber;
     }
-    return this._http.get(this.url + 'picking/pick/' + username + orderNumberFilter, { headers: HEADERS })
+    return this._http.get(this.url + 'picking/pick/' + username + orderNumberFilter, { headers: igbHeaders })
       .map(res => res.json());
   }
 
   public listUserOrders(username) {
-    return this._http.get(this.url + 'picking/orders/' + username, { headers: HEADERS })
+    let igbHeaders = new IGBHeaders().loadHeaders();
+    return this._http.get(this.url + 'picking/orders/' + username, { headers: igbHeaders })
       .map(res => res.json());
   }
 }

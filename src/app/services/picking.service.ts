@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers } from '@angular/http';
-import { GLOBAL, HEADERS } from './global';
+import { GLOBAL, IGBHeaders } from './global';
 
 @Injectable()
 export class PickingService {
@@ -11,20 +11,22 @@ export class PickingService {
     }
 
     public getNextPickingItem(username, orderNumber) {
+        let igbHeaders = new IGBHeaders().loadHeaders();
         let orderNumberFilter = '';
         if (orderNumber) {
             orderNumberFilter = '?orderNumber=' + orderNumber;
         }
-        return this._http.get(this.url + 'picking/v2/nextitem/' + username + orderNumberFilter, { headers: HEADERS })
+        return this._http.get(this.url + 'picking/v2/nextitem/' + username + orderNumberFilter, { headers: igbHeaders })
             .map(res => res.json());
     }
 
-    public finishPicking(username, orderNumber){
+    public finishPicking(username, orderNumber) {
+        let igbHeaders = new IGBHeaders().loadHeaders();
         let orderNumberFilter = '';
         if (orderNumber) {
             orderNumberFilter = '?orderNumber=' + orderNumber;
         }
-        return this._http.get(this.url + 'picking/v2/close/' + username + orderNumberFilter, { headers: HEADERS })
+        return this._http.get(this.url + 'picking/v2/close/' + username + orderNumberFilter, { headers: igbHeaders })
             .map(res => res.json());
     }
 }

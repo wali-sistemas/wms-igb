@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers } from '@angular/http';
-import { GLOBAL, HEADERS } from './global';
+import { GLOBAL, IGBHeaders } from './global';
 
 @Injectable()
 export class BinLocationService {
@@ -11,7 +11,8 @@ export class BinLocationService {
     }
 
     public listAvailablePickingCarts() {
-        return this._http.get(this.url + 'binlocation/picking-carts', { headers: HEADERS })
+        let igbHeaders = new IGBHeaders().loadHeaders();
+        return this._http.get(this.url + 'binlocation/picking-carts', { headers: igbHeaders })
             .map(res => res.json());
     }
 }
