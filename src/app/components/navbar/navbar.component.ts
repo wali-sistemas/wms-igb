@@ -37,6 +37,10 @@ export class NavBarComponent implements OnInit {
     }
   }
 
+  public getSelectedCompany() {
+    return localStorage.getItem("igb.selectedCompany");
+  }
+
   cerrarSesion() {
     localStorage.removeItem('igb.identity');
     localStorage.removeItem('igb.selectedCompany');

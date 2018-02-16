@@ -10,6 +10,7 @@
 </nav>
 <nav class="topnav visible-xs visible-sm">
   <a [routerLink]="['/home']" class="topnav-logo"><img src="/assets/images/logo.png"/></a>
+  <span class="selected-company">[{{getSelectedCompany()}}]</span>
   <span id="menu-icon" class="topnav-menu glyphicon glyphicon-menu-hamburger" (click)="alternateNav()"></span>
 </nav>
 <div id="myNav" class="overlay visible-xs visible-sm">

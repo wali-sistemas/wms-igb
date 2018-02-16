@@ -148,6 +148,14 @@
   background-color: #ddd;
 }
 
+.selected-company {
+  color: #ddd;
+  right: 50px;
+  position: absolute;
+  font-size: 1.8em;
+  top: 7px;
+}
+
 
 /* When the height of the screen is less than 450 pixels, change the font-size of the links and position the close button again, so they don't overlap */
 
