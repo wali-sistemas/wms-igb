@@ -1,10 +1,14 @@
 import { PackingOrderItemBin } from './packing-order';
-export class PackingOrdeBox{
+export class PackingOrderBox {
 
-    public boxId: number;
-    public boxQuantity: number;
-    public boxShowName: String;
-    public packingOrderItemBin: Array<PackingOrderItemBin> = new Array<PackingOrderItemBin>();
+    public boxId: number = 0;
+    public boxQuantity: number = 0;
+    public boxShowName: String = "";
+    public orderBox: String = "";
+    public itemBinAbs: number = 0;
     constructor() { }
 
+    public addQuantity(qty) {
+        this.boxQuantity += parseInt(qty);
+    }
 }
