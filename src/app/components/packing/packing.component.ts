@@ -32,9 +32,13 @@ export class PackingComponent implements OnInit {
     public nextItemQuantity: number = -1;
     public packedItemCode: string = '';
     public packedItemQuantity: number;
+    public nextBinCode: String = '';
+    public binItemCode: String = '';
+    public isVisibleShowItemBin: Boolean = false;
     public packedItemCodeValidated = false;
     public packedItemQuantityValidated = false;
     public isPossibleAddNewBox = false;
+    public isVisibleItemCode: Boolean = false;
 
     public confirmingItemQuantity = false;
     public errorMessageBinLocation: string = '';
@@ -112,15 +116,16 @@ export class PackingComponent implements OnInit {
         orderItemBin.packedQty = 0;
         packingItem.itemsBin = new Array<PackingOrderItemBin>();
         let orderItemBin2: PackingOrderItemBin = new PackingOrderItemBin();
-        orderItemBin.binAbs = "abs2";
-        orderItemBin.binCode = "IEMCODE00010";
-        orderItemBin.packingOrderItemBinId = 2;
-        orderItemBin.packingOrdItemId = 1;
-        orderItemBin.pickedQty = 10;
-        orderItemBin.packedQty = 0;
+        orderItemBin2.binAbs = "abs2";
+        orderItemBin2.binCode = "IEMCODE00010";
+        orderItemBin2.packingOrderItemBinId = 2;
+        orderItemBin2.packingOrdItemId = 1;
+        orderItemBin2.pickedQty = 10;
+        orderItemBin2.packedQty = 0;
         packingOrderDummy.itemsOrders = new Array<PackingOrderItem>();
         packingItem.itemsBin.push(orderItemBin);
         packingItem.itemsBin.push(orderItemBin2);
+        console.log("******************  el total de los item bin es   "+packingItem.itemsBin.length);
         packingOrderDummy.itemsOrders.push(packingItem);
 
         /*let order: PackingOrder = new PackingOrder();
@@ -173,9 +178,15 @@ export class PackingComponent implements OnInit {
                 this.assignedOrders.push(element);
             }
         });
+        this.loadNextItem();
     }
 
-    public showItemsOrder(){
+    public showItemBin(){
+        this.isVisibleShowItemBin = true;
+        this.loadNextItem();
+    }
+
+    /*public showItemsOrder(){
         this.assignedOrders.forEach(element => {
             if (element.orderNumber === this.selectedOrder ){
                 this.packingOrderItem = element.itemsOrders.pop();
@@ -184,6 +195,14 @@ export class PackingComponent implements OnInit {
         this.nextItemCode = this.packingOrderItem.itemCode;
 
         this.loadNextItem();
+    }*/
+
+    public confirmBinItemCode(){
+        //      Se valida el code de localizacion del los items, 
+        //      que en este caso el es carro donde se encuentran
+        if (this.nextBinCode == this.binItemCode){
+            this.isVisibleItemCode = true;
+        }
     }
 
     
@@ -228,15 +247,18 @@ export class PackingComponent implements OnInit {
 
     private getItemUiFromOrder(packingOrderSelected : PackingOrder){
         
-        if (this.packingOrderItem){
+        //if (this.packingOrderItem){
+        if (packingOrderSelected.itemsOrders.length > 0){
             this.packingOrderItem = packingOrderSelected.itemsOrders.pop() ;
-            let packingOrderItem = this.packingOrderItemSelected;
-            this.nextItemCode = packingOrderItem.itemCode;
-            let packingOrderItemBin = packingOrderItem.itemsBin.pop();
-            this.nextItemQuantity = packingOrderItemBin.pickedQty;
-            console.log("La cantidad es  if : "+packingOrderItemBin.pickedQty);
+            //let packingOrderItem = this.packingOrderItemSelected;
+            this.nextItemCode = this.packingOrderItem.itemCode;
+            this.orderItemBinSelected = this.packingOrderItem.itemsBin.pop();
+            this.nextItemQuantity = this.orderItemBinSelected.pickedQty;
+            console.log("La cantidad es  if : "+this.orderItemBinSelected.pickedQty);
             this.selectedOrderInUI = packingOrderSelected.orderNumber;
-        } else {
+            this.nextBinCode = this.orderItemBinSelected.binCode;
+        }
+        /*} else {
             this.packingOrderItem = packingOrderSelected.itemsOrders.pop() ;
             if (this.packingOrderItem.itemsBin.length > 0){
                 //let packingOrderItem = packingOrderSelected.itemsOrders.pop();
@@ -255,7 +277,7 @@ export class PackingComponent implements OnInit {
                 this.nextItemQuantity = this.orderItemBinSelected.pickedQty;
                 this.selectedOrderInUI = packingOrderSelected.orderNumber;
             }
-        }
+        }*/
         
     }
 
@@ -304,14 +326,20 @@ export class PackingComponent implements OnInit {
             //      se coloca el item en la ultima caja
             this.packingOrderBox[this.packingOrderBox.length-1].itemBinAbs = parseInt(this.orderItemBinSelected.binAbs.toString());
             this.packingOrderBox[this.packingOrderBox.length-1].addQuantity(this.packedItemQuantity);
-            this.packingOrderItem.itemsBin.push(this.orderItemBinSelected);
-            this.packingOrderInUI.itemsOrders.push(this.packingOrderItem);
-            //      puede crear una nueva caja si escanea una referencia nueva 
-            //      se deben limpiar los valores actuales de nro de items y de item order seleccionado
-            this.nextItemQuantity = -1;
+            this.packedItemQuantity = 0;
+            if (this.orderItemBinSelected.pickedQty != 0){
+                this.packingOrderItem.itemsBin.push(this.orderItemBinSelected);
+                this.packingOrderInUI.itemsOrders.push(this.packingOrderItem);
+                this.nextItemQuantity = 0;
+                this.getItemUiFromOrder(this.packingOrderInUI);
+            } else {
+                this.loadNextItem();
+            }
+            
+            this.isPossibleAddNewBox = true;
             //this.nextItemCode = "";
         }
-        this.loadNextItem();
+        
 
     }
 
