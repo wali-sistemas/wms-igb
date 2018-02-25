@@ -17,6 +17,7 @@ export class PurchaseOrderComponent implements OnInit {
   public token;
   public quantity: number;
   public generalErrorMessage: string;
+  public quantityErrorMessage: string;
   public errorMessage: string;
   public scannedText: string;
   public order: PurchaseOrder;
@@ -43,7 +44,7 @@ export class PurchaseOrderComponent implements OnInit {
     if (this.identity === null) {
       this._router.navigate(['/']);
     }
-    $('#modal_quantity').on('shown.bs.modal', function() {
+    $('#modal_quantity').on('shown.bs.modal', function () {
       $('#quantity').focus();
     });
     this.loadSelectedOrder();
@@ -127,10 +128,11 @@ export class PurchaseOrderComponent implements OnInit {
   }
 
   public confirmItem() {
-    $('#modal_quantity').modal('hide');
+    this.quantityErrorMessage = null;
     console.log('validando cantidad para agregar item');
     this.errorMessage = '';
     if (this.quantity === this.processingItem.quantity) {
+      $('#modal_quantity').modal('hide');
       //TODO: validar item parcial
       console.log('cantidad aceptada');
       this.receivedItems.push(this.processingItem);
@@ -143,6 +145,7 @@ export class PurchaseOrderComponent implements OnInit {
       $('#modal_warning').modal('show');
     } else {
       console.log('la cantidad ingresada es superior a la cantidad de la orden');
+      this.quantityErrorMessage = 'La cantidad ingresada es superior a la cantidad de la orden. ';
     }
   }
 

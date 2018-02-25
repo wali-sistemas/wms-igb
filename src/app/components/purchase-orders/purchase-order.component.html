@@ -10,6 +10,13 @@
             <p *ngIf="editingQuantity">Modifica la cantidad o elimina el ítem</p>
             <input id="quantity" type="number" class="form-control input-lg" autocomplete="off" name="quantity" placeholder="ingresa la cantidad" [(ngModel)]="quantity" />
           </div>
+          <div class="row" *ngIf="quantityErrorMessage">
+            <div class="col-xs-12">
+              <div class="alert alert-danger" role="alert">
+                {{quantityErrorMessage}}
+              </div>
+            </div>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-warning btn-lg" *ngIf="editingQuantity" (click)="eliminarItem()"><span class="glyphicon glyphicon-trash"></span> Eliminar</button>
