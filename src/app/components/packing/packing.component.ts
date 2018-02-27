@@ -109,7 +109,7 @@ export class PackingComponent implements OnInit {
         packingItem.packingOrderItemId = 1;
         let orderItemBin: PackingOrderItemBin = new PackingOrderItemBin();
         orderItemBin.binAbs = "abs1";
-        orderItemBin.binCode = "IEMCODE00001";
+        orderItemBin.binCode = "IEMCODE123";
         orderItemBin.packingOrderItemBinId = 1;
         orderItemBin.packingOrdItemId = 1;
         orderItemBin.pickedQty = 10;
@@ -117,7 +117,7 @@ export class PackingComponent implements OnInit {
         packingItem.itemsBin = new Array<PackingOrderItemBin>();
         let orderItemBin2: PackingOrderItemBin = new PackingOrderItemBin();
         orderItemBin2.binAbs = "abs2";
-        orderItemBin2.binCode = "IEMCODE00010";
+        orderItemBin2.binCode = "IEMCODE456";
         orderItemBin2.packingOrderItemBinId = 2;
         orderItemBin2.packingOrdItemId = 1;
         orderItemBin2.pickedQty = 10;
@@ -248,7 +248,7 @@ export class PackingComponent implements OnInit {
     private getItemUiFromOrder(packingOrderSelected : PackingOrder){
         
         //if (this.packingOrderItem){
-        if (packingOrderSelected.itemsOrders.length > 0){
+        //if (packingOrderSelected.itemsOrders.length > 0){
             this.packingOrderItem = packingOrderSelected.itemsOrders.pop() ;
             //let packingOrderItem = this.packingOrderItemSelected;
             this.nextItemCode = this.packingOrderItem.itemCode;
@@ -257,7 +257,7 @@ export class PackingComponent implements OnInit {
             console.log("La cantidad es  if : "+this.orderItemBinSelected.pickedQty);
             this.selectedOrderInUI = packingOrderSelected.orderNumber;
             this.nextBinCode = this.orderItemBinSelected.binCode;
-        }
+        //}
         /*} else {
             this.packingOrderItem = packingOrderSelected.itemsOrders.pop() ;
             if (this.packingOrderItem.itemsBin.length > 0){
@@ -333,6 +333,13 @@ export class PackingComponent implements OnInit {
                 this.nextItemQuantity = 0;
                 this.getItemUiFromOrder(this.packingOrderInUI);
             } else {
+                this.packingOrderInUI.itemsOrders.push(this.packingOrderItem);
+                this.isVisibleItemCode = false;
+                this.binItemCode = "";
+                this.nextItemCode = "";
+                this.packedItemCode = "";
+                this.nextItemQuantity = -1;
+                this.packedItemCodeValidated = false;
                 this.loadNextItem();
             }
             
