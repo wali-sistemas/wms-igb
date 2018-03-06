@@ -23,6 +23,7 @@ export class PurchaseOrderComponent implements OnInit {
   public order: PurchaseOrder;
   public receivedItems: Array<PurchaseOrderLine>;
   public processingItem: PurchaseOrderLine;
+  public displayType: string = 'table';
   private processingItemIndex: number = 0;
   public creatingSAPDocument: boolean = false;
   public editingQuantity: boolean = false;
@@ -56,7 +57,6 @@ export class PurchaseOrderComponent implements OnInit {
       if (params['docNum']) {
         this._purchaseOrdersService.loadOrder(params['docNum']).subscribe(
           response => {
-            console.log(response);
             this.order = response;
             //busca si hay ordenes en proceso en el localStorage
             let previousReception = JSON.parse(localStorage.getItem('igb.reception'));
@@ -231,6 +231,14 @@ export class PurchaseOrderComponent implements OnInit {
       this.quantity = 0;
       $('#modal_quantity').modal('hide');
       localStorage.setItem('igb.reception', JSON.stringify(this.receivedItems));
+    }
+  }
+
+  public toggleDisplayType() {
+    if (this.displayType === 'table') {
+      this.displayType = 'grid';
+    } else {
+      this.displayType = 'table';
     }
   }
 }

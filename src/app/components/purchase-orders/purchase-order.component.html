@@ -8,7 +8,8 @@
           <div class="form-group">
             <label class="control-label" for="quantity" *ngIf="processingItem">Cantidad {{processingItem.itemCode}}</label>
             <p *ngIf="editingQuantity">Modifica la cantidad o elimina el ítem</p>
-            <input id="quantity" type="number" class="form-control input-lg" autocomplete="off" name="quantity" placeholder="ingresa la cantidad" [(ngModel)]="quantity" />
+            <input id="quantity" type="number" class="form-control input-lg" autocomplete="off" name="quantity" placeholder="ingresa la cantidad"
+              [(ngModel)]="quantity" />
           </div>
           <div class="row" *ngIf="quantityErrorMessage">
             <div class="col-xs-12">
@@ -19,7 +20,8 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-warning btn-lg" *ngIf="editingQuantity" (click)="eliminarItem()"><span class="glyphicon glyphicon-trash"></span> Eliminar</button>
+          <button type="button" class="btn btn-warning btn-lg" *ngIf="editingQuantity" (click)="eliminarItem()">
+            <span class="glyphicon glyphicon-trash"></span> Eliminar</button>
           <button type="submit" class="btn btn-primary btn-lg">Guardar</button>
           <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cancelar</button>
         </div>
@@ -35,7 +37,9 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-body">
-        <p *ngIf="quantity && processingItem">La cantidad que ingresaste ({{quantity}}) es inferior a la cantidad de la orden ({{processingItem.quantity}}). ¿Deseas <b>continuar</b> agregando la cantidad ingresada o <b>volver</b> y revisar dicha cantidad?</p>
+        <p *ngIf="quantity && processingItem">La cantidad que ingresaste ({{quantity}}) es inferior a la cantidad de la orden ({{processingItem.quantity}}). ¿Deseas
+          <b>continuar</b> agregando la cantidad ingresada o
+          <b>volver</b> y revisar dicha cantidad?</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary btn-lg" (click)="confirmItemPartial()">Continuar</button>
@@ -61,7 +65,8 @@
         </div>
         <div id="botones" *ngIf="creatingSAPDocument">
           <div class="progress">
-            <div class="progress-bar progress-bar-warning progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+            <div class="progress-bar progress-bar-warning progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0"
+              aria-valuemax="100" style="width: 100%">
               <span class="sr-only">100% Complete</span>
             </div>
           </div>
@@ -81,8 +86,10 @@
 <div class="container content" *ngIf="order.docNum">
   <div class="row">
     <div class="col-xs-12">
-      <span class="btn btn-default" [routerLink]="['/purchase-orders']"><span class="glyphicon glyphicon-download"></span> Volver</span>
-      <span class="btn btn-default" (click)="restart()"><span class="glyphicon glyphicon-refresh"></span> Reiniciar</span>
+      <span class="btn btn-default" [routerLink]="['/purchase-orders']">
+        <span class="glyphicon glyphicon-download"></span> Volver</span>
+      <span class="btn btn-default" (click)="restart()">
+        <span class="glyphicon glyphicon-refresh"></span> Reiniciar</span>
       <span class="order-number pull-right">Órden #{{order.docNum}}</span>
     </div>
     <div class="col-xs-12">
@@ -94,7 +101,8 @@
       <form (submit)="scanItem()">
         <div class="form-group" [class.has-error]="errorMessage">
           <label class="control-label" for="itemcode" aria-hidden="true">Referencia</label>
-          <input id="itemcode" type="text" class="form-control input-lg" autocomplete="off" name="scannedText" placeholder="escanea o escribe" [(ngModel)]="scannedText" />
+          <input id="itemcode" type="text" class="form-control input-lg" autocomplete="off" name="scannedText" placeholder="escanea o escribe"
+            [(ngModel)]="scannedText" />
         </div>
       </form>
     </div>
@@ -106,14 +114,27 @@
   <div class="row">
     <div class="col-xs-12">
       <!-- Nav tabs -->
-      <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active">
-          <a href="#scanned" aria-controls="scanned" role="tab" data-toggle="tab">Recibidos <span class="badge">{{receivedItems.length}}</span></a>
-        </li>
-        <li role="presentation">
-          <a href="#pending" aria-controls="pending" role="tab" data-toggle="tab">Pendientes <span class="badge">{{order.lines.length}}</span></a>
-        </li>
-      </ul>
+      <div class="row">
+        <div class="col-xs-10">
+          <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active">
+              <a href="#scanned" aria-controls="scanned" role="tab" data-toggle="tab">Recibidos
+                <span class="badge">{{receivedItems.length}}</span>
+              </a>
+            </li>
+            <li role="presentation">
+              <a href="#pending" aria-controls="pending" role="tab" data-toggle="tab">Pendientes
+                <span class="badge">{{order.lines.length}}</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-xs-2">
+          <button type="button" class="btn btn-default">
+            <span class="glyphicon" [ngClass]="{'glyphicon-th-large': displayType === 'table', 'glyphicon-list': displayType === 'grid'}" (click)="toggleDisplayType()"></span>
+          </button>
+        </div>
+      </div>
 
       <!-- Tab panes -->
       <div class="tab-content">
@@ -122,7 +143,9 @@
           <div class="row" *ngIf="receivedItems && receivedItems.length > 0">
             <div class="col-xs-6" *ngFor="let line of receivedItems; let i = index" (click)="modificarRecibido(i)">
               <div class="item-pending" [class.partial]="line.partial">
-                <div>{{line.itemCode}} [{{line.lineNum}}]<span class="badge pull-right">{{line.quantity}}</span></div>
+                <div>{{line.itemCode}}
+                  <span class="badge pull-right">{{line.quantity}}</span>
+                </div>
                 <div class="item-name">{{line.itemName}}</div>
               </div>
             </div>
@@ -134,10 +157,29 @@
           </div>
         </div>
         <div role="tabpanel" class="tab-pane fade" id="pending">
-          <div class="row">
+          <div class="row" *ngIf="displayType === 'table'">
+            <div class="col-xs-12">
+              <table class="table table-striped">
+                <tr>
+                  <th class="column-right">#</th>
+                  <th>Referencia</th>
+                  <th class="column-right">Cantidad</th>
+                </tr>
+                <tr *ngFor="let line of order.lines">
+                  <td class="column-right">{{line.lineNum + 1}}</td>
+                  <td>{{line.itemCode}}</td>
+                  <td class="column-right">{{line.quantity}}</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          <div class="row" *ngIf="displayType === 'grid'">
             <div class="col-xs-6" *ngFor="let line of order.lines">
               <div class="item-pending" [class.partial]="line.partial" [class.line-completed]="line.quantity === 0">
-                <div>{{line.itemCode}} <span title="SAP lineNum={{line.lineNum}}">[{{line.lineNum}}]</span><span class="badge pull-right">{{line.quantity}}</span></div>
+                <div>{{line.itemCode}}
+                  <span title="SAP lineNum={{line.lineNum}}">[{{line.lineNum}}]</span>
+                  <span class="badge pull-right">{{line.quantity}}</span>
+                </div>
                 <div class="item-name">{{line.itemName}}</div>
               </div>
             </div>
