@@ -27,4 +27,10 @@ export class InventoryService {
     return this._http.get(this.url + 'inventory/inventoryhistory/' + warehouse + "/" + idInventory, { headers: igbHeaders })
       .map(res => res.json());
   }
+
+  public inventoryRandom(warehouse) {
+    let igbHeaders = new IGBHeaders().loadHeaders();
+    return this._http.get(this.url + 'inventory/inventoryrandom/' + warehouse, { headers: igbHeaders })
+      .map(res => res.json());
+  }
 }

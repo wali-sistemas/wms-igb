@@ -36,6 +36,7 @@ export class InventoryComponent implements OnInit {
   }
 
   ngOnInit() {
+    $('#txt_location').focus();
     this.messageProgress = 'Validando si hay inventarios pendientes.';
     $('#modal_process').modal('show');
     console.log('iniciando componente de inventario');
@@ -59,7 +60,22 @@ export class InventoryComponent implements OnInit {
     );
   }
 
-  public preparateCreateInventory() {
+
+  public inventoryRandom() {
+    this._inventoryService.inventoryRandom("01").subscribe(
+      response => {
+        console.log(response);
+        if (response && response.content.length > 0) {
+          this.location = response.content;
+          this.preparateInventory();
+        }
+      }, error => {
+        console.log(error);
+      }
+    );
+  }
+
+  public preparateInventory() {
     console.log('Se abrira un nuevo inventario');
     if (!this.location || this.location === null || this.location.length === 0) {
       this.messageError = 'Se debe ingresar una ubicación para empezar el inventario.';
@@ -70,6 +86,7 @@ export class InventoryComponent implements OnInit {
   }
 
   public createInventory() {
+    $('#modalConfirmacion').modal('hide');
     this.messageProgress = 'Creando un nuevo inventario, espere por favor.';
     $('#modal_process').modal('show');
     this._stockTransferService.openInventory('01', this.location).subscribe(
