@@ -84,7 +84,7 @@ export class PickingComponent implements OnInit {
                     binLocation.binCode = result[i].binCode;
                     binLocation.binName = result[i].binName;
                     binLocation.items = result[i].items;
-
+                    binLocation.pieces = result[i].pieces;
                     this.availableCarts.push(binLocation);
                 }
                 if (this.selectedCart > 0) {
@@ -180,45 +180,56 @@ export class PickingComponent implements OnInit {
         }
     }
 
-    public confirmItemQuantity() {
-        console.log('confirmando cantidad para trasladar item, ' + this.nextItemQuantity + ', ' + this.pickedItemQuantity);
-        if (this.nextItemQuantity == this.pickedItemQuantity) {
-            this.pickedItemQuantityValidated = true;
-            //transfer items to cart
-            //change order??
-            let itemTransfer = {
-                binAbsFrom: this.nextBinAbs,
-                binAbsTo: this.selectedCart,
-                quantity: this.nextItemQuantity,
-                itemCode: this.nextItemCode,
-                orderNumber: (this.selectedOrder == null || this.selectedOrder.length == 0) ? this.nextOrderNumber : this.selectedOrder,
-                username: this.identity.username,
-                warehouseCode: '01' //TODO: parametrizar whscode
-            }
-            $('#modal_transfer_process').modal({
+    public validatePickedQuantity() {
+        if (this.getQuantityToPick() != this.pickedItemQuantity) {
+            //show different quantity confirmation
+            $('#modal_confirm_quantity_diff').modal({
                 backdrop: 'static',
                 keyboard: false,
                 show: true
             });
-            console.log('itemTransfer: ', itemTransfer);
-            this.errorMessageBinTransfer = '';
-            this._stockTransferService.transferSingleItem(itemTransfer).subscribe(
-                response => {
-                    console.info(response);
-                    if (response.code === 0) {
-                        //Clears bin location, item code and quantity fields; then loads cart inventory and next item
-                        this.resetForm();
-                    } else {
-                        this.errorMessageBinTransfer = response.content;
-                    }
-                    $('#modal_transfer_process').modal('hide');
-                }, error => {
-                    console.error(JSON.parse(error._body).content);
-                    this.errorMessageBinTransfer = JSON.parse(error._body).content;
-                    $('#modal_transfer_process').modal('hide');
-                }
-            );
+        } else {
+            this.confirmItemQuantity();
         }
+    }
+
+    public confirmItemQuantity() {
+        $('#modal_confirm_quantity_diff').modal('hide');
+        console.log('confirmando cantidad para trasladar item, ' + this.nextItemQuantity + ', ' + this.pickedItemQuantity);
+        this.pickedItemQuantityValidated = true;
+        let itemTransfer = {
+            binAbsFrom: this.nextBinAbs,
+            binAbsTo: this.selectedCart,
+            quantity: this.pickedItemQuantity,
+            expectedQuantity: this.getQuantityToPick(),
+            itemCode: this.nextItemCode,
+            orderNumber: (this.selectedOrder == null || this.selectedOrder.length == 0) ? this.nextOrderNumber : this.selectedOrder,
+            username: this.identity.username,
+            warehouseCode: '01' //TODO: parametrizar whscode
+        }
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+        console.log('itemTransfer: ', itemTransfer);
+        this.errorMessageBinTransfer = '';
+        this._stockTransferService.transferSingleItem(itemTransfer).subscribe(
+            response => {
+                console.info(response);
+                if (response.code === 0) {
+                    //Clears bin location, item code and quantity fields; then loads cart inventory and next item
+                    this.resetForm();
+                } else {
+                    this.errorMessageBinTransfer = response.content;
+                }
+                $('#modal_transfer_process').modal('hide');
+            }, error => {
+                console.error(JSON.parse(error._body).content);
+                this.errorMessageBinTransfer = JSON.parse(error._body).content;
+                $('#modal_transfer_process').modal('hide');
+            }
+        );
     }
 
     public resetForm() {
@@ -262,5 +273,12 @@ export class PickingComponent implements OnInit {
         this.selectedPickingMethod = 'multiple';
         $('#modal_change_picking_method').modal('hide');
         this.loadNextItem();
+    }
+
+    public getQuantityToPick() {
+        if (this.nextItemQuantity > this.nextBinStock) {
+            return this.nextBinStock;
+        }
+        return this.nextItemQuantity;
     }
 }
