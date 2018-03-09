@@ -7,6 +7,7 @@ import { Router, ActivatedRoute, Params } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { SalesOrdersService } from '../../services/sales-orders.service';
 import { PickingOrders } from '../../services/picking-orders';
+import { PackingService } from '../../services/packing.service';
 import { BinLocation } from '../../models/bin-location';
 import { forEach } from '@angular/router/src/utils/collection';
 
@@ -16,7 +17,7 @@ declare var $: any;
 @Component({
     templateUrl: './packing.component.html',
     styleUrls: ['./packing.component.css'],
-    providers: [UserService, SalesOrdersService, PickingOrders]
+    providers: [UserService, SalesOrdersService, PickingOrders, PackingService]
 })
 export class PackingComponent implements OnInit {
     public identity;
@@ -50,25 +51,24 @@ export class PackingComponent implements OnInit {
     public packingOrderItem: PackingOrderItem;
     public packingOrderBox: Array<PackingOrderBox>;
     public packingOrderItemSelected: PackingOrderItem = new PackingOrderItem();
-    public costumersToSee : Map<String, String> = new Map();
-    public costumersArray : Array<[String,String]> = new Array();
-    public orderItemBinSelected : PackingOrderItemBin = new PackingOrderItemBin();
+    public costumersToSee: Map<String, String> = new Map();
+    public costumersArray: Array<[String, String]> = new Array();
+    public orderItemBinSelected: PackingOrderItemBin = new PackingOrderItemBin();
 
     constructor(private _userService: UserService,
         private _salesOrderService: SalesOrdersService,
+        private _packingService: PackingService,
         private _packingOrders: PickingOrders,
         private _route: ActivatedRoute,
         private _router: Router) {
         this.availableCarts = new Array<BinLocation>();
         this.assignedCustomer = new Array<Customer>();
         this.assignedOrders = new Array<PackingOrder>();
-        //this.packingOrderItem = new PackingOrderItem();
         this.packingOrderBox = new Array<PackingOrderBox>();
         this.packedItemQuantity = 0;
     }
 
     ngOnInit() {
-        //TODO: validar vigencia del token/identity
         this.identity = this._userService.getItentity();
         if (this.identity === null) {
             this._router.navigate(['/']);
@@ -76,92 +76,61 @@ export class PackingComponent implements OnInit {
         $('#modal_quantity').on('shown.bs.modal', function () {
             $('#quantity').focus();
         });
-        this.loadCostumer();
+        this.loadCustomer();
     }
 
-    private loadCostumer() {
+    private loadCustomer() {
         this.costumerOrders = new Array<PackingOrder>();
-        /*this._packingOrders.listAvailableCostumerOrders().subscribe(
+        this._packingService.listPackingRecords().subscribe(
             result => {
                 console.log('packing orders:', result);
-                for (let i = 0; i < result.length; i++) {
+                for (let i = 0; i < result.content.length; i++) {
+                    let row = result.content[i];
                     let packingOrder: PackingOrder = new PackingOrder();
-                    packingOrder.packingOrderId = result[i][0];
-                    packingOrder.orderNumber = result[i][1];
-                    packingOrder.cardCode = result[i][2];
-                    packingOrder.cardName = result[i][3];
-                    packingOrder.status = result[i][4];
+                    packingOrder.packingOrderId = row.idpacking_order;
+                    packingOrder.orderNumber = row.order_number;
+                    packingOrder.cardCode = row.customer_id;
+                    packingOrder.cardName = row.customer_name;
+                    packingOrder.status = row.status;
+                    packingOrder.itemsOrders = new Array<PackingOrderItem>();
+
+                    for (let key in row.lines) {
+                        let line = row.lines[key];
+                        console.log(line);
+
+                        let packingItem: PackingOrderItem = new PackingOrderItem();
+                        packingItem.itemCode = line.item_code;
+                        packingItem.packingOrderItemId = line.idpacking_order_item;
+                        packingItem.itemsBin = new Array<PackingOrderItemBin>();
+
+                        for (let binCode in line.bins) {
+                            let bin = line.bins[binCode];
+                            console.log(bin);
+
+                            let orderItemBin: PackingOrderItemBin = new PackingOrderItemBin();
+                            orderItemBin.binAbs = bin.bin_abs;
+                            orderItemBin.binCode = bin.bin_code;
+                            orderItemBin.packingOrderItemBinId = bin.idpacking_order_item_bin;
+                            orderItemBin.packingOrdItemId = line.idpacking_order_item;
+                            orderItemBin.pickedQty = bin.picked_qty;
+                            orderItemBin.packedQty = bin.packed_qty;
+
+                            packingItem.itemsBin.push(orderItemBin);
+                        }
+                        packingOrder.itemsOrders.push(packingItem);
+                    }
                     this.costumerOrders.push(packingOrder);
                 }
-                
-            }, error => { console.error(error); }           
-        );*/
+                console.log(this.costumerOrders);
+                this.sortOrdersUnique();
+            }, error => {
+                console.error(error);
+            }
+        );
         
-        let packingOrderDummy : PackingOrder = new PackingOrder();
-        packingOrderDummy.packingOrderId = 1;
-        packingOrderDummy.orderNumber = "200";
-        packingOrderDummy.cardCode = "1.cardCode";
-        packingOrderDummy.cardName = "el primero";
-        packingOrderDummy.status = "Para empacar";
-        let packingItem: PackingOrderItem = new PackingOrderItem();
-        packingItem.itemCode = "IEMCODE00001";
-        packingItem.packingOrderItemId = 1;
-        packingItem.packingOrderItemId = 1;
-        let orderItemBin: PackingOrderItemBin = new PackingOrderItemBin();
-        orderItemBin.binAbs = "abs1";
-        orderItemBin.binCode = "IEMCODE123";
-        orderItemBin.packingOrderItemBinId = 1;
-        orderItemBin.packingOrdItemId = 1;
-        orderItemBin.pickedQty = 10;
-        orderItemBin.packedQty = 0;
-        packingItem.itemsBin = new Array<PackingOrderItemBin>();
-        let orderItemBin2: PackingOrderItemBin = new PackingOrderItemBin();
-        orderItemBin2.binAbs = "abs2";
-        orderItemBin2.binCode = "IEMCODE456";
-        orderItemBin2.packingOrderItemBinId = 2;
-        orderItemBin2.packingOrdItemId = 1;
-        orderItemBin2.pickedQty = 10;
-        orderItemBin2.packedQty = 0;
-        packingOrderDummy.itemsOrders = new Array<PackingOrderItem>();
-        packingItem.itemsBin.push(orderItemBin);
-        packingItem.itemsBin.push(orderItemBin2);
-        console.log("******************  el total de los item bin es   "+packingItem.itemsBin.length);
-        packingOrderDummy.itemsOrders.push(packingItem);
-
-        /*let order: PackingOrder = new PackingOrder();
-        console.log('kkkkkkkkkkkkkkkkkkkkkkk');
-            order.orderNumber = "la primera";
-            
-            order.cardCode = "1.primero";
-            order.cardName = "2.segundo";
-            this.costumerOrders.push(order);
-            let customerArra : Customer = new Customer();
-            customerArra.customerId = "2.segundo"; 
-            customerArra.customerName = "el segundo";            
-            this.assignedCustomer.push(customerArra);
-            customerArra = new Customer();
-            customerArra.customerId = "1.primero"; 
-            customerArra.customerName = "el primero";
-            this.assignedCustomer.push(customerArra);
-        */
-        //      se ordenan las ordenes por cliente
-        this.costumerOrders.push( packingOrderDummy );
-        /*var sortedClient: Array<PackingOrder> = this.costumerOrders.sort(function(a:PackingOrder, b:PackingOrder) {
-            
-            if (a.cardCode > b.cardCode) {
-               return 1;
-            }
-            if (a.cardCode < b.cardCode) {
-                return -1;
-            }
-            return 0;
-        });
-
-        this.costumerOrders = sortedClient;*/
-        this.sortOrdersUnique();
     }
 
-    private sortOrdersUnique(){
+    private sortOrdersUnique() {
         let order = new Map();
         this.costumerOrders.forEach(element => {
             order.set(element.cardCode, element.cardName);
@@ -170,18 +139,18 @@ export class PackingComponent implements OnInit {
         this.costumersArray = Array.from(this.costumersToSee);
     }
 
-    public loadOrdersCostumers(){
+    public loadOrdersCostumers() {
 
         this.assignedOrders = new Array<PackingOrder>();
         this.costumerOrders.forEach(element => {
-            if (element.cardCode === this.selectedCustomer){
+            if (element.cardCode === this.selectedCustomer) {
                 this.assignedOrders.push(element);
             }
         });
         this.loadNextItem();
     }
 
-    public showItemBin(){
+    public showItemBin() {
         this.isVisibleShowItemBin = true;
         this.loadNextItem();
     }
@@ -197,41 +166,41 @@ export class PackingComponent implements OnInit {
         this.loadNextItem();
     }*/
 
-    public confirmBinItemCode(){
+    public confirmBinItemCode() {
         //      Se valida el code de localizacion del los items, 
         //      que en este caso el es carro donde se encuentran
-        if (this.nextBinCode == this.binItemCode){
+        if (this.nextBinCode == this.binItemCode) {
             this.isVisibleItemCode = true;
         }
     }
 
-    
+
 
     /**
      * Se cargan las cantidades de cada item
      * 
-     */ 
+     */
     private loadNextItem() {
 
-        console.log("order in ui es  "+this.selectedOrderInUI);
-        console.log("assignedOrder "+this.selectedOrder);
+        console.log("order in ui es  " + this.selectedOrderInUI);
+        console.log("assignedOrder " + this.selectedOrder);
         //if (this.selectedOrderInUI != this.selectedOrder){
-            //this.indexItemOrderSelected = 0;
-            for (let packingOrderSelected of this.assignedOrders){
-                if (packingOrderSelected.orderNumber === this.selectedOrder){
-                    this.packingOrderInUI = packingOrderSelected;
-                    this.getItemUiFromOrder(packingOrderSelected);
-                    //this.packingOrderItemSelected = packingOrderSelected.itemsOrders[this.indexItemOrderSelected];
-                    
-                    console.log("el next item es  "+this,this.nextItemCode);
-                    //console.log(" la cantidad es"+packingOrderSelected.itemsOrders[this.indexItemOrderSelected].itemsBin[this.indexItemOrderBinSelected].pickedQty);
-                    
-                    this.isPossibleAddNewBox = true
-                    // debe limpiar cajas y cantidad de items
-                }
+        //this.indexItemOrderSelected = 0;
+        for (let packingOrderSelected of this.assignedOrders) {
+            if (packingOrderSelected.orderNumber === this.selectedOrder) {
+                this.packingOrderInUI = packingOrderSelected;
+                this.getItemUiFromOrder(packingOrderSelected);
+                //this.packingOrderItemSelected = packingOrderSelected.itemsOrders[this.indexItemOrderSelected];
+
+                console.log("el next item es  " + this, this.nextItemCode);
+                //console.log(" la cantidad es"+packingOrderSelected.itemsOrders[this.indexItemOrderSelected].itemsBin[this.indexItemOrderBinSelected].pickedQty);
+
+                this.isPossibleAddNewBox = true
+                // debe limpiar cajas y cantidad de items
             }
-            //this.indexItemOrderSelected++;
-            //this.indexItemOrderBinSelected++;
+        }
+        //this.indexItemOrderSelected++;
+        //this.indexItemOrderBinSelected++;
         //} else {
         //    if (this.packingOrderInUI.itemsOrders.length >  this.indexItemOrderSelected) {
         //        this.nextItemCode = this.packingOrderInUI.itemsOrders[this.indexItemOrderSelected].itemCode;
@@ -242,21 +211,21 @@ export class PackingComponent implements OnInit {
         //        console.log("el next item es  "+this,this.nextItemCode);
         //    }
         //}
-        
+
     }
 
-    private getItemUiFromOrder(packingOrderSelected : PackingOrder){
-        
+    private getItemUiFromOrder(packingOrderSelected: PackingOrder) {
+
         //if (this.packingOrderItem){
         //if (packingOrderSelected.itemsOrders.length > 0){
-            this.packingOrderItem = packingOrderSelected.itemsOrders.pop() ;
-            //let packingOrderItem = this.packingOrderItemSelected;
-            this.nextItemCode = this.packingOrderItem.itemCode;
-            this.orderItemBinSelected = this.packingOrderItem.itemsBin.pop();
-            this.nextItemQuantity = this.orderItemBinSelected.pickedQty;
-            console.log("La cantidad es  if : "+this.orderItemBinSelected.pickedQty);
-            this.selectedOrderInUI = packingOrderSelected.orderNumber;
-            this.nextBinCode = this.orderItemBinSelected.binCode;
+        this.packingOrderItem = packingOrderSelected.itemsOrders.pop();
+        //let packingOrderItem = this.packingOrderItemSelected;
+        this.nextItemCode = this.packingOrderItem.itemCode;
+        this.orderItemBinSelected = this.packingOrderItem.itemsBin.pop();
+        this.nextItemQuantity = this.orderItemBinSelected.pickedQty;
+        console.log("La cantidad es  if : " + this.orderItemBinSelected.pickedQty);
+        this.selectedOrderInUI = packingOrderSelected.orderNumber;
+        this.nextBinCode = this.orderItemBinSelected.binCode;
         //}
         /*} else {
             this.packingOrderItem = packingOrderSelected.itemsOrders.pop() ;
@@ -278,14 +247,14 @@ export class PackingComponent implements OnInit {
                 this.selectedOrderInUI = packingOrderSelected.orderNumber;
             }
         }*/
-        
-    }
-
-    private getItemQuantityFromItem(){
 
     }
 
-    private getNumberItemsUIFromItemsOrder(){
+    private getItemQuantityFromItem() {
+
+    }
+
+    private getNumberItemsUIFromItemsOrder() {
 
 
     }
@@ -293,14 +262,14 @@ export class PackingComponent implements OnInit {
     /**
      * Se obtienen las ordenes del cliente seleccionado
      */
-    public loadOrdersForCostumer(){
+    public loadOrdersForCostumer() {
         for (let salesOrder of this.costumerOrders) {
-            if(salesOrder.cardCode === this.selectedCustomer){
-                this.assignedOrders.push( salesOrder);
+            if (salesOrder.cardCode === this.selectedCustomer) {
+                this.assignedOrders.push(salesOrder);
             }
             console.log(salesOrder);
         }
-        
+
     }
 
     public confirmItemCode() {
@@ -318,16 +287,16 @@ export class PackingComponent implements OnInit {
             this.packedItemQuantityValidated = true;
         }
     }
-    
-    public addItemBox(){
-        if (this.packingOrderBox.length > 0){
+
+    public addItemBox() {
+        if (this.packingOrderBox.length > 0) {
             //      le resto el valor que selecciono
             this.orderItemBinSelected.pickedQty = this.orderItemBinSelected.pickedQty - this.packedItemQuantity;
             //      se coloca el item en la ultima caja
-            this.packingOrderBox[this.packingOrderBox.length-1].itemBinAbs = parseInt(this.orderItemBinSelected.binAbs.toString());
-            this.packingOrderBox[this.packingOrderBox.length-1].addQuantity(this.packedItemQuantity);
+            this.packingOrderBox[this.packingOrderBox.length - 1].itemBinAbs = parseInt(this.orderItemBinSelected.binAbs.toString());
+            this.packingOrderBox[this.packingOrderBox.length - 1].addQuantity(this.packedItemQuantity);
             this.packedItemQuantity = 0;
-            if (this.orderItemBinSelected.pickedQty != 0){
+            if (this.orderItemBinSelected.pickedQty != 0) {
                 this.packingOrderItem.itemsBin.push(this.orderItemBinSelected);
                 this.packingOrderInUI.itemsOrders.push(this.packingOrderItem);
                 this.nextItemQuantity = 0;
@@ -342,11 +311,11 @@ export class PackingComponent implements OnInit {
                 this.packedItemCodeValidated = false;
                 this.loadNextItem();
             }
-            
+
             this.isPossibleAddNewBox = true;
             //this.nextItemCode = "";
         }
-        
+
 
     }
 
@@ -381,14 +350,14 @@ export class PackingComponent implements OnInit {
     }
 
 
-    public addBox(){
-        let newBox :  PackingOrderBox =  new PackingOrderBox();
+    public addBox() {
+        let newBox: PackingOrderBox = new PackingOrderBox();
         newBox.boxShowName = "Caja N";
         this.packingOrderBox.push(newBox);
         this.isPossibleAddNewBox = false;
     }
 
-    public deleteBox(){
+    public deleteBox() {
 
     }
 }
