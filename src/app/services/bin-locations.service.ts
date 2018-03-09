@@ -15,4 +15,16 @@ export class BinLocationService {
         return this._http.get(this.url + 'binlocation/picking-carts', { headers: igbHeaders })
             .map(res => res.json());
     }
+
+    public transferSingleItem(itemTransfer) {
+        let igbHeaders = new IGBHeaders().loadHeaders();
+        return this._http.post(this.url + 'binlocation/pick-item', itemTransfer, { headers: igbHeaders })
+            .map(res => res.json());
+    }
+
+    public listAvailablePackedCarts() {
+        let igbHeaders = new IGBHeaders().loadHeaders();
+        return this._http.get(this.url + 'binlocation/picking-carts', { headers: igbHeaders })
+            .map(res => res.json());
+    }
 }
