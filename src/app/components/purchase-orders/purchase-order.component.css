@@ -55,3 +55,11 @@
 .line-completed .badge {
   background-color: #aaa;
 }
+
+.column-right{
+  text-align: right;
+}
+
+.column-left {
+  text-align: left
+}

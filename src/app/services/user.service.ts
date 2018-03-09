@@ -2,37 +2,32 @@ import { Injectable } from '@angular/core';
 import { Http, Response, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
-import { GLOBAL } from './global';
+import { GLOBAL, IGBHeaders, CONTENT_TYPE_JSON } from './global';
 
 @Injectable()
 export class UserService {
   public url: string;
-  //public identity;
 
   constructor(private _http: Http) {
     this.url = GLOBAL.url;
   }
 
-  signIn(userToLogin, selectedCompany) {
-    console.log(userToLogin);
+  public signIn(userToLogin, selectedCompany) {
+    let igbHeaders = new IGBHeaders().loadHeaders();
     let params = '{"username":"' + userToLogin.username + '","password":"' + userToLogin.password + '", "selectedCompany":"' + selectedCompany + '"}';
-    const headers = new Headers({ 'Content-Type': 'application/json' });
-    return this._http.post(this.url + 'user/login', params, { headers: headers })
+    return this._http.post(this.url + 'user/login', params, { headers: CONTENT_TYPE_JSON })
       .map(res => res.json());
   }
 
-  getItentity() {
-    //this.identity = null;
+  public getItentity() {
+    let igbHeaders = new IGBHeaders().loadHeaders();
     const identity = JSON.parse(localStorage.getItem('igb.identity'));
-    if (typeof identity !== 'undefined') {
-      //this.identity = identity;
-    }
     return identity;
   }
 
-  listUsersByGroup(groupName) {
-    const headers = new Headers({ 'Content-Type': 'application/json' });
-    return this._http.get(this.url + 'user/list/' + groupName, { headers: headers })
+  public listUsersByGroup(groupName) {
+    let igbHeaders = new IGBHeaders().loadHeaders();
+    return this._http.get(this.url + 'user/list/' + groupName, { headers: igbHeaders })
       .map(res => res.json());
   }
 

@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers } from '@angular/http';
-import 'rxjs/add/operator/map';
-import { Observable } from 'rxjs/Observable';
-import { GLOBAL } from './global';
+import { HttpHeaders } from '@angular/common/http';
+import { GLOBAL, IGBHeaders } from './global';
 
 @Injectable()
 export class SalesOrdersService {
@@ -13,43 +12,30 @@ export class SalesOrdersService {
   }
 
   public listOpenOrders(showApprovedOnly) {
-    //TODO: enviar token para validar permisos
-    const headers = new Headers({
-      'Content-Type': 'application/json',
-      'X-Company-Name': localStorage.getItem('igb.selectedCompany')
-    });
-    return this._http.get(this.url + 'picking/list/orders?showAll=' + !showApprovedOnly, { headers: headers })
+    let igbHeaders = new IGBHeaders().loadHeaders();
+    return this._http.get(this.url + 'picking/list/orders?showAll=' + !showApprovedOnly, { headers: igbHeaders })
       .map(res => res.json());
   }
 
   public assignOrders(assignment) {
-    const headers = new Headers({
-      'Content-Type': 'application/json',
-      'X-Company-Name': localStorage.getItem('igb.selectedCompany')
-    });
-    return this._http.post(this.url + 'picking/assign', JSON.stringify(assignment), { headers: headers })
+    let igbHeaders = new IGBHeaders().loadHeaders();
+    return this._http.post(this.url + 'picking/assign', JSON.stringify(assignment), { headers: igbHeaders })
       .map(res => res.json());
   }
 
   public getNextPickingItem(username, orderNumber) {
-    const headers = new Headers({
-      'Content-Type': 'application/json',
-      'X-Company-Name': localStorage.getItem('igb.selectedCompany')
-    });
+    let igbHeaders = new IGBHeaders().loadHeaders();
     let orderNumberFilter = '';
     if (orderNumber) {
       orderNumberFilter = '?orderNumber=' + orderNumber;
     }
-    return this._http.get(this.url + 'picking/pick/' + username + orderNumberFilter, { headers: headers })
+    return this._http.get(this.url + 'picking/pick/' + username + orderNumberFilter, { headers: igbHeaders })
       .map(res => res.json());
   }
 
   public listUserOrders(username) {
-    const headers = new Headers({
-      'Content-Type': 'application/json',
-      'X-Company-Name': localStorage.getItem('igb.selectedCompany')
-    });
-    return this._http.get(this.url + 'picking/orders/' + username, { headers: headers })
+    let igbHeaders = new IGBHeaders().loadHeaders();
+    return this._http.get(this.url + 'picking/orders/' + username, { headers: igbHeaders })
       .map(res => res.json());
   }
 }

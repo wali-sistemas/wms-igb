@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers } from '@angular/http';
-import { GLOBAL } from './global';
+import { GLOBAL, IGBHeaders } from './global';
 
 @Injectable()
 export class BinLocationService {
@@ -11,30 +11,20 @@ export class BinLocationService {
     }
 
     public listAvailablePickingCarts() {
-        const headers = new Headers({
-            'Content-Type': 'application/json',
-            'X-Company-Name': localStorage.getItem('igb.selectedCompany')
-        });
-        return this._http.get(this.url + 'binlocation/picking-carts', { headers: headers })
+        let igbHeaders = new IGBHeaders().loadHeaders();
+        return this._http.get(this.url + 'binlocation/picking-carts', { headers: igbHeaders })
             .map(res => res.json());
     }
 
     public transferSingleItem(itemTransfer) {
-        const headers = new Headers({
-            'Content-Type': 'application/json',
-            'X-Company-Name': localStorage.getItem('igb.selectedCompany')
-        });
-        return this._http.post(this.url + 'binlocation/pick-item', itemTransfer, { headers: headers })
+        let igbHeaders = new IGBHeaders().loadHeaders();
+        return this._http.post(this.url + 'binlocation/pick-item', itemTransfer, { headers: igbHeaders })
             .map(res => res.json());
     }
 
     public listAvailablePackedCarts() {
-        const headers = new Headers({
-            'Content-Type': 'application/json',
-            'X-Company-Name': localStorage.getItem('igb.selectedCompany')
-        });
-        return this._http.get(this.url + 'binlocation/picking-carts', { headers: headers })
+        let igbHeaders = new IGBHeaders().loadHeaders();
+        return this._http.get(this.url + 'binlocation/picking-carts', { headers: igbHeaders })
             .map(res => res.json());
     }
-
 }

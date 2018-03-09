@@ -13,6 +13,7 @@ import { SalesOrdersComponent } from './components/sales-orders/sales-orders.com
 import { SalesOrderComponent } from './components/sales-orders/sales-order.component';
 import { PickingComponent } from './components/picking/picking.component';
 import { PackingComponent } from './components/packing/packing.component';
+import { InventoryComponent } from './components/inventory/inventory.component';
 
 import { routing, appRoutingProviders } from './app.routing';
 
@@ -27,7 +28,8 @@ import { routing, appRoutingProviders } from './app.routing';
     SalesOrdersComponent,
     SalesOrderComponent,
     PickingComponent,
-    PackingComponent
+    PackingComponent,
+    InventoryComponent
   ],
   imports: [
     BrowserModule,

@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { SalesOrdersService } from '../../services/sales-orders.service';
+import { StockTransferService } from '../../services/stock-transfer.service';
 import { BinLocationService } from '../../services/bin-locations.service';
+import { PickingService } from '../../services/picking.service';
 import { BinLocation } from '../../models/bin-location';
 import { SalesOrder } from '../../models/sales-order';
 
@@ -11,15 +13,17 @@ declare var $: any;
 @Component({
     templateUrl: './picking.component.html',
     styleUrls: ['./picking.component.css'],
-    providers: [UserService, SalesOrdersService, BinLocationService]
+    providers: [UserService, SalesOrdersService, BinLocationService, StockTransferService, PickingService]
 })
 export class PickingComponent implements OnInit {
     public identity;
     public token;
     public pickingMethod: string = 'multiple';
+    public selectedPickingMethod: string = 'multiple';
     public selectedCart: number = 0;
     public selectedOrder: string = '';
 
+    private nextOrderNumber: number;
     public nextBinLocationCode: string;
     public nextItemCode: string = '';
     public nextItemName: string = '';
@@ -33,20 +37,23 @@ export class PickingComponent implements OnInit {
 
     public confirmBinCode: string = '';
     public confirmingItemQuantity = false;
+    public errorMessage: string = '';
     public errorMessageBinLocation: string = '';
+    public errorMessageBinTransfer: string = '';
     public availableCarts: Array<BinLocation>;
     public assignedOrders: Array<SalesOrder>;
 
     constructor(private _userService: UserService,
         private _salesOrderService: SalesOrdersService,
         private _binLocationService: BinLocationService,
+        private _stockTransferService: StockTransferService,
+        private _pickingService: PickingService,
         private _route: ActivatedRoute,
         private _router: Router) {
         this.availableCarts = new Array<BinLocation>();
     }
 
     ngOnInit() {
-        //TODO: validar vigencia del token/identity
         this.identity = this._userService.getItentity();
         if (this.identity === null) {
             this._router.navigate(['/']);
@@ -56,6 +63,14 @@ export class PickingComponent implements OnInit {
         });
         this.loadAvailablePickingCarts();
         this.loadAssignedOrders();
+    }
+
+    private redirectIfSessionInvalid(error) {
+        if (error && error.status && error.status == 401) {
+            localStorage.removeItem('igb.identity');
+            localStorage.removeItem('igb.selectedCompany');
+            this._router.navigate(['/']);
+        }
     }
 
     private loadAvailablePickingCarts() {
@@ -69,11 +84,16 @@ export class PickingComponent implements OnInit {
                     binLocation.binCode = result[i].binCode;
                     binLocation.binName = result[i].binName;
                     binLocation.items = result[i].items;
-
+                    binLocation.pieces = result[i].pieces;
                     this.availableCarts.push(binLocation);
                 }
-                this.loadNextItem();
-            }, error => { console.error(error); }
+                if (this.selectedCart > 0) {
+                    this.loadNextItem();
+                }
+            }, error => {
+                console.error(error);
+                this.redirectIfSessionInvalid(error);
+            }
         );
     }
 
@@ -81,27 +101,63 @@ export class PickingComponent implements OnInit {
         this.assignedOrders = new Array<SalesOrder>();
         this._salesOrderService.listUserOrders(this.identity.username).subscribe(
             result => {
-                console.log('assigned orders:', result);
-                for (let i = 0; i < result.length; i++) {
-                    let order: SalesOrder = new SalesOrder();
-                    order.docNum = result[i][0];
-                    order.cardName = result[i][1];
-                    this.assignedOrders.push(order);
+                if (result.code == 0) {
+                    console.log('assigned orders:', result.content);
+                    for (let i = 0; i < result.content.length; i++) {
+                        let order: SalesOrder = new SalesOrder();
+                        order.docNum = result.content[i][0];
+                        order.cardName = result.content[i][1];
+                        this.assignedOrders.push(order);
+                    }
+                } else {
+                    this._router.navigate(['home']);
                 }
-            }, error => { console.error(error); }
+            }, error => {
+                console.error(error);
+                this.redirectIfSessionInvalid(error);
+            }
         );
     }
 
     private loadNextItem() {
-        this._salesOrderService.getNextPickingItem(this.identity.username, this.selectedOrder).subscribe(
+        this._pickingService.getNextPickingItem(this.identity.username, this.selectedOrder).subscribe(
             result => {
                 console.log(result);
-                this.nextItemCode = result[0][0];
-                this.nextItemQuantity = result[0][1];
-                this.nextBinAbs = result[0][3];
-                this.nextBinStock = result[0][4];
-                this.nextBinLocationCode = result[0][5];
-                this.nextItemName = result[0][6];
+                if (result.code == 0) {
+                    this.nextItemCode = result.content.itemCode;
+                    this.nextItemQuantity = result.content.openQuantity;
+                    this.nextBinAbs = result.content.binAbs;
+                    this.nextBinStock = result.content.availableQuantity;
+                    this.nextBinLocationCode = result.content.binCode;
+                    this.nextItemName = result.content.itemName;
+                    this.nextOrderNumber = result.content.orderNumber;
+                } else if (result.code == -1) {
+                    if (this.pickingMethod == 'single') {
+                        this.pickingMethod = 'multiple';
+                        $('#modal_change_picking_method').modal({
+                            backdrop: 'static',
+                            keyboard: false,
+                            show: true
+                        });
+                    } else {
+                        this.closeOrderAssignation(this.identity.username, null);
+                    }
+                } else if (result.code == -2) {
+                    this.errorMessage = 'Ocurrió un error al consultar el siguiente ítem para picking. ' + result.content;
+                }
+            }, error => {
+                console.error(error);
+                this.errorMessage = 'Ocurrió un error al consultar el siguiente ítem para picking. ';
+            }
+        );
+    }
+
+    private closeOrderAssignation(username, orderNumber) {
+        console.log('closing picking assignation for ' + (orderNumber == null ? 'all orders' : 'order ' + orderNumber));
+        this._pickingService.finishPicking(username, orderNumber).subscribe(
+            result => {
+                console.log('finished closing order picking assignation. ', result);
+                this._router.navigate(['home']);
             }, error => { console.error(error); }
         );
     }
@@ -124,33 +180,56 @@ export class PickingComponent implements OnInit {
         }
     }
 
-    public confirmItemQuantity() {
-        console.log('confirmando cantidad para trasladar item, ' + this.nextItemQuantity + ', ' + this.pickedItemQuantity);
-        if (this.nextItemQuantity == this.pickedItemQuantity) {
-            this.pickedItemQuantityValidated = true;
-            //transfer items to cart
-            //change order??
-            let itemTransfer = {
-                binAbsFrom: this.nextBinAbs,
-                binAbsTo: this.selectedCart,
-                quantity: this.nextItemQuantity,
-                itemCode: this.nextItemCode,
-                warehouseCode: '01' //TODO: parametrizar whscode
-            }
-            //TODO: mostrar backdrop mientras se procesa el traslado y limpiar formulario en caso de traslado exitoso
-            console.log('itemTransfer: ', itemTransfer);
-            this._binLocationService.transferSingleItem(itemTransfer).subscribe(
-                response => {
-                    console.info(response);
-                }, error => {
-                    console.error(error);
-                }
-            );
+    public validatePickedQuantity() {
+        if (this.getQuantityToPick() != this.pickedItemQuantity) {
+            //show different quantity confirmation
+            $('#modal_confirm_quantity_diff').modal({
+                backdrop: 'static',
+                keyboard: false,
+                show: true
+            });
+        } else {
+            this.confirmItemQuantity();
         }
     }
 
-    public loadCartInventory() {
-        console.log('loading inventory for location ' + this.selectedCart);
+    public confirmItemQuantity() {
+        $('#modal_confirm_quantity_diff').modal('hide');
+        console.log('confirmando cantidad para trasladar item, ' + this.nextItemQuantity + ', ' + this.pickedItemQuantity);
+        this.pickedItemQuantityValidated = true;
+        let itemTransfer = {
+            binAbsFrom: this.nextBinAbs,
+            binAbsTo: this.selectedCart,
+            quantity: this.pickedItemQuantity,
+            expectedQuantity: this.getQuantityToPick(),
+            itemCode: this.nextItemCode,
+            orderNumber: (this.selectedOrder == null || this.selectedOrder.length == 0) ? this.nextOrderNumber : this.selectedOrder,
+            username: this.identity.username,
+            warehouseCode: '01' //TODO: parametrizar whscode
+        }
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+        console.log('itemTransfer: ', itemTransfer);
+        this.errorMessageBinTransfer = '';
+        this._stockTransferService.transferSingleItem(itemTransfer).subscribe(
+            response => {
+                console.info(response);
+                if (response.code === 0) {
+                    //Clears bin location, item code and quantity fields; then loads cart inventory and next item
+                    this.resetForm();
+                } else {
+                    this.errorMessageBinTransfer = response.content;
+                }
+                $('#modal_transfer_process').modal('hide');
+            }, error => {
+                console.error(JSON.parse(error._body).content);
+                this.errorMessageBinTransfer = JSON.parse(error._body).content;
+                $('#modal_transfer_process').modal('hide');
+            }
+        );
     }
 
     public resetForm() {
@@ -172,15 +251,34 @@ export class PickingComponent implements OnInit {
         this.nextItemName = '';
         this.nextItemQuantity = null;
 
-        //reload selected cart inventory
-        this.loadCartInventory();
+        //clean selected location
+        this.confirmingItemQuantity = false;
+        this.confirmBinCode = '';
+
+        //reload carts and inventory
+        this.loadAvailablePickingCarts();
 
         //reload next item
         this.loadNextItem();
     }
 
-    public chooseOrder() {
+    public choosePickingMethod() {
+        this.pickingMethod = this.selectedPickingMethod;
         $('#modal_config').modal('hide');
         this.loadNextItem();
+    }
+
+    public changePickingMethod() {
+        this.pickingMethod = 'multiple';
+        this.selectedPickingMethod = 'multiple';
+        $('#modal_change_picking_method').modal('hide');
+        this.loadNextItem();
+    }
+
+    public getQuantityToPick() {
+        if (this.nextItemQuantity > this.nextBinStock) {
+            return this.nextBinStock;
+        }
+        return this.nextItemQuantity;
     }
 }

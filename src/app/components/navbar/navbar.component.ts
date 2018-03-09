@@ -17,8 +17,6 @@ export class NavBarComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log('iniciando componente de navbar');
-    //TODO: validar vigencia del token/identity
     this.identity = this._userService.getItentity();
     if (this.identity === null) {
       this._router.navigate(['/']);
@@ -26,7 +24,6 @@ export class NavBarComponent implements OnInit {
   }
 
   alternateNav() {
-    console.log(document.getElementById("menu-icon").classList);
     if (document.getElementById("myNav").style.width === '' || document.getElementById("myNav").style.width === '0%') {
       document.getElementById("myNav").style.width = "100%";
       //Configura el icono para cerrar
@@ -38,6 +35,10 @@ export class NavBarComponent implements OnInit {
       document.getElementById("menu-icon").classList.remove('glyphicon-remove');
       document.getElementById("menu-icon").classList.add('glyphicon-menu-hamburger');
     }
+  }
+
+  public getSelectedCompany() {
+    return localStorage.getItem("igb.selectedCompany");
   }
 
   cerrarSesion() {

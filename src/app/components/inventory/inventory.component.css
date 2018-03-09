@@ -1,0 +1,19 @@
+.content {
+  margin-top: 60px;
+}
+
+.margin-bottom-5 {
+  margin-bottom: 5px;
+}
+
+.right-component {
+  text-align: right;
+}
+
+.justify-component {
+  text-align: justify;
+}
+
+.center-component {
+  text-align: center;
+}

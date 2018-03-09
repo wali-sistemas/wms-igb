@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { UserService } from '../../services/user.service';
-import { PurchaseOrdersService } from '../../services/purchase-orders';
+import { PurchaseOrdersService } from '../../services/purchase-orders.service';
 import { PurchaseOrder } from '../../models/purchase-order';
 import { PurchaseOrderLine } from '../../models/purchase-order-line';
 
@@ -17,11 +17,13 @@ export class PurchaseOrderComponent implements OnInit {
   public token;
   public quantity: number;
   public generalErrorMessage: string;
+  public quantityErrorMessage: string;
   public errorMessage: string;
   public scannedText: string;
   public order: PurchaseOrder;
   public receivedItems: Array<PurchaseOrderLine>;
   public processingItem: PurchaseOrderLine;
+  public displayType: string = 'table';
   private processingItemIndex: number = 0;
   public creatingSAPDocument: boolean = false;
   public editingQuantity: boolean = false;
@@ -43,7 +45,7 @@ export class PurchaseOrderComponent implements OnInit {
     if (this.identity === null) {
       this._router.navigate(['/']);
     }
-    $('#modal_quantity').on('shown.bs.modal', function() {
+    $('#modal_quantity').on('shown.bs.modal', function () {
       $('#quantity').focus();
     });
     this.loadSelectedOrder();
@@ -55,7 +57,6 @@ export class PurchaseOrderComponent implements OnInit {
       if (params['docNum']) {
         this._purchaseOrdersService.loadOrder(params['docNum']).subscribe(
           response => {
-            console.log(response);
             this.order = response;
             //busca si hay ordenes en proceso en el localStorage
             let previousReception = JSON.parse(localStorage.getItem('igb.reception'));
@@ -127,10 +128,11 @@ export class PurchaseOrderComponent implements OnInit {
   }
 
   public confirmItem() {
-    $('#modal_quantity').modal('hide');
+    this.quantityErrorMessage = null;
     console.log('validando cantidad para agregar item');
     this.errorMessage = '';
     if (this.quantity === this.processingItem.quantity) {
+      $('#modal_quantity').modal('hide');
       //TODO: validar item parcial
       console.log('cantidad aceptada');
       this.receivedItems.push(this.processingItem);
@@ -143,6 +145,7 @@ export class PurchaseOrderComponent implements OnInit {
       $('#modal_warning').modal('show');
     } else {
       console.log('la cantidad ingresada es superior a la cantidad de la orden');
+      this.quantityErrorMessage = 'La cantidad ingresada es superior a la cantidad de la orden. ';
     }
   }
 
@@ -228,6 +231,14 @@ export class PurchaseOrderComponent implements OnInit {
       this.quantity = 0;
       $('#modal_quantity').modal('hide');
       localStorage.setItem('igb.reception', JSON.stringify(this.receivedItems));
+    }
+  }
+
+  public toggleDisplayType() {
+    if (this.displayType === 'table') {
+      this.displayType = 'grid';
+    } else {
+      this.displayType = 'table';
     }
   }
 }
