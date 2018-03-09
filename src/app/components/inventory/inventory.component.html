@@ -137,7 +137,7 @@
         <tr *ngFor="let history of history">
           <td class="center-component">{{history.item}}</td>
           <td class="right-component">{{history.quantity}}</td>
-          <td class="right-component">{{history.date}}</td>
+          <td class="right-component">{{history.date | date:'dd-MM-yyyy HH:mm:ss'}}</td>
         </tr>
       </table>
     </div>
