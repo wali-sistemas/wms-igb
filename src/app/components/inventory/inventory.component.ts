@@ -110,6 +110,8 @@ export class InventoryComponent implements OnInit {
   }
 
   public addItem() {
+    this.messageError = null;
+    this.messageInfo = null;
     if (!this.item || this.item === null || this.item.length === 0) {
       this.messageError = 'Debe escanear un ítem para agregarlo al inventario';
       return;
