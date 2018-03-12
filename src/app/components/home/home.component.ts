@@ -30,4 +30,12 @@ export class HomeComponent implements OnInit {
     this._router.navigate(['/']);
   }
 
+  private redirectIfSessionInvalid(error) {
+    if (error && error.status && error.status == 401) {
+      localStorage.removeItem('igb.identity');
+      localStorage.removeItem('igb.selectedCompany');
+      this._router.navigate(['/']);
+    }
+  }
+
 }

@@ -17,7 +17,6 @@ declare var $: any;
 })
 export class PickingComponent implements OnInit {
     public identity;
-    public token;
     public pickingMethod: string = 'multiple';
     public selectedPickingMethod: string = 'multiple';
     public selectedCart: number = 0;
@@ -133,12 +132,7 @@ export class PickingComponent implements OnInit {
                     this.nextOrderNumber = result.content.orderNumber;
                 } else if (result.code == -1) {
                     if (this.pickingMethod == 'single') {
-                        this.pickingMethod = 'multiple';
-                        $('#modal_change_picking_method').modal({
-                            backdrop: 'static',
-                            keyboard: false,
-                            show: true
-                        });
+                        this.closeOrderAssignation(this.identity.username, this.selectedOrder);
                     } else {
                         this.closeOrderAssignation(this.identity.username, null);
                     }
@@ -157,7 +151,13 @@ export class PickingComponent implements OnInit {
         this._pickingService.finishPicking(username, orderNumber).subscribe(
             result => {
                 console.log('finished closing order picking assignation. ', result);
-                this._router.navigate(['home']);
+                if (this.pickingMethod == 'single') {
+                    $('#modal_change_picking_method').modal({
+                        backdrop: 'static',
+                        keyboard: false,
+                        show: true
+                    });
+                }
             }, error => { console.error(error); }
         );
     }
@@ -225,9 +225,9 @@ export class PickingComponent implements OnInit {
                 }
                 $('#modal_transfer_process').modal('hide');
             }, error => {
-                console.error(JSON.parse(error._body).content);
-                this.errorMessageBinTransfer = JSON.parse(error._body).content;
                 $('#modal_transfer_process').modal('hide');
+                console.error(error);
+                this.errorMessageBinTransfer = JSON.parse(error._body).content;
             }
         );
     }
@@ -271,7 +271,9 @@ export class PickingComponent implements OnInit {
     public changePickingMethod() {
         this.pickingMethod = 'multiple';
         this.selectedPickingMethod = 'multiple';
+        this.selectedOrder = '';
         $('#modal_change_picking_method').modal('hide');
+        this.loadAssignedOrders();
         this.loadNextItem();
     }
 

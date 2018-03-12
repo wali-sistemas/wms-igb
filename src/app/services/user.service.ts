@@ -21,14 +21,17 @@ export class UserService {
 
   public getItentity() {
     let igbHeaders = new IGBHeaders().loadHeaders();
-    const identity = JSON.parse(localStorage.getItem('igb.identity'));
-    return identity;
+    return JSON.parse(localStorage.getItem('igb.identity'));
   }
 
   public listUsersByGroup(groupName) {
     let igbHeaders = new IGBHeaders().loadHeaders();
     return this._http.get(this.url + 'user/list/' + groupName, { headers: igbHeaders })
       .map(res => res.json());
+  }
+
+  private validateToken(igbHeaders) {
+    return this._http.get(this.url + 'user/validate', { headers: igbHeaders }).map(res => res.json());
   }
 
 }

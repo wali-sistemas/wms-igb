@@ -12,3 +12,39 @@
 .cursor-pointer {
     cursor: pointer;
 }
+
+.packing-box {
+    height: 150px;
+    border: 1px solid #bbb;
+    margin-bottom: 5px;
+    padding: 3px;
+    border-radius: 5px;
+}
+
+.box-number {
+    display: block;
+    font-size: 2em;
+}
+
+.box-quantity {
+    display: block;
+    font-size: 1.4em;
+}
+
+.new-box {
+    font-size: 1.5em;
+    cursor: pointer;
+    text-align: center;
+    padding: 10px;
+}
+
+.new-box-disabled {
+    cursor: not-allowed;
+    color: #888;
+}
+
+.add-to-box {
+    text-align: center;
+    position: absolute;
+    bottom: 10px;
+}

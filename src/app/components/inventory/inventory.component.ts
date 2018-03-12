@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { StockTransferService } from '../../services/stock-transfer.service';
 import { InventoryService } from '../../services/inventory.service';
+import { UserService } from '../../services/user.service';
 
 declare var $: any;
 
 @Component({
   templateUrl: './inventory.component.html',
   styleUrls: ['./inventory.component.css'],
-  providers: [StockTransferService, InventoryService]
+  providers: [StockTransferService, InventoryService, UserService]
 })
 export class InventoryComponent implements OnInit {
 
@@ -24,7 +25,10 @@ export class InventoryComponent implements OnInit {
   public differences: Array<any>;
   public history: Array<any>;
 
-  constructor(private _stockTransferService: StockTransferService, private _inventoryService: InventoryService) {
+  constructor(private _stockTransferService: StockTransferService,
+    private _inventoryService: InventoryService,
+    private _userService: UserService,
+    private _router: Router) {
     this.itemTmp = {
       idInventory: null,
       item: null,
@@ -39,7 +43,6 @@ export class InventoryComponent implements OnInit {
     $('#txt_location').focus();
     this.messageProgress = 'Validando si hay inventarios pendientes.';
     $('#modal_process').modal('show');
-    console.log('iniciando componente de inventario');
     //Buscar si hay un conteo iniciado
     this.validateInventoryOpen();
   }
@@ -54,6 +57,7 @@ export class InventoryComponent implements OnInit {
         }
         $('#modal_process').modal('hide');
       }, error => {
+        this.redirectIfSessionInvalid(error);
         console.log(error);
         $('#modal_process').modal('hide');
       }
@@ -201,5 +205,13 @@ export class InventoryComponent implements OnInit {
     $('#modalDiferencias').modal('hide');
     $('#modal_process').modal('hide');
     this.validateInventoryOpen();
+  }
+
+  private redirectIfSessionInvalid(error) {
+    if (error && error.status && error.status == 401) {
+      localStorage.removeItem('igb.identity');
+      localStorage.removeItem('igb.selectedCompany');
+      this._router.navigate(['/']);
+    }
   }
 }

@@ -1,149 +1,140 @@
- <igb-navbar></igb-navbar> 
+<igb-navbar></igb-navbar>
+
+<div id="confirm_add" class="modal slide" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p>Vas a agregar {{itemQuantity}} unidades del item {{itemCode}} a {{boxes.length > 0 ? boxes[addToBox].boxDisplayName : ''}}.
+                    ¿Deseas continuar?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-lg" (click)="addItemToBox()">Sí, continuar</button>
+                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
 
 <div class="container content">
     <h3>Packing </h3>
-            <br>    
-            <label for="radio_single"> Seleccionar cliente</label>
-            <br>
-            <select class="form-control input-lg" [(ngModel)]="selectedCustomer" name="selectedCustomer" (change)="loadOrdersCostumers()">
+
+    <div class="row">
+        <div class="col-xs-12">
+            <label for="cliente">Cliente</label>
+            <select id="cliente" class="form-control input-lg" [(ngModel)]="selectedCustomer" name="selectedCustomer" (change)="loadCustomerOrders()">
                 <option style="display:none" disabled value="">Selecciona un cliente</option>
-                <option *ngFor="let customer of costumersArray" value="{{customer[0]}}"> {{customer[1]}}</option>
+                <option *ngFor="let customer of customersList" value="{{customer[0]}}"> {{customer[1]}}</option>
             </select>
-        <div *ngIf="assignedOrders.length > 0">
-            <label for="radio_single"> Seleccionar orden</label>
-            <br>
-            <select class="form-control input-lg"  [(ngModel)]="selectedOrder" name="selectedOrder" (change)="showItemBin()">
-                <option style="display:none" disabled value="">Selecciona una órden</option>
-                <option *ngFor="let order of assignedOrders" value="{{order.orderNumber}}">{{order.orderNumber}} - {{order.cardName}}</option>
-            </select>
-            <!-- <span *ngIf="packingMethod === 'multiple' && assignedOrders.length > 0"> ({{assignedOrders.length}} órdenes)</span>
-            <span *ngIf="pakingMethod === 'single'"> (órden #{{selectedOrder}})</span> -->
-        </div>        
-    
-
-    <div class="row" >
-        <div class="col-xs-12" *ngIf="isVisibleShowItemBin">
-            <div class="col-xs-12">
-                <h4>({{nextBinCode}}) </h4>
-            </div>
-                <div class="col-xs-12" *ngIf="!binItemCodeValidated">
-                    <div class="input-group">
-                        <input type="text" class="form-control input-lg" 
-                                name="filter" 
-                                placeholder="escanea el carrito" 
-                                [(ngModel)]="binItemCode">
-                        <span class="input-group-btn">
-                            <button class="btn btn-primary btn-lg" 
-                                    type="button" 
-                                    (click)="confirmBinItemCode()" >
-                                    
-                                <span class="glyphicon glyphicon-ok"></span>
-                            <!-- [disabled]="nextItemCode != packedItemCode"> -->
-                            </button>
-                        </span>
-                    </div>
-                </div>
         </div>
-        <div class="row" *ngIf="isVisibleItemCode">
-            <div class="col-xs-12">
-                <div class="confirm-item">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <h4>({{nextItemCode}}) </h4>
+    </div>
+    <br>
+    <div class="row" *ngIf="ordersList && ordersList.length > 0">
+        <div class="col-xs-12">
+            <label for="orderNumber">Orden</label>
+            <select id="orderNumber" class="form-control input-lg" [(ngModel)]="selectedOrder" name="selectedOrder" >
+                <option style="display:none" disabled value="0">Selecciona una orden</option>
+                <option *ngFor="let order of ordersList" value="{{order}}">{{order}}</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12" *ngIf="selectedOrder && !isVisibleItemCode">
+            <div class="row">
+                <div class="col-xs-12">
+                    <h4>Escanea el carrito</h4>
+                </div>
+                <div class="col-xs-12">
+                    <form (submit)="validateScannedBin()">
+                        <div class="input-group">
+                            <input type="text" class="form-control input-lg" autocomplete="off" name="binlocation" placeholder="escanea el carrito" [(ngModel)]="binCode">
+                            <span class="input-group-btn">
+                                <button class="btn btn-primary btn-lg" type="button" (click)="validateScannedBin()">
+                                    <span class="glyphicon glyphicon-ok"></span>
+                                </button>
+                            </span>
                         </div>
-                        <form>
-                            <div class="col-xs-12" *ngIf="!packedItemCodeValidated">
-                                <div class="input-group">
-                                    <input type="text" class="form-control input-lg" 
-                                            name="filter" 
-                                            placeholder="escanea la referencia" 
-                                            [(ngModel)]="packedItemCode">
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-primary btn-lg" 
-                                                type="button" 
-                                                (click)="confirmItemCode()" 
-                                                [disabled]="nextItemCode != packedItemCode">
-                                            <span class="glyphicon glyphicon-ok"></span>
-                                        </button>
-                                    </span>
-                                </div>
-                            </div>
-                        </form>
-                        <form>
-                            <div class="col-xs-12" *ngIf="packedItemCodeValidated">
-                                <div class="input-group">
-                                    <span class="input-group-btn">
-                                        <button type="button" class="btn btn-default btn-lg">
-                                            Toma {{nextItemQuantity}} unidades
-                                        </button>
-                                    </span>
-                                    <input id="input_packedQuantity" type="number" 
-                                            class="form-control input-lg" 
-                                            name="filter" 
-                                            placeholder="confirma la cantidad"
-                                        [(ngModel)]="packedItemQuantity">
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-primary btn-lg" type="button" 
-                                        (click)="confirmItemQuantity()" 
-                                        [disabled]="packedItemQuantity < 0 && nextItemQuantity < packedItemQuantity">
-                                            <span class="glyphicon glyphicon-ok"></span>
-                                        </button>
-                                    </span>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
 
+        <div class="col-xs-12" *ngIf="isVisibleItemCode">
+            <div class="row">
+                <div class="col-xs-12" *ngIf="!packedItemCodeValidated">
+                    <h4>{{binCode}} &gt; Escanea el ítem </h4>
+                </div>
+                <form (submit)="validateScannedItem()">
+                    <div class="col-xs-12" *ngIf="!packedItemCodeValidated">
+                        <div class="input-group">
+                            <input id="txt_itemcode" type="text" class="form-control input-lg" autocomplete="off" name="itemcode" placeholder="escanea la referencia"
+                                [(ngModel)]="itemCode">
+                            <span class="input-group-btn">
+                                <button class="btn btn-primary btn-lg" type="button" (click)="validateScannedItem()">
+                                    <span class="glyphicon glyphicon-ok"></span>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                </form>
+                <div class="col-xs-12" *ngIf="packedItemCodeValidated">
+                    <h4>{{binCode}} &gt; {{itemCode}} &gt; Ingresa la cantidad</h4>
+                </div>
+                <form (submit)="validateItemQuantity()">
+                    <div class="col-xs-12" *ngIf="packedItemCodeValidated">
+                        <div class="input-group">
+                            <input id="input_packedQuantity" type="number" class="form-control input-lg" name="filter" placeholder="confirma la cantidad"
+                                [(ngModel)]="itemQuantity" [disabled]="packedItemQuantityValidated" autocomplete="off">
+                            <span class="input-group-btn">
+                                <button class="btn btn-primary btn-lg" type="button" (click)="validateItemQuantity()" >
+                                    <span class="glyphicon glyphicon-ok"></span>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="col-xs-12" *ngIf="quantityErrorMessage">
+                        <div class="alert alert-danger">
+                            {{quantityErrorMessage}}
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
     <br>
 
     <div class="row" *ngIf="packedItemQuantityValidated">
-
-    <div>
-            <br>    
-            <label> Cajas</label>
-            <br>
-            <span class="input-group-btn">
-                    <button class="btn btn-primary btn-lg" type="button" 
-                    (click)="addBox()" 
-                    [disabled]="!isPossibleAddNewBox">
-                        <span class="glyphicon glyphicon-ok">Nueva caja</span>
+        <div class="col-xs-12">
+            <h4>¿En cuál caja deseas empacar?</h4>
+        </div>
+        <div class="col-xs-4" *ngFor="let box of boxes; let idx = index">
+            <div class="packing-box">
+                <span class="box-number">{{box.boxDisplayName}}</span>
+                <span class="box-quantity">{{box.boxQuantity}} items</span>
+                <span class="add-to-box">
+                    <button class="btn btn-default" type="button" (click)="confirmAddToBox(idx)" [disabled]="packedItemQuantity <= 0 || packedItemQuantity > nextItemQuantity">
+                        Aquí <span class="glyphicon glyphicon-thumbs-up"></span>
                     </button>
                 </span>
-            <br>
-            
-            <div>
-                <div *ngFor="let box of packingOrderBox" style=" border-style:solid; height:2cm; width:2cm;
-                border-color:black;">
-                    <label>{{box.boxShowName}}</label>
-                    <label>{{box.boxQuantity}}</label>
-                </div>
-                <div>
-                    <span class="input-group-btn">
-                        <button class="btn btn-primary btn-lg" type="button" (click)="addItemBox()" 
-                                [disabled]="packedItemQuantity <= 0 || packedItemQuantity > nextItemQuantity">
-                            <span class="glyphicon glyphicon-ok">Empacar en caja actual</span>
-                        </button>
-                    </span>
-                </div>
             </div>
-            
-
-            
-            <br>
-            <div>
-                    <label for="radio_single"> Finalizar empaque</label>
+        </div>
+        <div class="col-xs-4">
+            <div class="packing-box new-box" (click)="addBox()" [class.new-box-disabled]="!addNewBoxEnabled">
+                <span>Nueva caja</span>
             </div>
+        </div>
 
-    </div>
-        <span class="input-group-btn">
-            <button class="btn btn-primary btn-lg" type="button" (click)="confirmItemQuantity()" 
-            [disabled]="packedItemQuantity > nextItemQuantity">
-                <span class="glyphicon glyphicon-ok">Crear Documento Sap</span>
-            </button>
-        </span>
+        <div class="col-xs-12">
+            <span class="input-group-btn">
+                <button class="btn btn-danger btn-lg" type="button" (click)="confirmItemQuantity()" [disabled]="packedItemQuantity > nextItemQuantity">
+                    Finalizar
+                    <span class="glyphicon glyphicon-save"></span>
+                </button>
+            </span>
+        </div>
     </div>
 </div>

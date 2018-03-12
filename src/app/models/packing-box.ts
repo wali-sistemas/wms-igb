@@ -1,9 +1,10 @@
-import { PackingOrderItemBin } from './packing-order';
-export class PackingOrderBox {
+
+export class PackingBox {
 
     public boxId: number = 0;
     public boxQuantity: number = 0;
-    public boxShowName: String = "";
+    public boxNumber: number = 0;
+    public boxDisplayName: String = "";
     public orderBox: String = "";
     public itemBinAbs: number = 0;
     constructor() { }
