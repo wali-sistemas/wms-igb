@@ -31,15 +31,18 @@ export class PackingComponent implements OnInit {
     public packedItemCodeValidated = false;
     public packedItemQuantityValidated = false;
     public addNewBoxEnabled: boolean = false;
+    public orderItemsList: Array<any>;
     private identity;
     private idPackingList: number;
+    private idPackingOrder: number;
 
     constructor(
         private _userService: UserService,
         private _packingService: PackingService,
         private _router: Router) {
         this.customersList = new Array<any>();
-        this.ordersList = new Array<number>();
+        this.ordersList = new Array<any>();
+        this.orderItemsList = new Array<any>();
         this.boxes = new Array<PackingBox>();
     }
 
@@ -65,6 +68,7 @@ export class PackingComponent implements OnInit {
                     this.selectedOrder = firstRecord[2];
                     this.selectedCustomer = firstRecord[3];
                     this.idPackingList = firstRecord[1];
+                    this.idPackingOrder = firstRecord[9];
                     for (let i = 0; i < response.content.length; i++) {
                         let record = response.content[i];
 
@@ -240,6 +244,31 @@ export class PackingComponent implements OnInit {
         this.packedItemCodeValidated = false;
         this.packedItemQuantityValidated = false;
         this.canBoxesBeAdded();
+    }
+
+    public setIdPackingOrder() {
+        for (let i = 0; i < this.ordersList.length; i++) {
+            if (this.ordersList[i][1] === this.selectedOrder) {
+                this.idPackingOrder = this.ordersList[i][0];
+                break;
+            }
+        }
+    }
+
+    public showAllItems() {
+        this.orderItemsList = new Array<any>();
+        this._packingService.listOrderItems(this.idPackingOrder).subscribe(
+            response => {
+                this.orderItemsList = response.content;
+                $('#order_items').modal({
+                    backdrop: 'static',
+                    keyboard: false,
+                    show: true
+                });
+            }, error => {
+                console.error(error);
+            }
+        );
     }
 
 }
