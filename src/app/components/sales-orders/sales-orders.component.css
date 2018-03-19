@@ -3,7 +3,7 @@
 }
 
 .order {
-  height: 230px;
+  height: 175px;
   border: 1px solid #ccc;
   margin-bottom: 10px;
   /*max-height: 100px;
@@ -94,4 +94,8 @@
 
 .assigned-employee {
   color: #037040;
+}
+
+.order.unauthorized .assigned-employee, .order.unauthorized .warn {
+  color: #f0ad4e;
 }

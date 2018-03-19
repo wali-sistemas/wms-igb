@@ -10,6 +10,7 @@ export class SalesOrder {
     public assignedPickingEmployee: String;
     public confirmed: String;
     public items: Number;
+    public status: String;
     public lines: Array<SalesOrderLine>;
     constructor() { }
 }

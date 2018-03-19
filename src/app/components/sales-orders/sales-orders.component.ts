@@ -62,7 +62,7 @@ export class SalesOrdersComponent implements OnInit {
 
   public selectOrder(order: SalesOrder) {
     //this._router.navigate(['/sale-order/', docNum]);
-    if (order.confirmed === 'N') {
+    if (order.confirmed === 'N' || order.status == 'warning') {
       return;
     }
     if (this.selectedOrders.has(order.docNum)) {
