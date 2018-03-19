@@ -3,7 +3,7 @@
 }
 
 .order {
-  height: 200px;
+  height: 230px;
   border: 1px solid #ccc;
   margin-bottom: 10px;
   /*max-height: 100px;
@@ -31,7 +31,7 @@
 }
 
 .order .order-number::before {
-  content: 'Órden #';
+  content: 'Orden #';
 }
 
 .order .order-number {
@@ -60,6 +60,7 @@
   position: absolute;
   top: 35px;
   right: 20px;
+  font-size: 11px;
 }
 
 .order .order-cardcode::before {

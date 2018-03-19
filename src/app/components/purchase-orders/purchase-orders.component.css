@@ -43,6 +43,7 @@
   position: absolute;
   top: 35px;
   right: 20px;
+  font-size: 11px;
 }
 
 .order .order-cardcode::before {

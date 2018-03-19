@@ -42,8 +42,17 @@ export class PurchaseOrdersComponent implements OnInit {
       },
       error => {
         console.error(error);
+        this.redirectIfSessionInvalid(error);
       }
     );
+  }
+
+  private redirectIfSessionInvalid(error) {
+    if (error && error.status && error.status == 401) {
+      localStorage.removeItem('igb.identity');
+      localStorage.removeItem('igb.selectedCompany');
+      this._router.navigate(['/']);
+    }
   }
 
   public seleccionarOrden(docNum) {

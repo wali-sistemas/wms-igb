@@ -133,15 +133,21 @@ export class PurchaseOrderComponent implements OnInit {
     this.errorMessage = '';
     if (this.quantity === this.processingItem.quantity) {
       $('#modal_quantity').modal('hide');
-      //TODO: validar item parcial
       console.log('cantidad aceptada');
-      this.receivedItems.push(this.processingItem);
-      this.received.set(this.processingItem.itemCode, this.receivedItems.length - 1);
+      this.processingItem.partial = false;
+      if (this.received.has(this.processingItem.itemCode)) {
+        //Completar item recibido parcialmente
+        this.receivedItems[this.received.get(this.processingItem.itemCode)].quantity += this.processingItem.quantity;
+        this.receivedItems[this.received.get(this.processingItem.itemCode)].partial = false;
+      } else {
+        //Agregar item completo
+        this.receivedItems.push(this.processingItem);
+        this.received.set(this.processingItem.itemCode, this.receivedItems.length - 1);
+      }
       this.order.lines.splice(this.processingItemIndex, 1);
-      this.quantity = null;
-      localStorage.setItem('igb.reception', JSON.stringify(this.receivedItems));
-      this.processingItem = null;
+      this.cleanAndSave();
     } else if (this.quantity < this.processingItem.quantity) {
+      $('#modal_quantity').modal('hide');
       $('#modal_warning').modal('show');
     } else {
       console.log('la cantidad ingresada es superior a la cantidad de la orden');
@@ -156,18 +162,25 @@ export class PurchaseOrderComponent implements OnInit {
     this.processingItem.partial = true;
 
     this.order.lines[this.processingItemIndex].quantity = this.order.lines[this.processingItemIndex].quantity - this.quantity;
-    this.order.lines[this.processingItemIndex].partial = true;
+    if (this.order.lines[this.processingItemIndex].quantity > 0) {
+      this.order.lines[this.processingItemIndex].partial = true;
+    } else {
+      this.order.lines[this.processingItemIndex].partial = false;
+    }
 
-    //TODO: validar item parcial
     if (this.received.has(this.processingItem.itemCode)) {
       //el item ha sido recibido parcialmente
       this.receivedItems[this.received.get(this.processingItem.itemCode)].quantity += this.processingItem.quantity;
     } else {
-      //el item no se ha recibido parcialmente
+      //el item no se ha recibido
       this.receivedItems.push(this.processingItem);
       this.received.set(this.processingItem.itemCode, this.receivedItems.length - 1);
     }
 
+    this.cleanAndSave();
+  }
+
+  private cleanAndSave() {
     this.quantity = null;
     this.processingItem = null;
     localStorage.setItem('igb.reception', JSON.stringify(this.receivedItems));
@@ -209,6 +222,8 @@ export class PurchaseOrderComponent implements OnInit {
 
   public restart() {
     //TODO: solicitar confirmacion para reiniciar recepcion
+    this.received = new Map<String, number>();
+    this.receivedItems = new Array<PurchaseOrderLine>();
     localStorage.removeItem('igb.reception');
     this.loadSelectedOrder();
   }
