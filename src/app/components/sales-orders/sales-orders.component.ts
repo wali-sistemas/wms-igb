@@ -42,11 +42,19 @@ export class SalesOrdersComponent implements OnInit {
     this.listOpenOrders();
   }
 
+  private redirectIfSessionInvalid(error) {
+    if (error && error.status && error.status == 401) {
+      localStorage.removeItem('igb.identity');
+      localStorage.removeItem('igb.selectedCompany');
+      this._router.navigate(['/']);
+    }
+  }
+
   private listOpenOrders() {
     this.orders = new Array<SalesOrder>();
     this.filteredOrders = new Array<SalesOrder>();
     this.selectedOrders = new Map<String, any>();
-    
+
     this._salesOrdersService.listOpenOrders(this.showApprovedOnly).subscribe(
       response => {
         this.orders = response;
@@ -56,6 +64,7 @@ export class SalesOrdersComponent implements OnInit {
       },
       error => {
         console.error(error);
+        this.redirectIfSessionInvalid(error);
       }
     );
   }
@@ -78,7 +87,7 @@ export class SalesOrdersComponent implements OnInit {
       response => {
         this.assignableUsers = response;
         $('#modal_users').modal('show');
-      }, error => { console.error(error); }
+      }, error => { console.error(error); this.redirectIfSessionInvalid(error); }
     );
   }
 
@@ -107,7 +116,7 @@ export class SalesOrdersComponent implements OnInit {
         $('#modal_users').modal('hide');
         this.listOpenOrders();
         this.selectedUser = '';
-      }, error => { console.error(error); }
+      }, error => { console.error(error); this.redirectIfSessionInvalid(error); }
     );
   }
 

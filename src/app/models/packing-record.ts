@@ -1,5 +1,6 @@
 export class PackingRecord {
     public idPackingList: number;
+    public idPackingOrder: number;
     public orderNumber: number;
     public customerId: string;
     public customerName: string;

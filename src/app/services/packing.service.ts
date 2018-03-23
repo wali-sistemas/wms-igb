@@ -58,4 +58,16 @@ export class PackingService {
         return this._http.get(this.url + 'packing/' + idPackingOrder, { headers: igbHeaders })
             .map(res => res.json());
     }
+
+    public createDelivery(idPackingOrder: number) {
+        let igbHeaders = new IGBHeaders().loadHeaders();
+        return this._http.post(this.url + 'packing/delivery', idPackingOrder, { headers: igbHeaders })
+            .map(res => res.json());
+    }
+
+    public closePackingOrder(idPackingOrder: number, username: string) {
+        let igbHeaders = new IGBHeaders().loadHeaders();
+        return this._http.put(this.url + 'packing/close/' + username + '/' + idPackingOrder, null, { headers: igbHeaders })
+            .map(res => res.json());
+    }
 }

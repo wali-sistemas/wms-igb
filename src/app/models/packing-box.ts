@@ -7,9 +7,17 @@ export class PackingBox {
     public boxDisplayName: String = "";
     public orderBox: String = "";
     public itemBinAbs: number = 0;
-    constructor() { }
+    public items: Map<string, number>;
+    constructor() {
+        this.items = new Map<string, number>();
+    }
 
-    public addQuantity(qty) {
-        this.boxQuantity += parseInt(qty);
+    public addItem(itemCode: string, qty: number) {
+        if (this.items.has(itemCode)) {
+            this.items.set(itemCode, this.items.get(itemCode) + qty);
+        } else {
+            this.items.set(itemCode, qty);
+        }
+        this.boxQuantity += qty;
     }
 }

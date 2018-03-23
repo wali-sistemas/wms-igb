@@ -1,5 +1,50 @@
 <igb-navbar></igb-navbar>
 
+<div id="close_confirmation" class="modal slide" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p><b>¿Estás seguro que deseas finalizar?</b> Al hacerlo, se crearán documentos de entrega y factura para los ítems
+                    empacados y se imprimirán los packing list</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-lg" (click)="createDelivery()">Sí, finalizar</button>
+                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="delivery_error" class="modal slide" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    {{deliveryErrorMessage}}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal_transfer_process" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0"
+                        aria-valuemax="100" style="width: 100%">
+                        <span class="sr-only">Procesando transferencia</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="confirm_add" class="modal slide" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -12,17 +57,15 @@
                 <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cancelar</button>
             </div>
         </div>
-        <!-- /.modal-content -->
     </div>
-    <!-- /.modal-dialog -->
 </div>
-<!-- /.modal -->
 
 <div id="order_items" class="modal slide" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-body">
-                <table class="table table-striped">
+                <span *ngIf="orderItemsList.length == 0">No hay items pendientes por empacar</span>
+                <table *ngIf="orderItemsList.length > 0" class="table table-striped">
                     <tr>
                         <th>Carrito</th>
                         <th>Referencia</th>
@@ -39,11 +82,32 @@
                 <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
             </div>
         </div>
-        <!-- /.modal-content -->
     </div>
-    <!-- /.modal-dialog -->
 </div>
-<!-- /.modal -->
+
+<div id="packing_detail" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body" *ngIf="selectedBox">
+                <span *ngIf="selectedBoxItems.size == 0">No hay items en la caja {{selectedBox+1}}</span>
+                <table *ngIf="selectedBoxItems.size > 0" class="table table-striped">
+                    <tr>
+                        <th>Ref</th>
+                        <th>Cantidad</th>
+                    </tr>
+                    <tr *ngFor="let key of selectedBoxItems.keys()">
+                        <td>{{key}}</td>
+                        <td>{{selectedBoxItems.get(key)}}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <div class="container content">
     <h3>Packing </h3>
@@ -111,6 +175,11 @@
                             </span>
                         </div>
                     </div>
+                    <div class="col-xs-12" *ngIf="!packedItemCodeValidated && itemCodeErrorMessage">
+                        <div class="alert alert-danger">
+                            {{itemCodeErrorMessage}}
+                        </div>
+                    </div>
                 </form>
                 <div class="col-xs-12" *ngIf="packedItemCodeValidated">
                     <h4>{{binCode}} &gt; {{itemCode}} &gt; Ingresa la cantidad</h4>
@@ -128,7 +197,7 @@
                         </div>
                     </div>
                     <br>
-                    <div class="col-xs-12" *ngIf="quantityErrorMessage">
+                    <div class="col-xs-12" *ngIf="packedItemCodeValidated && quantityErrorMessage">
                         <div class="alert alert-danger">
                             {{quantityErrorMessage}}
                         </div>
@@ -139,35 +208,39 @@
     </div>
     <br>
 
-    <div class="row" *ngIf="packedItemQuantityValidated">
+    <div class="row" *ngIf="selectedCustomer">
         <div class="col-xs-12">
             <h4>¿En cuál caja deseas empacar?</h4>
         </div>
-        <div class="col-xs-4" *ngFor="let box of boxes; let idx = index">
+        <div class="col-xs-6" *ngFor="let box of boxes; let idx = index">
             <div class="packing-box">
                 <span class="box-number">{{box.boxDisplayName}}</span>
                 <span class="box-quantity">{{box.boxQuantity}} items</span>
-                <span class="add-to-box">
-                    <button class="btn btn-default" type="button" (click)="confirmAddToBox(idx)" [disabled]="packedItemQuantity <= 0 || packedItemQuantity > nextItemQuantity">
+                <span class="add-to-box" *ngIf="packedItemQuantityValidated">
+                    <button class="btn btn-default form-control" type="button" (click)="confirmAddToBox(idx)" [disabled]="packedItemQuantity <= 0 || packedItemQuantity > nextItemQuantity">
                         Aquí
                         <span class="glyphicon glyphicon-thumbs-up"></span>
                     </button>
                 </span>
+                <span class="add-to-box" *ngIf="!packedItemQuantityValidated">
+                    <button class="btn btn-default btn-lg" type="button" (click)="showPackingDetail(idx)">
+                        Ver
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
             </div>
         </div>
-        <div class="col-xs-4">
+        <div class="col-xs-6" *ngIf="packedItemQuantityValidated">
             <div class="packing-box new-box" (click)="addBox()" [class.new-box-disabled]="!addNewBoxEnabled">
                 <span>Nueva caja</span>
             </div>
         </div>
 
         <div class="col-xs-12">
-            <span class="input-group-btn">
-                <button class="btn btn-danger btn-lg" type="button" (click)="confirmItemQuantity()" [disabled]="packedItemQuantity > nextItemQuantity">
-                    Finalizar
-                    <span class="glyphicon glyphicon-save"></span>
-                </button>
-            </span>
+            <button class="btn btn-danger btn-lg" type="button" data-toggle="modal" data-target="#close_confirmation">
+                Finalizar
+                <span class="glyphicon glyphicon-save"></span>
+            </button>
         </div>
     </div>
 </div>
