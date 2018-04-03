@@ -13,13 +13,13 @@ export class SalesOrdersService {
 
   public listOpenOrders(showApprovedOnly) {
     let igbHeaders = new IGBHeaders().loadHeaders();
-    return this._http.get(this.url + 'picking/list/orders?showAll=' + !showApprovedOnly, { headers: igbHeaders })
+    return this._http.get(this.url + 'salesorder/list/orders?showAll=' + !showApprovedOnly, { headers: igbHeaders })
       .map(res => res.json());
   }
 
   public assignOrders(assignment) {
     let igbHeaders = new IGBHeaders().loadHeaders();
-    return this._http.post(this.url + 'picking/assign', JSON.stringify(assignment), { headers: igbHeaders })
+    return this._http.post(this.url + 'salesorder/assign', JSON.stringify(assignment), { headers: igbHeaders })
       .map(res => res.json());
   }
 
@@ -29,13 +29,25 @@ export class SalesOrdersService {
     if (orderNumber) {
       orderNumberFilter = '?orderNumber=' + orderNumber;
     }
-    return this._http.get(this.url + 'picking/pick/' + username + orderNumberFilter, { headers: igbHeaders })
+    return this._http.get(this.url + 'salesorder/pick/' + username + orderNumberFilter, { headers: igbHeaders })
       .map(res => res.json());
   }
 
   public listUserOrders(username) {
     let igbHeaders = new IGBHeaders().loadHeaders();
-    return this._http.get(this.url + 'picking/orders/' + username, { headers: igbHeaders })
+    return this._http.get(this.url + 'salesorder/orders/' + username, { headers: igbHeaders })
+      .map(res => res.json());
+  }
+
+  public listAvailableStock(orderNumber) {
+    let igbHeaders = new IGBHeaders().loadHeaders();
+    return this._http.get(this.url + 'salesorder/stock/' + orderNumber, { headers: igbHeaders })
+      .map(res => res.json());
+  }
+
+  public enableAssignation(orderNumber) {
+    let igbHeaders = new IGBHeaders().loadHeaders();
+    return this._http.put(this.url + 'salesorder/enable', orderNumber, { headers: igbHeaders })
       .map(res => res.json());
   }
 }

@@ -138,6 +138,8 @@ export class PickingComponent implements OnInit {
                     }
                 } else if (result.code == -2) {
                     this.errorMessage = 'Ocurrió un error al consultar el siguiente ítem para picking. ' + result.content;
+                } else if (result.code == -3) {
+                    this.errorMessage = 'No hay saldo disponible para picking. La orden pasa a estado <span class="warning">warning</span>. ' + result.content;
                 }
             }, error => {
                 console.error(error);
@@ -282,5 +284,31 @@ export class PickingComponent implements OnInit {
             return this.nextBinStock;
         }
         return this.nextItemQuantity;
+    }
+
+    public getBinDetail(fieldName: string) {
+        if (!this.nextBinLocationCode) {
+            return '';
+        }
+        switch (fieldName) {
+            case 'whs':
+                return this.nextBinLocationCode.substring(0, 2);
+            case 'area':
+                return this.nextBinLocationCode.substring(2, 4);
+            case 'calle':
+                return this.nextBinLocationCode.substring(4, 6);
+            case 'mod':
+                return this.nextBinLocationCode.substring(6, 8);
+            case 'nivel':
+                return this.nextBinLocationCode.substring(8, 10);
+            case 'fila':
+                return this.nextBinLocationCode.substring(10, 12);
+            case 'col':
+                return this.nextBinLocationCode.substring(12, 14);
+            case 'prof':
+                return this.nextBinLocationCode.substring(14, 16);
+            default:
+                return '';
+        }
     }
 }

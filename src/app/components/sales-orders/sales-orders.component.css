@@ -96,6 +96,16 @@
   color: #037040;
 }
 
-.order.unauthorized .assigned-employee, .order.unauthorized .warn {
+.order.warning .assigned-employee, .order.warning .glyphicon-warning-sign{
   color: #f0ad4e;
+}
+
+.order.warning {
+  border: 1px solid #f0ad4e;
+  color: #e0e0e0;
+}
+
+.order.warning:hover {
+  cursor: pointer;
+  box-shadow: 2px 2px 4px rgb(179, 129, 59);
 }

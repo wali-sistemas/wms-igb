@@ -6,15 +6,21 @@ import { PackingRecord } from '../../models/packing-record';
 
 import { UserService } from '../../services/user.service';
 import { PackingService } from '../../services/packing.service';
+import { InvoiceService } from '../../services/invoice.service';
 
 declare var $: any;
 
 @Component({
     templateUrl: './packing.component.html',
     styleUrls: ['./packing.component.css'],
-    providers: [UserService, PackingService]
+    providers: [UserService, PackingService, InvoiceService]
 })
 export class PackingComponent implements OnInit {
+
+    public processDeliveryStatus: string = 'none';
+    public process2Status: string = 'none';
+    public process3Status: string = 'none';
+    public process4Status: string = 'none';
 
     public deliveryErrorMessage: string = '';
     public itemCodeErrorMessage: string = '';
@@ -37,6 +43,8 @@ export class PackingComponent implements OnInit {
     public packedItemQuantityValidated = false;
     public addNewBoxEnabled: boolean = false;
     public orderItemsList: Array<any>;
+    public customersListDisabled: boolean = false;
+    public packingOrdersComplete: boolean = false;
     private identity;
     private idPackingList: number;
     private idPackingOrder: number;
@@ -44,6 +52,7 @@ export class PackingComponent implements OnInit {
     constructor(
         private _userService: UserService,
         private _packingService: PackingService,
+        private _invoiceService: InvoiceService,
         private _router: Router) {
         this.start();
     }
@@ -69,6 +78,7 @@ export class PackingComponent implements OnInit {
         });
         this.loadCustomers();
         this.listOpenJobs();
+        this.isPackingComplete();
     }
 
     private listOpenJobs() {
@@ -77,6 +87,7 @@ export class PackingComponent implements OnInit {
                 console.log('registros de packing abiertos: ', response);
                 if (response.content.length > 0) {
                     console.log('procesando registros...');
+                    this.customersListDisabled = true;
                     let firstRecord = response.content[0];
                     this.selectedOrder = firstRecord[2];
                     this.selectedCustomer = firstRecord[3];
@@ -253,6 +264,7 @@ export class PackingComponent implements OnInit {
                         this.boxes[this.addToBox].addItem(this.itemCode, this.itemQuantity);
 
                         this.reset();
+                        this.isPackingComplete();
                     }
                 }, error => {
                     $('#modal_transfer_process').modal('hide');
@@ -270,6 +282,15 @@ export class PackingComponent implements OnInit {
         this.packedItemCodeValidated = false;
         this.packedItemQuantityValidated = false;
         this.canBoxesBeAdded();
+    }
+
+    private isPackingComplete() {
+        this._packingService.arePackingOrdersComplete().subscribe(
+            result => {
+                console.log(result);
+                this.packingOrdersComplete = result.content;
+            }, error => { console.error(error); }
+        );
     }
 
     public setIdPackingOrder() {
@@ -309,7 +330,10 @@ export class PackingComponent implements OnInit {
 
     public createDelivery() {
         $('#close_confirmation').modal('hide');
-        $('#modal_transfer_process').modal({
+        this.processDeliveryStatus = 'inprogress';
+        this.process2Status = 'none';
+        this.process3Status = 'none';
+        $('#process_status').modal({
             backdrop: 'static',
             keyboard: false,
             show: true
@@ -318,28 +342,65 @@ export class PackingComponent implements OnInit {
         console.log('creando documento sap para idPackingOrder=' + this.idPackingOrder);
         this._packingService.createDelivery(this.idPackingOrder).subscribe(
             result => {
-                $('#modal_transfer_process').modal('hide');
                 console.log(result);
                 if (result.code == 0) {
-                    this._packingService.closePackingOrder(this.idPackingOrder, this.identity.username).subscribe(
-                        response => {
-                            this.reset();
-                            this.start();
-                            this.ngOnInit();
-                        }, error => { console.error(error); }
-                    );
+                    this.processDeliveryStatus = 'done';
+                    this.closePackingOrder(this.idPackingOrder, this.identity.username);
+                    this.createInvoice(result.content);
                 } else {
+                    this.processDeliveryStatus = 'error';
                     this.deliveryErrorMessage = 'Ocurrió un error al crear el documento de entrega en SAP. ';
                     $('#delivery_error').modal('show');
                 }
             },
             error => {
-                $('#modal_transfer_process').modal('hide');
+                this.processDeliveryStatus = 'error';
                 this.deliveryErrorMessage = 'Ocurrió un error al crear el documento de entrega en SAP. ';
                 $('#delivery_error').modal('show');
                 console.error(error);
             }
         );
+    }
+
+    private closePackingOrder(idPackingOrder, username) {
+        this.process2Status = 'inprogress';
+        this._packingService.closePackingOrder(idPackingOrder, username).subscribe(
+            response => {
+                if (response.content) {
+                    //Orden completa. Cerrar orden de venta
+                    this.closeSalesOrder(this.idPackingOrder);
+                }
+                this.process2Status = 'done';
+                this.reset();
+                this.start();
+                this.ngOnInit();
+            }, error => {
+                this.process2Status = 'error';
+                console.error(error);
+            }
+        );
+    }
+
+    private createInvoice(docEntryDelivery) {
+        this.process3Status = 'inprogress';
+        this._invoiceService.createInvoice(docEntryDelivery).subscribe(
+            response => {
+                console.log(response);
+                if (response.code == 0) {
+                    this.process3Status = 'done';
+                } else {
+                    this.process3Status = 'error';
+                }
+            },
+            error => {
+                this.process3Status = 'error';
+                console.error(error);
+            }
+        );
+    }
+
+    private closeSalesOrder(idPackingOrder) {
+        this.process4Status = 'inprogress';
     }
 
 }
