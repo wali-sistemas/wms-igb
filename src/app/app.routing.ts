@@ -9,6 +9,7 @@ import { SalesOrdersComponent } from './components/sales-orders/sales-orders.com
 import { PickingComponent } from './components/picking/picking.component';
 import { PackingComponent } from './components/packing/packing.component';
 import { InventoryComponent } from './components/inventory/inventory.component';
+import { ResupplyComponent } from './components/resupply/resupply.component';
 
 const appRoutes: Routes = [
     { path: '', component: LoginComponent },
@@ -18,7 +19,8 @@ const appRoutes: Routes = [
     { path: 'sales-orders', component: SalesOrdersComponent },
     { path: 'picking', component: PickingComponent },
     { path: 'packing', component: PackingComponent },
-    { path: 'inventory', component: InventoryComponent }
+    { path: 'inventory', component: InventoryComponent },
+    { path: 'resupply', component: ResupplyComponent }
 ];
 
 export const appRoutingProviders: any[] = [];

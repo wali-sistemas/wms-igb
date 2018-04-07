@@ -1,0 +1,131 @@
+<igb-navbar></igb-navbar>
+
+<div class="container content">
+    <div id="modal_process" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0"
+                            aria-valuemax="100" style="width: 100%">
+                            <span class="sr-only">Estamos procesando la solicitud</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form #resupplyForm="ngForm" (ngSubmit)="stockTransfer()">
+        <div id="modalUbicacion" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-xs-12 margin-bottom-10">
+                                <label>Ubicación</label>
+                                <input type="text" class="form-control" [(ngModel)]="locationConfirm" autocomplete="off" name="locationConfirm" autocorrect="off"
+                                    autocapitalize="none">
+                            </div>
+                            <div class="col-xs-12 margin-bottom-10">
+                                <label>Cantidad ({{quantity}})</label>
+                                <input type="text" class="form-control" [(ngModel)]="quantityConfirm" autocomplete="off" name="quantityConfirm" autocorrect="off"
+                                    autocapitalize="none">
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="alert alert-danger" role="alert" *ngIf="message != null && message.length > 0">
+                                        <p>{{message}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Aplicar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="row" *ngIf="pass > 1">
+        <div class="col-xs-12 col-md-4 col-md-offset-4 margin-bottom-10">
+            <button type="button" class="btn btn-default" (click)="goToPass(null, null, true)">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Atras
+            </button>
+        </div>
+    </div>
+    <div class="row" *ngIf="message != null && message.length > 0">
+        <div class="col-xs-12 margin-bottom-10">
+            <div class="alert alert-danger" role="alert">
+                <p>{{message}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="row" *ngIf="pass === 1">
+        <div class="col-xs-12 col-md-4 col-md-offset-4">
+            <table class="table table-bordered table-striped">
+                <tr>
+                    <th>#</th>
+                    <th>Ubicación</th>
+                    <th></th>
+                </tr>
+                <tr *ngFor="let location of locationsResupply; let i = index">
+                    <td>{{i + 1}}</td>
+                    <td>{{location[0]}}</td>
+                    <td class="pointer-cursor" (click)="goToPass(location, null, false)">
+                        <span class="glyphicon glyphicon-chevron-right"></span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row" *ngIf="pass === 2">
+        <div class="col-xs-12 col-md-4 col-md-offset-4">
+            <table class="table table-bordered table-striped">
+                <tr>
+                    <th>#</th>
+                    <th>Referencia</th>
+                    <th></th>
+                </tr>
+                <tr *ngFor="let item of items; let i = index">
+                    <td>{{i + 1}}</td>
+                    <td>{{item[0]}}</td>
+                    <td class="pointer-cursor" (click)="goToPass(null, item, false)">
+                        <span class="glyphicon glyphicon-chevron-right"></span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row" *ngIf="pass === 3">
+        <div class="col-xs-12 col-md-4 col-md-offset-4">
+            <table class="table table-bordered table-striped">
+                <tr>
+                    <th>#</th>
+                    <th>Ubicación</th>
+                    <th></th>
+                </tr>
+                <tr *ngFor="let storage of locationsStorage; let i = index">
+                    <td>{{i + 1}}</td>
+                    <td>{{storage[0]}}
+                        <span class="badge">{{storage[1]}}</span>
+                    </td>
+                    <td class="pointer-cursor" (click)="useLocation(storage)">
+                        <span class="glyphicon glyphicon-ok"></span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="alert alert-danger" role="alert" *ngIf="message != null && message.length > 0">
+                <p>{{message}}</p>
+            </div>
+        </div>
+    </div>
+</div>

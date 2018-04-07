@@ -14,6 +14,7 @@ import { SalesOrderComponent } from './components/sales-orders/sales-order.compo
 import { PickingComponent } from './components/picking/picking.component';
 import { PackingComponent } from './components/packing/packing.component';
 import { InventoryComponent } from './components/inventory/inventory.component';
+import { ResupplyComponent } from './components/resupply/resupply.component';
 
 import { routing, appRoutingProviders } from './app.routing';
 
@@ -29,7 +30,8 @@ import { routing, appRoutingProviders } from './app.routing';
     SalesOrderComponent,
     PickingComponent,
     PackingComponent,
-    InventoryComponent
+    InventoryComponent,
+    ResupplyComponent
   ],
   imports: [
     BrowserModule,

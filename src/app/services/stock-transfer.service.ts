@@ -28,4 +28,10 @@ export class StockTransferService {
       .map(res => res.json());
   }
 
+  public transferResupply(itemTransfer) {
+    let igbHeaders = new IGBHeaders().loadHeaders();
+
+    return this._http.post(this.url + 'stocktransfer/resupplylocation', itemTransfer, { headers: igbHeaders })
+      .map(res => res.json());
+  }
 }

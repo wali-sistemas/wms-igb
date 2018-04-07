@@ -1,0 +1,19 @@
+th, td {
+    text-align: center;
+}
+
+.content {
+    margin-top: 60px;
+}
+
+.pointer-cursor {
+    cursor: pointer;
+}
+
+.margin-bottom-10 {
+    margin-bottom: 10px;
+}
+
+.alert {
+    margin-bottom: 0px;
+}
