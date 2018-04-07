@@ -3,25 +3,29 @@ import { Router, ActivatedRoute, Params } from '@angular/router';
 
 import { PackingBox } from './../../models/packing-box';
 import { PackingRecord } from '../../models/packing-record';
+import { Printer } from '../../models/printer';
 
 import { UserService } from '../../services/user.service';
 import { PackingService } from '../../services/packing.service';
 import { InvoiceService } from '../../services/invoice.service';
+import { PrintService } from '../../services/print.service';
 
 declare var $: any;
 
 @Component({
     templateUrl: './packing.component.html',
     styleUrls: ['./packing.component.css'],
-    providers: [UserService, PackingService, InvoiceService]
+    providers: [UserService, PackingService, InvoiceService, PrintService]
 })
 export class PackingComponent implements OnInit {
 
     public processDeliveryStatus: string = 'none';
-    public process2Status: string = 'none';
-    public process3Status: string = 'none';
+    public processClosePackingOrderStatus: string = 'none';
+    public processPrintLabelsStatus: string = 'none';
+    public processInvoiceStatus: string = 'none';
     public process4Status: string = 'none';
 
+    public selectedPrinter: string = '';
     public deliveryErrorMessage: string = '';
     public itemCodeErrorMessage: string = '';
     public quantityErrorMessage: string = '';
@@ -43,6 +47,7 @@ export class PackingComponent implements OnInit {
     public packedItemQuantityValidated = false;
     public addNewBoxEnabled: boolean = false;
     public orderItemsList: Array<any>;
+    public printersList: Array<Printer>;
     public customersListDisabled: boolean = false;
     public packingOrdersComplete: boolean = false;
     private identity;
@@ -53,6 +58,7 @@ export class PackingComponent implements OnInit {
         private _userService: UserService,
         private _packingService: PackingService,
         private _invoiceService: InvoiceService,
+        private _printService: PrintService,
         private _router: Router) {
         this.start();
     }
@@ -326,13 +332,12 @@ export class PackingComponent implements OnInit {
         $('#packing_detail').modal('show');
     }
 
-
-
     public createDelivery() {
-        $('#close_confirmation').modal('hide');
+        $('#printer_selection').modal('hide');
         this.processDeliveryStatus = 'inprogress';
-        this.process2Status = 'none';
-        this.process3Status = 'none';
+        this.processClosePackingOrderStatus = 'none';
+        this.processPrintLabelsStatus = 'none';
+        this.processInvoiceStatus = 'none';
         $('#process_status').modal({
             backdrop: 'static',
             keyboard: false,
@@ -350,50 +355,83 @@ export class PackingComponent implements OnInit {
                 } else {
                     this.processDeliveryStatus = 'error';
                     this.deliveryErrorMessage = 'Ocurrió un error al crear el documento de entrega en SAP. ';
-                    $('#delivery_error').modal('show');
                 }
             },
             error => {
                 this.processDeliveryStatus = 'error';
                 this.deliveryErrorMessage = 'Ocurrió un error al crear el documento de entrega en SAP. ';
-                $('#delivery_error').modal('show');
                 console.error(error);
             }
         );
     }
 
+    public loadPrinters() {
+        console.log('listando impresoras habilitadas...');
+        $('#close_confirmation').modal('hide');
+        this._printService.listEnabledPrinters().subscribe(
+            response => {
+                console.log(response);
+                if (response.code == 0) {
+                    this.printersList = response.content;
+                    $('#printer_selection').modal('show');
+                }
+            }, error => { console.error(error); }
+        );
+    }
+
+    private printLabels() {
+        console.log('imprimiendo etiquetas de packingList ' + this.idPackingList + ' en impresora ' + this.selectedPrinter);
+        this._printService.printLabels(this.idPackingList, this.selectedPrinter).subscribe(
+            result => {
+                console.log(result);
+                if (result.code == 0) {
+                    if (result.content) {
+                        //todas las etiquetas se imprimieron
+                        this.processPrintLabelsStatus = 'done';
+                    } else {
+                        //no se imprimieron correctamente todas las etiquetas
+                        this.processPrintLabelsStatus = 'warn';
+                    }
+                }
+            }, error => {
+                console.error(error);
+                this.processPrintLabelsStatus = 'error';
+            }
+        );
+    }
+
     private closePackingOrder(idPackingOrder, username) {
-        this.process2Status = 'inprogress';
+        this.processClosePackingOrderStatus = 'inprogress';
         this._packingService.closePackingOrder(idPackingOrder, username).subscribe(
             response => {
                 if (response.content) {
                     //Orden completa. Cerrar orden de venta
                     this.closeSalesOrder(this.idPackingOrder);
                 }
-                this.process2Status = 'done';
+                this.processClosePackingOrderStatus = 'done';
                 this.reset();
                 this.start();
                 this.ngOnInit();
             }, error => {
-                this.process2Status = 'error';
+                this.processClosePackingOrderStatus = 'error';
                 console.error(error);
             }
         );
     }
 
     private createInvoice(docEntryDelivery) {
-        this.process3Status = 'inprogress';
+        this.processInvoiceStatus = 'inprogress';
         this._invoiceService.createInvoice(docEntryDelivery).subscribe(
             response => {
                 console.log(response);
                 if (response.code == 0) {
-                    this.process3Status = 'done';
+                    this.processInvoiceStatus = 'done';
                 } else {
-                    this.process3Status = 'error';
+                    this.processInvoiceStatus = 'error';
                 }
             },
             error => {
-                this.process3Status = 'error';
+                this.processInvoiceStatus = 'error';
                 console.error(error);
             }
         );
