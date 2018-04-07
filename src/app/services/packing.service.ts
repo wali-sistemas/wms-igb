@@ -55,7 +55,7 @@ export class PackingService {
 
     public listOrderItems(idPackingOrder: number) {
         let igbHeaders = new IGBHeaders().loadHeaders();
-        return this._http.get(this.url + 'packing/' + idPackingOrder, { headers: igbHeaders })
+        return this._http.get(this.url + 'packing/items/' + idPackingOrder, { headers: igbHeaders })
             .map(res => res.json());
     }
 
