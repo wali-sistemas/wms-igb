@@ -18,7 +18,7 @@ export class StockTransferService {
 
   public finishInventory(idInventory) {
     let igbHeaders = new IGBHeaders().loadHeaders();
-    return this._http.get(this.url + 'stocktransfer/finishInventory/' + idInventory, { headers: igbHeaders })
+    return this._http.get(this.url + 'stocktransfer/finish-inventory/' + idInventory, { headers: igbHeaders })
       .map(res => res.json());
   }
 
@@ -31,7 +31,7 @@ export class StockTransferService {
   public transferResupply(itemTransfer) {
     let igbHeaders = new IGBHeaders().loadHeaders();
 
-    return this._http.post(this.url + 'stocktransfer/resupplylocation', itemTransfer, { headers: igbHeaders })
+    return this._http.post(this.url + 'stocktransfer/resupply-location', itemTransfer, { headers: igbHeaders })
       .map(res => res.json());
   }
 }

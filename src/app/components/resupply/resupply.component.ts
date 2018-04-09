@@ -12,14 +12,12 @@ declare var $: any;
 })
 export class ResupplyComponent implements OnInit {
     public pass: number;
-    public quantityNecesary: number;
-    public quantity: number;
     public quantityConfirm: number;
-    public location: string;
-    public locationStorage: string;
     public locationConfirm: string;
     public message: string;
-    public item: string;
+    public locationTo: any;
+    public locationFrom: any;
+    public item: any;
     public locationsResupply: Array<any>;
     public items: Array<any>;
     public locationsStorage: Array<any>;
@@ -47,11 +45,11 @@ export class ResupplyComponent implements OnInit {
         );
     }
 
-    private listItems(location: string) {
+    private listItems() {
         this.message = null;
         this.items = new Array<any>();
         this.locationsResupply = new Array<any>();
-        this._resupplyService.listItemsLocation(location).subscribe(
+        this._resupplyService.listItemsLocation(this.locationTo[1]).subscribe(
             response => {
                 this.items = response.content;
 
@@ -65,15 +63,15 @@ export class ResupplyComponent implements OnInit {
         );
     }
 
-    private listLocationsStorage(itemCode: string) {
+    private listLocationsStorage() {
         this.message = "";
         this.items = new Array<any>();
-        this._resupplyService.listUbicationsStorage(itemCode).subscribe(
+        this._resupplyService.listUbicationsStorage(this.item[0]).subscribe(
             response => {
                 this.locationsStorage = response.content;
                 if (this.locationsStorage === null || this.locationsStorage.length <= 0) {
                     this.pass--;
-                    this.listItems(this.location);
+                    this.listItems();
                     this.message = "No se encontraron ubicación para re-abastecer el ítem";
                 }
             }, error => {
@@ -87,36 +85,32 @@ export class ResupplyComponent implements OnInit {
         if (!back && this.pass < 3) {
             this.pass++;
             if (this.pass === 2) {
-                this.location = location[0];
-                this.quantityNecesary = location[1];
-                this.listItems(this.location);
+                this.locationTo = location;
+                this.listItems();
             } else if (this.pass === 3) {
-                this.item = item[0];
-                this.quantityNecesary = item[1];
-                this.listLocationsStorage(item[0]);
+                this.item = item;
+                this.listLocationsStorage();
             }
         } else if (back && this.pass > 1) {
             this.pass--;
             if (this.pass === 1) {
                 this.listLocationsResupply();
             } else if (this.pass === 2) {
-                this.listItems(this.location);
+                this.listItems();
             }
         }
     }
 
     public useLocation(storage) {
         this.message = null;
-        this.quantity = storage[1];
-        this.locationStorage = storage[0];
-        console.log(storage[0]);
+        this.locationFrom = storage;
         $('#modalUbicacion').modal('show');
     }
 
     public stockTransfer() {
         this.message = null;
         console.log(this.locationConfirm);
-        if (this.locationConfirm === null || this.locationStorage !== this.locationConfirm) {
+        if (this.locationConfirm === null || this.locationFrom[0] !== this.locationConfirm) {
             this.message = "Digite la ubicación de la que se desea sacar los ítems";
             console.log("Digite la ubicación de la que se desea sacar los ítems");
             return;
@@ -126,7 +120,7 @@ export class ResupplyComponent implements OnInit {
             this.message = "Digite la cantidad que desea sacar de la ubicación";
             console.log("Digite la cantidad que desea sacar de la ubicación");
             return;
-        } else if (this.quantityConfirm > this.quantity) {
+        } else if (this.quantityConfirm > this.locationFrom[2]) {
             this.message = "La cantidad ingresada supera la disponible en la ubicación";
             console.log("La cantidad ingresada supera la disponible en la ubicación");
             return;
@@ -136,8 +130,8 @@ export class ResupplyComponent implements OnInit {
         $('#modal_process').modal('show');
 
         let itemTransfer = {
-            binCodeFrom: this.locationStorage,
-            binCodeTo: this.location,
+            binAbsFrom: this.locationFrom[1],
+            binAbsTo: this.locationTo[1],
             quantity: this.quantityConfirm,
             itemCode: this.item,
             warehouseCode: '01' //TODO: parametrizar whscode
@@ -148,19 +142,19 @@ export class ResupplyComponent implements OnInit {
         this._stockTransferService.transferResupply(itemTransfer).subscribe(
             response => {
                 if (response.code === 0) {
-                    this.quantityNecesary = this.quantityNecesary - this.quantityConfirm;
-                    this.quantity = this.quantity - this.quantityConfirm;
+                    this.item[1] = this.item[1] - this.quantityConfirm;
+                    this.locationFrom[2] = this.locationFrom[2] - this.quantityConfirm;
 
-                    if (this.quantityNecesary > 0 && this.locationsStorage.length > 1) {
-                        this.listLocationsStorage(this.item);
-                    } else if (this.quantityNecesary <= 0) {
+                    if (this.item[1] > 0 && this.locationsStorage.length > 1) {
+                        this.listLocationsStorage();
+                    } else if (this.item[1] <= 0) {
                         this.pass = 1;
                         this.listLocationsResupply();
-                    } else if (this.locationsStorage.length <= 0 && this.quantity <= 0) {
+                    } else if (this.locationsStorage.length <= 0 && this.locationFrom[2] <= 0) {
                         this.pass--;
-                        this.listItems(this.location);
+                        this.listItems();
                     } else {
-                        this.listLocationsStorage(this.item);
+                        this.listLocationsStorage();
                     }
                     this.locationConfirm = null;
                     this.quantityConfirm = null;
