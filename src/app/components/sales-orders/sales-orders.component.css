@@ -74,8 +74,24 @@
   border-top: 1px solid #ddd;
   position: absolute;
   top: 60px;
-  width: 80%;
+  /*width: 80%;*/
   left: 20px;
+}
+
+.order .order-comments-label {
+  position: absolute;
+  top: 40px;
+  left: 120px;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+.order .order-comments {
+  border-top: 1px solid #ddd;
+  position: absolute;
+  top: 60px;
+  left: 120px;
+  width: 70%;
 }
 
 .order .order-cardname::before {

@@ -311,4 +311,43 @@ export class PickingComponent implements OnInit {
                 return '';
         }
     }
+
+    public skipItem() {
+        console.log('saltando item, ' + this.nextItemQuantity);
+        this.pickedItemQuantityValidated = true;
+        let itemTransfer = {
+            binAbsFrom: this.nextBinAbs,
+            binAbsTo: this.selectedCart,
+            quantity: this.nextItemQuantity,
+            expectedQuantity: this.getQuantityToPick(),
+            itemCode: this.nextItemCode,
+            orderNumber: (this.selectedOrder == null || this.selectedOrder.length == 0) ? this.nextOrderNumber : this.selectedOrder,
+            username: this.identity.username,
+            temporary: true,
+            warehouseCode: '01' //TODO: parametrizar whscode
+        }
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+        console.log('itemTransfer: ', itemTransfer);
+        this.errorMessageBinTransfer = '';
+        this._stockTransferService.transferSingleItem(itemTransfer).subscribe(
+            response => {
+                console.info(response);
+                if (response.code === 0) {
+                    //Clears bin location, item code and quantity fields; then loads cart inventory and next item
+                    this.resetForm();
+                } else {
+                    this.errorMessageBinTransfer = response.content;
+                }
+                $('#modal_transfer_process').modal('hide');
+            }, error => {
+                $('#modal_transfer_process').modal('hide');
+                console.error(error);
+                this.errorMessageBinTransfer = JSON.parse(error._body).content;
+            }
+        );
+    }
 }

@@ -45,33 +45,41 @@
                 <div class="row">
                     <div class="col-xs-12">
                         <img *ngIf="processDeliveryStatus === 'inprogress'" height="22" src="/assets/images/loading.gif">
+                        <span *ngIf="processDeliveryStatus === 'done'" class="glyphicon glyphicon-ok"></span>
                         <span *ngIf="processDeliveryStatus === 'error'" class="glyphicon glyphicon-exclamation-sign"></span>
                         <span class="status-text">Creación entrega</span>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-xs-12">
-                        <span *ngIf="processClosePackingOrderStatus === 'none'" class="glyphicon glyphicon-minus-sign"></span>
-                        <img *ngIf="processClosePackingOrderStatus === 'inprogress'" height="22" src="/assets/images/loading.gif">
-                        <span class="status-text">Finalización packing</span>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-12">
                         <span *ngIf="processInvoiceStatus === 'none'" class="glyphicon glyphicon-minus-sign"></span>
                         <img *ngIf="processInvoiceStatus === 'inprogress'" height="22" src="/assets/images/loading.gif">
+                        <span *ngIf="processInvoiceStatus === 'done'" class="glyphicon glyphicon-ok"></span>
+                        <span *ngIf="processInvoiceStatus === 'error'" class="glyphicon glyphicon-exclamation-sign"></span>
                         <span class="status-text">Creación factura</span>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-xs-12">
+                        <span *ngIf="processClosePackingOrderStatus === 'none'" class="glyphicon glyphicon-minus-sign"></span>
+                        <img *ngIf="processClosePackingOrderStatus === 'inprogress'" height="22" src="/assets/images/loading.gif">
+                        <span *ngIf="processClosePackingOrderStatus === 'done'" class="glyphicon glyphicon-ok"></span>
+                        <span *ngIf="processClosePackingOrderStatus === 'error'" class="glyphicon glyphicon-exclamation-sign"></span>
+                        <span class="status-text">Finalización packing</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12">
                         <span *ngIf="processPrintLabelsStatus === 'none'" class="glyphicon glyphicon-minus-sign"></span>
                         <img *ngIf="processPrintLabelsStatus === 'inprogress'" height="22" src="/assets/images/loading.gif">
                         <span *ngIf="processPrintLabelsStatus === 'done'" class="glyphicon glyphicon-ok"></span>
-                        <span *ngIf="processPrintLabelsStatus === 'warn'" class="glyphicon glyphicon-warning-sign "></span>
+                        <span *ngIf="processPrintLabelsStatus === 'warn'" class="glyphicon glyphicon-warning-sign"></span>
+                        <span *ngIf="processPrintLabelsStatus === 'error'" class="glyphicon glyphicon-exclamation-sign"></span>
                         <span class="status-text">Impresión de etiquetas</span>
                     </div>
                 </div>
+                <!--
                 <div class="row">
                     <div class="col-xs-12">
                         <img *ngIf="process4Status === 'inprogress'" height="22" src="/assets/images/loading.gif">
@@ -79,6 +87,7 @@
                         <span class="status-text">Cierre orden de venta</span>
                     </div>
                 </div>
+                -->
                 <div class="row" *ngIf="deliveryErrorMessage">
                     <div class="col-xs-12">
                         <div class="alert alert-danger">

@@ -34,9 +34,9 @@
         </div>
         <div *ngIf="!loadingAvailableStock">
           <p>La orden
-            <b>{{allStockAvailable ? '' : 'NO'}}</b> tiene inventario disponible en ubicaciones de picking para todas sus referencias. 
+            <b>{{allStockAvailable ? '' : 'NO'}}</b> tiene inventario disponible en ubicaciones de picking para todas sus referencias.
             <b>{{allStockAvailable ? 'Haz clic en habilitar para cambiar el estado y terminar el proceso de picking.' : ''}}</b>
-            </p>
+          </p>
           <table class="table">
             <tr>
               <th>Referencia</th>
@@ -97,8 +97,11 @@
         <div class="order-items">
           <span class="badge">{{order.items}}</span>
         </div>
+
         <div class="order-docdate">{{order.docDate}}</div>
         <div class="order-cardcode">{{order.cardCode}}</div>
+        <div class="order-comments-label">Comentarios: </div>
+        <div class="order-comments">{{order.comments}}</div>
         <div class="order-cardname">{{order.cardName}}</div>
       </div>
     </div>

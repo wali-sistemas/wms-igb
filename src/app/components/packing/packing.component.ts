@@ -352,9 +352,10 @@ export class PackingComponent implements OnInit {
                     this.processDeliveryStatus = 'done';
                     this.closePackingOrder(this.idPackingOrder, this.identity.username);
                     this.createInvoice(result.content);
+                    this.printLabels();
                 } else {
                     this.processDeliveryStatus = 'error';
-                    this.deliveryErrorMessage = 'Ocurrió un error al crear el documento de entrega en SAP. ';
+                    this.deliveryErrorMessage = result.content;
                 }
             },
             error => {
@@ -381,6 +382,7 @@ export class PackingComponent implements OnInit {
 
     private printLabels() {
         console.log('imprimiendo etiquetas de packingList ' + this.idPackingList + ' en impresora ' + this.selectedPrinter);
+        this.processPrintLabelsStatus = 'inprogress';
         this._printService.printLabels(this.idPackingList, this.selectedPrinter).subscribe(
             result => {
                 console.log(result);
@@ -392,10 +394,14 @@ export class PackingComponent implements OnInit {
                         //no se imprimieron correctamente todas las etiquetas
                         this.processPrintLabelsStatus = 'warn';
                     }
+                } else {
+                    this.processPrintLabelsStatus = 'error';
+                    this.deliveryErrorMessage += result.content;
                 }
             }, error => {
                 console.error(error);
                 this.processPrintLabelsStatus = 'error';
+                this.deliveryErrorMessage += 'Ocurrió un error al imprimir las etiquetas de empaque. Deben imprimirse manualmente';
             }
         );
     }
