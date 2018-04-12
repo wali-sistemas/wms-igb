@@ -119,8 +119,14 @@ export class PickingComponent implements OnInit {
     }
 
     private loadNextItem() {
+        $('#modal_loading_next').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
         this._pickingService.getNextPickingItem(this.identity.username, this.selectedOrder).subscribe(
             result => {
+                $('#modal_loading_next').modal('hide');
                 console.log(result);
                 if (result.code == 0) {
                     this.nextItemCode = result.content.itemCode;
@@ -142,6 +148,7 @@ export class PickingComponent implements OnInit {
                     this.errorMessage = 'No hay saldo disponible para picking. La orden pasa a estado <span class="warning">warning</span>. ' + result.content;
                 }
             }, error => {
+                $('#modal_loading_next').modal('hide');
                 console.error(error);
                 this.errorMessage = 'Ocurrió un error al consultar el siguiente ítem para picking. ';
             }
