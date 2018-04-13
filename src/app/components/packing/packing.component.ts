@@ -447,4 +447,11 @@ export class PackingComponent implements OnInit {
         this.process4Status = 'inprogress';
     }
 
+    public inProgress() {
+        return this.processClosePackingOrderStatus === 'inprogress'
+            || this.processDeliveryStatus === 'inprogress'
+            || this.processInvoiceStatus === 'inprogress'
+            || this.processPrintLabelsStatus === 'inprogress';
+    }
+
 }

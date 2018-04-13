@@ -144,7 +144,13 @@
     </div>
 </div>
 
-<div class="container content">
+<div class="container content" *ngIf="errorMessagePickingCarts">
+    <div class="alert alert-danger" role="alert" *ngIf="errorMessagePickingCarts">
+        {{errorMessagePickingCarts}}
+    </div>
+</div>
+
+<div class="container content" *ngIf="!errorMessagePickingCarts">
     <h3>Picking
         <span *ngIf="pickingMethod === 'multiple' && assignedOrders.length > 0"> ({{assignedOrders.length}} órdenes)</span>
         <span class="grayed-order" *ngIf="pickingMethod === 'multiple' && assignedOrders.length > 0"> - {{nextOrderNumber}}</span>

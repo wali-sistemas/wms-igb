@@ -37,6 +37,7 @@ export class PickingComponent implements OnInit {
     public confirmBinCode: string = '';
     public confirmingItemQuantity = false;
     public errorMessage: string = '';
+    public errorMessagePickingCarts: string = '';
     public errorMessageBinLocation: string = '';
     public errorMessageBinTransfer: string = '';
     public availableCarts: Array<BinLocation>;
@@ -74,20 +75,25 @@ export class PickingComponent implements OnInit {
 
     private loadAvailablePickingCarts() {
         this.availableCarts = new Array<BinLocation>();
+        this.errorMessagePickingCarts = '';
         this._binLocationService.listAvailablePickingCarts().subscribe(
             result => {
                 console.log('picking carts: ', result);
-                for (let i = 0; i < result.length; i++) {
-                    let binLocation = new BinLocation();
-                    binLocation.binAbs = result[i].binAbs;
-                    binLocation.binCode = result[i].binCode;
-                    binLocation.binName = result[i].binName;
-                    binLocation.items = result[i].items;
-                    binLocation.pieces = result[i].pieces;
-                    this.availableCarts.push(binLocation);
-                }
-                if (this.selectedCart > 0) {
-                    this.loadNextItem();
+                if (result.length === 0) {
+                    this.errorMessagePickingCarts = 'No se encontraron carritos de picking habilitados. Se deben configurar ubicaciones tipo CART en SAP, asegurándose de agregar el nombre de cada carrito en el campo descripción';
+                } else {
+                    for (let i = 0; i < result.length; i++) {
+                        let binLocation = new BinLocation();
+                        binLocation.binAbs = result[i].binAbs;
+                        binLocation.binCode = result[i].binCode;
+                        binLocation.binName = result[i].binName;
+                        binLocation.items = result[i].items;
+                        binLocation.pieces = result[i].pieces;
+                        this.availableCarts.push(binLocation);
+                    }
+                    if (this.selectedCart > 0) {
+                        this.loadNextItem();
+                    }
                 }
             }, error => {
                 console.error(error);

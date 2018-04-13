@@ -97,7 +97,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" [disabled]="true">Cerrar</button>
+                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" [disabled]="inProgress()">Cerrar</button>
             </div>
         </div>
     </div>
@@ -142,12 +142,12 @@
                     <tr>
                         <th>Carrito</th>
                         <th>Referencia</th>
-                        <th>Cantidad</th>
+                        <th style="text-align: right;">Cantidad</th>
                     </tr>
                     <tr *ngFor="let row of orderItemsList">
-                        <td>{{row[0]}}</td>
-                        <td>{{row[2]}}</td>
-                        <td>{{row[1]}}</td>
+                        <td>{{row[1]}}<span class="bin-code"> ({{row[0]}})</span></td>
+                        <td>{{row[3]}}</td>
+                        <td style="text-align: right;">{{row[2]}}</td>
                     </tr>
                 </table>
             </div>

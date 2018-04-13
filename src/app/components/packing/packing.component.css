@@ -55,3 +55,8 @@
 .status-text {
     font-size: 1.5em;
 }
+
+.bin-code{
+    font-size: 9px;
+    color:#666;
+}
