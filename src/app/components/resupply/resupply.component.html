@@ -16,10 +16,10 @@
         </div>
     </div>
 
-    <form #resupplyForm="ngForm" (ngSubmit)="stockTransfer()">
+    <form #resupplyForm="ngForm" (ngSubmit)="stockTransfer(false)">
         <div id="modalUbicacion" class="modal fade" tabindex="-1" role="dialog">
             <div class="modal-dialog modal-sm" role="document">
-                <div class="modal-content">
+                <div class="modal-content" *ngIf="locationFrom">
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-xs-12 margin-bottom-10">
@@ -28,7 +28,7 @@
                                     autocapitalize="none">
                             </div>
                             <div class="col-xs-12 margin-bottom-10">
-                                <label>Cantidad ({{quantity}})</label>
+                                <label>Cantidad ({{locationFrom[2]}})</label>
                                 <input type="text" class="form-control" [(ngModel)]="quantityConfirm" autocomplete="off" name="quantityConfirm" autocorrect="off"
                                     autocapitalize="none">
                             </div>
@@ -50,12 +50,107 @@
         </div>
     </form>
 
-    <div class="row" *ngIf="pass > 1">
+    <div id="modalConfiguracion" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Limite ubicaciones</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6">
+                            <div class="row">
+                                <div class="col-xs-12 margin-bottom-10">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Buscar">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="button">
+                                                <span class="glyphicon glyphicon-search"></span>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div style="max-height: 222px; overflow-y: auto">
+                                        <table class="table table-bordered table-striped">
+                                            <tr class="pointer-cursor" [ngClass]="{'location-limit-active': limitSelect.code === limit.code, 'location-limit': limitSelect.code !== limit.code}"
+                                                *ngFor="let limit of limits" (click)="selectLimit(limit)">
+                                                <td>{{limit.ubicacion}}</td>
+                                                <td>{{limit.item}}</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-6">
+                            <form #LimitForm="ngForm" (ngSubmit)="saveLocationLimit()">
+                                <div class="row">
+                                    <div class="col-xs-12 margin-bottom-10">
+                                        <label>Ubicación</label>
+                                        <input type="text" class="form-control" [(ngModel)]="limitSelect.ubicacion" autocomplete="off" name="ubicacion" autocorrect="off"
+                                            autocapitalize="none">
+                                    </div>
+                                    <div class="col-xs-12 margin-bottom-10">
+                                        <label>Ítem</label>
+                                        <input type="text" class="form-control" [(ngModel)]="limitSelect.item" autocomplete="off" name="item" autocorrect="off" autocapitalize="none">
+                                    </div>
+                                    <div class="col-xs-12 margin-bottom-10">
+                                        <label>Cantidad minima</label>
+                                        <input type="text" class="form-control" [(ngModel)]="limitSelect.cantMinima" autocomplete="off" name="cantMinima" autocorrect="off"
+                                            autocapitalize="none">
+                                    </div>
+                                    <div class="col-xs-12 margin-bottom-10">
+                                        <label>Cantidad maxima</label>
+                                        <input type="text" class="form-control" [(ngModel)]="limitSelect.cantMaxima" autocomplete="off" name="cantMaxima" autocorrect="off"
+                                            autocapitalize="none">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" (click)="saveLocationLimit()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalAdvertencia" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Advertencia</h4>
+                </div>
+                <div class="modal-body">
+                    <p>La cantidad ingresada supera a la máxima que se puede tener en la ubicación</p>
+                    <p class="center-component">¿Desea continuar?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button (click)="stockTransfer(true)" type="button" class="btn btn-primary">Continuar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
         <div class="col-xs-12 col-md-4 col-md-offset-4 margin-bottom-10">
-            <button type="button" class="btn btn-default" (click)="goToPass(null, null, true)">
-                <span class="glyphicon glyphicon-arrow-left"></span>
-                Atras
-            </button>
+            <div class="row">
+                <div class="col-xs-6">
+                    <button type="button" class="btn btn-default" (click)="goToPass(null, null, true)" *ngIf="pass > 1">
+                        <span class="glyphicon glyphicon-arrow-left"></span>
+                        Atras
+                    </button>
+                </div>
+                <div class="col-xs-6 right-component pointer-cursor">
+                    <span class="glyphicon glyphicon-cog configuration-button" (click)="listLocationLimits()"></span>
+                </div>
+            </div>
         </div>
     </div>
     <div class="row" *ngIf="message != null && message.length > 0">
@@ -116,8 +211,8 @@
                 </tr>
                 <tr *ngFor="let storage of locationsStorage; let i = index">
                     <td>{{i + 1}}</td>
-                    <td>{{storage[0]}}
-                        <span class="badge">{{storage[1]}}</span>
+                    <td>{{storage[1]}}
+                        <span class="badge">{{storage[2]}}</span>
                     </td>
                     <td class="pointer-cursor" (click)="useLocation(storage)">
                         <span class="glyphicon glyphicon-ok"></span>

@@ -26,3 +26,19 @@ th, td {
     text-align: right;
     font-size: 18px;
 }
+
+.center-component {
+    text-align: center;
+}
+
+.location-limit {
+}
+
+.location-limit:hover, .location-limit-active {
+    background-color: #da0611 !important;
+    color: #ffffff;
+}
+
+.configuration-button {
+    font-size: 28px;
+}
