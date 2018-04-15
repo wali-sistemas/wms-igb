@@ -85,6 +85,7 @@ export class ResupplyComponent implements OnInit {
     }
 
     public listLocationLimits() {
+        $('#modalConfiguracion').modal('hide');
         this.clean();
         this.message = "";
         $('#modal_process').modal('show');
@@ -132,7 +133,27 @@ export class ResupplyComponent implements OnInit {
                     return;
                 }
                 this.clean();
+                this.listLocationLimits();
             }, error => { console.log(error); }
+        );
+    }
+
+    public deleteLocationLimit() {
+        this.message = null;
+        if (this.limitSelect.code == null || this.limitSelect.code.length <= 0) {
+            this.message = "Lo se encontro un limite seleccionado para poder eliminar.";
+            return;
+        }
+
+        this._resupplyService.deleteLocationLimit(this.limitSelect.code).subscribe(
+            response => {
+                if (response.code < 0) {
+                    this.message = response.content;
+                } else {
+                    this.clean();
+                    this.listLocationLimits();
+                }
+            }, error => { console.error(error); }
         );
     }
 

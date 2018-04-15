@@ -44,4 +44,11 @@ export class ResupplyService {
         return this._http.post(this.url + 'resupply/save-location-limit', locationLimit, { headers: igbHeaders })
             .map(res => res.json());
     }
+
+    public deleteLocationLimit(code) {
+        let igbHeaders = new IGBHeaders().loadHeaders();
+
+        return this._http.delete(this.url + 'resupply/delete-location-limit/' + code, { headers: igbHeaders })
+            .map(res => res.json());
+    }
 }

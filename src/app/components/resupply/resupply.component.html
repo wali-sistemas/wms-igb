@@ -114,6 +114,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-default" (click)="deleteLocationLimit()" *ngIf="limitSelect && limitSelect.code !== null && limitSelect.code.length > 0">Eliminar</button>
                     <button type="button" class="btn btn-primary" (click)="saveLocationLimit()">Guardar</button>
                 </div>
             </div>
