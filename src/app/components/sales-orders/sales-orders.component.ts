@@ -36,13 +36,10 @@ export class SalesOrdersComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log('iniciando componente de ordenes de compra');
-    //TODO: validar vigencia del token/identity
     this.identity = this._userService.getItentity();
     if (this.identity === null) {
       this._router.navigate(['/']);
     }
-    console.log(this.identity);
     this.listOpenOrders();
   }
 
@@ -74,7 +71,6 @@ export class SalesOrdersComponent implements OnInit {
   }
 
   public selectOrder(order: SalesOrder) {
-    //this._router.navigate(['/sale-order/', docNum]);
     if (order.confirmed === 'N') {
       return;
     }

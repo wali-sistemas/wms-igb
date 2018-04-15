@@ -12,7 +12,7 @@ export class InvoiceService {
 
     public createInvoice(deliveryDocEntry) {
         let igbHeaders = new IGBHeaders().loadHeaders();
-        return this._http.post(this.url + 'invoice/draft', deliveryDocEntry, { headers: igbHeaders })
+        return this._http.post(this.url + 'invoice', deliveryDocEntry, { headers: igbHeaders })
             .map(res => res.json());
     }
 }
