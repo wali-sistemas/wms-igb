@@ -20,8 +20,11 @@ export class UserService {
   }
 
   public getItentity() {
-    let igbHeaders = new IGBHeaders().loadHeaders();
     return JSON.parse(localStorage.getItem('igb.identity'));
+  }
+
+  public getWarehouseCode() {
+    return JSON.parse(localStorage.getItem('igb.identity')).warehouseCode;
   }
 
   public listUsersByGroup(groupName) {

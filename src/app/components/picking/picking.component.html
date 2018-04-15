@@ -151,14 +151,18 @@
 </div>
 
 <div class="container content" *ngIf="!errorMessagePickingCarts">
-    <h3>Picking
+    <div class="alert alert-warning" role="alert" *ngIf="warningMessageNoOrders">
+        {{warningMessageNoOrders}}
+    </div>
+    
+    <h3 *ngIf="!warningMessageNoOrders">Picking
         <span *ngIf="pickingMethod === 'multiple' && assignedOrders.length > 0"> ({{assignedOrders.length}} órdenes)</span>
         <span class="grayed-order" *ngIf="pickingMethod === 'multiple' && assignedOrders.length > 0"> - {{nextOrderNumber}}</span>
-        <span *ngIf="pickingMethod === 'single'"> (órden #{{selectedOrder}})</span>
+        <span *ngIf="pickingMethod === 'single'"> (orden #{{selectedOrder}})</span>
         <span class="glyphicon glyphicon-cog pull-right cursor-pointer" data-toggle="modal" data-target="#modal_config"></span>
     </h3>
 
-    <div class="row" *ngIf="availableCarts.length > 0">
+    <div class="row" *ngIf="availableCarts.length > 0 && !warningMessageNoOrders">
         <div class="col-xs-12">
             <select class="form-control input-lg" [(ngModel)]="selectedCart" (change)="loadAvailablePickingCarts()">
                 <option style="display:none" disabled value="0">Selecciona un carrito</option>
