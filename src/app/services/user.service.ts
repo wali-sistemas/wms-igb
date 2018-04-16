@@ -34,4 +34,10 @@ export class UserService {
     return this._http.get(this.url + 'user/validate', { headers: igbHeaders }).map(res => res.json());
   }
 
+  public validateUserAdmin(user) {
+    let igbHeaders = new IGBHeaders().loadHeaders();
+
+    return this._http.get(this.url + 'user/validate-user-admin/' + user, { headers: igbHeaders })
+      .map(res => res.json());
+  }
 }

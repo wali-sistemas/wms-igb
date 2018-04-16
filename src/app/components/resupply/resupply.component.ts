@@ -2,19 +2,21 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { ResupplyService } from '../../services/resupply.service';
 import { StockTransferService } from '../../services/stock-transfer.service';
+import { UserService } from '../../services/user.service';
 
 declare var $: any;
 
 @Component({
     templateUrl: './resupply.component.html',
     styleUrls: ['./resupply.component.css'],
-    providers: [ResupplyService, StockTransferService]
+    providers: [ResupplyService, StockTransferService, UserService]
 })
 export class ResupplyComponent implements OnInit {
     public pass: number;
     public quantityConfirm: number;
     public locationConfirm: string;
     public message: string;
+    public admin: boolean = false;
     public locationTo: any;
     public locationFrom: any;
     public item: any;
@@ -24,7 +26,7 @@ export class ResupplyComponent implements OnInit {
     public locationsStorage: Array<any>;
     public limits: Array<any>;
 
-    constructor(private _router: Router, private _resupplyService: ResupplyService, private _stockTransferService: StockTransferService) {
+    constructor(private _router: Router, private _resupplyService: ResupplyService, private _stockTransferService: StockTransferService, private _userService: UserService) {
         this.pass = 1;
         this.clean();
         this.locationsResupply = new Array<any>();
@@ -35,6 +37,11 @@ export class ResupplyComponent implements OnInit {
 
     ngOnInit() {
         this.listLocationsResupply();
+        this._userService.validateUserAdmin(this._userService.getItentity().username).subscribe(
+            response => {
+                this.admin = response.content;
+            }, error => { console.error(error); }
+        );
     }
 
     private listLocationsResupply() {
@@ -101,6 +108,15 @@ export class ResupplyComponent implements OnInit {
 
     public selectLimit(limit) {
         this.limitSelect = limit;
+    }
+
+    public changeLimitSelect() {
+        for (let i = 0; i < this.limits.length; i++) {
+            if (this.limits[i].code === this.limitSelect.code) {
+                this.limitSelect = this.limits[i];
+                break;
+            }
+        }
     }
 
     public saveLocationLimit() {
@@ -253,7 +269,7 @@ export class ResupplyComponent implements OnInit {
         );
     }
 
-    private clean() {
+    public clean() {
         this.limitSelect = {
             code: '',
             name: '',

@@ -59,7 +59,7 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-xs-12 col-md-6">
-                            <div class="row">
+                            <!--<div class="row">
                                 <div class="col-xs-12 margin-bottom-10">
                                     <div class="input-group">
                                         <input type="text" class="form-control" placeholder="Buscar">
@@ -70,10 +70,17 @@
                                         </span>
                                     </div>
                                 </div>
-                            </div>
+                            </div>-->
                             <div class="row">
                                 <div class="col-xs-12">
-                                    <div style="max-height: 222px; overflow-y: auto">
+                                    <div class="hidden-md hidden-lg">
+                                        <select id="limit" class="form-control" [(ngModel)]="limitSelect.code" name="code" (change)="changeLimitSelect()">
+                                            <option style="display:none" disabled value="">Selecciona un limite</option>
+                                            <option *ngFor="let limit of limits" value="{{limit.code}}">{{limit.ubicacion}} - {{limit.item}}</option>
+                                        </select>
+                                        <hr/>
+                                    </div>
+                                    <div class="hidden-xs hidden-sm" style="max-height: 222px; overflow-y: auto">
                                         <table class="table table-bordered table-striped">
                                             <tr class="pointer-cursor" [ngClass]="{'location-limit-active': limitSelect.code === limit.code, 'location-limit': limitSelect.code !== limit.code}"
                                                 *ngFor="let limit of limits" (click)="selectLimit(limit)">
@@ -113,7 +120,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-default" (click)="clean()" *ngIf="limitSelect && limitSelect.ubicacion !== null && limitSelect.ubicacion.length > 0">Cancelar</button>
                     <button type="button" class="btn btn-default" (click)="deleteLocationLimit()" *ngIf="limitSelect && limitSelect.code !== null && limitSelect.code.length > 0">Eliminar</button>
                     <button type="button" class="btn btn-primary" (click)="saveLocationLimit()">Guardar</button>
                 </div>
@@ -148,7 +156,7 @@
                         Atras
                     </button>
                 </div>
-                <div class="col-xs-6 right-component pointer-cursor">
+                <div class="col-xs-6 right-component pointer-cursor" *ngIf="admin">
                     <span class="glyphicon glyphicon-cog configuration-button" (click)="listLocationLimits()"></span>
                 </div>
             </div>
