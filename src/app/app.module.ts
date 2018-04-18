@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { ChartsModule } from 'ng2-charts';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './components/login/login.component';
@@ -14,6 +15,8 @@ import { SalesOrderComponent } from './components/sales-orders/sales-order.compo
 import { PickingComponent } from './components/picking/picking.component';
 import { PackingComponent } from './components/packing/packing.component';
 import { InventoryComponent } from './components/inventory/inventory.component';
+import { ResupplyComponent } from './components/resupply/resupply.component';
+import { ReportComponent } from './components/report/report.component';
 
 import { routing, appRoutingProviders } from './app.routing';
 
@@ -29,13 +32,16 @@ import { routing, appRoutingProviders } from './app.routing';
     SalesOrderComponent,
     PickingComponent,
     PackingComponent,
-    InventoryComponent
+    InventoryComponent,
+    ResupplyComponent,
+    ReportComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpModule,
-    routing
+    routing,
+    ChartsModule
   ],
   providers: [appRoutingProviders],
   bootstrap: [AppComponent]
