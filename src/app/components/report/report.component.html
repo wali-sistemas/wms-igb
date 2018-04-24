@@ -1,25 +1,73 @@
 <div class="row">
     <div class="col-xs-12 col-md-4 margin-bottom-20">
-        <div class="margin-20">
-            <div style="display: block">
-                <canvas baseChart [data]="doughnutChartData" [labels]="doughnutChartLabels" [chartType]="doughnutChartType"></canvas>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="margin-20">
+                    <div style="display: block">
+                        <canvas baseChart [data]="doughnutChartData" [labels]="doughnutChartLabels" [chartType]="doughnutChartType"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="margin-20">
+                    <h2>Ordenes asignadas</h2>
+
+                    <table class="table table-bordered table-striped">
+                        <tr>
+                            <th>Empelado</th>
+                            <th>Ordenes asignadas</th>
+                        </tr>
+                        <tr *ngFor="let empleado of users">
+                            <td>{{empleado.completeName}}</td>
+                            <td>{{empleado.ordenesAsignadas}}</td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<div class="row">
-    <div class="col-xs-12 col-md-4">
-        <div class="margin-20">
-            <table class="table table-bordered table-striped">
-                <tr>
-                    <th>Empelado</th>
-                    <th>Ordenes asignadas</th>
-                </tr>
-                <tr *ngFor="let empleado of users">
-                    <td>{{empleado.completeName}}</td>
-                    <td>{{empleado.ordenesAsignadas}}</td>
-                </tr>
-            </table>
+    <div class="col-xs-12 col-md-4 margin-bottom-20">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="margin-20">
+                    <h2>Ordenes x cliente</h2>
+
+                    <table class="table table-bordered table-striped">
+                        <tr>
+                            <td>Cliente</td>
+                            <td>Ordenes</td>
+                        </tr>
+                        <tr *ngFor="let client of clientsOrders">
+                            <td>{{client[0]}}</td>
+                            <td>{{client[1]}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-12 col-md-4 margin-bottom-20">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="margin-20">
+                    <h2>Promedio x orden</h2>
+
+                    <table class="table table-bordered table-striped">
+                        <tr>
+                            <th>Orden</th>
+                            <th>Promedio</th>
+                            <th>Total tiempo</th>
+                        </tr>
+                        <tr *ngFor="let picking of pickingProgress">
+                            <td>{{picking[0]}}</td>
+                            <td>{{picking[1] | number}} min</td>
+                            <td>{{picking[2] | number}} min</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
