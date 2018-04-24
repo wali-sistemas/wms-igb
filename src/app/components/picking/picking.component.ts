@@ -37,8 +37,10 @@ export class PickingComponent implements OnInit {
     public confirmBinCode: string = '';
     public confirmingItemQuantity = false;
     public errorMessage: string = '';
+    public errorMessagePickingCarts: string = '';
     public errorMessageBinLocation: string = '';
     public errorMessageBinTransfer: string = '';
+    public warningMessageNoOrders: string = '';
     public availableCarts: Array<BinLocation>;
     public assignedOrders: Array<SalesOrder>;
 
@@ -74,20 +76,25 @@ export class PickingComponent implements OnInit {
 
     private loadAvailablePickingCarts() {
         this.availableCarts = new Array<BinLocation>();
+        this.errorMessagePickingCarts = '';
         this._binLocationService.listAvailablePickingCarts().subscribe(
             result => {
                 console.log('picking carts: ', result);
-                for (let i = 0; i < result.length; i++) {
-                    let binLocation = new BinLocation();
-                    binLocation.binAbs = result[i].binAbs;
-                    binLocation.binCode = result[i].binCode;
-                    binLocation.binName = result[i].binName;
-                    binLocation.items = result[i].items;
-                    binLocation.pieces = result[i].pieces;
-                    this.availableCarts.push(binLocation);
-                }
-                if (this.selectedCart > 0) {
-                    this.loadNextItem();
+                if (result.length === 0) {
+                    this.errorMessagePickingCarts = 'No se encontraron carritos de picking habilitados. Se deben configurar ubicaciones tipo CART en SAP, asegurándose de agregar el nombre de cada carrito en el campo descripción';
+                } else {
+                    for (let i = 0; i < result.length; i++) {
+                        let binLocation = new BinLocation();
+                        binLocation.binAbs = result[i].binAbs;
+                        binLocation.binCode = result[i].binCode;
+                        binLocation.binName = result[i].binName;
+                        binLocation.items = result[i].items;
+                        binLocation.pieces = result[i].pieces;
+                        this.availableCarts.push(binLocation);
+                    }
+                    if (this.selectedCart > 0) {
+                        this.loadNextItem();
+                    }
                 }
             }, error => {
                 console.error(error);
@@ -98,6 +105,7 @@ export class PickingComponent implements OnInit {
 
     private loadAssignedOrders() {
         this.assignedOrders = new Array<SalesOrder>();
+        this.warningMessageNoOrders = '';
         this._salesOrderService.listUserOrders(this.identity.username).subscribe(
             result => {
                 if (result.code == 0) {
@@ -109,7 +117,8 @@ export class PickingComponent implements OnInit {
                         this.assignedOrders.push(order);
                     }
                 } else {
-                    this._router.navigate(['home']);
+                    //this._router.navigate(['home']);
+                    this.warningMessageNoOrders = 'No se encontraron órdenes asignadas para picking';
                 }
             }, error => {
                 console.error(error);
@@ -119,27 +128,37 @@ export class PickingComponent implements OnInit {
     }
 
     private loadNextItem() {
+        $('#modal_loading_next').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
         this._pickingService.getNextPickingItem(this.identity.username, this.selectedOrder).subscribe(
             result => {
+                $('#modal_loading_next').modal('hide');
+                this.loadAssignedOrders();
                 console.log(result);
                 if (result.code == 0) {
                     this.nextItemCode = result.content.itemCode;
-                    this.nextItemQuantity = result.content.openQuantity;
+                    this.nextItemQuantity = result.content.pendingQuantity;
                     this.nextBinAbs = result.content.binAbs;
                     this.nextBinStock = result.content.availableQuantity;
                     this.nextBinLocationCode = result.content.binCode;
                     this.nextItemName = result.content.itemName;
                     this.nextOrderNumber = result.content.orderNumber;
                 } else if (result.code == -1) {
-                    if (this.pickingMethod == 'single') {
-                        this.closeOrderAssignation(this.identity.username, this.selectedOrder);
+                    if (this.pickingMethod == 'multiple') {
+                        //this.closeOrderAssignation(this.identity.username, this.selectedOrder);
                     } else {
-                        this.closeOrderAssignation(this.identity.username, null);
+                        //this.closeOrderAssignation(this.identity.username, null);
                     }
                 } else if (result.code == -2) {
                     this.errorMessage = 'Ocurrió un error al consultar el siguiente ítem para picking. ' + result.content;
+                } else if (result.code == -3) {
+                    this.errorMessage = 'No hay saldo disponible para picking. La orden pasa a estado <span class="warning">warning</span>. ' + result.content;
                 }
             }, error => {
+                $('#modal_loading_next').modal('hide');
                 console.error(error);
                 this.errorMessage = 'Ocurrió un error al consultar el siguiente ítem para picking. ';
             }
@@ -205,7 +224,7 @@ export class PickingComponent implements OnInit {
             itemCode: this.nextItemCode,
             orderNumber: (this.selectedOrder == null || this.selectedOrder.length == 0) ? this.nextOrderNumber : this.selectedOrder,
             username: this.identity.username,
-            warehouseCode: '01' //TODO: parametrizar whscode
+            warehouseCode: this._userService.getWarehouseCode()
         }
         $('#modal_transfer_process').modal({
             backdrop: 'static',
@@ -259,7 +278,9 @@ export class PickingComponent implements OnInit {
         this.loadAvailablePickingCarts();
 
         //reload next item
-        this.loadNextItem();
+        if (this.selectedCart <= 0) {
+            this.loadNextItem();
+        }
     }
 
     public choosePickingMethod() {
@@ -282,5 +303,70 @@ export class PickingComponent implements OnInit {
             return this.nextBinStock;
         }
         return this.nextItemQuantity;
+    }
+
+    public getBinDetail(fieldName: string) {
+        if (!this.nextBinLocationCode) {
+            return '';
+        }
+        switch (fieldName) {
+            case 'whs':
+                return this.nextBinLocationCode.substring(0, 2);
+            case 'area':
+                return this.nextBinLocationCode.substring(2, 4);
+            case 'calle':
+                return this.nextBinLocationCode.substring(4, 6);
+            case 'mod':
+                return this.nextBinLocationCode.substring(6, 8);
+            case 'nivel':
+                return this.nextBinLocationCode.substring(8, 10);
+            case 'fila':
+                return this.nextBinLocationCode.substring(10, 12);
+            case 'col':
+                return this.nextBinLocationCode.substring(12, 14);
+            case 'prof':
+                return this.nextBinLocationCode.substring(14, 16);
+            default:
+                return '';
+        }
+    }
+
+    public skipItem() {
+        console.log('saltando item, ' + this.nextItemQuantity);
+        this.pickedItemQuantityValidated = true;
+        let itemTransfer = {
+            binAbsFrom: this.nextBinAbs,
+            binAbsTo: this.selectedCart,
+            quantity: this.nextItemQuantity,
+            expectedQuantity: this.getQuantityToPick(),
+            itemCode: this.nextItemCode,
+            orderNumber: (this.selectedOrder == null || this.selectedOrder.length == 0) ? this.nextOrderNumber : this.selectedOrder,
+            username: this.identity.username,
+            temporary: true,
+            warehouseCode: this._userService.getWarehouseCode()
+        }
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+        console.log('itemTransfer: ', itemTransfer);
+        this.errorMessageBinTransfer = '';
+        this._stockTransferService.transferSingleItem(itemTransfer).subscribe(
+            response => {
+                console.info(response);
+                if (response.code === 0) {
+                    //Clears bin location, item code and quantity fields; then loads cart inventory and next item
+                    this.resetForm();
+                } else {
+                    this.errorMessageBinTransfer = response.content;
+                }
+                $('#modal_transfer_process').modal('hide');
+            }, error => {
+                $('#modal_transfer_process').modal('hide');
+                console.error(error);
+                this.errorMessageBinTransfer = JSON.parse(error._body).content;
+            }
+        );
     }
 }

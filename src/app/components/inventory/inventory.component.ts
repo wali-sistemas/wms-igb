@@ -48,7 +48,7 @@ export class InventoryComponent implements OnInit {
   }
 
   public validateInventoryOpen() {
-    this._inventoryService.inventoryOpen('01').subscribe(
+    this._inventoryService.inventoryOpen(this._userService.getWarehouseCode()).subscribe(
       response => {
         console.log(response);
         if (response !== -1) {
@@ -66,7 +66,7 @@ export class InventoryComponent implements OnInit {
 
 
   public inventoryRandom() {
-    this._inventoryService.inventoryRandom("01").subscribe(
+    this._inventoryService.inventoryRandom(this._userService.getWarehouseCode()).subscribe(
       response => {
         console.log(response);
         if (response && response.content.length > 0) {
@@ -93,7 +93,7 @@ export class InventoryComponent implements OnInit {
     $('#modalConfirmacion').modal('hide');
     this.messageProgress = 'Creando un nuevo inventario, espere por favor.';
     $('#modal_process').modal('show');
-    this._stockTransferService.openInventory('01', this.location).subscribe(
+    this._stockTransferService.openInventory(this._userService.getWarehouseCode(), this.location).subscribe(
       response => {
         console.log(response);
         if (response === -1) {
@@ -157,7 +157,7 @@ export class InventoryComponent implements OnInit {
       $('#modal_process').modal('hide');
     } else {
       console.log('Obteniendo historial');
-      this._inventoryService.inventoryHistory('01', this.idInventory).subscribe(
+      this._inventoryService.inventoryHistory(this._userService.getWarehouseCode(), this.idInventory).subscribe(
         response => {
           console.log(response);
           if (response !== -1) {

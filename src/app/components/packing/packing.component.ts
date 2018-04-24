@@ -3,19 +3,29 @@ import { Router, ActivatedRoute, Params } from '@angular/router';
 
 import { PackingBox } from './../../models/packing-box';
 import { PackingRecord } from '../../models/packing-record';
+import { Printer } from '../../models/printer';
 
 import { UserService } from '../../services/user.service';
 import { PackingService } from '../../services/packing.service';
+import { InvoiceService } from '../../services/invoice.service';
+import { PrintService } from '../../services/print.service';
 
 declare var $: any;
 
 @Component({
     templateUrl: './packing.component.html',
     styleUrls: ['./packing.component.css'],
-    providers: [UserService, PackingService]
+    providers: [UserService, PackingService, InvoiceService, PrintService]
 })
 export class PackingComponent implements OnInit {
 
+    public processDeliveryStatus: string = 'none';
+    public processClosePackingOrderStatus: string = 'none';
+    public processPrintLabelsStatus: string = 'none';
+    public processInvoiceStatus: string = 'none';
+    public process4Status: string = 'none';
+
+    public selectedPrinter: string = '';
     public deliveryErrorMessage: string = '';
     public itemCodeErrorMessage: string = '';
     public quantityErrorMessage: string = '';
@@ -37,6 +47,9 @@ export class PackingComponent implements OnInit {
     public packedItemQuantityValidated = false;
     public addNewBoxEnabled: boolean = false;
     public orderItemsList: Array<any>;
+    public printersList: Array<Printer>;
+    public customersListDisabled: boolean = false;
+    public packingOrdersComplete: boolean = false;
     private identity;
     private idPackingList: number;
     private idPackingOrder: number;
@@ -44,6 +57,8 @@ export class PackingComponent implements OnInit {
     constructor(
         private _userService: UserService,
         private _packingService: PackingService,
+        private _invoiceService: InvoiceService,
+        private _printService: PrintService,
         private _router: Router) {
         this.start();
     }
@@ -69,6 +84,7 @@ export class PackingComponent implements OnInit {
         });
         this.loadCustomers();
         this.listOpenJobs();
+        this.isPackingComplete();
     }
 
     private listOpenJobs() {
@@ -77,6 +93,7 @@ export class PackingComponent implements OnInit {
                 console.log('registros de packing abiertos: ', response);
                 if (response.content.length > 0) {
                     console.log('procesando registros...');
+                    this.customersListDisabled = true;
                     let firstRecord = response.content[0];
                     this.selectedOrder = firstRecord[2];
                     this.selectedCustomer = firstRecord[3];
@@ -253,6 +270,7 @@ export class PackingComponent implements OnInit {
                         this.boxes[this.addToBox].addItem(this.itemCode, this.itemQuantity);
 
                         this.reset();
+                        this.isPackingComplete();
                     }
                 }, error => {
                     $('#modal_transfer_process').modal('hide');
@@ -270,6 +288,15 @@ export class PackingComponent implements OnInit {
         this.packedItemCodeValidated = false;
         this.packedItemQuantityValidated = false;
         this.canBoxesBeAdded();
+    }
+
+    private isPackingComplete() {
+        this._packingService.arePackingOrdersComplete().subscribe(
+            result => {
+                console.log(result);
+                this.packingOrdersComplete = result.content;
+            }, error => { console.error(error); }
+        );
     }
 
     public setIdPackingOrder() {
@@ -305,11 +332,13 @@ export class PackingComponent implements OnInit {
         $('#packing_detail').modal('show');
     }
 
-
-
     public createDelivery() {
-        $('#close_confirmation').modal('hide');
-        $('#modal_transfer_process').modal({
+        $('#printer_selection').modal('hide');
+        this.processDeliveryStatus = 'inprogress';
+        this.processClosePackingOrderStatus = 'none';
+        this.processPrintLabelsStatus = 'none';
+        this.processInvoiceStatus = 'none';
+        $('#process_status').modal({
             backdrop: 'static',
             keyboard: false,
             show: true
@@ -318,28 +347,111 @@ export class PackingComponent implements OnInit {
         console.log('creando documento sap para idPackingOrder=' + this.idPackingOrder);
         this._packingService.createDelivery(this.idPackingOrder).subscribe(
             result => {
-                $('#modal_transfer_process').modal('hide');
                 console.log(result);
                 if (result.code == 0) {
-                    this._packingService.closePackingOrder(this.idPackingOrder, this.identity.username).subscribe(
-                        response => {
-                            this.reset();
-                            this.start();
-                            this.ngOnInit();
-                        }, error => { console.error(error); }
-                    );
+                    this.processDeliveryStatus = 'done';
+                    this.closePackingOrder(this.idPackingOrder, this.identity.username);
+                    this.createInvoice(result.content);
+                    this.printLabels();
                 } else {
-                    this.deliveryErrorMessage = 'Ocurrió un error al crear el documento de entrega en SAP. ';
-                    $('#delivery_error').modal('show');
+                    this.processDeliveryStatus = 'error';
+                    this.deliveryErrorMessage = result.content;
                 }
             },
             error => {
-                $('#modal_transfer_process').modal('hide');
+                this.processDeliveryStatus = 'error';
                 this.deliveryErrorMessage = 'Ocurrió un error al crear el documento de entrega en SAP. ';
-                $('#delivery_error').modal('show');
                 console.error(error);
             }
         );
+    }
+
+    public loadPrinters() {
+        console.log('listando impresoras habilitadas...');
+        $('#close_confirmation').modal('hide');
+        this._printService.listEnabledPrinters().subscribe(
+            response => {
+                console.log(response);
+                if (response.code == 0) {
+                    this.printersList = response.content;
+                    $('#printer_selection').modal('show');
+                }
+            }, error => { console.error(error); }
+        );
+    }
+
+    private printLabels() {
+        console.log('imprimiendo etiquetas de packingList ' + this.idPackingList + ' en impresora ' + this.selectedPrinter);
+        this.processPrintLabelsStatus = 'inprogress';
+        this._printService.printLabels(this.idPackingList, this.selectedPrinter).subscribe(
+            result => {
+                console.log(result);
+                if (result.code == 0) {
+                    if (result.content) {
+                        //todas las etiquetas se imprimieron
+                        this.processPrintLabelsStatus = 'done';
+                    } else {
+                        //no se imprimieron correctamente todas las etiquetas
+                        this.processPrintLabelsStatus = 'warn';
+                    }
+                } else {
+                    this.processPrintLabelsStatus = 'error';
+                    this.deliveryErrorMessage += result.content;
+                }
+            }, error => {
+                console.error(error);
+                this.processPrintLabelsStatus = 'error';
+                this.deliveryErrorMessage += 'Ocurrió un error al imprimir las etiquetas de empaque. Deben imprimirse manualmente';
+            }
+        );
+    }
+
+    private closePackingOrder(idPackingOrder, username) {
+        this.processClosePackingOrderStatus = 'inprogress';
+        this._packingService.closePackingOrder(idPackingOrder, username).subscribe(
+            response => {
+                if (response.content) {
+                    //Orden completa. Cerrar orden de venta
+                    this.closeSalesOrder(this.idPackingOrder);
+                }
+                this.processClosePackingOrderStatus = 'done';
+                this.reset();
+                this.start();
+                this.ngOnInit();
+            }, error => {
+                this.processClosePackingOrderStatus = 'error';
+                console.error(error);
+            }
+        );
+    }
+
+    private createInvoice(docEntryDelivery) {
+        this.processInvoiceStatus = 'inprogress';
+        this._invoiceService.createInvoice(docEntryDelivery).subscribe(
+            response => {
+                console.log(response);
+                if (response.code == 0) {
+                    this.processInvoiceStatus = 'done';
+                } else {
+                    this.processInvoiceStatus = 'error';
+                }
+            },
+            error => {
+                this.processInvoiceStatus = 'error';
+                console.error(error);
+            }
+        );
+    }
+
+    private closeSalesOrder(idPackingOrder) {
+        this.process4Status = 'inprogress';
+    }
+
+    public inProgress() {
+        return this.processClosePackingOrderStatus === 'inprogress'
+            || this.processDeliveryStatus === 'inprogress'
+            || this.processInvoiceStatus === 'inprogress'
+            || this.processPrintLabelsStatus === 'inprogress';
     }
 
 }

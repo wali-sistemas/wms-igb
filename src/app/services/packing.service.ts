@@ -55,7 +55,7 @@ export class PackingService {
 
     public listOrderItems(idPackingOrder: number) {
         let igbHeaders = new IGBHeaders().loadHeaders();
-        return this._http.get(this.url + 'packing/' + idPackingOrder, { headers: igbHeaders })
+        return this._http.get(this.url + 'packing/items/' + idPackingOrder, { headers: igbHeaders })
             .map(res => res.json());
     }
 
@@ -68,6 +68,18 @@ export class PackingService {
     public closePackingOrder(idPackingOrder: number, username: string) {
         let igbHeaders = new IGBHeaders().loadHeaders();
         return this._http.put(this.url + 'packing/close/' + username + '/' + idPackingOrder, null, { headers: igbHeaders })
+            .map(res => res.json());
+    }
+
+    public closeOrder(idPackingOrder) {
+        let igbHeaders = new IGBHeaders().loadHeaders();
+        return this._http.put(this.url + 'salesorder/close/', idPackingOrder, { headers: igbHeaders })
+            .map(res => res.json());
+    }
+
+    public arePackingOrdersComplete() {
+        let igbHeaders = new IGBHeaders().loadHeaders();
+        return this._http.get(this.url + 'packing/status', { headers: igbHeaders })
             .map(res => res.json());
     }
 }

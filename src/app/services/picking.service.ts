@@ -26,7 +26,7 @@ export class PickingService {
         if (orderNumber) {
             orderNumberFilter = '?orderNumber=' + orderNumber;
         }
-        return this._http.get(this.url + 'picking/v2/close/' + username + orderNumberFilter, { headers: igbHeaders })
+        return this._http.put(this.url + 'picking/v2/close/' + username + orderNumberFilter, null, { headers: igbHeaders })
             .map(res => res.json());
     }
 }

@@ -4,27 +4,100 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-body">
-                <p><b>¿Estás seguro que deseas finalizar?</b> Al hacerlo, se crearán documentos de entrega y factura para los ítems
-                    empacados y se imprimirán los packing list</p>
+                <p>
+                    <b>¿Estás seguro que deseas finalizar?</b> Al hacerlo, se crearán la entrega y factura para los ítems empacados
+                    y se imprimirán las etiquetas. </p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary btn-lg" (click)="createDelivery()">Sí, finalizar</button>
+                <button type="button" class="btn btn-primary btn-lg" (click)="loadPrinters()">Sí, finalizar</button>
                 <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cancelar</button>
             </div>
         </div>
     </div>
 </div>
 
-<div id="delivery_error" class="modal slide" tabindex="-1" role="dialog">
+<div id="printer_selection" class="modal slide" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-body">
-                <div class="alert alert-danger">
-                    {{deliveryErrorMessage}}
+                <div class="row">
+                    <div class="col-xs-12">
+                        <label for="printer">Se imprimirá en</label>
+                        <select id="printer" class="form-control input-lg" [(ngModel)]="selectedPrinter" name="selectedPrinter">
+                            <option style="display:none" disabled value="">Selecciona una impresora</option>
+                            <option *ngFor="let printer of printersList" value="{{printer.printServiceName}}"> {{printer.printerName}}</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary btn-lg" (click)="createDelivery()">Continuar</button>
+                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="process_status" class="modal slide" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <img *ngIf="processDeliveryStatus === 'inprogress'" height="22" src="/assets/images/loading.gif">
+                        <span *ngIf="processDeliveryStatus === 'done'" class="glyphicon glyphicon-ok"></span>
+                        <span *ngIf="processDeliveryStatus === 'error'" class="glyphicon glyphicon-exclamation-sign"></span>
+                        <span class="status-text">Creación entrega</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <span *ngIf="processInvoiceStatus === 'none'" class="glyphicon glyphicon-minus-sign"></span>
+                        <img *ngIf="processInvoiceStatus === 'inprogress'" height="22" src="/assets/images/loading.gif">
+                        <span *ngIf="processInvoiceStatus === 'done'" class="glyphicon glyphicon-ok"></span>
+                        <span *ngIf="processInvoiceStatus === 'error'" class="glyphicon glyphicon-exclamation-sign"></span>
+                        <span class="status-text">Creación factura</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <span *ngIf="processClosePackingOrderStatus === 'none'" class="glyphicon glyphicon-minus-sign"></span>
+                        <img *ngIf="processClosePackingOrderStatus === 'inprogress'" height="22" src="/assets/images/loading.gif">
+                        <span *ngIf="processClosePackingOrderStatus === 'done'" class="glyphicon glyphicon-ok"></span>
+                        <span *ngIf="processClosePackingOrderStatus === 'error'" class="glyphicon glyphicon-exclamation-sign"></span>
+                        <span class="status-text">Finalización packing</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12">
+                        <span *ngIf="processPrintLabelsStatus === 'none'" class="glyphicon glyphicon-minus-sign"></span>
+                        <img *ngIf="processPrintLabelsStatus === 'inprogress'" height="22" src="/assets/images/loading.gif">
+                        <span *ngIf="processPrintLabelsStatus === 'done'" class="glyphicon glyphicon-ok"></span>
+                        <span *ngIf="processPrintLabelsStatus === 'warn'" class="glyphicon glyphicon-warning-sign"></span>
+                        <span *ngIf="processPrintLabelsStatus === 'error'" class="glyphicon glyphicon-exclamation-sign"></span>
+                        <span class="status-text">Impresión de etiquetas</span>
+                    </div>
+                </div>
+                <!--
+                <div class="row">
+                    <div class="col-xs-12">
+                        <img *ngIf="process4Status === 'inprogress'" height="22" src="/assets/images/loading.gif">
+                        <span *ngIf="process4Status === 'done'" class="glyphicon glyphicon-ok"></span>
+                        <span class="status-text">Cierre orden de venta</span>
+                    </div>
+                </div>
+                -->
+                <div class="row" *ngIf="deliveryErrorMessage">
+                    <div class="col-xs-12">
+                        <div class="alert alert-danger">
+                            {{deliveryErrorMessage}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" [disabled]="inProgress()">Cerrar</button>
             </div>
         </div>
     </div>
@@ -69,12 +142,12 @@
                     <tr>
                         <th>Carrito</th>
                         <th>Referencia</th>
-                        <th>Cantidad</th>
+                        <th style="text-align: right;">Cantidad</th>
                     </tr>
                     <tr *ngFor="let row of orderItemsList">
-                        <td>{{row[0]}}</td>
-                        <td>{{row[2]}}</td>
-                        <td>{{row[1]}}</td>
+                        <td>{{row[1]}}<span class="bin-code"> ({{row[0]}})</span></td>
+                        <td>{{row[3]}}</td>
+                        <td style="text-align: right;">{{row[2]}}</td>
                     </tr>
                 </table>
             </div>
@@ -108,14 +181,13 @@
     </div>
 </div>
 
-
 <div class="container content">
     <h3>Packing </h3>
-
     <div class="row">
         <div class="col-xs-12">
             <label for="cliente">Cliente</label>
-            <select id="cliente" class="form-control input-lg" [(ngModel)]="selectedCustomer" name="selectedCustomer" (change)="loadCustomerOrders()">
+            <select id="cliente" class="form-control input-lg" [(ngModel)]="selectedCustomer" name="selectedCustomer" (change)="loadCustomerOrders()"
+                [disabled]="customersListDisabled">
                 <option style="display:none" disabled value="">Selecciona un cliente</option>
                 <option *ngFor="let customer of customersList" value="{{customer[0]}}"> {{customer[1]}}</option>
             </select>
@@ -224,8 +296,7 @@
                 </span>
                 <span class="add-to-box" *ngIf="!packedItemQuantityValidated">
                     <button class="btn btn-default btn-lg" type="button" (click)="showPackingDetail(idx)">
-                        Ver
-                        <span class="glyphicon glyphicon-search"></span>
+                        <span class="glyphicon glyphicon-search"></span> Detalle
                     </button>
                 </span>
             </div>
@@ -236,10 +307,9 @@
             </div>
         </div>
 
-        <div class="col-xs-12">
+        <div class="col-xs-12" *ngIf="packingOrdersComplete">
             <button class="btn btn-danger btn-lg" type="button" data-toggle="modal" data-target="#close_confirmation">
                 Finalizar
-                <span class="glyphicon glyphicon-save"></span>
             </button>
         </div>
     </div>

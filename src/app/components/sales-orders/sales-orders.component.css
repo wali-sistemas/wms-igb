@@ -74,8 +74,24 @@
   border-top: 1px solid #ddd;
   position: absolute;
   top: 60px;
-  width: 80%;
+  /*width: 80%;*/
   left: 20px;
+}
+
+.order .order-comments-label {
+  position: absolute;
+  top: 40px;
+  left: 120px;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+.order .order-comments {
+  border-top: 1px solid #ddd;
+  position: absolute;
+  top: 60px;
+  left: 120px;
+  width: 70%;
 }
 
 .order .order-cardname::before {
@@ -96,6 +112,16 @@
   color: #037040;
 }
 
-.order.unauthorized .assigned-employee, .order.unauthorized .warn {
+.order.warning .assigned-employee, .order.warning .glyphicon-warning-sign{
   color: #f0ad4e;
+}
+
+.order.warning {
+  border: 1px solid #f0ad4e;
+  color: #e0e0e0;
+}
+
+.order.warning:hover {
+  cursor: pointer;
+  box-shadow: 2px 2px 4px rgb(179, 129, 59);
 }

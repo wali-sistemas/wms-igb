@@ -62,7 +62,6 @@ export class ReportComponent implements OnInit {
         this.clientsOrders = new Array<any>();
         this._reportService.listReportsOrdersClient().subscribe(
             response => {
-                console.log(response);
                 this.clientsOrders = response.content;
             }, error => { console.error(error); }
         );

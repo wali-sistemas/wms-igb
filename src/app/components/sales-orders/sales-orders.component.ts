@@ -21,7 +21,11 @@ export class SalesOrdersComponent implements OnInit {
   public showApprovedOnly: boolean = true;
   public selectedOrders: Map<String, String>;
   public assignableUsers: Array<any>;
+  public availableStock: Array<any>;
   public selectedUser: string = '';
+  public allStockAvailable: boolean = true;
+  public loadingAvailableStock: boolean = false;
+  public selectedOrder: number;
 
   constructor(private _userService: UserService,
     private _salesOrdersService: SalesOrdersService,
@@ -32,13 +36,10 @@ export class SalesOrdersComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log('iniciando componente de ordenes de compra');
-    //TODO: validar vigencia del token/identity
     this.identity = this._userService.getItentity();
     if (this.identity === null) {
       this._router.navigate(['/']);
     }
-    console.log(this.identity);
     this.listOpenOrders();
   }
 
@@ -70,8 +71,11 @@ export class SalesOrdersComponent implements OnInit {
   }
 
   public selectOrder(order: SalesOrder) {
-    //this._router.navigate(['/sale-order/', docNum]);
-    if (order.confirmed === 'N' || order.status == 'warning') {
+    if (order.confirmed === 'N') {
+      return;
+    }
+    if (order.status == 'warning') {
+      this.listAvailableStock(order.docNum);
       return;
     }
     if (this.selectedOrders.has(order.docNum)) {
@@ -128,7 +132,8 @@ export class SalesOrdersComponent implements OnInit {
         let ord = this.orders[i];
         if (ord.docNum.toLowerCase().includes(this.searchFilter)
           || ord.cardCode.toLowerCase().includes(this.searchFilter)
-          || ord.cardName.toLowerCase().includes(this.searchFilter)) {
+          || ord.cardName.toLowerCase().includes(this.searchFilter)
+          || (ord.assignedPickingEmployee && ord.assignedPickingEmployee.toLowerCase().includes(this.searchFilter))) {
           this.filteredOrders.push(ord);
         }
       }
@@ -140,5 +145,44 @@ export class SalesOrdersComponent implements OnInit {
   public toggleEye() {
     this.showApprovedOnly = !this.showApprovedOnly;
     this.listOpenOrders();
+  }
+
+  public listAvailableStock(orderNumber) {
+    this.selectedOrder = orderNumber;
+    this.loadingAvailableStock = true;
+    this.allStockAvailable = true;
+    this.availableStock = new Array<any>();
+    $('#order_status').modal('show');
+    this._salesOrdersService.listAvailableStock(orderNumber).subscribe(
+      result => {
+        this.loadingAvailableStock = false;
+        console.log(result);
+        for (let i = 0; i < result.content.length; i++) {
+          if (result.content[i][6] < result.content[i][1]) {
+            this.allStockAvailable = false;
+            break;
+          }
+        }
+        this.availableStock = result.content;
+
+      },
+      error => {
+        this.loadingAvailableStock = false;
+        console.error(error);
+      }
+    );
+  }
+
+  public enableOrder() {
+    this._salesOrdersService.enableAssignation(this.selectedOrder).subscribe(
+      result => {
+        $('#order_status').modal('hide');
+        this.listOpenOrders();
+        this.selectedOrder = null;
+      },
+      error => {
+        console.error(error);
+      }
+    );
   }
 }

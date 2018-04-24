@@ -7,11 +7,13 @@ export let GLOBAL = {
 
 export class IGBHeaders {
     public loadHeaders() {
-        if (localStorage.getItem('igb.identity')) {
+        let ident = localStorage.getItem('igb.identity');
+        if (ident) {
             return new Headers({
                 'Content-Type': 'application/json',
                 'X-Company-Name': localStorage.getItem('igb.selectedCompany'),
-                'Authorization': JSON.parse(localStorage.getItem('igb.identity')).token
+                'Authorization': JSON.parse(ident).token,
+                'X-Employee': JSON.parse(ident).username
             });
         } else {
             return new Headers({
