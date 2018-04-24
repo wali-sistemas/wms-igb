@@ -30,4 +30,11 @@ export class ReportService {
         return this._http.get(this.url + 'report/reports-picking-progress', { headers: igbHeaders })
             .map(res => res.json());
     }
+
+    public listReportsOrdersClient() {
+        let igbHeaders = new IGBHeaders().loadHeaders();
+
+        return this._http.get(this.url + 'report/reports-orders-client', { headers: igbHeaders })
+            .map(res => res.json());
+    }
 }
