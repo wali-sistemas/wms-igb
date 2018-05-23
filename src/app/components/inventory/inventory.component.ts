@@ -93,7 +93,7 @@ export class InventoryComponent implements OnInit {
     $('#modalConfirmacion').modal('hide');
     this.messageProgress = 'Creando un nuevo inventario, espere por favor.';
     $('#modal_process').modal('show');
-    this._stockTransferService.openInventory(this._userService.getWarehouseCode(), this.location.trim()).subscribe(
+    this._stockTransferService.cleanLocation(this._userService.getWarehouseCode(), this.location.trim()).subscribe(
       response => {
         console.log(response);
         if (response.code === -1) {
