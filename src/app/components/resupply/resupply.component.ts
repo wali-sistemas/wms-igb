@@ -206,6 +206,7 @@ export class ResupplyComponent implements OnInit {
         $('#modalUbicacion').modal('hide');
         $('#modalAdvertencia').modal('hide');
         console.log(this.item);
+        this.locationConfirm = this.locationConfirm.trim();
         if (this.locationConfirm === null || this.locationFrom[1] !== this.locationConfirm) {
             this.message = "Digite la ubicación de la que se desea sacar los ítems";
             console.log("Digite la ubicación de la que se desea sacar los ítems");
@@ -232,7 +233,7 @@ export class ResupplyComponent implements OnInit {
             binAbsFrom: this.locationFrom[0],
             binAbsTo: this.locationTo[0],
             quantity: this.quantityConfirm,
-            itemCode: this.item[0],
+            itemCode: this.item[0].trim(),
             warehouseCode: '01' //TODO: parametrizar whscode
         }
 
