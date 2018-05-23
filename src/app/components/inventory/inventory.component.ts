@@ -93,11 +93,12 @@ export class InventoryComponent implements OnInit {
     $('#modalConfirmacion').modal('hide');
     this.messageProgress = 'Creando un nuevo inventario, espere por favor.';
     $('#modal_process').modal('show');
-    this._stockTransferService.openInventory(this._userService.getWarehouseCode(), this.location).subscribe(
+    this._stockTransferService.cleanLocation(this._userService.getWarehouseCode(), this.location).subscribe(
       response => {
         console.log(response);
-        if (response === -1) {
+        if (response.code === -1) {
           this.messageError = 'No fue posible iniciar el inventario solicitado.';
+          console.error(response.content);
           console.log('No fue posible iniciar el inventario solicitado.');
         } else {
           this.idInventory = response.content.id;
