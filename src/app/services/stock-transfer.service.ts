@@ -10,7 +10,7 @@ export class StockTransferService {
     this.url = GLOBAL.url;
   }
 
-  public openInventory(warehouse, location) {
+  public cleanLocation(warehouse, location) {
     let igbHeaders = new IGBHeaders().loadHeaders();
     return this._http.get(this.url + 'stocktransfer/clean-location' + '/' + warehouse + '/' + location, { headers: igbHeaders })
       .map(res => res.json());

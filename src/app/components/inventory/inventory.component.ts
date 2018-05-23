@@ -96,8 +96,9 @@ export class InventoryComponent implements OnInit {
     this._stockTransferService.openInventory(this._userService.getWarehouseCode(), this.location.trim()).subscribe(
       response => {
         console.log(response);
-        if (response === -1) {
+        if (response.code === -1) {
           this.messageError = 'No fue posible iniciar el inventario solicitado.';
+          console.error(response.content);
           console.log('No fue posible iniciar el inventario solicitado.');
         } else {
           this.idInventory = response.content.id;
