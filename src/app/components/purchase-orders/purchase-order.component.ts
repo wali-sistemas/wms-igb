@@ -115,7 +115,7 @@ export class PurchaseOrderComponent implements OnInit {
         //mostrar modal de cantidad
         console.log('el item existe, solicitando cantidad para validar');
         this.scannedText = '';
-        this.processingItem = new PurchaseOrderLine(line.docNum, line.itemCode, line.itemName, line.quantity, line.lineNum);
+        this.processingItem = new PurchaseOrderLine(line.docNum, line.itemCode.trim(), line.itemName, line.quantity, line.lineNum);
         this.processingItem.partial = line.partial;
         this.processingItemIndex = i;
         $('#modal_quantity').modal('show');
@@ -137,12 +137,12 @@ export class PurchaseOrderComponent implements OnInit {
       this.processingItem.partial = false;
       if (this.received.has(this.processingItem.itemCode)) {
         //Completar item recibido parcialmente
-        this.receivedItems[this.received.get(this.processingItem.itemCode)].quantity += this.processingItem.quantity;
-        this.receivedItems[this.received.get(this.processingItem.itemCode)].partial = false;
+        this.receivedItems[this.received.get(this.processingItem.itemCode.trim())].quantity += this.processingItem.quantity;
+        this.receivedItems[this.received.get(this.processingItem.itemCode.trim())].partial = false;
       } else {
         //Agregar item completo
         this.receivedItems.push(this.processingItem);
-        this.received.set(this.processingItem.itemCode, this.receivedItems.length - 1);
+        this.received.set(this.processingItem.itemCode.trim(), this.receivedItems.length - 1);
       }
       this.order.lines.splice(this.processingItemIndex, 1);
       this.cleanAndSave();
@@ -174,7 +174,7 @@ export class PurchaseOrderComponent implements OnInit {
     } else {
       //el item no se ha recibido
       this.receivedItems.push(this.processingItem);
-      this.received.set(this.processingItem.itemCode, this.receivedItems.length - 1);
+      this.received.set(this.processingItem.itemCode.trim(), this.receivedItems.length - 1);
     }
 
     this.cleanAndSave();
@@ -194,7 +194,7 @@ export class PurchaseOrderComponent implements OnInit {
     for (let i = 0; i < this.receivedItems.length; i++) {
       let line = {
         docLine: this.receivedItems[i].lineNum,
-        itemCode: this.receivedItems[i].itemCode,
+        itemCode: this.receivedItems[i].itemCode.trim(),
         quantity: this.receivedItems[i].quantity
       };
       documentLines.push(line);
@@ -239,7 +239,7 @@ export class PurchaseOrderComponent implements OnInit {
   public eliminarItem() {
     if (this.editingPosition >= 0) {
       this.receivedItems.splice(this.editingPosition, 1);
-      this.received.delete(this.processingItem.itemCode);
+      this.received.delete(this.processingItem.itemCode.trim());
       this.editingPosition = -1;
       this.editingQuantity = false;
       this.processingItem = null;

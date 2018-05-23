@@ -13,10 +13,10 @@ export class PackingBox {
     }
 
     public addItem(itemCode: string, qty: number) {
-        if (this.items.has(itemCode)) {
-            this.items.set(itemCode, this.items.get(itemCode) + qty);
+        if (this.items.has(itemCode.trim())) {
+            this.items.set(itemCode.trim(), this.items.get(itemCode.trim()) + qty);
         } else {
-            this.items.set(itemCode, qty);
+            this.items.set(itemCode.trim(), qty);
         }
         this.boxQuantity += qty;
     }

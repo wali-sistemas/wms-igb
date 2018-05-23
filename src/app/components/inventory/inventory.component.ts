@@ -93,7 +93,7 @@ export class InventoryComponent implements OnInit {
     $('#modalConfirmacion').modal('hide');
     this.messageProgress = 'Creando un nuevo inventario, espere por favor.';
     $('#modal_process').modal('show');
-    this._stockTransferService.cleanLocation(this._userService.getWarehouseCode(), this.location).subscribe(
+    this._stockTransferService.openInventory(this._userService.getWarehouseCode(), this.location.trim()).subscribe(
       response => {
         console.log(response);
         if (response.code === -1) {
@@ -127,7 +127,7 @@ export class InventoryComponent implements OnInit {
 
     this.itemVisible = {
       idInventory: this.idInventory,
-      item: this.item,
+      item: this.item.trim().toUpperCase(),
       quantity: this.quantity
     }
 
@@ -135,7 +135,6 @@ export class InventoryComponent implements OnInit {
     this.quantity = null;
     this.itemTmp = this.itemVisible;
 
-    console.log(this.itemVisible);
     this.saveAddItem();
   }
 

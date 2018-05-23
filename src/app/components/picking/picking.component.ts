@@ -88,7 +88,7 @@ export class PickingComponent implements OnInit {
                         binLocation.binAbs = result[i].binAbs;
                         binLocation.binCode = result[i].binCode;
                         binLocation.binName = result[i].binName;
-                        binLocation.items = result[i].items;
+                        binLocation.items = result[i].items.trim();
                         binLocation.pieces = result[i].pieces;
                         this.availableCarts.push(binLocation);
                     }
@@ -139,7 +139,7 @@ export class PickingComponent implements OnInit {
                 this.loadAssignedOrders();
                 console.log(result);
                 if (result.code == 0) {
-                    this.nextItemCode = result.content.itemCode;
+                    this.nextItemCode = result.content.itemCode.trim();
                     this.nextItemQuantity = result.content.pendingQuantity;
                     this.nextBinAbs = result.content.binAbs;
                     this.nextBinStock = result.content.availableQuantity;
@@ -184,6 +184,7 @@ export class PickingComponent implements OnInit {
     public scanBinLocation() {
         this.errorMessageBinLocation = '';
         this.confirmingItemQuantity = false;
+        this.confirmBinCode = this.confirmBinCode.trim();
         if (this.confirmBinCode != this.nextBinLocationCode) {
             console.error('no estas en la ubicacion correcta');
             this.errorMessageBinLocation = 'No estás en la ubicación correcta. Revisa el número e intenta de nuevo';
@@ -221,7 +222,7 @@ export class PickingComponent implements OnInit {
             binAbsTo: this.selectedCart,
             quantity: this.pickedItemQuantity,
             expectedQuantity: this.getQuantityToPick(),
-            itemCode: this.nextItemCode,
+            itemCode: this.nextItemCode.trim(),
             orderNumber: (this.selectedOrder == null || this.selectedOrder.length == 0) ? this.nextOrderNumber : this.selectedOrder,
             username: this.identity.username,
             warehouseCode: this._userService.getWarehouseCode()
@@ -339,7 +340,7 @@ export class PickingComponent implements OnInit {
             binAbsTo: this.selectedCart,
             quantity: this.nextItemQuantity,
             expectedQuantity: this.getQuantityToPick(),
-            itemCode: this.nextItemCode,
+            itemCode: this.nextItemCode.trim(),
             orderNumber: (this.selectedOrder == null || this.selectedOrder.length == 0) ? this.nextOrderNumber : this.selectedOrder,
             username: this.identity.username,
             temporary: true,
