@@ -99,7 +99,7 @@ export class InventoryComponent implements OnInit {
         if (response.code === -1) {
           this.messageError = 'No fue posible iniciar el inventario solicitado.';
           console.error(response.content);
-          console.log('No fue posible iniciar el inventario solicitado.');
+          console.log('No fue posible iniciar el inventario solicitado.'); 
         } else {
           this.idInventory = response.content.id;
           $('#modalConfirmacion').modal('hide');
