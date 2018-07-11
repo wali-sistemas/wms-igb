@@ -42,7 +42,7 @@ export class ReportComponent implements OnInit {
 
     public listEmployees() {
         this.users = new Array<any>();
-        this._reportService.obtainReportsEmployeeAssigned('WMS').subscribe(
+        this._reportService.obtainReportsEmployeeAssigned().subscribe(
             response => {
                 this.users = response.content;
             }, error => { console.error(error); }

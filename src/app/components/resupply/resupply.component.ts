@@ -221,7 +221,7 @@ export class ResupplyComponent implements OnInit {
             this.message = "La cantidad ingresada supera la disponible en la ubicación";
             console.log("La cantidad ingresada supera la disponible en la ubicación");
             return;
-        } else if ((parseInt(this.item[1]) + this.quantityConfirm) > this.item[2] && !continuar) {
+        } else if (this.quantityConfirm > parseInt(this.item[1]) && !continuar) {
             $('#modalAdvertencia').modal('show');
             return;
         }

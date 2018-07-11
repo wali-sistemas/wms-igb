@@ -88,7 +88,7 @@ export class PickingComponent implements OnInit {
                         binLocation.binAbs = result[i].binAbs;
                         binLocation.binCode = result[i].binCode;
                         binLocation.binName = result[i].binName;
-                        binLocation.items = result[i].items.trim();
+                        binLocation.items = result[i].items;
                         binLocation.pieces = result[i].pieces;
                         this.availableCarts.push(binLocation);
                     }
