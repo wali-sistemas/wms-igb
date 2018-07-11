@@ -17,10 +17,10 @@ export class ReportService {
             .map(res => res.json());
     }
 
-    public obtainReportsEmployeeAssigned(groupName) {
+    public obtainReportsEmployeeAssigned() {
         let igbHeaders = new IGBHeaders().loadHeaders();
 
-        return this._http.get(this.url + 'report/reports-employee-assigned/' + groupName, { headers: igbHeaders })
+        return this._http.get(this.url + 'report/reports-employee-assigned', { headers: igbHeaders })
             .map(res => res.json());
     }
 
