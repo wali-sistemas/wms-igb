@@ -143,16 +143,46 @@
                         <th>Carrito</th>
                         <th>Referencia</th>
                         <th style="text-align: right;">Cantidad</th>
+                        <th></th>
                     </tr>
                     <tr *ngFor="let row of orderItemsList">
-                        <td>{{row[1]}}<span class="bin-code"> ({{row[0]}})</span></td>
+                        <td>{{row[1]}}
+                            <span class="bin-code"> ({{row[0]}})</span>
+                        </td>
                         <td>{{row[3]}}</td>
                         <td style="text-align: right;">{{row[2]}}</td>
+                        <td class="pointer-cursor" style="text-align: center; border-left: 1px solid #DDDDDD; cursor: pointer;" (click)="selectItemTable(row)">
+                            <span class="glyphicon glyphicon-chevron-right"></span>
+                        </td>
                     </tr>
                 </table>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="cantidad" class="modal slide" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <p>Confirme la cantidad</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input id="input_packedQuantity" type="number" class="form-control input-lg" name="filter" placeholder="Confirme cantidad"
+                            [(ngModel)]="itemQuantity" autocomplete="off">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" (click)="cleanItemTable()">Cerrar</button>
+                <button type="button" class="btn btn-primary btn-lg" (click)="validateItemQuantity()">Ok</button>
             </div>
         </div>
     </div>
@@ -181,8 +211,52 @@
     </div>
 </div>
 
+<div id="magicTable" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <table class="table table-striped" *ngIf="specialPacking != null && specialPacking.length > 0">
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Orden</th>
+                        <th>Carro</th>
+                        <th>Ítem</th>
+                        <th>Cant</th>
+                        <th></th>
+                    </tr>
+                    <tr *ngFor="let special of specialPacking">
+                        <td>({{special[[0]]}}) {{special[1]}}</td>
+                        <td>{{special[2]}}</td>
+                        <td>{{special[4]}} <span class="bin-code">({{special[5]}})</span></td>
+                        <td>{{special[3]}}</td>
+                        <td style="text-align: right;">{{special[7]}}</td>
+                        <td class="pointer-cursor" style="text-align: center; border-left: 1px solid #DDDDDD; cursor: pointer;" (click)="selectItemMagicTable(special)">
+                            <span class="glyphicon glyphicon-chevron-right"></span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="container content">
     <h3>Packing </h3>
+    <div class="row">
+        <div class="col-xs-12" style="text-align:  right; font-size:  30px; cursor:  pointer; color:  #da0611;">
+            <span class="glyphicon glyphicon-th-large" (click)="getPackingOrders()"></span>
+        </div>
+    </div>
+    <div class="row">
+            <div class="col-xs-12">
+                <div class="alert alert-danger" role="alert" *ngIf="errorMessage != null && errorMessage.length > 0">
+                    <p>{{errorMessage}}</p>
+                </div>
+            </div>
+        </div>
     <div class="row">
         <div class="col-xs-12">
             <label for="cliente">Cliente</label>

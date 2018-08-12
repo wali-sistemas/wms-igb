@@ -54,6 +54,9 @@ export class PackingComponent implements OnInit {
     private idPackingList: number;
     private idPackingOrder: number;
 
+    public errorMessage: string;
+    public specialPacking: Array<any>;
+
     constructor(
         private _userService: UserService,
         private _packingService: PackingService,
@@ -72,6 +75,7 @@ export class PackingComponent implements OnInit {
         this.selectedBoxItems = this.selectedBox.items;
         this.selectedCustomer = '';
         this.selectedOrder = 0;
+        this.specialPacking = new Array<any>();
     }
 
     ngOnInit() {
@@ -199,6 +203,7 @@ export class PackingComponent implements OnInit {
     }
 
     public validateItemQuantity() {
+        $('#cantidad').modal('hide');
         this.quantityErrorMessage = '';
         console.log('validando la cantidad ');
         if (!this.itemQuantity || this.itemQuantity <= 0 || this.itemQuantity > this.expectedItemQuantity) {
@@ -454,4 +459,55 @@ export class PackingComponent implements OnInit {
             || this.processPrintLabelsStatus === 'inprogress';
     }
 
+    public selectItemTable(orderList: any) {
+        this.itemCode = orderList[3];
+        this.binCode = orderList[0];
+
+        $('#order_items').modal('hide');
+        $('#cantidad').modal('show');
+
+        this.isVisibleItemCode = true;
+        this.packedItemCodeValidated = true;
+        this.customersListDisabled = true;
+    }
+
+    public cleanItemTable() {
+        this.itemCode = null;
+        this.binCode = null;
+        this.itemQuantity = null;
+        this.isVisibleItemCode = false;
+        this.packedItemCodeValidated = false;
+    }
+
+    public getPackingOrders() {
+        this.specialPacking = new Array<any>();
+
+        this._packingService.getPackingOrders((this.selectedCustomer == null || this.selectedCustomer.length == 0) ? 'null' : this.selectedCustomer).subscribe(
+            response => {
+                if (response.content.length > 0) {
+                    this.specialPacking = response.content;
+                    $('#magicTable').modal('show');
+                    console.log(this.specialPacking);
+                } else {
+                    this.errorMessage = 'No se encontraron ítems pendientes por empacar';
+                }
+            }, error => { }
+        );
+    }
+
+    public selectItemMagicTable(specialPacking: any) {
+        this.selectedCustomer = specialPacking[0];
+        this.selectedOrder = specialPacking[2];
+        this.itemCode = specialPacking[3];
+        this.binCode = specialPacking[5];
+        this.idPackingOrder = specialPacking[8];
+
+        this.loadCustomerOrders();
+
+        $('#magicTable').modal('hide');
+        $('#cantidad').modal('show');
+
+        this.isVisibleItemCode = true;
+        this.packedItemCodeValidated = true;
+    }
 }

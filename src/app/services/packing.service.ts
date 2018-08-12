@@ -82,4 +82,10 @@ export class PackingService {
         return this._http.get(this.url + 'packing/status', { headers: igbHeaders })
             .map(res => res.json());
     }
+
+    public getPackingOrders(customer: string) {
+        let igbHeaders = new IGBHeaders().loadHeaders();
+        return this._http.get(this.url + 'packing/get-packing-orders/' + customer, { headers: igbHeaders })
+            .map(res => res.json());
+    }
 }
