@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Http, Response, Headers } from '@angular/http';
+import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
-import { Observable } from 'rxjs/Observable';
 import { GLOBAL, CONTENT_TYPE_JSON, IGBHeaders } from './global';
 
 @Injectable()
@@ -18,8 +17,12 @@ export class GenericService {
   }
 
   public validateStatus() {
-    let igbHeaders = new IGBHeaders().loadHeaders();
-    return this._http.get(this.url + 'generic/status', { headers: igbHeaders })
+    return this._http.get(this.url + 'generic/status', { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
+
+  public listAvailableWarehouses() {
+    return this._http.get(this.url + 'generic/warehouses', { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 

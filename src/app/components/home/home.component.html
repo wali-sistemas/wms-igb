@@ -1,5 +1,14 @@
 <igb-navbar></igb-navbar>
 <div class="container content">
-  <h1>Hola {{identity.name}}!!</h1>
-  <p>Has iniciado sesion correctamente</p>
+  <h1>Hola {{identity.name}}!</h1>
+
+  <div class="row">
+    <div class="col-xs-12">
+      <label for="warehouse">Selecciona un almacén</label>
+      <select id="warehouse" class="form-control input-lg" [(ngModel)]="selectedWarehouse" name="selectedWarehouse" (change)="updateWarehouseCode()">
+        <option *ngFor="let warehouse of warehouses" value="{{warehouse.code}}">({{warehouse.code}}) {{warehouse.name}}</option>
+      </select>
+    </div>
+  </div>
+
 </div>

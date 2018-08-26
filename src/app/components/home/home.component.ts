@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, Params } from '@angular/router';
+import { Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { GenericService } from '../../services/generic';
+import { Warehouse } from '../../models/warehouse';
 
 @Component({
-  selector: 'home',
+  // selector: 'home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
   providers: [UserService, GenericService]
@@ -12,11 +13,13 @@ import { GenericService } from '../../services/generic';
 export class HomeComponent implements OnInit {
   public errorMessage: string;
   public identity;
+  public selectedWarehouse: string;
+  public warehouses: Array<Warehouse>;
 
   constructor(private _userService: UserService,
     private _genericService: GenericService,
-    private _route: ActivatedRoute,
     private _router: Router) {
+    this.warehouses = new Array<Warehouse>();
   }
 
   ngOnInit() {
@@ -25,6 +28,17 @@ export class HomeComponent implements OnInit {
     if (this.identity === null) {
       this._router.navigate(['/']);
     }
+    this.selectedWarehouse = this.identity.warehouseCode;
+    this.listAvailableWarehouses();
+  }
+
+  private listAvailableWarehouses() {
+    this._genericService.listAvailableWarehouses().subscribe(
+      result => {
+        console.log(result);
+        this.warehouses = result.content;
+      }, error => { console.error(error); }
+    );
   }
 
   private validateStatus() {
@@ -51,6 +65,12 @@ export class HomeComponent implements OnInit {
       localStorage.removeItem('igb.selectedCompany');
       this._router.navigate(['/']);
     }
+  }
+
+  public updateWarehouseCode() {
+    console.log(this.selectedWarehouse);
+    this.identity.warehouseCode = this.selectedWarehouse;
+    localStorage.setItem('igb.identity', JSON.stringify(this.identity));
   }
 
 }
