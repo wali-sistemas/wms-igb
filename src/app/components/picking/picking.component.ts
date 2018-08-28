@@ -84,7 +84,7 @@ export class PickingComponent implements OnInit {
                     this.errorMessagePickingCarts = 'No se encontraron carritos de picking habilitados. Se deben configurar ubicaciones tipo CART en SAP, asegurándose de agregar el nombre de cada carrito en el campo descripción';
                 } else {
                     for (let i = 0; i < result.length; i++) {
-                        let binLocation = new BinLocation();
+                        const binLocation = new BinLocation();
                         binLocation.binAbs = result[i].binAbs;
                         binLocation.binCode = result[i].binCode;
                         binLocation.binName = result[i].binName;
@@ -217,7 +217,7 @@ export class PickingComponent implements OnInit {
         $('#modal_confirm_quantity_diff').modal('hide');
         console.log('confirmando cantidad para trasladar item, ' + this.nextItemQuantity + ', ' + this.pickedItemQuantity);
         this.pickedItemQuantityValidated = true;
-        let itemTransfer = {
+        const itemTransfer = {
             binAbsFrom: this.nextBinAbs,
             binAbsTo: this.selectedCart,
             quantity: this.pickedItemQuantity,
@@ -236,7 +236,7 @@ export class PickingComponent implements OnInit {
         this.errorMessageBinTransfer = '';
         this._stockTransferService.transferSingleItem(itemTransfer).subscribe(
             response => {
-                console.info(response);
+                console.log(response);
                 if (response.code === 0) {
                     //Clears bin location, item code and quantity fields; then loads cart inventory and next item
                     this.resetForm();
@@ -335,7 +335,7 @@ export class PickingComponent implements OnInit {
     public skipItem() {
         console.log('saltando item, ' + this.nextItemQuantity);
         this.pickedItemQuantityValidated = true;
-        let itemTransfer = {
+        const itemTransfer = {
             binAbsFrom: this.nextBinAbs,
             binAbsTo: this.selectedCart,
             quantity: this.nextItemQuantity,
@@ -355,7 +355,7 @@ export class PickingComponent implements OnInit {
         this.errorMessageBinTransfer = '';
         this._stockTransferService.transferSingleItem(itemTransfer).subscribe(
             response => {
-                console.info(response);
+                console.log(response);
                 if (response.code === 0) {
                     //Clears bin location, item code and quantity fields; then loads cart inventory and next item
                     this.resetForm();
