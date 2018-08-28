@@ -221,7 +221,7 @@ export class ResupplyComponent implements OnInit {
             this.message = "La cantidad ingresada supera la disponible en la ubicación";
             console.log("La cantidad ingresada supera la disponible en la ubicación");
             return;
-        } else if (this.quantityConfirm > parseInt(this.item[1]) && !continuar) {
+        } else if (this.quantityConfirm > parseInt(this.item[1], 10) && !continuar) {
             $('#modalAdvertencia').modal('show');
             return;
         }
@@ -229,12 +229,12 @@ export class ResupplyComponent implements OnInit {
         $('#modalUbicacion').modal('hide');
         $('#modal_process').modal('show');
 
-        let itemTransfer = {
+        const itemTransfer = {
             binAbsFrom: this.locationFrom[0],
             binAbsTo: this.locationTo[0],
             quantity: this.quantityConfirm,
             itemCode: this.item[0].trim(),
-            warehouseCode: '01' //TODO: parametrizar whscode
+            warehouseCode: this._userService.getItentity().warehouseCode
         }
 
         console.log(itemTransfer);

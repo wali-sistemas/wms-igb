@@ -11,44 +11,32 @@ export class ResupplyService {
     }
 
     public listLocationsResupply() {
-        let igbHeaders = new IGBHeaders().loadHeaders();
-
-        return this._http.get(this.url + 'resupply/list-locations-resupply', { headers: igbHeaders })
+        return this._http.get(this.url + 'resupply/list-locations-resupply', { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
 
     public listItemsLocation(location: string) {
-        let igbHeaders = new IGBHeaders().loadHeaders();
-
-        return this._http.get(this.url + 'resupply/list-items-location/' + location, { headers: igbHeaders })
+        return this._http.get(this.url + 'resupply/list-items-location/' + location, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
 
     public listUbicationsStorage(itemCode: string) {
-        let igbHeaders = new IGBHeaders().loadHeaders();
-
-        return this._http.get(this.url + 'resupply/list-location-storage/' + itemCode, { headers: igbHeaders })
+        return this._http.get(this.url + 'resupply/list-location-storage/' + itemCode, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
 
     public listLocationLimits() {
-        let igbHeaders = new IGBHeaders().loadHeaders();
-
-        return this._http.get(this.url + 'resupply/list-location-limits', { headers: igbHeaders })
+        return this._http.get(this.url + 'resupply/list-location-limits', { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
 
     public saveLocationLimit(locationLimit) {
-        let igbHeaders = new IGBHeaders().loadHeaders();
-
-        return this._http.post(this.url + 'resupply/save-location-limit', locationLimit, { headers: igbHeaders })
+        return this._http.post(this.url + 'resupply/save-location-limit', locationLimit, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
 
     public deleteLocationLimit(code) {
-        let igbHeaders = new IGBHeaders().loadHeaders();
-
-        return this._http.delete(this.url + 'resupply/delete-location-limit/' + code, { headers: igbHeaders })
+        return this._http.delete(this.url + 'resupply/delete-location-limit/' + code, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
 }
