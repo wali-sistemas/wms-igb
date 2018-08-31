@@ -67,7 +67,7 @@ export class PickingComponent implements OnInit {
     }
 
     private redirectIfSessionInvalid(error) {
-        if (error && error.status && error.status == 401) {
+        if (error && error.status && error.status === 401) {
             localStorage.removeItem('igb.identity');
             localStorage.removeItem('igb.selectedCompany');
             this._router.navigate(['/']);
@@ -108,10 +108,10 @@ export class PickingComponent implements OnInit {
         this.warningMessageNoOrders = '';
         this._salesOrderService.listUserOrders(this.identity.username).subscribe(
             result => {
-                if (result.code == 0) {
+                if (result.code === 0) {
                     console.log('assigned orders:', result.content);
                     for (let i = 0; i < result.content.length; i++) {
-                        let order: SalesOrder = new SalesOrder();
+                        const order: SalesOrder = new SalesOrder();
                         order.docNum = result.content[i][0];
                         order.cardName = result.content[i][1];
                         this.assignedOrders.push(order);
@@ -138,7 +138,7 @@ export class PickingComponent implements OnInit {
                 $('#modal_loading_next').modal('hide');
                 this.loadAssignedOrders();
                 console.log(result);
-                if (result.code == 0) {
+                if (result.code === 0) {
                     this.nextItemCode = result.content.itemCode.trim();
                     this.nextItemQuantity = result.content.pendingQuantity;
                     this.nextBinAbs = result.content.binAbs;
@@ -146,15 +146,15 @@ export class PickingComponent implements OnInit {
                     this.nextBinLocationCode = result.content.binCode;
                     this.nextItemName = result.content.itemName;
                     this.nextOrderNumber = result.content.orderNumber;
-                } else if (result.code == -1) {
-                    if (this.pickingMethod == 'multiple') {
+                } else if (result.code === -1) {
+                    if (this.pickingMethod === 'multiple') {
                         //this.closeOrderAssignation(this.identity.username, this.selectedOrder);
                     } else {
                         //this.closeOrderAssignation(this.identity.username, null);
                     }
-                } else if (result.code == -2) {
+                } else if (result.code === -2) {
                     this.errorMessage = 'Ocurrió un error al consultar el siguiente ítem para picking. ' + result.content;
-                } else if (result.code == -3) {
+                } else if (result.code === -3) {
                     this.errorMessage = 'No hay saldo disponible para picking. La orden pasa a estado <span class="warning">warning</span>. ' + result.content;
                 }
             }, error => {
@@ -170,7 +170,7 @@ export class PickingComponent implements OnInit {
         this._pickingService.finishPicking(username, orderNumber).subscribe(
             result => {
                 console.log('finished closing order picking assignation. ', result);
-                if (this.pickingMethod == 'single') {
+                if (this.pickingMethod === 'single') {
                     $('#modal_change_picking_method').modal({
                         backdrop: 'static',
                         keyboard: false,
@@ -185,7 +185,7 @@ export class PickingComponent implements OnInit {
         this.errorMessageBinLocation = '';
         this.confirmingItemQuantity = false;
         this.confirmBinCode = this.confirmBinCode.trim();
-        if (this.confirmBinCode != this.nextBinLocationCode) {
+        if (this.confirmBinCode !== this.nextBinLocationCode) {
             console.error('no estas en la ubicacion correcta');
             this.errorMessageBinLocation = 'No estás en la ubicación correcta. Revisa el número e intenta de nuevo';
             return;
@@ -201,7 +201,7 @@ export class PickingComponent implements OnInit {
     }
 
     public validatePickedQuantity() {
-        if (this.getQuantityToPick() != this.pickedItemQuantity) {
+        if (this.getQuantityToPick() !== this.pickedItemQuantity) {
             //show different quantity confirmation
             $('#modal_confirm_quantity_diff').modal({
                 backdrop: 'static',
@@ -223,7 +223,7 @@ export class PickingComponent implements OnInit {
             quantity: this.pickedItemQuantity,
             expectedQuantity: this.getQuantityToPick(),
             itemCode: this.nextItemCode.trim(),
-            orderNumber: (this.selectedOrder == null || this.selectedOrder.length == 0) ? this.nextOrderNumber : this.selectedOrder,
+            orderNumber: (this.selectedOrder == null || this.selectedOrder.length === 0) ? this.nextOrderNumber : this.selectedOrder,
             username: this.identity.username,
             warehouseCode: this._userService.getWarehouseCode()
         }
@@ -341,7 +341,7 @@ export class PickingComponent implements OnInit {
             quantity: this.nextItemQuantity,
             expectedQuantity: this.getQuantityToPick(),
             itemCode: this.nextItemCode.trim(),
-            orderNumber: (this.selectedOrder == null || this.selectedOrder.length == 0) ? this.nextOrderNumber : this.selectedOrder,
+            orderNumber: (this.selectedOrder == null || this.selectedOrder.length === 0) ? this.nextOrderNumber : this.selectedOrder,
             username: this.identity.username,
             temporary: true,
             warehouseCode: this._userService.getWarehouseCode()

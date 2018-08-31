@@ -44,7 +44,7 @@ export class SalesOrdersComponent implements OnInit {
   }
 
   private redirectIfSessionInvalid(error) {
-    if (error && error.status && error.status == 401) {
+    if (error && error.status && error.status === 401) {
       localStorage.removeItem('igb.identity');
       localStorage.removeItem('igb.selectedCompany');
       this._router.navigate(['/']);
@@ -74,7 +74,7 @@ export class SalesOrdersComponent implements OnInit {
     if (order.confirmed === 'N') {
       return;
     }
-    if (order.status == 'warning') {
+    if (order.status === 'warning') {
       this.listAvailableStock(order.docNum);
       return;
     }
@@ -90,7 +90,11 @@ export class SalesOrdersComponent implements OnInit {
     this._userService.listUsersByGroup('WMS').subscribe(
       response => {
         this.assignableUsers = response;
-        $('#modal_users').modal('show');
+        if (this.assignableUsers.length > 0) {
+          $('#modal_users').modal('show');
+        } else {
+          console.error('No se encontraron empleados en el directorio activo para asignar la orden');
+        }
       }, error => { console.error(error); this.redirectIfSessionInvalid(error); }
     );
   }
@@ -107,10 +111,10 @@ export class SalesOrdersComponent implements OnInit {
       return;
     }
 
-    let assignment = {
-      "assignedBy": this.identity.username,
-      "employeeId": this.selectedUser,
-      "orders": Array.from(this.selectedOrders.entries())//.map(Number)
+    const assignment = {
+      'assignedBy': this.identity.username,
+      'employeeId': this.selectedUser,
+      'orders': Array.from(this.selectedOrders.entries())//.map(Number)
     };
 
     console.log(assignment);
@@ -125,11 +129,11 @@ export class SalesOrdersComponent implements OnInit {
   }
 
   public filterOrders(force) {
-    if (this.filter != this.searchFilter || force) {
+    if (this.filter !== this.searchFilter || force) {
       this.searchFilter = this.filter.toLowerCase();
       this.filteredOrders = new Array<SalesOrder>();
       for (let i = 0; i < this.orders.length; i++) {
-        let ord = this.orders[i];
+        const ord = this.orders[i];
         if (ord.docNum.toLowerCase().includes(this.searchFilter)
           || ord.cardCode.toLowerCase().includes(this.searchFilter)
           || ord.cardName.toLowerCase().includes(this.searchFilter)
