@@ -106,16 +106,16 @@ export class PackingComponent implements OnInit {
                     for (let i = 0; i < response.content.length; i++) {
                         const record = response.content[i];
 
-                        if (this.boxes.length < record[11]) {
+                        if (this.boxes.length < record[12]) {
                             //Si hay que agregar la caja
                             const box = new PackingBox();
-                            box.boxDisplayName = 'Caja #' + record[11];
-                            box.boxNumber = record[11];
-                            box.addItem(record[7], record[8]);
+                            box.boxDisplayName = 'Caja #' + record[12];
+                            box.boxNumber = record[12];
+                            box.addItem(record[7], record[9]);
                             this.boxes.push(box);
                         } else {
                             //Si hay que agregar la cantidad a una caja existente
-                            this.boxes[record[11] - 1].addItem(record[7], record[8]);
+                            this.boxes[record[12] - 1].addItem(record[7], record[9]);
                         }
                     }
                     this.loadCustomerOrders();
