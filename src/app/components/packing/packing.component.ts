@@ -418,10 +418,6 @@ export class PackingComponent implements OnInit {
         this.processClosePackingOrderStatus = 'inprogress';
         this._packingService.closePackingOrder(idPackingOrder, username).subscribe(
             response => {
-                if (response.content) {
-                    //Orden completa. Cerrar orden de venta
-                    this.closeSalesOrder(this.idPackingOrder);
-                }
                 this.processClosePackingOrderStatus = 'done';
                 this.reset();
                 this.start();
@@ -449,11 +445,6 @@ export class PackingComponent implements OnInit {
                 console.error(error);
             }
         );
-    }
-
-    //Las ordenes se cierran automaticamente al facturar. Por la tanto este metodo no es necesario
-    private closeSalesOrder(idPackingOrder) {
-        this.process4Status = 'inprogress';
     }
 
     public inProgress() {
