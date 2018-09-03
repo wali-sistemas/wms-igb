@@ -23,7 +23,6 @@ export class PackingComponent implements OnInit {
     public processClosePackingOrderStatus: string = 'none';
     public processPrintLabelsStatus: string = 'none';
     public processInvoiceStatus: string = 'none';
-    public process4Status: string = 'none';
 
     public selectedPrinter: string = '';
     public deliveryErrorMessage: string = '';
@@ -38,6 +37,7 @@ export class PackingComponent implements OnInit {
     public selectedBoxItems: Map<string, number> = this.selectedBox.items;
     public binCode: string = '';
     public itemCode: string = '';
+    public itemName: string = '';
     public expectedItemQuantity: number;
     public itemQuantity: number;
     public boxes: Array<PackingBox>;
@@ -98,18 +98,18 @@ export class PackingComponent implements OnInit {
                 if (response.content.length > 0) {
                     console.log('procesando registros...');
                     this.customersListDisabled = true;
-                    let firstRecord = response.content[0];
+                    const firstRecord = response.content[0];
                     this.selectedOrder = firstRecord[2];
                     this.selectedCustomer = firstRecord[3];
                     this.idPackingList = firstRecord[1];
                     this.idPackingOrder = firstRecord[6];
                     for (let i = 0; i < response.content.length; i++) {
-                        let record = response.content[i];
+                        const record = response.content[i];
 
                         if (this.boxes.length < record[11]) {
                             //Si hay que agregar la caja
-                            let box = new PackingBox();
-                            box.boxDisplayName = "Caja #" + record[11];
+                            const box = new PackingBox();
+                            box.boxDisplayName = 'Caja #' + record[11];
                             box.boxNumber = record[11];
                             box.addItem(record[7], record[8]);
                             this.boxes.push(box);
@@ -189,8 +189,9 @@ export class PackingComponent implements OnInit {
         console.log('validando el item ' + this.itemCode);
         this._packingService.validateItem(this.itemCode, this.binCode, this.selectedOrder).subscribe(
             response => {
-                if (response && response.code == 0 && response.content && response.content > 0) {
-                    this.expectedItemQuantity = response.content;
+                if (response && response.code == 0 && response.content && response.content.items > 0) {
+                    this.expectedItemQuantity = response.content.items;
+                    this.itemName = response.content.itemName;
                     this.packedItemCodeValidated = true;
                 } else {
                     console.warn('el item ' + this.itemCode + ' no se encuentra pendiente por packing en la orden y ubicacion seleccionadas');
@@ -230,8 +231,8 @@ export class PackingComponent implements OnInit {
         if (!this.addNewBoxEnabled) {
             return;
         }
-        let newBox: PackingBox = new PackingBox();
-        newBox.boxDisplayName = "Caja #" + (this.boxes.length + 1);
+        const newBox: PackingBox = new PackingBox();
+        newBox.boxDisplayName = 'Caja #' + (this.boxes.length + 1);
         newBox.boxNumber = this.boxes.length + 1;
         this.boxes.push(newBox);
 
@@ -255,10 +256,11 @@ export class PackingComponent implements OnInit {
                 keyboard: false,
                 show: true
             });
-            let packingRecord = new PackingRecord();
+            const packingRecord = new PackingRecord();
             packingRecord.idPackingList = this.idPackingList;
             packingRecord.binCode = this.binCode;
             packingRecord.itemCode = this.itemCode;
+            packingRecord.itemName = this.itemName;
             packingRecord.quantity = this.itemQuantity;
             packingRecord.boxNumber = this.boxes[this.addToBox].boxNumber;
             packingRecord.customerId = this.selectedCustomer;
@@ -288,6 +290,7 @@ export class PackingComponent implements OnInit {
     private reset() {
         this.binCode = '';
         this.itemCode = '';
+        this.itemName = '';
         this.itemQuantity = 0;
         this.isVisibleItemCode = false;
         this.packedItemCodeValidated = false;
@@ -448,6 +451,7 @@ export class PackingComponent implements OnInit {
         );
     }
 
+    //Las ordenes se cierran automaticamente al facturar. Por la tanto este metodo no es necesario
     private closeSalesOrder(idPackingOrder) {
         this.process4Status = 'inprogress';
     }
@@ -473,6 +477,7 @@ export class PackingComponent implements OnInit {
 
     public cleanItemTable() {
         this.itemCode = null;
+        this.itemName = null;
         this.binCode = null;
         this.itemQuantity = null;
         this.isVisibleItemCode = false;
@@ -499,6 +504,7 @@ export class PackingComponent implements OnInit {
         this.selectedCustomer = specialPacking[0];
         this.selectedOrder = specialPacking[2];
         this.itemCode = specialPacking[3];
+        this.itemName = specialPacking[9];
         this.binCode = specialPacking[5];
         this.idPackingOrder = specialPacking[8];
 

@@ -201,7 +201,7 @@ export class PickingComponent implements OnInit {
     }
 
     public validatePickedQuantity() {
-        if (this.getQuantityToPick() !== this.pickedItemQuantity) {
+        if (this.getQuantityToPick() != this.pickedItemQuantity) {
             //show different quantity confirmation
             $('#modal_confirm_quantity_diff').modal({
                 backdrop: 'static',

@@ -6,6 +6,7 @@ export class PackingRecord {
     public customerName: string;
     public pickingOrder: number;
     public itemCode: string;
+    public itemName: string;
     public quantity: number;
     public binAbs: number;
     public binCode: string;
