@@ -1,0 +1,76 @@
+<igb-navbar></igb-navbar>
+
+<div class="container content">
+    <h3>Transferencia entre ubicaciones</h3>
+    <div class="row" *ngIf="stockTransferErrorMessage">
+        <div class="col-xs-12">
+            <div class="alert alert-danger">
+                {{stockTransferErrorMessage}}
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="col-xs-12">
+            <form (submit)="validarUbicacion(fromBin, 'from')">
+                <label for="fromBin">Origen</label>
+                <input type="text" class="form-control input-lg" autocomplete="off" id="fromBin" name="fromBin" placeholder="escanea la ubicación de origen"
+                    [(ngModel)]="fromBin">
+            </form>
+        </div>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="col-xs-12">
+            <form (submit)="validarUbicacion(toBin, 'to')">
+                <label for="toBin">Destino</label>
+                <input type="text" class="form-control input-lg" autocomplete="off" id="toBin" name="toBin" placeholder="escanea la ubicación de origen"
+                    [(ngModel)]="toBin">
+            </form>
+        </div>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="col-xs-8">
+            <form (submit)="validarReferencia()">
+                <label for="itemCode">Referencia</label>
+                <input type="text" class="form-control input-lg" autocomplete="off" id="itemCode" name="itemCode" placeholder="escanea la referencia"
+                    [(ngModel)]="itemCode">
+            </form>
+        </div>
+        <div class="col-xs-4">
+            <form (submit)="validarReferencia()">
+                <label for="quantity">Cant</label>
+                <input type="number" class="form-control input-lg" autocomplete="off" id="quantity" name="quantity" [(ngModel)]="quantity">
+            </form>
+        </div>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="col-xs-6">
+            <button class="btn btn-default btn-lg" type="button" (click)="agregarReferencia()">
+                Agregar ítem <span class="glyphicon glyphicon-plus"></span>
+            </button>
+        </div>
+        <div class="col-xs-6">
+            <button class="btn btn-default btn-lg" type="button" (click)="crearTraslado()">
+                Finalizar <span class="glyphicon glyphicon-save"></span>
+            </button>
+        </div>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="col-xs-12">
+            <table *ngIf="items.length > 0" class="table table-striped">
+                <tr>
+                    <th>Referencia</th>
+                    <th style="text-align: right;">Cantidad</th>
+                </tr>
+                <tr *ngFor="let item of items">
+                    <td>{{item.itemCode}}</td>
+                    <td style="text-align: right;">{{item.quantity}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
