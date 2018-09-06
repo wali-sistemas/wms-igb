@@ -11,20 +11,22 @@ export class BinLocationService {
     }
 
     public listAvailablePickingCarts() {
-        let igbHeaders = new IGBHeaders().loadHeaders();
-        return this._http.get(this.url + 'binlocation/picking-carts', { headers: igbHeaders })
+        return this._http.get(this.url + 'binlocation/picking-carts', { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
 
     public transferSingleItem(itemTransfer) {
-        let igbHeaders = new IGBHeaders().loadHeaders();
-        return this._http.post(this.url + 'binlocation/pick-item', itemTransfer, { headers: igbHeaders })
+        return this._http.post(this.url + 'binlocation/pick-item', itemTransfer, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
 
     public listAvailablePackedCarts() {
-        let igbHeaders = new IGBHeaders().loadHeaders();
-        return this._http.get(this.url + 'binlocation/picking-carts', { headers: igbHeaders })
+        return this._http.get(this.url + 'binlocation/picking-carts', { headers: new IGBHeaders().loadHeaders() })
+            .map(res => res.json());
+    }
+
+    public getBinAbs(binCode: string) {
+        return this._http.get(this.url + 'binlocation/binabs/' + binCode, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
 }

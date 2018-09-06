@@ -17,6 +17,7 @@ import { PackingComponent } from './components/packing/packing.component';
 import { InventoryComponent } from './components/inventory/inventory.component';
 import { ResupplyComponent } from './components/resupply/resupply.component';
 import { ReportComponent } from './components/report/report.component';
+import { StockTransferComponent } from './components/stock-transfer/stock-transfer.component';
 
 import { routing, appRoutingProviders } from './app.routing';
 
@@ -34,7 +35,8 @@ import { routing, appRoutingProviders } from './app.routing';
     PackingComponent,
     InventoryComponent,
     ResupplyComponent,
-    ReportComponent
+    ReportComponent,
+    StockTransferComponent
   ],
   imports: [
     BrowserModule,

@@ -10,6 +10,8 @@ import { PackingService } from '../../services/packing.service';
 import { InvoiceService } from '../../services/invoice.service';
 import { PrintService } from '../../services/print.service';
 
+import 'rxjs/Rx'
+
 declare var $: any;
 
 @Component({
@@ -419,6 +421,11 @@ export class PackingComponent implements OnInit {
         this._packingService.closePackingOrder(idPackingOrder, username).subscribe(
             response => {
                 this.processClosePackingOrderStatus = 'done';
+
+                const blob = new Blob([response], { type: 'application/pdf' });
+                const url = window.URL.createObjectURL(blob);
+                window.open(url);
+
                 this.reset();
                 this.start();
                 this.ngOnInit();

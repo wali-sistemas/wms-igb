@@ -12,80 +12,67 @@ export class PackingService {
     }
 
     public listPackingRecords() {
-        let igbHeaders = new IGBHeaders().loadHeaders();
-        return this._http.get(this.url + 'packing', { headers: igbHeaders })
+        return this._http.get(this.url + 'packing', { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
 
     public listCustomers() {
-        let igbHeaders = new IGBHeaders().loadHeaders();
-        return this._http.get(this.url + 'packing/customers', { headers: igbHeaders })
+        return this._http.get(this.url + 'packing/customers', { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
 
     public listCustomerOrders(customerId: string) {
-        let igbHeaders = new IGBHeaders().loadHeaders();
-        return this._http.get(this.url + 'packing/orders/' + customerId, { headers: igbHeaders })
+        return this._http.get(this.url + 'packing/orders/' + customerId, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
 
     public validateBinCode(binCode: string, orderNumber: number) {
-        let igbHeaders = new IGBHeaders().loadHeaders();
-        return this._http.get(this.url + 'packing/bin/' + orderNumber + '/' + binCode, { headers: igbHeaders })
+        return this._http.get(this.url + 'packing/bin/' + orderNumber + '/' + binCode, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
 
     public validateItem(itemCode: string, binCode: string, orderNumber: number) {
-        let igbHeaders = new IGBHeaders().loadHeaders();
-        return this._http.get(this.url + 'packing/item/' + orderNumber + '/' + binCode + '/' + itemCode, { headers: igbHeaders })
+        return this._http.get(this.url + 'packing/item/' + orderNumber + '/' + binCode + '/' + itemCode, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
 
     public createPackingRecord(packingRecord: PackingRecord) {
-        let igbHeaders = new IGBHeaders().loadHeaders();
-        return this._http.post(this.url + 'packing/pack', packingRecord, { headers: igbHeaders })
+        return this._http.post(this.url + 'packing/pack', packingRecord, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
 
     public listOpenJobRecords(username: string) {
-        let igbHeaders = new IGBHeaders().loadHeaders();
-        return this._http.get(this.url + 'packing/list/' + username, { headers: igbHeaders })
+        return this._http.get(this.url + 'packing/list/' + username, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
 
     public listOrderItems(idPackingOrder: number) {
-        let igbHeaders = new IGBHeaders().loadHeaders();
-        return this._http.get(this.url + 'packing/items/' + idPackingOrder, { headers: igbHeaders })
+        return this._http.get(this.url + 'packing/items/' + idPackingOrder, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
 
     public createDelivery(idPackingOrder: number) {
-        let igbHeaders = new IGBHeaders().loadHeaders();
-        return this._http.post(this.url + 'packing/delivery', idPackingOrder, { headers: igbHeaders })
+        return this._http.post(this.url + 'packing/delivery', idPackingOrder, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
 
     public closePackingOrder(idPackingOrder: number, username: string) {
-        let igbHeaders = new IGBHeaders().loadHeaders();
-        return this._http.put(this.url + 'packing/close/' + username + '/' + idPackingOrder, null, { headers: igbHeaders })
-            .map(res => res.json());
+        return this._http.put(this.url + 'packing/close/' + username + '/' + idPackingOrder, null, { headers: new IGBHeaders().loadHeaders() })
+            .map(res => res);
     }
 
     public closeOrder(idPackingOrder) {
-        let igbHeaders = new IGBHeaders().loadHeaders();
-        return this._http.put(this.url + 'salesorder/close/', idPackingOrder, { headers: igbHeaders })
+        return this._http.put(this.url + 'salesorder/close/', idPackingOrder, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
 
     public arePackingOrdersComplete() {
-        let igbHeaders = new IGBHeaders().loadHeaders();
-        return this._http.get(this.url + 'packing/status', { headers: igbHeaders })
+        return this._http.get(this.url + 'packing/status', { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
 
     public getPackingOrders(customer: string) {
-        let igbHeaders = new IGBHeaders().loadHeaders();
-        return this._http.get(this.url + 'packing/get-packing-orders/' + customer, { headers: igbHeaders })
+        return this._http.get(this.url + 'packing/get-packing-orders/' + customer, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
 }

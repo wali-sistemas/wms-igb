@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Response, Headers } from '@angular/http';
+import { Http } from '@angular/http';
 import { GLOBAL, IGBHeaders } from './global';
 
 @Injectable()
@@ -11,27 +11,27 @@ export class StockTransferService {
   }
 
   public cleanLocation(warehouse, location) {
-    let igbHeaders = new IGBHeaders().loadHeaders();
-    return this._http.get(this.url + 'stocktransfer/clean-location' + '/' + warehouse + '/' + location, { headers: igbHeaders })
+    return this._http.get(this.url + 'stocktransfer/clean-location' + '/' + warehouse + '/' + location, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 
   public finishInventory(idInventory) {
-    let igbHeaders = new IGBHeaders().loadHeaders();
-    return this._http.get(this.url + 'stocktransfer/finish-inventory/' + idInventory, { headers: igbHeaders })
+    return this._http.get(this.url + 'stocktransfer/finish-inventory/' + idInventory, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 
   public transferSingleItem(itemTransfer) {
-    let igbHeaders = new IGBHeaders().loadHeaders();
-    return this._http.post(this.url + 'stocktransfer/picking', itemTransfer, { headers: igbHeaders })
+    return this._http.post(this.url + 'stocktransfer/picking', itemTransfer, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 
   public transferResupply(itemTransfer) {
-    let igbHeaders = new IGBHeaders().loadHeaders();
+    return this._http.post(this.url + 'stocktransfer/resupply-location', itemTransfer, { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
 
-    return this._http.post(this.url + 'stocktransfer/resupply-location', itemTransfer, { headers: igbHeaders })
+  public stockTransfer(stockTransfer) {
+    return this._http.post(this.url + 'stocktransfer/stock-transfer', stockTransfer, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 }
