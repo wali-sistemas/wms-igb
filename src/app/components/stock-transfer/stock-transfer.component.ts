@@ -41,29 +41,37 @@ export class StockTransferComponent implements OnInit {
     }
 
     public validarUbicacion(binCode, type) {
-        console.log('validando ubicacion ' + binCode);
+        this.stockTransferErrorMessage = '';
         this._binLocationService.getBinAbs(binCode).subscribe(
             response => {
-                console.log(response);
                 if (type === 'to') {
-                    this.toBinId = response.content;
-                    console.log('toBinId=' + this.toBinId);
+                    if (response.content) {
+                        this.toBinId = response.content;
+                    } else {
+                        this.stockTransferErrorMessage = 'La ubicación de destino no es válida';
+                    }
                 } else {
-                    this.fromBinId = response.content;
-                    console.log('fromBinId=' + this.fromBinId);
+                    if (response.content) {
+                        this.fromBinId = response.content;
+                    } else {
+                        this.stockTransferErrorMessage = 'La ubicación de origen no es válida';
+                    }
                 }
             }, error => {
+                console.error(error);
                 if (type === 'to') {
                     this.toBinId = null;
+                    this.stockTransferErrorMessage = 'La ubicación de destino no es válida';
                 } else {
                     this.fromBinId = null;
+                    this.stockTransferErrorMessage = 'La ubicación de origen no es válida';
                 }
             }
         );
     }
 
     public validarReferencia() {
-        console.log('validando referencia ' + this.itemCode);
+        this.itemCode = this.itemCode.replace(/\s/g, '');
     }
 
     public agregarReferencia() {

@@ -15,7 +15,7 @@
             <form (submit)="validarUbicacion(fromBin, 'from')">
                 <label for="fromBin">Origen</label>
                 <input type="text" class="form-control input-lg" autocomplete="off" id="fromBin" name="fromBin" placeholder="escanea la ubicación de origen"
-                    [(ngModel)]="fromBin">
+                    [(ngModel)]="fromBin" (blur)="validarUbicacion(fromBin, 'from')">
             </form>
         </div>
     </div>
@@ -25,7 +25,7 @@
             <form (submit)="validarUbicacion(toBin, 'to')">
                 <label for="toBin">Destino</label>
                 <input type="text" class="form-control input-lg" autocomplete="off" id="toBin" name="toBin" placeholder="escanea la ubicación de origen"
-                    [(ngModel)]="toBin">
+                    [(ngModel)]="toBin" (blur)="validarUbicacion(toBin, 'to')">
             </form>
         </div>
     </div>
@@ -35,11 +35,11 @@
             <form (submit)="validarReferencia()">
                 <label for="itemCode">Referencia</label>
                 <input type="text" class="form-control input-lg" autocomplete="off" id="itemCode" name="itemCode" placeholder="escanea la referencia"
-                    [(ngModel)]="itemCode">
+                    [(ngModel)]="itemCode" (blur)="validarReferencia()">
             </form>
         </div>
         <div class="col-xs-4">
-            <form (submit)="validarReferencia()">
+            <form>
                 <label for="quantity">Cant</label>
                 <input type="number" class="form-control input-lg" autocomplete="off" id="quantity" name="quantity" [(ngModel)]="quantity">
             </form>
@@ -53,7 +53,7 @@
             </button>
         </div>
         <div class="col-xs-6">
-            <button class="btn btn-default btn-lg" type="button" (click)="crearTraslado()">
+            <button class="btn btn-default btn-lg" type="button" (click)="crearTraslado()" [disabled]="items.length == 0">
                 Finalizar <span class="glyphicon glyphicon-save"></span>
             </button>
         </div>
