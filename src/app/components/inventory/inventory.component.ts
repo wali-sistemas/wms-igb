@@ -127,7 +127,7 @@ export class InventoryComponent implements OnInit {
 
     this.itemVisible = {
       idInventory: this.idInventory,
-      item: this.item.trim().toUpperCase(),
+      item: this.item.replace(/\s/g, '').toUpperCase(),
       quantity: this.quantity
     }
 

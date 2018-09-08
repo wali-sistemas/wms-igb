@@ -194,6 +194,7 @@ export class PickingComponent implements OnInit {
     }
 
     public confirmItemCode() {
+        this.pickedItemCode = this.pickedItemCode.replace(/\s/g, '');
         if (this.pickedItemCode === this.nextItemCode) {
             this.pickedItemCodeValidated = true;
             $('#input_pickedQuantity').focus();

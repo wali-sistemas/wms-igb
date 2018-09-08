@@ -66,7 +66,7 @@ export class PurchaseOrdersComponent implements OnInit {
       this.searchFilter = this.filter.toLowerCase();
       this.filteredOrders = new Array<PurchaseOrder>();
       for (let i = 0; i < this.orders.length; i++) {
-        let ord = this.orders[i];
+        const ord = this.orders[i];
         if (ord.docNum.toLowerCase().includes(this.searchFilter)
           || ord.cardCode.toLowerCase().includes(this.searchFilter)
           || ord.cardName.toLowerCase().includes(this.searchFilter)) {
