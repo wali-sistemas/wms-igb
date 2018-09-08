@@ -109,8 +109,9 @@ export class PurchaseOrderComponent implements OnInit {
       this.scannedText = '';
       return;
     }
+    this.scannedText = this.scannedText.replace(/\s/g, '');
     for (let i = 0; i < this.order.lines.length; i++) {
-      let line = this.order.lines[i];
+      const line = this.order.lines[i];
       if (line.itemCode.toLowerCase() === this.scannedText.toLowerCase() && line.quantity > 0) {
         //mostrar modal de cantidad
         console.log('el item existe, solicitando cantidad para validar');
