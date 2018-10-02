@@ -12,6 +12,8 @@ export class SalesOrder {
     public items: Number;
     public status: String;
     public lines: Array<SalesOrderLine>;
+    public address: String;
+    public transp: String;
     constructor() { }
 }
 

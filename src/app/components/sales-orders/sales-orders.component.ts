@@ -71,7 +71,7 @@ export class SalesOrdersComponent implements OnInit {
   }
 
   public selectOrder(order: SalesOrder) {
-    if (order.confirmed === 'N') {
+    if (order.confirmed === 'N' || order.address.length === 0 || order.transp.length === 0) {
       return;
     }
     if (order.status === 'warning') {
