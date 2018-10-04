@@ -409,6 +409,9 @@ export class PackingComponent implements OnInit {
         this._packingService.cleanPackingOrder(this.idPackingOrder).subscribe(
             result => {
                 $('#modal_transfer_process').modal('hide');
+                this.reset();
+                this.start();
+                this.ngOnInit();
             }, error => {
                 console.error(error);
                 this._router.navigate(['/']);
