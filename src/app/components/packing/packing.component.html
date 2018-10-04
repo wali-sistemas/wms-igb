@@ -233,6 +233,23 @@
     </div>
 </div>
 
+<div id="clean_confirmation" class="modal slide" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p>
+                    <b>Ha ocurrido un error en el proceso de packing y Wali debe cancelarlo.</b> 
+                    Será necesario que los procesos de empaque, impresión de etiquetas, impresión de packing list, 
+                    creación de entrega y factura en SAP se realicen de manera manual
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-lg" (click)="cleanPacking()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="container content">
     <h3>Packing </h3>
     <div class="row">

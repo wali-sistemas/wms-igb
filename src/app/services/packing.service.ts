@@ -66,6 +66,11 @@ export class PackingService {
             .map(res => res.json());
     }
 
+    public cleanPackingOrder(idPackingOrder) {
+        return this._http.put(this.url + 'packing/cancel/' + idPackingOrder, null, { headers: new IGBHeaders().loadHeaders() })
+            .map(res => res.json());
+    }
+
     public arePackingOrdersComplete() {
         return this._http.get(this.url + 'packing/status', { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());

@@ -11,6 +11,7 @@ import { InvoiceService } from '../../services/invoice.service';
 import { PrintService } from '../../services/print.service';
 
 import 'rxjs/Rx'
+import { ResupplyComponent } from '../resupply/resupply.component';
 
 declare var $: any;
 
@@ -280,6 +281,18 @@ export class PackingComponent implements OnInit {
 
                         this.reset();
                         this.isPackingComplete();
+                    } else {
+                        this.processDeliveryStatus = 'error';
+                        this.deliveryErrorMessage = response.content;
+                        if (response.code == -2) {
+                            //mostrar panel de confirmacion para limpiar proceso de packing
+                            $('#process_status').modal('hide');
+                            $('#clean_confirmation').modal({
+                                backdrop: 'static',
+                                keyboard: false,
+                                show: true
+                            });
+                        }
                     }
                 }, error => {
                     $('#modal_transfer_process').modal('hide');
@@ -366,12 +379,39 @@ export class PackingComponent implements OnInit {
                 } else {
                     this.processDeliveryStatus = 'error';
                     this.deliveryErrorMessage = result.content;
+                    if (result.code == -2) {
+                        //mostrar panel de confirmacion para limpiar proceso de packing
+                        $('#process_status').modal('hide');
+                        $('#clean_confirmation').modal({
+                            backdrop: 'static',
+                            keyboard: false,
+                            show: true
+                        });
+                    }
                 }
             },
             error => {
                 this.processDeliveryStatus = 'error';
                 this.deliveryErrorMessage = 'Ocurrió un error al crear el documento de entrega en SAP. ';
                 console.error(error);
+            }
+        );
+    }
+
+    public cleanPacking() {
+        $('#clean_confirmation').modal('hide');
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+        console.log('cancelando packing order ' + this.idPackingOrder);
+        this._packingService.cleanPackingOrder(this.idPackingOrder).subscribe(
+            result => {
+                $('#modal_transfer_process').modal('hide');
+            }, error => {
+                console.error(error);
+                this._router.navigate(['/']);
             }
         );
     }
