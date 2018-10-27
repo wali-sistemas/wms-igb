@@ -1,0 +1,37 @@
+<igb-navbar></igb-navbar>
+
+<div class="container content">
+    <h3>Consulta Stock ítem</h3>
+    <div class="row" *ngIf="stockConsultrErrorMessage">
+        <div class="col-xs-12">
+            <div class="alert alert-danger">
+                {{stockConsultErrorMessage}}
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="col-xs-12">
+            <form (submit)="validarReferencia()">
+                <label for="itemCode">Referencia</label>
+                <input type="text" class="form-control input-lg" autocomplete="off" id="itemCode" name="itemCode" placeholder="escanea la referencia"
+                    [(ngModel)]="itemCode" (blur)="validarReferencia()">
+            </form>
+        </div>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="col-xs-12">
+            <table *ngIf="items.length > 0" class="table table-striped">
+                <tr>
+                    <th>Referencia</th>
+                    <th style="text-align: right;">Cantidad</th>
+                </tr>
+                <tr *ngFor="let item of items">
+                    <td>{{item.itemCode}}</td>
+                    <td style="text-align: right;">{{item.quantity}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

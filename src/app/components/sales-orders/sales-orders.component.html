@@ -70,7 +70,7 @@
               <span class="glyphicon glyphicon-user"></span>
             </button>
           </span>
-          <input type="text" class="form-control input-lg" name="filter" placeholder="escribe para filtrar" [(ngModel)]="filter" (keyup)="filterOrders(false)"
+          <input type="text" class="form-control input-lg" id="filter" name="filter" placeholder="escribe para filtrar" [(ngModel)]="filter" (keyup)="filterOrders(false)"
             autocomplete="off" />
           <span class="input-group-btn">
             <button type="button" class="btn btn-default btn-lg" (click)="toggleEye()">

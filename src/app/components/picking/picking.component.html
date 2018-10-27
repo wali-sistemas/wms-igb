@@ -181,8 +181,8 @@
                     <span class="glyphicon glyphicon-info-sign" data-toggle="modal" data-target="#modal_bin_detail"></span>
                 </label>
 
-                <div class="input-group" *ngIf="nextBinLocationCode">
-                    <input id="binLocation" name="binLocation" class="form-control input-lg" type="text" [(ngModel)]="confirmBinCode" placeholder="escanea aquí"
+                <div class="input-group" style="display: {{display}}">
+                    <input id="binLoc" name="binLocation" class="form-control input-lg" type="text" [(ngModel)]="confirmBinCode" placeholder="escanea aquí"
                         autocomplete="off" [disabled]="confirmingItemQuantity">
                     <span class="input-group-btn">
                         <button class="btn btn-danger btn-lg" type="button" (click)="resetForm()" *ngIf="confirmingItemQuantity">
@@ -200,7 +200,7 @@
         </div>
     </div>
     <br>
-    <div class="row" *ngIf="confirmingItemQuantity">
+    <div class="row" style="display: {{display}}">
         <div class="col-xs-12">
             <div class="confirm-item">
                 <div class="row">
@@ -210,7 +210,7 @@
                     <form (submit)="confirmItemCode()">
                         <div class="col-xs-12" *ngIf="!pickedItemCodeValidated">
                             <div class="input-group">
-                                <input type="text" class="form-control input-lg" name="filter" placeholder="escanea la referencia" [(ngModel)]="pickedItemCode"
+                                <input type="text" class="form-control input-lg" id="filter" name="filter" placeholder="escanea la referencia" [(ngModel)]="pickedItemCode"
                                     autocomplete="off">
                                 <span class="input-group-btn">
                                     <button class="btn btn-primary btn-lg" type="button" (click)="confirmItemCode()" [disabled]="nextItemCode != pickedItemCode">
@@ -221,7 +221,7 @@
                         </div>
                     </form>
                     <form (submit)="validatePickedQuantity()">
-                        <div class="col-xs-12" *ngIf="pickedItemCodeValidated">
+                        <div class="col-xs-12">
                             <div class="input-group">
                                 <span class="input-group-btn">
                                     <button type="button" class="btn btn-default btn-lg">

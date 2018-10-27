@@ -1,18 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { UserService } from '../../services/user.service';
-import { StockTransferService } from '../../services/stock-transfer.service';
+import { StockConsultService } from '../../services/stock-consult.service';
 import { BinLocationService } from '../../services/bin-locations.service';
 
 declare var $: any;
 
 @Component({
-    templateUrl: './stock-transfer.component.html',
-    styleUrls: ['./stock-transfer.component.css'],
-    providers: [UserService, StockTransferService, BinLocationService]
+    templateUrl: './stock-consult.component.html',
+    styleUrls: ['./stock-consult.component.css'],
+    providers: [UserService, StockConsultService, BinLocationService]
 })
 
-export class StockTransferComponent implements OnInit {
+export class StockConsultComponent implements OnInit {
     public identity;
     public token;
 
@@ -23,10 +23,10 @@ export class StockTransferComponent implements OnInit {
     public itemCode: string = '';
     public quantity: number;
     public items: Array<any>;
-    public stockTransferErrorMessage: string = null;
+    public stockConsultErrorMessage: string = null;
 
     constructor(private _userService: UserService,
-        private _stockTransferService: StockTransferService,
+        private _stockConsultService: StockConsultService,
         private _binLocationService: BinLocationService,
         private _router: Router) {
         this._userService = _userService;
@@ -34,7 +34,7 @@ export class StockTransferComponent implements OnInit {
     }
 
     ngOnInit() {
-        $('#fromBin').focus();
+        $('#itemCode').focus();
         this.identity = this._userService.getItentity();
         if (this.identity === null) {
             this._router.navigate(['/']);
@@ -42,30 +42,30 @@ export class StockTransferComponent implements OnInit {
     }
 
     public validarUbicacion(binCode, type) {
-        this.stockTransferErrorMessage = '';
+        this.stockConsultErrorMessage = '';
         this._binLocationService.getBinAbs(binCode).subscribe(
             response => {
                 if (type === 'to') {
                     if (response.content) {
                         this.toBinId = response.content;
                     } else {
-                        this.stockTransferErrorMessage = 'La ubicación de destino no es válida';
+                        this.stockConsultErrorMessage = 'La ubicación de destino no es válida';
                     }
                 } else {
                     if (response.content) {
                         this.fromBinId = response.content;
                     } else {
-                        this.stockTransferErrorMessage = 'La ubicación de origen no es válida';
+                        this.stockConsultErrorMessage = 'La ubicación de origen no es válida';
                     }
                 }
             }, error => {
                 console.error(error);
                 if (type === 'to') {
                     this.toBinId = null;
-                    this.stockTransferErrorMessage = 'La ubicación de destino no es válida';
+                    this.stockConsultErrorMessage = 'La ubicación de destino no es válida';
                 } else {
                     this.fromBinId = null;
-                    this.stockTransferErrorMessage = 'La ubicación de origen no es válida';
+                    this.stockConsultErrorMessage = 'La ubicación de origen no es válida';
                 }
             }
         );
@@ -99,8 +99,8 @@ export class StockTransferComponent implements OnInit {
     }
 
     public crearTraslado() {
-        this.stockTransferErrorMessage = null;
-        const stockTransfer = {
+        this.stockConsultErrorMessage = null;
+        const stockConsult = {
             username: this.identity.username,
             binCodeFrom: this.fromBin,
             binCodeTo: this.toBin,
@@ -109,20 +109,20 @@ export class StockTransferComponent implements OnInit {
             warehouseCode: this.identity.warehouseCode,
             lines: this.items
         };
-        this._stockTransferService.stockTransfer(stockTransfer).subscribe(
+        this._stockConsultService.stockConsult(stockConsult).subscribe(
             response => {
                 console.log(response);
                 if (response.code === 0) {
                     this.limpiarTodo();
                 } else {
-                    this.stockTransferErrorMessage = response.content;
+                    this.stockConsultErrorMessage = response.content;
                 }
             }, error => {
                 console.error(error);
                 if (error._body) {
-                    this.stockTransferErrorMessage = JSON.parse(error._body).content;
+                    this.stockConsultErrorMessage = JSON.parse(error._body).content;
                 } else {
-                    this.stockTransferErrorMessage = 'Ocurrió un error no identificado al intentar realizar el traslado';
+                    this.stockConsultErrorMessage = 'Ocurrió un error no identificado al intentar realizar el traslado';
                 }
             }
         );

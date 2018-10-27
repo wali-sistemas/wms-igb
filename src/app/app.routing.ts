@@ -12,6 +12,7 @@ import { InventoryComponent } from './components/inventory/inventory.component';
 import { ResupplyComponent } from './components/resupply/resupply.component';
 import { ReportComponent } from './components/report/report.component';
 import { StockTransferComponent } from './components/stock-transfer/stock-transfer.component';
+import { StockConsultComponent } from './components/stock-consult/stock-consult.component';
 
 const appRoutes: Routes = [
     { path: '', component: LoginComponent },
@@ -23,6 +24,7 @@ const appRoutes: Routes = [
     { path: 'packing', component: PackingComponent },
     { path: 'inventory', component: InventoryComponent },
     { path: 'transfer', component: StockTransferComponent },
+    { path: 'consult', component: StockConsultComponent },
     { path: 'resupply', component: ResupplyComponent },
     { path: 'report', component: ReportComponent }
 ];
