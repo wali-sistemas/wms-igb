@@ -38,4 +38,9 @@ export class UserService {
     return this._http.get(this.url + 'user/validate-user-admin/' + user, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
+
+  public canAccess(user, module) {
+    return this._http.get(this.url + 'user/access/' + user + '/' + module, { headers: new IGBHeaders().loadHeaders() })
+    .map(res => res.json());
+  }
 }
