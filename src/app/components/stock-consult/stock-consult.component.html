@@ -1,37 +1,42 @@
 <igb-navbar></igb-navbar>
 
 <div class="container content">
-    <h3>Consulta Stock ítem</h3>
+    <h3>Consulta stock ítem</h3>
     <div class="row" *ngIf="stockConsultrErrorMessage">
         <div class="col-xs-12">
             <div class="alert alert-danger">
-                {{stockConsultErrorMessage}}
+                {{stockConsultrErrorMessage}}
             </div>
         </div>
     </div>
-    <br/>
+    <br />
     <div class="row">
         <div class="col-xs-12">
-            <form (submit)="validarReferencia()">
-                <label for="itemCode">Referencia</label>
-                <input type="text" class="form-control input-lg" autocomplete="off" id="itemCode" name="itemCode" placeholder="escanea la referencia"
-                    [(ngModel)]="itemCode" (blur)="validarReferencia()">
+            <form>
+                <label for="itemCode">Referencia/Ubicación</label>
+                <input type="text" class="form-control input-lg" autocomplete="off" id="item" name="itemCode"
+                    placeholder="escanea el ítem o la ubicación" [(ngModel)]="itemCode" (keyup)="consultarStock()">
             </form>
         </div>
     </div>
-    <br/>
-    <div class="row">
-        <div class="col-xs-12">
-            <table *ngIf="items.length > 0" class="table table-striped">
-                <tr>
-                    <th>Referencia</th>
-                    <th style="text-align: right;">Cantidad</th>
-                </tr>
-                <tr *ngFor="let item of items">
-                    <td>{{item.itemCode}}</td>
-                    <td style="text-align: right;">{{item.quantity}}</td>
-                </tr>
-            </table>
+    <br />
+    <div class="col-xs-12 col-md-6" *ngFor="let item of items">
+        <div class="box">
+            <div class="col-xs-6 col-md-3">
+                <img class="photo" src="{{urlShared}}/mtz/{{item[0]}}.jpg">
+            </div>
+            <div class="box-itemname">{{item[1]}}</div>
+            <div class="col-xs-6 col-md-3">
+                <div class="box-stock">
+                    <span class="badge">{{item[2]}}</span>
+                    <label> - {{item[4]}}</label>
+                </div>
+                <div class="box-itemcode">
+                    {{item[0]}}
+                </div>
+                <div class="box-wharehouse">{{item[3]}}</div>
+                <div class="box-price">{{item[5] | number}}</div>
+            </div>
         </div>
     </div>
 </div>

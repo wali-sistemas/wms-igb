@@ -10,8 +10,8 @@ export class StockConsultService {
     this.url = GLOBAL.url;
   }
 
-  public stockConsult(stockConsult) {
-    return this._http.post(this.url + 'stockConsult/stock-Consult', stockConsult, { headers: new IGBHeaders().loadHeaders() })
+  public stockConsult(itemCode) {
+    return this._http.get(this.url + 'stockitem/consult/' + itemCode, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 }
