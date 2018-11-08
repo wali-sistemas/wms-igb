@@ -1,5 +1,5 @@
 <nav class="topnav visible-md visible-lg">
-  <a [routerLink]="['/home']" class="topnav-logo"><img src="/assets/images/logo.png" /></a>
+  <a [routerLink]="['/home']" class="topnav-logo"><img src="/assets/images/{{logo}}" /></a>
   <!--<a href="#" routerLinkActive="active">Sistema</a>-->
   <a href="#" routerLinkActive="active" [routerLink]="['/purchase-orders']">Recepción</a>
   <a href="#" routerLinkActive="active" [routerLink]="['/resupply']">Reabastecimiento</a>
@@ -12,7 +12,7 @@
   <span class="salir-desktop" (click)="cerrarSesion()">Salir <span class="glyphicon glyphicon-log-out"></span></span>
 </nav>
 <nav class="topnav visible-xs visible-sm">
-  <a [routerLink]="['/home']" class="topnav-logo"><img src="/assets/images/logo.png" /></a>
+  <a [routerLink]="['/home']" class="topnav-logo"><img src="/assets/images/{{logo}}" /></a>
   <span class="selected-company">[{{getSelectedCompany()}}]</span>
   <span id="menu-icon" class="topnav-menu glyphicon glyphicon-menu-hamburger" (click)="alternateNav()"></span>
 </nav>
