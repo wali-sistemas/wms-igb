@@ -11,7 +11,7 @@ export class StockConsultService {
   }
 
   public stockConsult(itemCode) {
-    return this._http.get(this.url + 'stockitem/consult/' + itemCode, { headers: new IGBHeaders().loadHeaders() })
+    return this._http.get(this.url + 'stockitem/find/' + itemCode, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 }
