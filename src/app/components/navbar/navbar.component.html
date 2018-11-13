@@ -9,7 +9,7 @@
   <a *ngIf="inventoryModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/inventory']">Inventario</a>
   <a *ngIf="transferModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/transfer']">Traslados</a>
   <a href="#" routerLinkActive="active" [routerLink]="['/stock-item']">Consultar</a>
-  <span class="salir-desktop" (click)="cerrarSesion()">Salir <span class="glyphicon glyphicon-log-out"></span></span>
+  <span class="salir-desktop" (click)="cerrarSesion()">Salir <span class="icon-log-out"></span></span>
 </nav>
 <nav class="topnav visible-xs visible-sm">
   <a [routerLink]="['/home']" class="topnav-logo"><img src="/assets/images/{{logo}}" /></a>
@@ -30,7 +30,7 @@
     <a routerLinkActive="active" [routerLink]="['/stock-item']" href="#">Consultar</a>
     <a href="">
       <span (click)="cerrarSesion()">
-        Salir <span class="glyphicon glyphicon-log-out"></span>
+        Salir <span class="icon-log-out"></span>
       </span>
     </a>
   </div>
