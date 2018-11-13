@@ -21,8 +21,6 @@ export class PickingComponent implements OnInit {
     public selectedPickingMethod: string = 'multiple';
     public selectedCart: number = 0;
     public selectedOrder: string = '';
-    public display: String = 'none';
-    public display2: String = 'none';
 
     private nextOrderNumber: number;
     public nextBinLocationCode: string;
@@ -66,13 +64,6 @@ export class PickingComponent implements OnInit {
         });
         this.loadAvailablePickingCarts();
         this.loadAssignedOrders();
-        console.log(this.confirmingItemQuantity);
-        if (this.confirmingItemQuantity) {
-            this.display2 = 'inline';
-        } else {
-            this.display2 = 'none';
-        }
-        console.log(this.display + ' ' + this.display2);
     }
 
     private redirectIfSessionInvalid(error) {
@@ -92,7 +83,6 @@ export class PickingComponent implements OnInit {
                 if (result.length === 0) {
                     this.errorMessagePickingCarts = 'No se encontraron carritos de picking habilitados. Se deben configurar ubicaciones tipo CART en SAP, asegurándose de agregar el nombre de cada carrito en el campo descripción';
                 } else {
-                    this.display = 'inline';
                     for (let i = 0; i < result.length; i++) {
                         const binLocation = new BinLocation();
                         binLocation.binAbs = result[i].binAbs;

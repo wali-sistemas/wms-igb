@@ -3,7 +3,8 @@ import { Router, ActivatedRoute, Params } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { PurchaseOrdersService } from '../../services/purchase-orders.service';
 import { PurchaseOrder } from '../../models/purchase-order';
-import { $ } from 'protractor';
+
+declare var $: any;
 
 @Component({
   templateUrl: './purchase-orders.component.html',
@@ -26,7 +27,7 @@ export class PurchaseOrdersComponent implements OnInit {
   }
 
   ngOnInit() {
-    //$('#filter').focus();
+    $('#filter').focus();
     console.log('iniciando componente de ordenes de compra');
     //TODO: validar vigencia del token/identity
     this.identity = this._userService.getItentity();
