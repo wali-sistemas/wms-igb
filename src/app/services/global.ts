@@ -1,8 +1,8 @@
 import { Headers } from '@angular/http';
 
 export let GLOBAL = {
-    // url: 'http://wali.igbcolombia.com:8080/igb/res/'
-    url: 'http://192.168.1.18:8080/igb/res/'
+    url: 'http://wali.igbcolombia.com:8080/igb/res/',
+    urlShared: 'http://wali.igbcolombia.com:8080/shared/images/'
 };
 
 export class IGBHeaders {

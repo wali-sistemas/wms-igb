@@ -36,6 +36,7 @@ export class SalesOrdersComponent implements OnInit {
   }
 
   ngOnInit() {
+    $('#filter').focus();
     this.identity = this._userService.getItentity();
     if (this.identity === null) {
       this._router.navigate(['/']);
