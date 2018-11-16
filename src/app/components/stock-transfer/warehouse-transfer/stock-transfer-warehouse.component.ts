@@ -1,18 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
-import { UserService } from '../../services/user.service';
-import { StockTransferService } from '../../services/stock-transfer.service';
-import { BinLocationService } from '../../services/bin-locations.service';
+import { UserService } from '../../../services/user.service';
+import { StockTransferService } from '../../../services/stock-transfer.service';
+import { BinLocationService } from '../../../services/bin-locations.service';
+import { Warehouse } from 'app/models/warehouse';
+import { GenericService } from '../../../services/generic';
 
 declare var $: any;
 
 @Component({
-    templateUrl: './stock-transfer.component.html',
-    styleUrls: ['./stock-transfer.component.css'],
-    providers: [UserService, StockTransferService, BinLocationService]
+    templateUrl: './stock-transfer-warehouse.component.html',
+    styleUrls: ['./stock-transfer-warehouse.component.css'],
+    providers: [UserService, StockTransferService, BinLocationService, GenericService]
 })
 
-export class StockTransferComponent implements OnInit {
+export class StockTransferWarehouseComponent implements OnInit {
     public identity;
     public token;
 
@@ -25,12 +27,20 @@ export class StockTransferComponent implements OnInit {
     public items: Array<any>;
     public stockTransferErrorMessage: string = null;
 
+    public disabledWhFrom: boolean = false;
+    public selectedWarehouseFrom: string = '';
+    public selectedWarehouseTo: string = '';
+    public warehousesFrom: Array<Warehouse>;
+    public warehousesTo: Array<Warehouse>;
+
     constructor(private _userService: UserService,
         private _stockTransferService: StockTransferService,
         private _binLocationService: BinLocationService,
-        private _router: Router) {
+        private _router: Router, private _genericService: GenericService) {
         this._userService = _userService;
         this.items = new Array<any>();
+        this.warehousesFrom = new Array<Warehouse>();
+        this.warehousesTo = new Array<Warehouse>();
     }
 
     ngOnInit() {
@@ -39,9 +49,25 @@ export class StockTransferComponent implements OnInit {
         if (this.identity === null) {
             this._router.navigate(['/']);
         }
+
+        this.listAvailableWarehouses();
     }
 
-    public validarUbicacion(binCode, type) {
+    private listAvailableWarehouses() {
+        this._genericService.listActivesWarehouses().subscribe(
+            response => {
+                this.warehousesFrom = response.content;
+                this.warehousesTo = response.content;
+            }, error => { console.error(error); }
+        );
+    }
+
+    public updateWarehouseFrom() {
+        console.log('entro al metodo');
+        this.disabledWhFrom = true;
+    }
+
+    /*public validarUbicacion(binCode, type) {
         this.stockTransferErrorMessage = '';
         this._binLocationService.getBinAbs(binCode).subscribe(
             response => {
@@ -69,7 +95,7 @@ export class StockTransferComponent implements OnInit {
                 }
             }
         );
-    }
+    }*/
 
     public validarReferencia() {
         this.itemCode = this.itemCode.replace(/\s/g, '');
@@ -78,7 +104,9 @@ export class StockTransferComponent implements OnInit {
     public agregarReferencia() {
         const newItem = {
             itemCode: this.itemCode,
-            quantity: this.quantity
+            quantity: this.quantity,
+            fromWhsCode: this.selectedWarehouseFrom,
+            whsCode: this.selectedWarehouseTo
         };
         this.items.unshift(newItem);
         this.limpiarLinea();
@@ -102,16 +130,20 @@ export class StockTransferComponent implements OnInit {
         this.stockTransferErrorMessage = null;
         const stockTransfer = {
             username: this.identity.username,
-            binCodeFrom: this.fromBin,
-            binCodeTo: this.toBin,
-            binAbsFrom: this.fromBinId,
-            binAbsTo: this.toBinId,
-            warehouseCode: this.identity.warehouseCode,
+            binCodeFrom: "09PRODUCTION",
+            binCodeTo: "01PRODUCTION",
+            binAbsFrom: "419",
+            binAbsTo: "420",
+            warehouseCode: this.selectedWarehouseTo,
+            filler: this.selectedWarehouseFrom,
             lines: this.items
         };
-        this._stockTransferService.stockTransfer(stockTransfer).subscribe(
+        console.log('**********');
+        console.log(stockTransfer);
+        console.log('**********');
+        
+        this._stockTransferService.stockTransferBetweenWarehouse(stockTransfer).subscribe(
             response => {
-                console.log(response);
                 if (response.code === 0) {
                     this.limpiarTodo();
                 } else {

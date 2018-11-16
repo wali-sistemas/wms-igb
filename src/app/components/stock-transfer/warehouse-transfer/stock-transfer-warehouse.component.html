@@ -1,0 +1,84 @@
+<igb-navbar></igb-navbar>
+
+<div class="container content">
+    <h3>Transferencia entre almacenes</h3>
+    <div class="row" *ngIf="stockTransferErrorMessage">
+        <div class="col-xs-12">
+            <div class="alert alert-danger">
+                {{stockTransferErrorMessage}}
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-xs-12">
+            <label for="warehouse">Almacén Origen</label>
+            <select id="warehouse" class="form-control input-lg" [(ngModel)]="selectedWarehouseFrom" name="selectedWarehouseFrom"
+                (change)="updateWarehouseFrom()" disabled="{{disabledWhFrom}}">
+                <option value="" disabled>Seleccione uno</option>
+                <option *ngFor="let warehouse of warehousesFrom" value="{{warehouse.whsCode}}">({{warehouse.whsCode}})
+                    {{warehouse.whsName}}</option>
+            </select>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-xs-12">
+            <label for="warehouse">Almacén Destino</label>
+            <select id="warehouse" class="form-control input-lg" [(ngModel)]="selectedWarehouseTo" name="selectedWarehouseTo">
+                <option value="" disabled>Seleccione uno</option>
+                <option *ngFor="let warehouse of warehousesTo" value="{{warehouse.whsCode}}">({{warehouse.whsCode}})
+                    {{warehouse.whsName}}</option>
+            </select>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-xs-8">
+            <form (submit)="validarReferencia()">
+                <label for="itemCode">Referencia</label>
+                <input type="text" class="form-control input-lg" autocomplete="off" id="itemCode" name="itemCode"
+                    placeholder="escanea la referencia" [(ngModel)]="itemCode" (blur)="validarReferencia()">
+            </form>
+        </div>
+        <div class="col-xs-4">
+            <form>
+                <label for="quantity">Cant</label>
+                <input type="number" class="form-control input-lg" autocomplete="off" id="quantity" name="quantity"
+                    [(ngModel)]="quantity">
+            </form>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-xs-6">
+            <button class="btn btn-default btn-lg" type="button" (click)="agregarReferencia()">
+                Agregar ítem <span class="glyphicon glyphicon-plus"></span>
+            </button>
+        </div>
+        <div class="col-xs-6">
+            <button class="btn btn-default btn-lg" type="button" (click)="crearTraslado()" [disabled]="items.length == 0">
+                Finalizar <span class="glyphicon glyphicon-save"></span>
+            </button>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-xs-12">
+            <table *ngIf="items.length > 0" class="table table-striped">
+                <tr>
+                    <th style="text-align: center;">Referencia</th>
+                    <th style="text-align: center;">Origen</th>
+                    <th style="text-align: center;">Destino</th>
+                    <th style="text-align: center;">Cantidad</th>
+                </tr>
+                <tr *ngFor="let item of items">
+                    <td style="text-align: center;">{{item.itemCode}}</td>
+                    <td style="text-align: center;">{{item.fromWhsCode}}</td>
+                    <td style="text-align: center;">{{item.whsCode}}</td>
+                    <td style="text-align: center;">{{item.quantity}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

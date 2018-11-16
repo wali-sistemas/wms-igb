@@ -11,7 +11,9 @@ import { PackingComponent } from './components/packing/packing.component';
 import { InventoryComponent } from './components/inventory/inventory.component';
 import { ResupplyComponent } from './components/resupply/resupply.component';
 import { ReportComponent } from './components/report/report.component';
-import { StockTransferComponent } from './components/stock-transfer/stock-transfer.component';
+import { StockTransferLocationComponent } from './components/stock-transfer/location-transfer/stock-transfer-location.component';
+import { StockTransferWarehouseComponent } from './components/stock-transfer/warehouse-transfer/stock-transfer-warehouse.component';
+import { TransferComponent } from './components/stock-transfer/transfer.component';
 import { StockItemComponent } from './components/stock-item/stock-item.component';
 
 const appRoutes: Routes = [
@@ -23,7 +25,9 @@ const appRoutes: Routes = [
     { path: 'picking', component: PickingComponent },
     { path: 'packing', component: PackingComponent },
     { path: 'inventory', component: InventoryComponent },
-    { path: 'transfer', component: StockTransferComponent },
+    { path: 'transfer-location', component: StockTransferLocationComponent },
+    { path: 'transfer-warehouse', component: StockTransferWarehouseComponent },
+	{ path: 'transfer', component: TransferComponent },
     { path: 'stock-item', component: StockItemComponent },
     { path: 'resupply', component: ResupplyComponent },
     { path: 'report', component: ReportComponent }

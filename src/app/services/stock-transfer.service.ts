@@ -34,4 +34,9 @@ export class StockTransferService {
     return this._http.post(this.url + 'stocktransfer/stock-transfer', stockTransfer, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
+
+  public stockTransferBetweenWarehouse(stockTransfer) {
+    return this._http.post(this.url + 'stocktransfer/stock-transfer/between-warehouses', stockTransfer, { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
 }
