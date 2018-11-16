@@ -52,6 +52,14 @@ export class LoginComponent implements OnInit {
           localStorage.setItem('igb.identity', JSON.stringify(this.identity));
           localStorage.setItem('igb.selectedCompany', this.selectedCompany);
 
+          for (let i = 0; i < this.companies.length; i++) {
+            if (this.companies[i].companyId == this.selectedCompany) {
+              if (this.companies[i].companyName.toLowerCase().indexOf('prueba') >= 0) {
+                localStorage.setItem('igb.pruebas', 'true');
+              }
+            }
+          }
+
           this.user = new User('', '', '', '', '', '', true);
           this._router.navigate(['/home']);
         } else {
