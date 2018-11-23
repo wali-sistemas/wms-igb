@@ -1,5 +1,5 @@
 <nav class="topnav visible-md visible-lg">
-  <a [routerLink]="['/home']" class="topnav-logo"><img src="/assets/images/logo.png"/></a>
+  <a [routerLink]="['/home']" class="topnav-logo"><img src="/assets/images/{{logo}}" /></a>
   <!--<a href="#" routerLinkActive="active">Sistema</a>-->
   <a *ngIf="receptionModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/purchase-orders']">Recepción</a>
   <a *ngIf="resupplyModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/resupply']">Reabastecimiento</a>
@@ -8,10 +8,11 @@
   <a *ngIf="packingModuleAccesible" routerLinkActive="active" [routerLink]="['/packing']" href="#">Packing</a>
   <a *ngIf="inventoryModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/inventory']">Inventario</a>
   <a *ngIf="transferModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/transfer']">Traslados</a>
-  <span class="salir-desktop" (click)="cerrarSesion()">Salir <span class="glyphicon glyphicon-log-out"></span></span>
+  <a href="#" routerLinkActive="active" [routerLink]="['/stock-item']">Consultar</a>
+  <span class="salir-desktop" (click)="cerrarSesion()">Salir <span class="icon-log-out"></span></span>
 </nav>
 <nav class="topnav visible-xs visible-sm">
-  <a [routerLink]="['/home']" class="topnav-logo"><img src="/assets/images/logo.png"/></a>
+  <a [routerLink]="['/home']" class="topnav-logo"><img src="/assets/images/{{logo}}" /></a>
   <span class="selected-company">[{{getSelectedCompany()}}]</span>
   <span id="menu-icon" class="topnav-menu glyphicon glyphicon-menu-hamburger" (click)="alternateNav()"></span>
 </nav>
@@ -26,6 +27,11 @@
     <a *ngIf="packingModuleAccesible" routerLinkActive="active" [routerLink]="['/packing']" href="#">Packing</a>
     <a *ngIf="inventoryModuleAccesible" routerLinkActive="active" [routerLink]="['/inventory']" href="#">Inventario</a>
     <a *ngIf="transferModuleAccesible" routerLinkActive="active" [routerLink]="['/transfer']" href="#">Traslados</a>
+    <a routerLinkActive="active" [routerLink]="['/stock-item']" href="#">Consultar</a>
+    <a href="">
+      <span (click)="cerrarSesion()">
+        Salir <span class="icon-log-out"></span>
+      </span>
+    </a>
   </div>
-  <span class="salir" (click)="cerrarSesion()">Salir <span class="glyphicon glyphicon-log-out"></span></span>
 </div>

@@ -18,6 +18,7 @@ import { InventoryComponent } from './components/inventory/inventory.component';
 import { ResupplyComponent } from './components/resupply/resupply.component';
 import { ReportComponent } from './components/report/report.component';
 import { StockTransferComponent } from './components/stock-transfer/stock-transfer.component';
+import { StockItemComponent } from './components/stock-item/stock-item.component';
 
 import { routing, appRoutingProviders } from './app.routing';
 
@@ -36,7 +37,8 @@ import { routing, appRoutingProviders } from './app.routing';
     InventoryComponent,
     ResupplyComponent,
     ReportComponent,
-    StockTransferComponent
+    StockTransferComponent,
+    StockItemComponent
   ],
   imports: [
     BrowserModule,

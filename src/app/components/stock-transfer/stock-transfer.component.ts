@@ -34,6 +34,7 @@ export class StockTransferComponent implements OnInit {
     }
 
     ngOnInit() {
+        $('#fromBin').focus();
         this.identity = this._userService.getItentity();
         if (this.identity === null) {
             this._router.navigate(['/']);

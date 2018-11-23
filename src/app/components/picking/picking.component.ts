@@ -163,6 +163,7 @@ export class PickingComponent implements OnInit {
                 this.errorMessage = 'Ocurrió un error al consultar el siguiente ítem para picking. ';
             }
         );
+        $('#binLoc').focus();
     }
 
     private closeOrderAssignation(username, orderNumber) {
@@ -191,6 +192,7 @@ export class PickingComponent implements OnInit {
             return;
         }
         this.confirmingItemQuantity = true;
+        $('#filter').focus();
     }
 
     public confirmItemCode() {

@@ -11,6 +11,7 @@ import { UserService } from '../../services/user.service';
 export class NavBarComponent implements OnInit {
   public identity;
   public token;
+  public logo;
   public ordersModuleAccesible: boolean = false;
   public pickingModuleAccesible: boolean = false;
   public resupplyModuleAccesible: boolean = false;
@@ -19,8 +20,8 @@ export class NavBarComponent implements OnInit {
   public packingModuleAccesible: boolean = false;
   public inventoryModuleAccesible: boolean = false;
 
-  constructor(private _userService: UserService, private _route: ActivatedRoute, private _router: Router) {
 
+  constructor(private _userService: UserService, private _route: ActivatedRoute, private _router: Router) {
   }
 
   ngOnInit() {
@@ -28,6 +29,13 @@ export class NavBarComponent implements OnInit {
     if (this.identity === null) {
       this._router.navigate(['/']);
     }
+
+    if (this.identity.selectedCompany == "VARROC") {
+      this.logo = "logo-mtz.png";
+    } else { 
+      this.logo = "logo-igb.png";
+    }
+
     this.initializeAccessParameters();
   }
 
