@@ -14,7 +14,8 @@ export class IGBHeaders {
                 'X-Company-Name': localStorage.getItem('igb.selectedCompany'),
                 'X-Warehouse-Code': JSON.parse(ident).warehouseCode,
                 'Authorization': JSON.parse(ident).token,
-                'X-Employee': JSON.parse(ident).username
+                'X-Employee': JSON.parse(ident).username,
+                'X-Pruebas': localStorage.getItem('igb.pruebas')
             });
         } else {
             return new Headers({
