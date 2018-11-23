@@ -25,8 +25,6 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log('iniciando componente de login');
-    //TODO: validar vigencia del token/identity
     this.identity = this._userService.getItentity();
     if (this.identity !== null) {
       this._router.navigate(['/home']);
@@ -38,7 +36,6 @@ export class LoginComponent implements OnInit {
     this._genericService.listAvailableCompanies().subscribe(
       response => {
         this.companies = response;
-        console.log('se encontraron las siguientes empresas para hacer login: ', this.companies);
       }, error => { console.error(error); }
     );
   }

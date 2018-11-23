@@ -30,10 +30,10 @@ export class NavBarComponent implements OnInit {
       this._router.navigate(['/']);
     }
 
-    if (this.identity.selectedCompany == "VARROC") {
-      this.logo = "logo-mtz.png";
-    } else { 
-      this.logo = "logo-igb.png";
+    if (this.identity.selectedCompany == 'VARROC') {
+      this.logo = 'logo-mtz.png';
+    } else {
+      this.logo = 'logo-igb.png';
     }
 
     this.initializeAccessParameters();
@@ -42,7 +42,6 @@ export class NavBarComponent implements OnInit {
   private initializeAccessParameters() {
     //valida si ya hay datos en sesion
     let userAccess = JSON.parse(localStorage.getItem('igb.user.access'));
-    console.log('user access in localStorage: ' + userAccess);
     if (userAccess) {
       this.ordersModuleAccesible = userAccess.ordersModuleAccesible;
       this.pickingModuleAccesible = userAccess.pickingModuleAccesible;
