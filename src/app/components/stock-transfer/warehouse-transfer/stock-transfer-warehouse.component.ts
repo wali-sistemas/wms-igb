@@ -1,20 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
+import { GLOBAL } from '../../../services/global';
 import { UserService } from '../../../services/user.service';
 import { StockTransferService } from '../../../services/stock-transfer.service';
 import { BinLocationService } from '../../../services/bin-locations.service';
 import { Warehouse } from 'app/models/warehouse';
 import { GenericService } from '../../../services/generic';
+import { StockItemService } from '../../../services/stock-item.service';
 
 declare var $: any;
 
 @Component({
     templateUrl: './stock-transfer-warehouse.component.html',
     styleUrls: ['./stock-transfer-warehouse.component.css'],
-    providers: [UserService, StockTransferService, BinLocationService, GenericService]
+    providers: [UserService, StockTransferService, BinLocationService, GenericService, StockItemService]
 })
 
 export class StockTransferWarehouseComponent implements OnInit {
+    public urlShared: String = GLOBAL.urlShared;
     public identity;
     public token;
 
@@ -36,7 +39,8 @@ export class StockTransferWarehouseComponent implements OnInit {
     constructor(private _userService: UserService,
         private _stockTransferService: StockTransferService,
         private _binLocationService: BinLocationService,
-        private _router: Router, private _genericService: GenericService) {
+        private _router: Router, private _genericService: GenericService,
+        private _stockItemService: StockItemService) {
         this._userService = _userService;
         this.items = new Array<any>();
         this.warehousesFrom = new Array<Warehouse>();
@@ -102,14 +106,40 @@ export class StockTransferWarehouseComponent implements OnInit {
     }
 
     public agregarReferencia() {
-        const newItem = {
-            itemCode: this.itemCode,
-            quantity: this.quantity,
-            fromWhsCode: this.selectedWarehouseFrom,
-            whsCode: this.selectedWarehouseTo
-        };
-        this.items.unshift(newItem);
-        this.limpiarLinea();
+        if (this.selectedWarehouseFrom == null || this.selectedWarehouseFrom.length <= 0 || this.selectedWarehouseTo == null || this.selectedWarehouseTo.length <= 0 ||
+            this.itemCode.length <= 0) {
+            this.stockTransferErrorMessage = 'Debe ingresar todos los campos obligatorios.';
+        } else {
+            if (this.selectedWarehouseFrom == this.selectedWarehouseTo) {
+                this.stockTransferErrorMessage = 'No está permitido realizar traslados entre el mismo almacén.'
+                return;
+            }
+            /*Validar que el item exista y que contenga saldo en production*/
+            this._stockItemService.stockFind(this.itemCode).subscribe(
+                response => {
+                    for (let i = 0; i < response.length; i++) {
+                        if (response[i][4] == "01PRODUCTION" && response[i][2] > this.quantity) {
+                            this.stockTransferErrorMessage = 'entro al if';
+                            return;
+                        } else {
+                            this.stockTransferErrorMessage = 'entro al else';
+                        }
+                    }
+                },
+                error => {
+                    console.error(error);
+                    this.stockTransferErrorMessage = 'Lo sentimos. Se produjo un error interno';
+                }
+            );
+            const newItem = {
+                itemCode: this.itemCode,
+                quantity: this.quantity == null ? 1 : this.quantity,
+                fromWhsCode: this.selectedWarehouseFrom,
+                whsCode: this.selectedWarehouseTo
+            };
+            this.items.unshift(newItem);
+            this.limpiarLinea();
+        }
     }
 
     private limpiarLinea() {
@@ -141,7 +171,7 @@ export class StockTransferWarehouseComponent implements OnInit {
         console.log('**********');
         console.log(stockTransfer);
         console.log('**********');
-        
+
         this._stockTransferService.stockTransferBetweenWarehouse(stockTransfer).subscribe(
             response => {
                 if (response.code === 0) {

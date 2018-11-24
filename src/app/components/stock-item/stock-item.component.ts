@@ -81,7 +81,9 @@ export class StockItemComponent implements OnInit {
         this.toBinId = null;
         this.fromBin = '';
         this.fromBinId = null;
+        this.itemCode = '';
         this.items = new Array<any>();
+        $('#item').focus();
     }
 
     public consultarStock() {

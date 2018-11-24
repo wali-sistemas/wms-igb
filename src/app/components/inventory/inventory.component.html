@@ -119,7 +119,7 @@
   <div class="row" *ngIf="idInventory">
     <div class="col-xs-12 col-sm-6 col-sm-offset-3 right-component margin-bottom-5">
       <button class="btn btn-default btn-lg" type="button" (click)="inventoryHistory()">
-        <span [ngClass]="{'glyphicon-eye-open': history || history === null, 'glyphicon-eye-close': history != null && history.length > 0}" class="glyphicon"></span> Historico
+        <span [ngClass]="{'icon-eye': history || history === null, 'icon-eye-off': history != null && history.length > 0}" class="glyphicon"></span> Histórico
       </button>
       <button type="button" class="btn btn-primary btn-lg" (click)="finishInventory()">
         Finalizar

@@ -6,8 +6,8 @@
             <div class="modal-content">
                 <div class="modal-body">
                     <div class="progress">
-                        <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0"
-                            aria-valuemax="100" style="width: 100%">
+                        <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
+                            aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
                             <span class="sr-only">Estamos procesando la solicitud</span>
                         </div>
                     </div>
@@ -24,13 +24,13 @@
                         <div class="row">
                             <div class="col-xs-12 margin-bottom-10">
                                 <label>Ubicación</label>
-                                <input type="text" class="form-control" [(ngModel)]="locationConfirm" autocomplete="off" name="locationConfirm" autocorrect="off"
-                                    autocapitalize="none">
+                                <input type="text" class="form-control" [(ngModel)]="locationConfirm" autocomplete="off"
+                                    name="locationConfirm" autocorrect="off" autocapitalize="none">
                             </div>
                             <div class="col-xs-12 margin-bottom-10">
                                 <label>Cantidad ({{locationFrom[2]}})</label>
-                                <input type="text" class="form-control" [(ngModel)]="quantityConfirm" autocomplete="off" name="quantityConfirm" autocorrect="off"
-                                    autocapitalize="none">
+                                <input type="text" class="form-control" [(ngModel)]="quantityConfirm" autocomplete="off"
+                                    name="quantityConfirm" autocorrect="off" autocapitalize="none">
                             </div>
                             <div class="row">
                                 <div class="col-xs-12">
@@ -50,11 +50,21 @@
         </div>
     </form>
 
-    <div id="modalConfiguracion" class="modal fade" tabindex="-1" role="dialog">
+    <div id="modalConfiguracion" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Limite ubicaciones</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Límite Ubicaciones</h4>
+                </div>
+                <div class="row" *ngIf="errorMessageModal != null && errorMessageModal.length > 0">
+                    <div class="col-xs-12 margin-bottom-10">
+                        <div class="alert alert-danger" role="alert">
+                            <p>{{errorMessageModal}}</p>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-body">
                     <div class="row">
@@ -74,18 +84,20 @@
                             <div class="row">
                                 <div class="col-xs-12">
                                     <div class="hidden-md hidden-lg">
-                                        <select id="limit" class="form-control" [(ngModel)]="limitSelect.code" name="code" (change)="changeLimitSelect()">
-                                            <option style="display:none" disabled value="">Selecciona un limite</option>
-                                            <option *ngFor="let limit of limits" value="{{limit.code}}">{{limit.ubicacion}} - {{limit.item}}</option>
+                                        <select id="limit" class="form-control" [(ngModel)]="limitSelectOne" name="code"
+                                            (change)="changeLimitSelect()">
+                                            <option style="display:none" disabled value="">Seleccione uno</option>
+                                            <option *ngFor="let limit of limits" value="{{limit[0]}}">{{limit[2]}} -
+                                                {{limit[3]}}</option>
                                         </select>
-                                        <hr/>
+                                        <hr />
                                     </div>
                                     <div class="hidden-xs hidden-sm" style="max-height: 222px; overflow-y: auto">
                                         <table class="table table-bordered table-striped">
-                                            <tr class="pointer-cursor" [ngClass]="{'location-limit-active': limitSelect.code === limit.code, 'location-limit': limitSelect.code !== limit.code}"
+                                            <tr class="pointer-cursor" [ngClass]="{'location-limit-active': limitSelect[0] === limit[0], 'location-limit': limitSelect[0] !== limit[0]}"
                                                 *ngFor="let limit of limits" (click)="selectLimit(limit)">
-                                                <td>{{limit.ubicacion}}</td>
-                                                <td>{{limit.item}}</td>
+                                                <td>{{limit[2]}}</td>
+                                                <td>{{limit[3]}}</td>
                                             </tr>
                                         </table>
                                     </div>
@@ -93,26 +105,29 @@
                             </div>
                         </div>
                         <div class="col-xs-12 col-md-6">
-                            <form #LimitForm="ngForm" (ngSubmit)="saveLocationLimit()">
+                            <form (ngSubmit)="saveLocationLimit()">
                                 <div class="row">
                                     <div class="col-xs-12 margin-bottom-10">
-                                        <label>Ubicación</label>
-                                        <input type="text" class="form-control" [(ngModel)]="limitSelect.ubicacion" autocomplete="off" name="ubicacion" autocorrect="off"
-                                            autocapitalize="none">
+                                        <label>Ubicación*</label>
+                                        <input type="text" class="form-control" [(ngModel)]="limitSelect[2]"
+                                            autocomplete="off" name="ubicacion" autocorrect="off" autocapitalize="none"
+                                            placeholder="escanea la ubicación">
                                     </div>
                                     <div class="col-xs-12 margin-bottom-10">
-                                        <label>Ítem</label>
-                                        <input type="text" class="form-control" [(ngModel)]="limitSelect.item" autocomplete="off" name="item" autocorrect="off" autocapitalize="none">
+                                        <label>Ítem*</label>
+                                        <input type="text" class="form-control" [(ngModel)]="limitSelect[3]"
+                                            autocomplete="off" name="item" autocorrect="off" autocapitalize="none"
+                                            placeholder="escanea el ítem">
                                     </div>
                                     <div class="col-xs-12 margin-bottom-10">
-                                        <label>Cantidad minima</label>
-                                        <input type="text" class="form-control" [(ngModel)]="limitSelect.cantMinima" autocomplete="off" name="cantMinima" autocorrect="off"
-                                            autocapitalize="none">
+                                        <label>Cantidad minima*</label>
+                                        <input type="text" class="form-control" [(ngModel)]="limitSelect[4]"
+                                            autocomplete="off" name="cantMinima" autocorrect="off" autocapitalize="none">
                                     </div>
                                     <div class="col-xs-12 margin-bottom-10">
-                                        <label>Cantidad maxima</label>
-                                        <input type="text" class="form-control" [(ngModel)]="limitSelect.cantMaxima" autocomplete="off" name="cantMaxima" autocorrect="off"
-                                            autocapitalize="none">
+                                        <label>Cantidad maxima*</label>
+                                        <input type="text" class="form-control" [(ngModel)]="limitSelect[5]"
+                                            autocomplete="off" name="cantMaxima" autocorrect="off" autocapitalize="none">
                                     </div>
                                 </div>
                             </form>
@@ -121,8 +136,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-default" (click)="clean()" *ngIf="limitSelect && limitSelect.ubicacion !== null && limitSelect.ubicacion.length > 0">Cancelar</button>
-                    <button type="button" class="btn btn-default" (click)="deleteLocationLimit()" *ngIf="limitSelect && limitSelect.code !== null && limitSelect.code.length > 0">Eliminar</button>
+                    <button type="button" class="btn btn-default" (click)="clean()" *ngIf="limitSelect && limitSelect[2] !== null">Cancelar</button>
+                    <button type="button" class="btn btn-default" (click)="deleteLocationLimit()" *ngIf="limitSelect && limitSelect[0] !== null">Eliminar</button>
                     <button type="button" class="btn btn-primary" (click)="saveLocationLimit()">Guardar</button>
                 </div>
             </div>
@@ -152,12 +167,12 @@
             <div class="row">
                 <div class="col-xs-6">
                     <button type="button" class="btn btn-default" (click)="goToPass(null, null, true)" *ngIf="pass > 1">
-                        <span class="glyphicon glyphicon-arrow-left"></span>
-                        Atras
+                        <span class="icon-arrow-left"></span>
+                        Atrás
                     </button>
                 </div>
                 <div class="col-xs-6 right-component pointer-cursor" *ngIf="admin">
-                    <span class="glyphicon glyphicon-cog configuration-button" (click)="listLocationLimits()"></span>
+                    <span class="icon-settings configuration-button" (click)="listLocationLimits()"></span>
                 </div>
             </div>
         </div>

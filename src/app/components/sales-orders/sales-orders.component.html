@@ -67,14 +67,14 @@
           <span class="input-group-btn" *ngIf="selectedOrders && selectedOrders.size > 0">
             <button type="button" class="btn btn-default btn-lg" (click)="listAssignableEmployees()">
               <span class="badge">{{selectedOrders.size}}</span>
-              <span class="glyphicon glyphicon-user"></span>
+              <span class="icon-user"></span>
             </button>
           </span>
           <input type="text" class="form-control input-lg" id="filter" name="filter" placeholder="escribe para filtrar" [(ngModel)]="filter" (keyup)="filterOrders(false)"
             autocomplete="off" />
           <span class="input-group-btn">
             <button type="button" class="btn btn-default btn-lg" (click)="toggleEye()">
-              <span class="glyphicon" [ngClass]="{'glyphicon-eye-open': !showApprovedOnly, 'glyphicon-eye-close': showApprovedOnly}"></span>
+              <span class="icon-eye" [ngClass]="{'icon-eye': !showApprovedOnly, 'icon-eye-off': showApprovedOnly}"></span>
             </button>
           </span>
         </div>
@@ -89,7 +89,7 @@
         <div class="order-number">
           {{order.docNum}}
           <span *ngIf="order.assignedPickingEmployee" class="assigned-employee">
-            <span class="glyphicon glyphicon-user"></span>
+            <span class="icon-user"></span>
             {{order.assignedPickingEmployee}}
           </span>
           <span *ngIf="order.status == 'warning'" class="glyphicon glyphicon-warning-sign warn"></span>
