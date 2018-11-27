@@ -111,6 +111,7 @@ export class StockTransferLocationComponent implements OnInit {
             warehouseCode: this.identity.warehouseCode,
             lines: this.items
         };
+
         console.log(stockTransfer);
         this._stockTransferService.stockTransfer(stockTransfer).subscribe(
             response => {
