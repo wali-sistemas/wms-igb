@@ -1,0 +1,36 @@
+.content {
+    margin-top: 60px;
+}
+
+.box{
+    height: 175px;
+    margin-bottom: 10px;
+    background-color: #333;
+    color: #ddd;
+    font-size: 100px;
+    text-align: center;
+}
+
+.box:hover {
+    color: #ddd;
+    background-color: #da0611;
+}
+
+.title {
+    font-size: 17px;
+    font-family: sans-serif;
+    margin: 0;
+}
+
+/*.salir-desktop {
+    color: #ddd;
+    font-size: 30px;
+    position: relative;
+    cursor: pointer;
+    background-color: #333;
+}
+  
+.salir-desktop:hover {
+    color: #ddd;
+    background-color: #da0611;
+}*/

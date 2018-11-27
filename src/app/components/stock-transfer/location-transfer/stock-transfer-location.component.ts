@@ -1,18 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
-import { UserService } from '../../services/user.service';
-import { StockTransferService } from '../../services/stock-transfer.service';
-import { BinLocationService } from '../../services/bin-locations.service';
+import { UserService } from '../../../services/user.service';
+import { StockTransferService } from '../../../services/stock-transfer.service';
+import { BinLocationService } from '../../../services/bin-locations.service';
 
 declare var $: any;
 
 @Component({
-    templateUrl: './stock-transfer.component.html',
-    styleUrls: ['./stock-transfer.component.css'],
+    templateUrl: './stock-transfer-location.component.html',
+    styleUrls: ['./stock-transfer-location.component.css'],
     providers: [UserService, StockTransferService, BinLocationService]
 })
 
-export class StockTransferComponent implements OnInit {
+export class StockTransferLocationComponent implements OnInit {
     public identity;
     public token;
 
@@ -24,6 +24,7 @@ export class StockTransferComponent implements OnInit {
     public quantity: number;
     public items: Array<any>;
     public stockTransferErrorMessage: string = null;
+    public routerLinkActive: string = 'active';
 
     constructor(private _userService: UserService,
         private _stockTransferService: StockTransferService,
@@ -34,11 +35,12 @@ export class StockTransferComponent implements OnInit {
     }
 
     ngOnInit() {
+        localStorage.setItem('router-Link-Active', this.routerLinkActive);
         $('#fromBin').focus();
         this.identity = this._userService.getItentity();
         if (this.identity === null) {
             this._router.navigate(['/']);
-        }
+        }  
     }
 
     public validarUbicacion(binCode, type) {
@@ -109,7 +111,10 @@ export class StockTransferComponent implements OnInit {
             warehouseCode: this.identity.warehouseCode,
             lines: this.items
         };
-        this._stockTransferService.stockTransfer(stockTransfer).subscribe(
+        console.log('**********');
+        console.log(stockTransfer);
+        console.log('**********');
+        /*this._stockTransferService.stockTransfer(stockTransfer).subscribe(
             response => {
                 console.log(response);
                 if (response.code === 0) {
@@ -125,6 +130,6 @@ export class StockTransferComponent implements OnInit {
                     this.stockTransferErrorMessage = 'Ocurrió un error no identificado al intentar realizar el traslado';
                 }
             }
-        );
+        );*/
     }
 }

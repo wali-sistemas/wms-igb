@@ -16,6 +16,7 @@ export class ResupplyComponent implements OnInit {
     public quantityConfirm: number;
     public locationConfirm: string;
     public message: string;
+    public errorMessageModal: string;
     public admin: boolean = false;
     public locationTo: any;
     public locationFrom: any;
@@ -25,6 +26,7 @@ export class ResupplyComponent implements OnInit {
     public items: Array<any>;
     public locationsStorage: Array<any>;
     public limits: Array<any>;
+    public limitSelectOne: string = '';
 
     constructor(private _router: Router, private _resupplyService: ResupplyService, private _stockTransferService: StockTransferService, private _userService: UserService) {
         this.pass = 1;
@@ -45,7 +47,8 @@ export class ResupplyComponent implements OnInit {
     }
 
     private listLocationsResupply() {
-        this.message = null;
+        this.message = "";
+        this.errorMessageModal = "";
         this.items = new Array<any>();
         this._resupplyService.listLocationsResupply().subscribe(
             response => {
@@ -57,25 +60,24 @@ export class ResupplyComponent implements OnInit {
     }
 
     private listItems() {
-        this.message = null;
+        this.message = "";
+        this.errorMessageModal = "";
         this.items = new Array<any>();
         this.locationsResupply = new Array<any>();
         this._resupplyService.listItemsLocation(this.locationTo[1]).subscribe(
             response => {
                 this.items = response.content;
-
                 if (this.items.length <= 0) {
                     this.pass--;
                     this.listLocationsResupply();
                 }
-            }, error => {
-                console.log(error);
-            }
+            }, error => { console.log(error); }
         );
     }
 
     private listLocationsStorage() {
         this.message = "";
+        this.errorMessageModal = "";
         this.items = new Array<any>();
         this._resupplyService.listUbicationsStorage(this.item[0]).subscribe(
             response => {
@@ -85,9 +87,7 @@ export class ResupplyComponent implements OnInit {
                     this.listItems();
                     this.message = "No se encontraron ubicación para re-abastecer el ítem";
                 }
-            }, error => {
-                console.log(error);
-            }
+            }, error => { console.log(error); }
         );
     }
 
@@ -95,6 +95,7 @@ export class ResupplyComponent implements OnInit {
         $('#modalConfiguracion').modal('hide');
         this.clean();
         this.message = "";
+        this.errorMessageModal = "";
         $('#modal_process').modal('show');
         this.limits = new Array<any>();
         this._resupplyService.listLocationLimits().subscribe(
@@ -112,7 +113,7 @@ export class ResupplyComponent implements OnInit {
 
     public changeLimitSelect() {
         for (let i = 0; i < this.limits.length; i++) {
-            if (this.limits[i].code === this.limitSelect.code) {
+            if (this.limits[i][0] === this.limitSelectOne) {
                 this.limitSelect = this.limits[i];
                 break;
             }
@@ -121,60 +122,58 @@ export class ResupplyComponent implements OnInit {
 
     public saveLocationLimit() {
         this.message = "";
-        if (this.limitSelect.ubicacion === null || this.limitSelect.ubicacion.length <= 0) {
-            this.message = "Ingrese la ubicación a la que le quiere registrar el límite";
-            console.log("Ingrese la ubicación a la que le quiere registrar el límite");
-            return;
-        }
-        if (this.limitSelect.item === null || this.limitSelect.item.length <= 0) {
-            this.message = "Ingrese el ítem al que le quiere registrar el límite";
-            console.log("Ingrese el ítem al que le quiere registrar el límite");
-            return;
-        }
-        if (this.limitSelect.cantMinima === null || this.limitSelect.cantMinima < 0) {
-            this.message = "Ingrese la cantidad mínima que le quiere registrar el límite";
-            console.log("Ingrese la cantidad mínima que le quiere registrar el límite");
-            return;
-        }
-        if (this.limitSelect.cantMaxima === null || this.limitSelect.cantMaxima < 0) {
-            this.message = "Ingrese la cantidad maxima que le quiere registrar el límite";
-            console.log("Ingrese la cantidad maxima que le quiere registrar el límite");
+        this.errorMessageModal = "";
+        if (this.limitSelect[2] === null || this.limitSelect[2] === '' || this.limitSelect[2] === undefined
+            || this.limitSelect[3] === null || this.limitSelect[3] == '' || this.limitSelect[3] === undefined
+            || this.limitSelect[4] === null || this.limitSelect[4] == '' || this.limitSelect[4] === undefined
+            || this.limitSelect[5] === null || this.limitSelect[5] == '' || this.limitSelect[5] === undefined) {
+            this.errorMessageModal = "Ingrese todos los campos obligatorios.";
             return;
         }
 
-        this._resupplyService.saveLocationLimit(this.limitSelect).subscribe(
+        let locationLimitDTO = {
+            "code": this.limitSelect[0],
+            "name": this.limitSelect[1],
+            "ubicacion": this.limitSelect[2],
+            "item": this.limitSelect[3],
+            "cantMaxima": this.limitSelect[4],
+            "cantMinima": this.limitSelect[5]
+        }
+
+        this._resupplyService.saveLocationLimit(locationLimitDTO).subscribe(
             response => {
                 if (response.code === -1) {
                     this.message = response.content;
                     return;
                 }
                 this.clean();
-                this.listLocationLimits();
+                $('#modalConfiguracion').modal('hide');
             }, error => { console.log(error); }
         );
     }
 
     public deleteLocationLimit() {
-        this.message = null;
-        if (this.limitSelect.code == null || this.limitSelect.code.length <= 0) {
-            this.message = "Lo se encontro un limite seleccionado para poder eliminar.";
+        this.errorMessageModal = "";
+        if (this.limitSelect[0] == null || this.limitSelect[0].length <= 0) {
+            this.errorMessageModal = "Sin límite seleccionado para eliminar.";
             return;
         }
 
-        this._resupplyService.deleteLocationLimit(this.limitSelect.code).subscribe(
+        this._resupplyService.deleteLocationLimit(this.limitSelect[0]).subscribe(
             response => {
                 if (response.code < 0) {
                     this.message = response.content;
                 } else {
                     this.clean();
-                    this.listLocationLimits();
+                    $('#modalConfiguracion').modal('hide');
                 }
             }, error => { console.error(error); }
         );
     }
 
     public goToPass(location, item, back: boolean) {
-        this.message = null;
+        this.message = "";
+        this.errorMessageModal = "";
         if (!back && this.pass < 3) {
             this.pass++;
             if (this.pass === 2) {
@@ -195,31 +194,28 @@ export class ResupplyComponent implements OnInit {
     }
 
     public useLocation(storage) {
-        this.message = null;
+        this.message = "";
+        this.errorMessageModal = "";
         this.locationFrom = storage;
-        console.log(this.locationFrom);
         $('#modalUbicacion').modal('show');
     }
 
     public stockTransfer(continuar: boolean) {
-        this.message = null;
+        this.message = "";
+        this.errorMessageModal = "";
         $('#modalUbicacion').modal('hide');
         $('#modalAdvertencia').modal('hide');
-        console.log(this.item);
         this.locationConfirm = this.locationConfirm.trim();
+
         if (this.locationConfirm === null || this.locationFrom[1] !== this.locationConfirm) {
             this.message = "Digite la ubicación de la que se desea sacar los ítems";
-            console.log("Digite la ubicación de la que se desea sacar los ítems");
             return;
         }
-        console.log(this.quantityConfirm);
         if (this.quantityConfirm == null || this.quantityConfirm <= 0) {
             this.message = "Digite la cantidad que desea sacar de la ubicación";
-            console.log("Digite la cantidad que desea sacar de la ubicación");
             return;
         } else if (this.quantityConfirm > this.locationFrom[2]) {
             this.message = "La cantidad ingresada supera la disponible en la ubicación";
-            console.log("La cantidad ingresada supera la disponible en la ubicación");
             return;
         } else if (this.quantityConfirm > parseInt(this.item[1], 10) && !continuar) {
             $('#modalAdvertencia').modal('show');
@@ -236,8 +232,6 @@ export class ResupplyComponent implements OnInit {
             itemCode: this.item[0].trim(),
             warehouseCode: this._userService.getItentity().warehouseCode
         }
-
-        console.log(itemTransfer);
 
         this._stockTransferService.transferResupply(itemTransfer).subscribe(
             response => {
@@ -262,11 +256,8 @@ export class ResupplyComponent implements OnInit {
                     this.message = "Ocurrió un error al crear el traslado";
                     $('#modalUbicacion').modal('show');
                 }
-                console.log(response);
                 $('#modal_process').modal('hide');
-            }, error => {
-                console.log(error);
-            }
+            }, error => { console.log(error); }
         );
     }
 
@@ -279,5 +270,7 @@ export class ResupplyComponent implements OnInit {
             cantMinima: 0,
             cantMaxima: 0
         }
+        this.errorMessageModal = "";
+        this.message = "";
     }
 }
