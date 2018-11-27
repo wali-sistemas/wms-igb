@@ -111,10 +111,8 @@ export class StockTransferLocationComponent implements OnInit {
             warehouseCode: this.identity.warehouseCode,
             lines: this.items
         };
-        console.log('**********');
         console.log(stockTransfer);
-        console.log('**********');
-        /*this._stockTransferService.stockTransfer(stockTransfer).subscribe(
+        this._stockTransferService.stockTransfer(stockTransfer).subscribe(
             response => {
                 console.log(response);
                 if (response.code === 0) {
@@ -130,6 +128,6 @@ export class StockTransferLocationComponent implements OnInit {
                     this.stockTransferErrorMessage = 'Ocurrió un error no identificado al intentar realizar el traslado';
                 }
             }
-        );*/
+        );
     }
 }
