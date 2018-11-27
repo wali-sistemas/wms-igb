@@ -76,7 +76,7 @@ export class StockItemComponent implements OnInit {
         this.itemCode = this.itemCode.replace(/\s/g, '');
     }
 
-    private limpiarTodo() {
+    public limpiarTodo() {
         this.toBin = '';
         this.toBinId = null;
         this.fromBin = '';
