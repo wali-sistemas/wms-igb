@@ -25,8 +25,6 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log('iniciando componente de login');
-    //TODO: validar vigencia del token/identity
     this.identity = this._userService.getItentity();
     if (this.identity !== null) {
       this._router.navigate(['/home']);
@@ -38,7 +36,6 @@ export class LoginComponent implements OnInit {
     this._genericService.listAvailableCompanies().subscribe(
       response => {
         this.companies = response;
-        console.log('se encontraron las siguientes empresas para hacer login: ', this.companies);
       }, error => { console.error(error); }
     );
   }
@@ -51,6 +48,14 @@ export class LoginComponent implements OnInit {
           this.identity = response.user;
           localStorage.setItem('igb.identity', JSON.stringify(this.identity));
           localStorage.setItem('igb.selectedCompany', this.selectedCompany);
+
+          for (let i = 0; i < this.companies.length; i++) {
+            if (this.companies[i].companyId == this.selectedCompany) {
+              if (this.companies[i].companyName.toLowerCase().indexOf('prueba') >= 0) {
+                localStorage.setItem('igb.pruebas', 'true');
+              }
+            }
+          }
 
           this.user = new User('', '', '', '', '', '', true);
           this._router.navigate(['/home']);

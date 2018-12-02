@@ -35,7 +35,6 @@ export class HomeComponent implements OnInit {
   private listAvailableWarehouses() {
     this._genericService.listAvailableWarehouses().subscribe(
       result => {
-        console.log(result);
         this.warehouses = result.content;
       }, error => { console.error(error); }
     );
@@ -43,7 +42,7 @@ export class HomeComponent implements OnInit {
 
   private validateStatus() {
     this._genericService.validateStatus().subscribe(
-      response => { console.log('status ok', response); },
+      response => {  },
       error => {
         console.error(error);
         this.redirectIfSessionInvalid(error);
