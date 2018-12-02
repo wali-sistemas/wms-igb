@@ -26,4 +26,8 @@ export class GenericService {
       .map(res => res.json());
   }
 
+  public listActivesWarehouses() {
+    return this._http.get(this.url + 'generic/warehouses/actives', { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
 }

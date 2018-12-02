@@ -95,3 +95,18 @@
     width: 87%;
     font-size: 12px;
 }
+
+.refresh {
+    font-size: 35px;
+    right: 0px;
+    cursor: pointer;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 9px;
+    padding-bottom: 8px;
+  }
+  
+  .refresh:hover {
+    color: #444;
+    background-color: #ddd;
+  }

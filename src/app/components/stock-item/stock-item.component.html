@@ -11,12 +11,15 @@
     </div>
     <br />
     <div class="row">
-        <div class="col-xs-12">
-            <form>
+        <div class="col-xs-10">
+            <form (submit)="consultarStock()">
                 <label for="itemCode">Referencia/Ubicación</label>
                 <input type="text" class="form-control input-lg" autocomplete="off" id="item" name="itemCode"
-                    placeholder="escanea el ítem o la ubicación" [(ngModel)]="itemCode" (keyup)="consultarStock()">
+                    placeholder="escanea el ítem o la ubicación" [(ngModel)]="itemCode">
             </form>
+        </div>
+        <div class="col-xs-2" style="top: 25px; right: 25px;">
+            <span class="refresh" (click)="limpiarTodo()"><span class="icon-refresh"></span></span>
         </div>
     </div>
     <br />
@@ -24,7 +27,7 @@
         <div class="col-xs-12 col-md-6" *ngFor="let item of items">
             <div class="box">
                 <div class="col-xs-6 col-md-3">
-                    <img class="photo" src="{{urlShared}}/mtz/{{item[0]}}.jpg">
+                    <img class="photo" src="{{urlShared}}mtz/{{item[0]}}.jpg">
                 </div>
                 <div class="box-itemname">{{item[1]}}</div>
                 <div class="col-xs-6 col-md-3">

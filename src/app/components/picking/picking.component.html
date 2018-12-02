@@ -100,7 +100,7 @@
         <div class="modal-content">
             <form>
                 <div class="modal-body">
-                    <h4>Detalle ubicación {{nextBinLocationCode}}</h4>
+                    <h4>Detalle Ubicación {{nextBinLocationCode}}</h4>
                     <table class="table table-striped">
                         <tr>
                             <td>Almacén</td>
@@ -159,7 +159,7 @@
         <span *ngIf="pickingMethod === 'multiple' && assignedOrders.length > 0"> ({{assignedOrders.length}} órdenes)</span>
         <span class="grayed-order" *ngIf="pickingMethod === 'multiple' && assignedOrders.length > 0"> - {{nextOrderNumber}}</span>
         <span *ngIf="pickingMethod === 'single'"> (orden #{{selectedOrder}})</span>
-        <span class="glyphicon glyphicon-cog pull-right cursor-pointer" data-toggle="modal" data-target="#modal_config"></span>
+        <span class="icon-settings pull-right cursor-pointer" data-toggle="modal" data-target="#modal_config" title="Configurar"></span>
     </h3>
 
     <div class="row" *ngIf="availableCarts.length > 0 && !warningMessageNoOrders">
@@ -182,17 +182,17 @@
                     <span data-toggle="modal" data-target="#modal_bin_detail">{{nextBinLocationCode}}</span>
                 </label>
                 <label *ngIf="confirmingItemQuantity" for="binLocation">Tomando items desde
-                    <span class="glyphicon glyphicon-info-sign" data-toggle="modal" data-target="#modal_bin_detail"></span>
+                    <span class="icon-info" data-toggle="modal" data-target="#modal_bin_detail" title="Detalle ubicación"></span>
                 </label>
 
                 <div class="input-group" *ngIf="nextBinLocationCode">
                     <input id="binLoc" name="binLocation" class="form-control input-lg" type="text" [(ngModel)]="confirmBinCode" placeholder="escanea aquí"
                         autocomplete="off" [disabled]="confirmingItemQuantity">
                     <span class="input-group-btn">
-                        <button class="btn btn-danger btn-lg" type="button" (click)="resetForm()" *ngIf="confirmingItemQuantity">
+                        <button class="btn btn-danger btn-lg danger" type="button" (click)="resetForm()" *ngIf="confirmingItemQuantity">
                             <span class="glyphicon glyphicon-erase"></span>
                         </button>
-                        <button class="btn btn-default btn-lg" type="button" (click)="skipItem()" *ngIf="!confirmingItemQuantity">
+                        <button class="btn btn-default btn-lg" type="button" (click)="skipItem()" *ngIf="!confirmingItemQuantity" disabled>
                             <span class="glyphicon glyphicon-forward"></span>
                         </button>
                     </span>
