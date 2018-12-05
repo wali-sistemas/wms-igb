@@ -179,7 +179,7 @@
                 </label>
                 <br>
                 <label *ngIf="!confirmingItemQuantity && nextBinLocationCode" for="binLocation">Escanea la ubicación
-                    <span data-toggle="modal" data-target="#modal_bin_detail">{{nextBinLocationCode}}</span>
+                    <span data-toggle="modal" data-target="#modal_bin_detail">{{nextBinLocationCode}}</span> [{{nextBinType}}]
                 </label>
                 <label *ngIf="confirmingItemQuantity" for="binLocation">Tomando items desde
                     <span class="icon-info" data-toggle="modal" data-target="#modal_bin_detail" title="Detalle ubicación"></span>
@@ -192,7 +192,7 @@
                         <button class="btn btn-danger btn-lg danger" type="button" (click)="resetForm()" *ngIf="confirmingItemQuantity">
                             <span class="glyphicon glyphicon-erase"></span>
                         </button>
-                        <button class="btn btn-default btn-lg" type="button" (click)="skipItem()" *ngIf="!confirmingItemQuantity">
+                        <button class="btn btn-default btn-lg" type="button" (click)="skipItem()" *ngIf="!confirmingItemQuantity" [disabled]="nextBinType === 'STORAGE'">
                             <span class="glyphicon glyphicon-forward"></span>
                         </button>
                     </span>

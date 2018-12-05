@@ -29,6 +29,7 @@ export class PickingComponent implements OnInit {
     public nextItemQuantity: number;
     public nextBinAbs: number;
     public nextBinStock: number;
+    public nextBinType: string;
     public pickedItemCode: string = '';
     public pickedItemQuantity: number;
     public pickedItemCodeValidated = false;
@@ -146,6 +147,7 @@ export class PickingComponent implements OnInit {
                     this.nextBinLocationCode = result.content.binCode;
                     this.nextItemName = result.content.itemName;
                     this.nextOrderNumber = result.content.orderNumber;
+                    this.nextBinType = result.content.binLocationType;
                 } else if (result.code === -1) {
                     if (this.pickingMethod === 'multiple') {
                         //this.closeOrderAssignation(this.identity.username, this.selectedOrder);
@@ -273,6 +275,7 @@ export class PickingComponent implements OnInit {
         this.nextItemCode = '';
         this.nextItemName = '';
         this.nextItemQuantity = null;
+        this.nextBinType = '';
 
         //clean selected location
         this.confirmingItemQuantity = false;
@@ -355,7 +358,7 @@ export class PickingComponent implements OnInit {
             show: true
         });
         console.log('itemTransfer: ', itemTransfer);
-        this.errorMessageBinTransfer = '';
+        this.errorMessageBinLocation = '';
         this._stockTransferService.transferSingleItem(itemTransfer).subscribe(
             response => {
                 console.log(response);
@@ -363,13 +366,13 @@ export class PickingComponent implements OnInit {
                     //Clears bin location, item code and quantity fields; then loads cart inventory and next item
                     this.resetForm();
                 } else {
-                    this.errorMessageBinTransfer = response.content;
+                    this.errorMessageBinLocation = response.content;
                 }
                 $('#modal_transfer_process').modal('hide');
             }, error => {
                 $('#modal_transfer_process').modal('hide');
                 console.error(error);
-                this.errorMessageBinTransfer = JSON.parse(error._body).content;
+                this.errorMessageBinLocation = JSON.parse(error._body).content;
             }
         );
     }
