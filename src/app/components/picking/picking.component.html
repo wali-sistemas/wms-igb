@@ -161,6 +161,9 @@
         <span *ngIf="pickingMethod === 'single'"> (orden #{{selectedOrder}})</span>
         <span class="icon-settings pull-right cursor-pointer" data-toggle="modal" data-target="#modal_config" title="Configurar"></span>
     </h3>
+    <div class="alert alert-error" role="alert" *ngIf="errorMessageNextItem">
+        {{errorMessageNextItem}}
+    </div>
 
     <div class="row" *ngIf="availableCarts.length > 0 && !warningMessageNoOrders">
         <div class="col-xs-12">
