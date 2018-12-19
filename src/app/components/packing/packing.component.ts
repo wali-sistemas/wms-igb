@@ -53,6 +53,7 @@ export class PackingComponent implements OnInit {
     public printersList: Array<Printer>;
     public customersListDisabled: boolean = false;
     public packingOrdersComplete: boolean = false;
+    public qtyBox: number;
     private identity;
     private idPackingList: number;
     private idPackingOrder: number;
@@ -306,7 +307,7 @@ export class PackingComponent implements OnInit {
         this.binCode = '';
         this.itemCode = '';
         this.itemName = '';
-        this.itemQuantity = 0;
+        this.itemQuantity = null;
         this.isVisibleItemCode = false;
         this.packedItemCodeValidated = false;
         this.packedItemQuantityValidated = false;
@@ -341,9 +342,7 @@ export class PackingComponent implements OnInit {
                     keyboard: false,
                     show: true
                 });
-            }, error => {
-                console.error(error);
-            }
+            }, error => { console.error(error); }
         );
     }
 
@@ -432,11 +431,9 @@ export class PackingComponent implements OnInit {
     }
 
     private printLabels() {
-        console.log('imprimiendo etiquetas de packingList ' + this.idPackingList + ' en impresora ' + this.selectedPrinter);
         this.processPrintLabelsStatus = 'inprogress';
-        this._printService.printLabels(this.idPackingList, this.selectedPrinter).subscribe(
+        this._printService.printLabels(this.idPackingOrder, this.selectedPrinter).subscribe(
             result => {
-                console.log(result);
                 if (result.code == 0) {
                     if (result.content) {
                         //todas las etiquetas se imprimieron
@@ -508,6 +505,7 @@ export class PackingComponent implements OnInit {
 
         $('#order_items').modal('hide');
         $('#cantidad').modal('show');
+        $('#input_packedQuantity').focus();
 
         this.isVisibleItemCode = true;
         this.packedItemCodeValidated = true;
@@ -521,6 +519,8 @@ export class PackingComponent implements OnInit {
         this.itemQuantity = null;
         this.isVisibleItemCode = false;
         this.packedItemCodeValidated = false;
+        this.qtyBox = null;
+        this.customersListDisabled = false;
     }
 
     public getPackingOrders() {
@@ -554,5 +554,78 @@ export class PackingComponent implements OnInit {
 
         this.isVisibleItemCode = true;
         this.packedItemCodeValidated = true;
+    }
+
+    public nextOrden() {
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+        this._packingService.cancelPackingOrder(this.idPackingOrder).subscribe(
+            response => {
+                this.customersListDisabled = false;
+                this.ordersList = new Array<any>();
+                this.orderItemsList = new Array<any>();
+                this.boxes = new Array<PackingBox>();
+                this.selectedBox = new PackingBox();
+                this.selectedBoxItems = this.selectedBox.items;
+                this.selectedCustomer = '';
+                this.selectedOrder = 0;
+                this.specialPacking = new Array<any>();
+                this.errorMessage = '';
+                $('#modal_transfer_process').modal('hide');
+            }, error => {
+                console.error(error);
+                $('#modal_transfer_process').modal('hide');
+            }
+        );
+    }
+
+    public expressPack() {
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+        this._packingService.listOrderItems(this.idPackingOrder).subscribe(
+            response => {
+                $('#modal_transfer_process').modal('hide');
+                if (response.content.length > 0) {
+                    for (let i = 0; i < response.content.length; i++) {
+                        console.log('Registrando packExpress para el item [' + response.content[i][3] + "]");
+                        const packingRecord = new PackingRecord();
+                        packingRecord.idPackingList = this.idPackingList;
+                        packingRecord.binCode = response.content[i][0];
+                        packingRecord.itemCode = response.content[i][3];
+                        packingRecord.itemName = this.itemName;
+                        packingRecord.quantity = response.content[i][2];
+                        packingRecord.boxNumber = this.qtyBox;
+                        packingRecord.customerId = this.selectedCustomer;
+                        packingRecord.orderNumber = this.selectedOrder;
+                        packingRecord.employee = this.identity.username;
+                        packingRecord.idPackingOrder = this.idPackingOrder;
+
+                        this._packingService.createPackingRecord(packingRecord).subscribe(
+                            response => {
+                                if (response.code < 0) {
+                                    this.errorMessage = "Lo sentimos. Se produjo un error interno."
+                                    $("#caja").modal('hide');
+                                    return;
+                                } else {
+                                    $("#caja").modal('hide');
+                                    this.loadPrinters();
+                                }
+                            },
+                            error => { console.error(error); }
+                        );
+                    }
+
+                } else {
+                    this.errorMessage = 'No hay items pendientes por empacar.';
+                    $("#caja").modal('hide');
+                }
+            }, error => { console.error(error); }
+        );
     }
 }

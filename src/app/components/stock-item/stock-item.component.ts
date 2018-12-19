@@ -87,9 +87,15 @@ export class StockItemComponent implements OnInit {
     }
 
     public consultarStock() {
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
         if (this.itemCode.length > 1) {
             this._stockItemService.stockFind(this.itemCode).subscribe(
                 response => {
+                    $('#modal_transfer_process').modal('hide');
                     this.items = response;
                 },
                 error => {

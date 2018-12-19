@@ -1,3 +1,8 @@
 .content {
     margin-top: 60px;
 }
+
+.detail {
+    text-align: center;
+    vertical-align: inherit !important;
+}
