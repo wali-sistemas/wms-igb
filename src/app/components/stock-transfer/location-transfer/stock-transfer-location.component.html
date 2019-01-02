@@ -75,8 +75,6 @@
             <button class="btn btn-lg" type="button" (click)="limpiarTodo()">
                 Limpiar
             </button>
-        </div>
-        <div class="col-xs-6">
             <button class="btn btn-danger btn-lg" type="button" (click)="crearTraslado()" [disabled]="items.length == 0">
                 Finalizar
             </button>
@@ -99,8 +97,7 @@
                     <td class="detail">{{item.toBin}}</td>
                     <td class="detail">{{item.quantity}}</td>
                     <td class="detail">
-                        <span class="refresh" (click)="eliminarItem(item.itemCode)" style="font-size: 25px;"><span
-                                class="icon-delete"></span></span>
+                        <span class="refresh" (click)="eliminarItem(item.itemCode)" style="font-size: 25px;"><span class="icon-delete"></span></span>
                     </td>
                 </tr>
             </table>

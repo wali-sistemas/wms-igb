@@ -73,7 +73,7 @@
         </div>
         <div class="col-xs-2">
             <form (submit)="agregarReferencia()">
-                <label for="quantity">Cant</label>
+                <label for="quantity">Cant*</label>
                 <input type="number" class="form-control input-lg" autocomplete="off" id="quantity" name="quantity"
                     [(ngModel)]="quantity">
             </form>
@@ -82,8 +82,11 @@
     <br />
     <div class="row">
         <div class="col-xs-6">
-            <button class="btn btn-default btn-lg send" type="button" (click)="crearTraslado()" style="display: none">
-                Finalizar <span class="icon-send"></span>
+            <button class="btn btn-lg" type="button" (click)="limpiarTodo()">
+                Limpiar
+            </button>
+            <button class="btn btn-danger btn-lg" type="button" (click)="crearTraslado()" [disabled]="items.length == 0">
+                Finalizar
             </button>
         </div>
     </div>
@@ -100,7 +103,7 @@
                 </tr>
                 <tr *ngFor="let item of items">
                     <td class="detail">{{item.itemCode}}</td>
-                    <td class="detail">{{item.fromWhsCode}}</td>
+                    <td class="detail">{{item.fromWhsCode}}<span class="bin-code"> ({{fromBin}})</span></td>
                     <td class="detail">{{item.whsCode}}</td>
                     <td class="detail">{{item.quantity}}</td>
                     <td class="detail">

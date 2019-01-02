@@ -50,7 +50,7 @@ export class StockTransferWarehouseComponent implements OnInit {
     }
 
     ngOnInit() {
-        $('#fromBin').focus();
+        $('#itemCode').focus();
         this.identity = this._userService.getItentity();
         if (this.identity === null) {
             this._router.navigate(['/']);
@@ -73,13 +73,15 @@ export class StockTransferWarehouseComponent implements OnInit {
     }
 
     public validarReferencia() {
+        this.stockTransferErrorMessage = '';
+        this.stockTransferExitMessage = '';
         this.itemCode = this.itemCode.replace(/\s/g, '');
     }
 
-    public validarUbicacion(binCode, type) {
+    public validarUbicacion(fromBin, type) {
         this.stockTransferErrorMessage = '';
         this.stockTransferExitMessage = '';
-        this._binLocationService.getBinAbs(binCode).subscribe(
+        this._binLocationService.getBinAbs(fromBin).subscribe(
             response => {
                 if (type === 'to') {
                     if (response.content) {
@@ -117,7 +119,7 @@ export class StockTransferWarehouseComponent implements OnInit {
         this.stockTransferExitMessage = '';
 
         if (this.selectedWarehouseFrom == null || this.selectedWarehouseFrom.length <= 0 || this.selectedWarehouseTo == null || this.selectedWarehouseTo.length <= 0 ||
-            this.itemCode.length <= 0) {
+            this.itemCode.length <= 0 || this.quantity <= 0) {
             $('#modal_transfer_process').modal('hide');
             this.stockTransferErrorMessage = 'Debe ingresar todos los campos obligatorios.';
         } else {
@@ -141,6 +143,7 @@ export class StockTransferWarehouseComponent implements OnInit {
                             this.items.unshift(newItem);
                             this.limpiarLinea();
                             $('#modal_transfer_process').modal('hide');
+                            $('#itemCode').focus();
                             disponible = true;
                             return;
                         } else {
@@ -164,7 +167,6 @@ export class StockTransferWarehouseComponent implements OnInit {
     private limpiarLinea() {
         this.itemCode = '';
         this.quantity = null;
-        this.fromBin = '';
     }
 
     private limpiarTodo() {
@@ -176,6 +178,9 @@ export class StockTransferWarehouseComponent implements OnInit {
         this.fromBin = '';
         this.fromBinId = null;
         this.items = new Array<any>();
+        this.selectedWarehouseFrom = '';
+        this.selectedWarehouseTo = '';
+        this.disabledWhFrom = false;
     }
 
     public crearTraslado() {
@@ -189,10 +194,10 @@ export class StockTransferWarehouseComponent implements OnInit {
 
         const stockTransfer = {
             username: this.identity.username,
-            binCodeFrom: "09PRODUCTION",
-            binCodeTo: "01PRODUCTION",
-            binAbsFrom: "419",
-            binAbsTo: "420",
+            binCodeFrom: this.fromBin,
+            binCodeTo: "02UBICACIÓN-DE-SISTEMA",
+            binAbsFrom: this.fromBinId,
+            binAbsTo: "84108",
             warehouseCode: this.selectedWarehouseTo,
             filler: this.selectedWarehouseFrom,
             lines: this.items
