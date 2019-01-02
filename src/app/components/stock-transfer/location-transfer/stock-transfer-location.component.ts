@@ -143,13 +143,13 @@ export class StockTransferLocationComponent implements OnInit {
         );
     }
 
-    private limpiarLinea() {
+    public limpiarLinea() {
         this.itemCode = '';
         this.quantity = null;
         $('#itemCode').focus();
     }
 
-    private limpiarTodo() {
+    public limpiarTodo() {
         this.stockTransferErrorMessage = '';
         this.stockTransferExitMessage = '';
         this.limpiarLinea();

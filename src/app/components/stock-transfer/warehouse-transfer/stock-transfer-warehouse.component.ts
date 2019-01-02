@@ -164,12 +164,12 @@ export class StockTransferWarehouseComponent implements OnInit {
         }
     }
 
-    private limpiarLinea() {
+    public limpiarLinea() {
         this.itemCode = '';
         this.quantity = null;
     }
 
-    private limpiarTodo() {
+    public limpiarTodo() {
         this.stockTransferErrorMessage = '';
         this.stockTransferExitMessage = '';
         this.limpiarLinea();
