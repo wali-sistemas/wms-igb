@@ -259,8 +259,8 @@
                 <div class="row">
                     <div class="col-xs-12">
                         <form (submit)="expressPack()">
-                            <input id="qtyBox" type="number" class="form-control input-lg" name="box" [(ngModel)]="qtyBox"
-                                autocomplete="off" placeholder="Ingrese # cajas">
+                            <input id="qtyBox" type="number" class="form-control input-lg" name="box" [(ngModel)]="qtyBox" autocomplete="off" placeholder="Ingrese # cajas" autofocus>
+                            <input id="qtyBox" type="number" class="form-control input-lg" name="box" [(ngModel)]="qtyBox" autocomplete="off" placeholder="Ingrese # cajas">
                         </form>
                     </div>
                 </div>
@@ -277,7 +277,7 @@
     <h3>Packing </h3>
     <div class="row">
         <div class="col-xs-10" style="text-align:  right; font-size:  35px; cursor:  pointer; color:  #da0611;">
-            <span class="icon-package" *ngIf="selectedOrder != ''" data-toggle="modal" data-target="#caja" title="Express-Pack"></span>
+            <span class="icon-package" *ngIf="selectedOrder > 0" data-toggle="modal" data-target="#caja" title="Express-Pack"></span>
         </div>
         <div class="col-xs-2" style="text-align:  right; font-size:  35px; cursor:  pointer; color:  #da0611;">
             <span class="icon-layers" (click)="getPackingOrders()" title="Listar Ordenes"></span>
