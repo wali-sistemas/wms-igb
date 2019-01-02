@@ -41,6 +41,7 @@ export class PickingComponent implements OnInit {
     public errorMessagePickingCarts: string = '';
     public errorMessageBinLocation: string = '';
     public errorMessageBinTransfer: string = '';
+    public errorMessageNextItem: string = '';
     public warningMessageNoOrders: string = '';
     public availableCarts: Array<BinLocation>;
     public assignedOrders: Array<SalesOrder>;
@@ -129,6 +130,7 @@ export class PickingComponent implements OnInit {
     }
 
     private loadNextItem() {
+        this.errorMessageNextItem = '';
         $('#modal_loading_next').modal({
             backdrop: 'static',
             keyboard: false,
@@ -149,15 +151,9 @@ export class PickingComponent implements OnInit {
                     this.nextOrderNumber = result.content.orderNumber;
                     this.nextBinType = result.content.binLocationType;
                 } else if (result.code === -1) {
-                    if (this.pickingMethod === 'multiple') {
-                        //this.closeOrderAssignation(this.identity.username, this.selectedOrder);
-                    } else {
-                        //this.closeOrderAssignation(this.identity.username, null);
+                    for (let i = 0; i < result.content.length; i++) {
+                        this.errorMessageNextItem += result.content[i].message + '<br>';
                     }
-                } else if (result.code === -2) {
-                    this.errorMessage = 'Ocurrió un error al consultar el siguiente ítem para picking. ' + result.content;
-                } else if (result.code === -3) {
-                    this.errorMessage = 'No hay saldo disponible para picking. La orden pasa a estado <span class="warning">warning</span>. ' + result.content;
                 }
             }, error => {
                 $('#modal_loading_next').modal('hide');

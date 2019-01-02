@@ -30,6 +30,7 @@ export class HomeComponent implements OnInit {
     }
     this.selectedWarehouse = this.identity.warehouseCode;
     this.listAvailableWarehouses();
+    this.updateWarehouseCode(); 
   }
 
   private listAvailableWarehouses() {
@@ -67,9 +68,15 @@ export class HomeComponent implements OnInit {
   }
 
   public updateWarehouseCode() {
+    for (let i = 0; i < this.warehouses.length; i++) {
+      if (this.warehouses[i].code == this.selectedWarehouse) {
+        this.identity.dftBinAbs = this.warehouses[i].dftBinAbs;
+        break;
+      }
+    }
+
     console.log(this.selectedWarehouse);
     this.identity.warehouseCode = this.selectedWarehouse;
     localStorage.setItem('igb.identity', JSON.stringify(this.identity));
   }
-
 }

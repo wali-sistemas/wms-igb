@@ -80,4 +80,9 @@ export class PackingService {
         return this._http.get(this.url + 'packing/get-packing-orders/' + customer, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
+
+    public cancelPackingOrder(idPackingOrder: number) {
+        return this._http.get(this.url + 'packing/cancel-packing-order/' + idPackingOrder, { headers: new IGBHeaders().loadHeaders() })
+            .map(res => res.json());
+    }
 }
