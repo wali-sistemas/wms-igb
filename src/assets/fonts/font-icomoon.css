@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?8rqnza');
-  src:  url('fonts/icomoon.eot?8rqnza#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?8rqnza') format('truetype'),
-    url('fonts/icomoon.woff?8rqnza') format('woff'),
-    url('fonts/icomoon.svg?8rqnza#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?nb2ytp');
+  src:  url('fonts/icomoon.eot?nb2ytp#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?nb2ytp') format('truetype'),
+    url('fonts/icomoon.woff?nb2ytp') format('woff'),
+    url('fonts/icomoon.svg?nb2ytp#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -264,6 +264,9 @@
 .icon-arrow-left:before {
   content: "\e94d";
 }
+.icon-delete:before {
+  content: "\e955";
+}
 .icon-download:before {
   content: "\e941";
 }
@@ -273,8 +276,17 @@
 .icon-eye-off:before {
   content: "\e950";
 }
+.icon-info:before {
+  content: "\e952";
+}
+.icon-layers:before {
+  content: "\e953";
+}
 .icon-log-out:before {
   content: "\e940";
+}
+.icon-package:before {
+  content: "\e954";
 }
 .icon-plus-square:before {
   content: "\e942";

@@ -42,36 +42,6 @@ export class StockItemComponent implements OnInit {
         }
     }
 
-    public validarUbicacion(binCode, type) {
-        this.stockItemErrorMessage = '';
-        this._binLocationService.getBinAbs(binCode).subscribe(
-            response => {
-                if (type === 'to') {
-                    if (response.content) {
-                        this.toBinId = response.content;
-                    } else {
-                        this.stockItemErrorMessage = 'La ubicación de destino no es válida';
-                    }
-                } else {
-                    if (response.content) {
-                        this.fromBinId = response.content;
-                    } else {
-                        this.stockItemErrorMessage = 'La ubicación de origen no es válida';
-                    }
-                }
-            }, error => {
-                console.error(error);
-                if (type === 'to') {
-                    this.toBinId = null;
-                    this.stockItemErrorMessage = 'La ubicación de destino no es válida';
-                } else {
-                    this.fromBinId = null;
-                    this.stockItemErrorMessage = 'La ubicación de origen no es válida';
-                }
-            }
-        );
-    }
-
     public validarReferencia() {
         this.itemCode = this.itemCode.replace(/\s/g, '');
     }
@@ -87,10 +57,23 @@ export class StockItemComponent implements OnInit {
     }
 
     public consultarStock() {
+        this.stockItemErrorMessage = '';
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
         if (this.itemCode.length > 1) {
             this._stockItemService.stockFind(this.itemCode).subscribe(
                 response => {
-                    this.items = response;
+                    if (response.length > 1) {
+                        $('#modal_transfer_process').modal('hide');
+                        this.items = response;
+                    } else {
+                        $('#modal_transfer_process').modal('hide');
+                        this.stockItemErrorMessage = 'No hay stock disponible. Almacén activo ['+ JSON.parse(localStorage.getItem('igb.identity')).warehouseCode + ']';
+                        this.items = new Array<any>();
+                    }
                 },
                 error => {
                     console.error(error);

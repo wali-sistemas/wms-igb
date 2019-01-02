@@ -1,11 +1,12 @@
 <igb-navbar></igb-navbar>
-
+<!--Modal confirmacion-->
 <div id="close_confirmation" class="modal slide" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-body">
                 <p>
-                    <b>¿Estás seguro que deseas finalizar?</b> Al hacerlo, se crearán la entrega y factura para los ítems empacados
+                    <b>¿Estás seguro que deseas finalizar?</b> Al hacerlo, se crearán la entrega y factura para los
+                    ítems empacados
                     y se imprimirán las etiquetas. </p>
             </div>
             <div class="modal-footer">
@@ -15,7 +16,7 @@
         </div>
     </div>
 </div>
-
+<!--Modal imprimir-->
 <div id="printer_selection" class="modal slide" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -25,19 +26,20 @@
                         <label for="printer">Se imprimirá en</label>
                         <select id="printer" class="form-control input-lg" [(ngModel)]="selectedPrinter" name="selectedPrinter">
                             <option style="display:none" disabled value="">Selecciona una impresora</option>
-                            <option *ngFor="let printer of printersList" value="{{printer.printServiceName}}"> {{printer.printerName}}</option>
+                            <option *ngFor="let printer of printersList" value="{{printer.printServiceName}}">
+                                {{printer.printerName}}</option>
                         </select>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary btn-lg" (click)="createDelivery()">Continuar</button>
-                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" (click)="cleanItemTable()">Cancelar</button>
             </div>
         </div>
     </div>
 </div>
-
+<!--Modal estado procesos-->
 <div id="process_status" class="modal slide" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -92,14 +94,14 @@
         </div>
     </div>
 </div>
-
+<!--Modal procesando-->
 <div id="modal_transfer_process" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-body">
                 <div class="progress">
-                    <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0"
-                        aria-valuemax="100" style="width: 100%">
+                    <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
+                        aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
                         <span class="sr-only">Procesando transferencia</span>
                     </div>
                 </div>
@@ -107,12 +109,13 @@
         </div>
     </div>
 </div>
-
+<!--Modal confirmar cantidad en cajas-->
 <div id="confirm_add" class="modal slide" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-body">
-                <p>Vas a agregar {{itemQuantity}} unidades del item {{itemCode}} a {{boxes.length > 0 ? boxes[addToBox].boxDisplayName
+                <p>Vas a agregar {{itemQuantity}} unidades del item {{itemCode}} a {{boxes.length > 0 ?
+                    boxes[addToBox].boxDisplayName
                     : ''}}. ¿Deseas continuar?</p>
             </div>
             <div class="modal-footer">
@@ -122,7 +125,7 @@
         </div>
     </div>
 </div>
-
+<!--Modal items pendientes por empacar-->
 <div id="order_items" class="modal slide" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -141,7 +144,8 @@
                         </td>
                         <td>{{row[3]}}</td>
                         <td style="text-align: right;">{{row[2]}}</td>
-                        <td class="pointer-cursor" style="text-align: center; border-left: 1px solid #DDDDDD; cursor: pointer;" (click)="selectItemTable(row)">
+                        <td class="pointer-cursor" style="text-align: center; border-left: 1px solid #DDDDDD; cursor: pointer;"
+                            (click)="selectItemTable(row)">
                             <span class="glyphicon glyphicon-chevron-right"></span>
                         </td>
                     </tr>
@@ -153,20 +157,17 @@
         </div>
     </div>
 </div>
-
+<!--Modal confirmar cantidad-->
 <div id="cantidad" class="modal slide" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-body">
                 <div class="row">
                     <div class="col-xs-12">
-                        <p>Confirme la cantidad</p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-12">
-                        <input id="input_packedQuantity" type="number" class="form-control input-lg" name="filter" placeholder="Confirme cantidad"
-                            [(ngModel)]="itemQuantity" autocomplete="off">
+                        <form (submit)="validateItemQuantity()">
+                            <input id="input_packedQuantity" type="number" class="form-control input-lg" name="filter"
+                                placeholder="Confirme cantidad" [(ngModel)]="itemQuantity" autocomplete="off">
+                        </form>
                     </div>
                 </div>
             </div>
@@ -177,7 +178,7 @@
         </div>
     </div>
 </div>
-
+<!--Modal detalle items caja-->
 <div id="packing_detail" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -200,7 +201,7 @@
         </div>
     </div>
 </div>
-
+<!--Modal detalle orden-->
 <div id="magicTable" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -220,7 +221,8 @@
                         <td>{{special[4]}} <span class="bin-code">({{special[5]}})</span></td>
                         <td>{{special[3]}}</td>
                         <td style="text-align: right;">{{special[7]}}</td>
-                        <td class="pointer-cursor" style="text-align: center; border-left: 1px solid #DDDDDD; cursor: pointer;" (click)="selectItemMagicTable(special)">
+                        <td class="pointer-cursor" style="text-align: center; border-left: 1px solid #DDDDDD; cursor: pointer;"
+                            (click)="selectItemMagicTable(special)">
                             <span class="glyphicon glyphicon-chevron-right"></span>
                         </td>
                     </tr>
@@ -232,14 +234,14 @@
         </div>
     </div>
 </div>
-
+<!--Modal notificación error-->
 <div id="clean_confirmation" class="modal slide" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-body">
                 <p>
-                    <b>Ha ocurrido un error en el proceso de packing y Wali debe cancelarlo.</b> 
-                    Será necesario que los procesos de empaque, impresión de etiquetas, impresión de packing list, 
+                    <b>Ha ocurrido un error en el proceso de packing y Wali debe cancelarlo.</b>
+                    Será necesario que los procesos de empaque, impresión de etiquetas, impresión de packing list,
                     creación de entrega y factura en SAP se realicen de manera manual
                 </p>
             </div>
@@ -249,12 +251,36 @@
         </div>
     </div>
 </div>
+<!--Modal confirmar cajas-->
+<div id="caja" class="modal slide" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <form (submit)="expressPack()">
+                            <input id="qtyBox" type="number" class="form-control input-lg" name="box" [(ngModel)]="qtyBox"
+                                autocomplete="off" placeholder="Ingrese # cajas" autofocus>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" (click)="cleanItemTable()">Cerrar</button>
+                <button type="button" class="btn btn-primary btn-lg" (click)="expressPack()">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="container content">
     <h3>Packing </h3>
     <div class="row">
-        <div class="col-xs-12" style="text-align:  right; font-size:  30px; cursor:  pointer; color:  #da0611;">
-            <span class="glyphicon glyphicon-th-large" (click)="getPackingOrders()"></span>
+        <div class="col-xs-10" style="text-align:  right; font-size:  35px; cursor:  pointer; color:  #da0611;">
+            <span class="icon-package" *ngIf="selectedOrder != ''" data-toggle="modal" data-target="#caja" title="Express-Pack"></span>
+        </div>
+        <div class="col-xs-2" style="text-align:  right; font-size:  35px; cursor:  pointer; color:  #da0611;">
+            <span class="icon-layers" (click)="getPackingOrders()" title="Listar Ordenes"></span>
         </div>
     </div>
     <div class="row">
@@ -267,10 +293,10 @@
     <div class="row">
         <div class="col-xs-12">
             <label for="cliente">Cliente</label>
-            <select id="cliente" class="form-control input-lg" [(ngModel)]="selectedCustomer" name="selectedCustomer" (change)="loadCustomerOrders()"
-                [disabled]="customersListDisabled">
+            <select id="cliente" class="form-control input-lg" [(ngModel)]="selectedCustomer" name="selectedCustomer"
+                (change)="loadCustomerOrders()" [disabled]="customersListDisabled">
                 <option style="display:none" disabled value="">Selecciona un cliente</option>
-                <option *ngFor="let customer of customersList" value="{{customer[0]}}"> {{customer[1]}}</option>
+                <option *ngFor="let customer of customersList" value="{{customer[0]}}">({{customer[2]}}) - {{customer[1]}}</option>
             </select>
         </div>
     </div>
@@ -278,7 +304,8 @@
     <div class="row" *ngIf="ordersList && ordersList.length > 0">
         <div class="col-xs-12">
             <label for="orderNumber">Orden</label>
-            <select id="orderNumber" class="form-control input-lg" [(ngModel)]="selectedOrder" name="selectedOrder" (change)="setIdPackingOrder()">
+            <select id="orderNumber" class="form-control input-lg" [(ngModel)]="selectedOrder" name="selectedOrder"
+                (change)="setIdPackingOrder()">
                 <option style="display:none" disabled value="0">Selecciona una orden</option>
                 <option *ngFor="let order of ordersList" value="{{order[1]}}">{{order[1]}}</option>
             </select>
@@ -299,7 +326,8 @@
                                     <span class="glyphicon glyphicon-search"></span>
                                 </button>
                             </span>
-                            <input type="text" class="form-control input-lg" autocomplete="off" name="binlocation" placeholder="escanea el carrito" [(ngModel)]="binCode">
+                            <input type="text" class="form-control input-lg" autocomplete="off" name="binlocation"
+                                placeholder="escanea el carrito" [(ngModel)]="binCode">
                             <span class="input-group-btn">
                                 <button class="btn btn-primary btn-lg" type="button" (click)="validateScannedBin()">
                                     <span class="glyphicon glyphicon-ok"></span>
@@ -319,8 +347,8 @@
                 <form (submit)="validateScannedItem()">
                     <div class="col-xs-12" *ngIf="!packedItemCodeValidated">
                         <div class="input-group">
-                            <input id="txt_itemcode" type="text" class="form-control input-lg" autocomplete="off" name="itemcode" placeholder="escanea la referencia"
-                                [(ngModel)]="itemCode">
+                            <input id="txt_itemcode" type="text" class="form-control input-lg" autocomplete="off" name="itemcode"
+                                placeholder="escanea la referencia" [(ngModel)]="itemCode">
                             <span class="input-group-btn">
                                 <button class="btn btn-primary btn-lg" type="button" (click)="validateScannedItem()">
                                     <span class="glyphicon glyphicon-ok"></span>
@@ -340,8 +368,9 @@
                 <form (submit)="validateItemQuantity()">
                     <div class="col-xs-12" *ngIf="packedItemCodeValidated">
                         <div class="input-group">
-                            <input id="input_packedQuantity" type="number" class="form-control input-lg" name="filter" placeholder="confirma la cantidad"
-                                [(ngModel)]="itemQuantity" [disabled]="packedItemQuantityValidated" autocomplete="off">
+                            <input id="input_packedQuantity" type="number" class="form-control input-lg" name="filter"
+                                placeholder="confirma la cantidad" [(ngModel)]="itemQuantity" [disabled]="packedItemQuantityValidated"
+                                autocomplete="off">
                             <span class="input-group-btn">
                                 <button class="btn btn-primary btn-lg" type="button" (click)="validateItemQuantity()">
                                     <span class="glyphicon glyphicon-ok"></span>
@@ -370,7 +399,8 @@
                 <span class="box-number">{{box.boxDisplayName}}</span>
                 <span class="box-quantity">{{box.boxQuantity}} items</span>
                 <span class="add-to-box" *ngIf="packedItemQuantityValidated">
-                    <button class="btn btn-default form-control" type="button" (click)="confirmAddToBox(idx)" [disabled]="packedItemQuantity <= 0 || packedItemQuantity > nextItemQuantity">
+                    <button class="btn btn-default form-control" type="button" (click)="confirmAddToBox(idx)"
+                        [disabled]="packedItemQuantity <= 0 || packedItemQuantity > nextItemQuantity">
                         Aquí
                         <span class="glyphicon glyphicon-thumbs-up"></span>
                     </button>
@@ -387,11 +417,16 @@
                 <span>Nueva caja</span>
             </div>
         </div>
-
-        <div class="col-xs-12" *ngIf="packingOrdersComplete">
-            <button class="btn btn-danger btn-lg" type="button" data-toggle="modal" data-target="#close_confirmation">
-                Finalizar
-            </button>
+        <div class="row">
+            <div class="col-xs-12">
+                <button *ngIf="packingOrdersComplete" class="btn btn-danger btn-lg" type="button" data-toggle="modal"
+                    data-target="#close_confirmation">
+                    Finalizar
+                </button>
+                <button class="btn btn-danger btn-lg" type="button" (click)="nextOrden()">
+                    Sigt Orden <span class="icon-refresh"></span>
+                </button>
+            </div>
         </div>
     </div>
 </div>

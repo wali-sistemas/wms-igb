@@ -14,4 +14,9 @@ export class StockItemService {
     return this._http.get(this.url + 'stockitem/find/' + itemCode, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
+
+  public checkOutStockItem(itemCode, location) {
+    return this._http.get(this.url + 'stockitem/checkoutStock/' + itemCode + "/" + location, { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
 }

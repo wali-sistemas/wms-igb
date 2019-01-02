@@ -1,11 +1,34 @@
 <igb-navbar></igb-navbar>
 
+<!--Modal procesando-->
+<div id="modal_transfer_process" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
+                        aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                        <span class="sr-only">Procesando transferencia</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="container content">
     <h3>Transferencia entre almacenes</h3>
     <div class="row" *ngIf="stockTransferErrorMessage">
         <div class="col-xs-12">
             <div class="alert alert-danger">
                 {{stockTransferErrorMessage}}
+            </div>
+        </div>
+    </div>
+    <div class="row" *ngIf="stockTransferExitMessage">
+        <div class="col-xs-12">
+            <div class="alert alert-success">
+                {{stockTransferExitMessage}}
             </div>
         </div>
     </div>
@@ -34,7 +57,7 @@
     </div>
     <br />
     <div class="row">
-        <div class="col-xs-8">
+        <div class="col-xs-6">
             <form (submit)="validarReferencia()">
                 <label for="itemCode">Referencia*</label>
                 <input type="text" class="form-control input-lg" autocomplete="off" id="itemCode" name="itemCode"
@@ -42,8 +65,15 @@
             </form>
         </div>
         <div class="col-xs-4">
+            <form (submit)="validarUbicacion(fromBin, 'from')">
+                <label for="fromBin">ubicación*</label>
+                <input type="text" class="form-control input-lg" autocomplete="off" id="fromBin" name="fromBin"
+                    placeholder="escanea la ubicación de origen" [(ngModel)]="fromBin" (keyup)="validarUbicacion(fromBin, 'from')">
+            </form>
+        </div>
+        <div class="col-xs-2">
             <form (submit)="agregarReferencia()">
-                <label for="quantity">Cant</label>
+                <label for="quantity">Cant*</label>
                 <input type="number" class="form-control input-lg" autocomplete="off" id="quantity" name="quantity"
                     [(ngModel)]="quantity">
             </form>
@@ -52,8 +82,11 @@
     <br />
     <div class="row">
         <div class="col-xs-6">
-            <button class="btn btn-default btn-lg send" type="button" (click)="crearTraslado()" style="display: none">
-                Finalizar <span class="icon-send"></span>
+            <button class="btn btn-lg" type="button" (click)="limpiarTodo()">
+                Limpiar
+            </button>
+            <button class="btn btn-danger btn-lg" type="button" (click)="crearTraslado()" [disabled]="items.length == 0">
+                Finalizar
             </button>
         </div>
     </div>
@@ -62,18 +95,21 @@
         <div class="col-xs-12">
             <table *ngIf="items.length > 0" class="table table-striped">
                 <tr>
-                    <th class="detail"></th>
                     <th class="detail">Referencia</th>
                     <th class="detail">Origen</th>
                     <th class="detail">Destino</th>
                     <th class="detail">Cantidad</th>
+                    <th class="detail"></th>
                 </tr>
                 <tr *ngFor="let item of items">
-                    <td style="width: 10%;"><img src="{{urlShared}}mtz/{{item.itemCode}}.jpg" style="width: 100%;"></td>
                     <td class="detail">{{item.itemCode}}</td>
-                    <td class="detail">{{item.fromWhsCode}}</td>
+                    <td class="detail">{{item.fromWhsCode}}<span class="bin-code"> ({{fromBin}})</span></td>
                     <td class="detail">{{item.whsCode}}</td>
                     <td class="detail">{{item.quantity}}</td>
+                    <td class="detail">
+                        <span class="refresh" (click)="eliminarItem(item.itemCode)" style="font-size: 25px;"><span
+                                class="icon-delete"></span></span>
+                    </td>
                 </tr>
             </table>
         </div>
