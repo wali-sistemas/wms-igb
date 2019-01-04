@@ -189,9 +189,7 @@ export class StockTransferWarehouseComponent implements OnInit {
         this.fromBin = '';
         this.fromBinId = null;
         this.items = new Array<any>();
-        this.selectedWarehouseFrom = '';
         this.selectedWarehouseTo = '';
-        this.disabledWhFrom = false;
     }
 
     public crearTraslado() {

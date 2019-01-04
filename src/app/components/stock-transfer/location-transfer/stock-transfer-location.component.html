@@ -35,6 +35,16 @@
     <br />
     <div class="row">
         <div class="col-xs-12">
+            <form (submit)="validarReferencia()">
+                <label for="itemCode">Referencia*</label>
+                <input type="text" class="form-control input-lg" autocomplete="off" id="itemCode" name="itemCode"
+                    placeholder="escanea la referencia" [(ngModel)]="itemCode" (blur)="validarReferencia()">
+            </form>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-xs-12">
             <form (submit)="validarUbicacion(fromBin, 'from')">
                 <label for="fromBin">Origen*</label>
                 <input type="text" class="form-control input-lg" autocomplete="off" id="fromBin" name="fromBin"
@@ -49,16 +59,6 @@
                 <label for="toBin">Destino*</label>
                 <input type="text" class="form-control input-lg" autocomplete="off" id="toBin" name="toBin" placeholder="escanea la ubicación de destino"
                     [(ngModel)]="toBin" (blur)="validarUbicacion(toBin, 'to')" [disabled]= "disabled">
-            </form>
-        </div>
-    </div>
-    <br />
-    <div class="row">
-        <div class="col-xs-12">
-            <form (submit)="validarReferencia()">
-                <label for="itemCode">Referencia*</label>
-                <input type="text" class="form-control input-lg" autocomplete="off" id="itemCode" name="itemCode"
-                    placeholder="escanea la referencia" [(ngModel)]="itemCode" (blur)="validarReferencia()">
             </form>
         </div>
     </div>
