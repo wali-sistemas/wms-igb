@@ -66,7 +66,7 @@ export class StockItemComponent implements OnInit {
         if (this.itemCode.length > 1) {
             this._stockItemService.stockFind(this.itemCode).subscribe(
                 response => {
-                    if (response.length > 1) {
+                    if (response.length >= 1) {
                         $('#modal_transfer_process').modal('hide');
                         this.items = response;
                     } else {
