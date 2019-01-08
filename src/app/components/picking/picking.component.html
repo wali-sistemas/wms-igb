@@ -167,7 +167,7 @@
 
     <div class="row" *ngIf="availableCarts.length > 0 && !warningMessageNoOrders">
         <div class="col-xs-12">
-            <select class="form-control input-lg" [(ngModel)]="selectedCart" (change)="loadAvailablePickingCarts()">
+            <select class="form-control input-lg" [(ngModel)]="selectedCart" (change)="loadAvailablePickingCarts()" [disabled] = "selectedOrder === ''">
                 <option style="display:none" disabled value="0">Selecciona un carrito</option>
                 <option *ngFor="let cart of availableCarts" value="{{cart.binAbs}}">{{cart.binName}} ({{cart.items}} refs, {{cart.pieces}} ítems)</option>
             </select>

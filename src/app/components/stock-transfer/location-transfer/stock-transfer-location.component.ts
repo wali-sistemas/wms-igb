@@ -42,7 +42,7 @@ export class StockTransferLocationComponent implements OnInit {
 
     ngOnInit() {
         localStorage.setItem('router-Link-Active', this.routerLinkActive);
-        $('#fromBin').focus();
+        $('#itemCode').focus();
         this.identity = this._userService.getItentity();
         if (this.identity === null) {
             this._router.navigate(['/']);
@@ -159,7 +159,7 @@ export class StockTransferLocationComponent implements OnInit {
         this.fromBinId = null;
         this.items = new Array<any>();
         this.disabled = false;
-        $('#fromBin').focus();
+        $('#itemCode').focus();
     }
 
     public crearTraslado() {
