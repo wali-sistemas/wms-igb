@@ -259,7 +259,8 @@
                 <div class="row">
                     <div class="col-xs-12">
                         <form (submit)="expressPack()">
-                            <input id="qtyBox" type="number" class="form-control input-lg" name="box" [(ngModel)]="qtyBox" autocomplete="off" placeholder="Ingrese # cajas" autofocus>
+                            <input id="qtyBox" type="number" class="form-control input-lg" name="box" [(ngModel)]="qtyBox"
+                                autocomplete="off" placeholder="Ingrese # cajas" autofocus>
                         </form>
                     </div>
                 </div>
@@ -271,21 +272,61 @@
         </div>
     </div>
 </div>
+<!--Modal reimprimir etiqueta-->
+<div id="reimprimir" class="modal slide" tabindex="-1" role="dialog" data-backdrop="static">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <form (submit)="reprintOrder()">
+                            <input id="orderNumber" type="text" class="form-control input-lg" name="box" [(ngModel)]="orderNumber"
+                                autocomplete="off" placeholder="Ingrese # orden">
+                            <br />
+                            <input id="qtyBox" type="number" class="form-control input-lg" name="box" [(ngModel)]="qtyBox"
+                                autocomplete="off" placeholder="Ingrese # cajas">
+                            <br />
+                            <select id="printer" class="form-control input-lg" [(ngModel)]="selectedPrinter" name="selectedPrinter">
+                                <option style="display:none" disabled value="">Selecciona una impresora</option>
+                                <option *ngFor="let printer of printersList" value="{{printer.printServiceName}}">
+                                    {{printer.printerName}}</option>
+                            </select>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary btn-lg" (click)="reprintOrder()">Imprimir</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="container content">
     <h3>Packing </h3>
     <div class="row">
-        <div class="col-xs-10" style="text-align:  right; font-size:  35px; cursor:  pointer; color:  #da0611;">
+        <div class="col-xs-8" style="text-align:  right; font-size:  35px; cursor:  pointer; color:  #da0611;">
+            <span class="icon-printer" (click)="getReprintOrder()" title="Reimprimir Etiqueta"></span>
+        </div>
+        <div class="col-xs-2" style="text-align:  right; font-size:  35px; cursor:  pointer; color:  #da0611;">
             <span class="icon-package" *ngIf="selectedOrder > 0" data-toggle="modal" data-target="#caja" title="Express-Pack"></span>
         </div>
         <div class="col-xs-2" style="text-align:  right; font-size:  35px; cursor:  pointer; color:  #da0611;">
             <span class="icon-layers" (click)="getPackingOrders()" title="Listar Ordenes"></span>
         </div>
     </div>
-    <div class="row">
+    <div class="row" *ngIf="errorMessage != null && errorMessage.length > 0">
         <div class="col-xs-12">
-            <div class="alert alert-danger" role="alert" *ngIf="errorMessage != null && errorMessage.length > 0">
+            <div class="alert alert-danger" role="alert">
                 <p>{{errorMessage}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="row" *ngIf="exitMessage">
+        <div class="col-xs-12">
+            <div class="alert alert-success">
+                {{exitMessage}}
             </div>
         </div>
     </div>
@@ -295,11 +336,12 @@
             <select id="cliente" class="form-control input-lg" [(ngModel)]="selectedCustomer" name="selectedCustomer"
                 (change)="loadCustomerOrders()" [disabled]="customersListDisabled">
                 <option style="display:none" disabled value="">Selecciona un cliente</option>
-                <option *ngFor="let customer of customersList" value="{{customer[0]}}">({{customer[2]}}) - {{customer[1]}}</option>
+                <option *ngFor="let customer of customersList" value="{{customer[0]}}">({{customer[2]}}) -
+                    {{customer[1]}}</option>
             </select>
         </div>
     </div>
-    <br>
+    <br />
     <div class="row" *ngIf="ordersList && ordersList.length > 0">
         <div class="col-xs-12">
             <label for="orderNumber">Orden</label>

@@ -34,4 +34,10 @@ export class PrintService {
         return this._http.post(this.url + 'print/packinglist/' + printer, idpackingList, { headers: igbHeaders })
             .map(res => res.json());
     }
+
+    public reprintOrder(RePrintDTO) {
+        let igbHeaders = new IGBHeaders().loadHeaders();
+        return this._http.post(this.url + 'print/Order/re-print', RePrintDTO, { headers: igbHeaders })
+            .map(res => res.json());
+    }
 }

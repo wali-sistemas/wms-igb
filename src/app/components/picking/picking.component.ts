@@ -34,6 +34,7 @@ export class PickingComponent implements OnInit {
     public pickedItemQuantity: number;
     public pickedItemCodeValidated = false;
     public pickedItemQuantityValidated = false;
+    public disabledSelectCart = true;
 
     public confirmBinCode: string = '';
     public confirmingItemQuantity = false;
@@ -288,6 +289,7 @@ export class PickingComponent implements OnInit {
 
     public choosePickingMethod() {
         this.pickingMethod = this.selectedPickingMethod;
+        this.disabledSelectCart = false;
         $('#modal_config').modal('hide');
         this.loadNextItem();
     }
