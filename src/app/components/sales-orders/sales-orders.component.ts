@@ -19,6 +19,7 @@ export class SalesOrdersComponent implements OnInit {
   public filter: string = '';
   public searchFilter: string;
   public showApprovedOnly: boolean = true;
+  public filterGroup: boolean = false;
   public selectedOrders: Map<String, String>;
   public assignableUsers: Array<any>;
   public availableStock: Array<any>;
@@ -57,8 +58,8 @@ export class SalesOrdersComponent implements OnInit {
     this.filteredOrders = new Array<SalesOrder>();
     this.selectedOrders = new Map<String, any>();
 
-    this._salesOrdersService.listOpenOrders(this.showApprovedOnly).subscribe(
-      response => {
+    this._salesOrdersService.listOpenOrders(this.showApprovedOnly, this.filterGroup).subscribe(
+      response => { 
         this.orders = response;
         console.log('loaded orders: ', this.orders);
         //TODO: validar ordenes asignadas
@@ -150,6 +151,13 @@ export class SalesOrdersComponent implements OnInit {
   public toggleEye() {
     this.showApprovedOnly = !this.showApprovedOnly;
     this.listOpenOrders();
+    $('#filter').focus();
+  }
+
+  public filterGroupOrders() {
+    this.filterGroup = !this.filterGroup;
+    this.listOpenOrders();
+    $('#filter').focus();
   }
 
   public listAvailableStock(orderNumber) {

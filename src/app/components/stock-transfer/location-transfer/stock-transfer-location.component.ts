@@ -81,8 +81,24 @@ export class StockTransferLocationComponent implements OnInit {
     }
 
     public validarReferencia() {
+        this.stockTransferErrorMessage = '';
+        this.stockTransferExitMessage = '';
         this.itemCode = this.itemCode.replace(/\s/g, '');
     }
+
+    public agregarReferenciaConfirmada() {
+        const newItem = {
+            itemCode: this.itemCode,
+            quantity: this.quantity,
+            toBin: this.toBin,
+            fromBin: this.fromBin
+        };
+        this.items.unshift(newItem);
+        this.limpiarLinea();
+        this.disabled = true;
+        $('#modal_confirmar_ubicacion_fija').modal('hide');
+    }
+
 
     public agregarReferencia() {
         $('#modal_transfer_process').modal({
@@ -118,21 +134,42 @@ export class StockTransferLocationComponent implements OnInit {
                     }
 
                     if (response[2] >= this.quantity) {
-                        const newItem = {
-                            itemCode: this.itemCode,
-                            quantity: this.quantity,
-                            toBin: this.toBin,
-                            fromBin: this.fromBin
-                        };
-                        this.items.unshift(newItem);
-                        this.limpiarLinea();
-                        this.disabled = true;
-                        $('#modal_transfer_process').modal('hide');
+                        this._binLocationService.getLocationFixed(this.itemCode).subscribe(
+                            response => {
+                                if (response.code < 0) {
+                                    this.stockTransferErrorMessage = 'Error';
+                                    $('#modal_transfer_process').modal('hide');
+                                } else if (response.content !== this.toBin) {
+                                    $('#modal_transfer_process').modal('hide');
+                                    $('#modal_confirmar_ubicacion_fija').modal('show');
+                                } else {
+                                    const newItem = {
+                                        itemCode: this.itemCode,
+                                        quantity: this.quantity,
+                                        toBin: this.toBin,
+                                        fromBin: this.fromBin
+                                    };
+                                    this.items.unshift(newItem);
+                                    this.limpiarLinea();
+                                    this.disabled = true;
+                                    $('#modal_transfer_process').modal('hide');
+                                }
+                            },
+                            error => {
+                                $('#modal_transfer_process').modal('hide');
+                                this.stockTransferErrorMessage = 'Lo sentimos. Se produjo un error interno.';
+                                console.error(error);
+                            }
+                        );
                     } else {
                         $('#modal_transfer_process').modal('hide');
                         this.stockTransferErrorMessage = 'No hay suficiente stock. Disponible: ' + response[2];
                         this.limpiarLinea();
                     }
+                } else {
+                    $('#modal_transfer_process').modal('hide');
+                    this.stockTransferErrorMessage = 'No encontro stock disponible en la ubicación ' + this.fromBin + '.';
+                    this.limpiarLinea();
                 }
             },
             error => {
@@ -144,6 +181,13 @@ export class StockTransferLocationComponent implements OnInit {
     }
 
     public limpiarLinea() {
+        if (this.items.length <= 0) {
+            this.toBin = '';
+            this.toBinId = null;
+            this.fromBin = '';
+            this.fromBinId = null;
+            this.disabled = false;
+        }
         this.itemCode = '';
         this.quantity = null;
         $('#itemCode').focus();
@@ -216,6 +260,7 @@ export class StockTransferLocationComponent implements OnInit {
                 this.items.splice(i, 1);
                 $('#modal_transfer_process').modal('hide');
                 this.stockTransferExitMessage = 'Ítem eliminado correctamente.';
+                this.limpiarLinea();
             }
         }
     }

@@ -11,9 +11,9 @@ export class SalesOrdersService {
     this.url = GLOBAL.url;
   }
 
-  public listOpenOrders(showApprovedOnly) {
+  public listOpenOrders(showApprovedOnly, filterGroup) {
     let igbHeaders = new IGBHeaders().loadHeaders();
-    return this._http.get(this.url + 'salesorder/list/orders?showAll=' + !showApprovedOnly, { headers: igbHeaders })
+    return this._http.get(this.url + 'salesorder/list/orders/' + !showApprovedOnly + '/' + filterGroup, { headers: igbHeaders })
       .map(res => res.json());
   }
 

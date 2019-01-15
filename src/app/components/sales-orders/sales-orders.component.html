@@ -26,16 +26,18 @@
         <div *ngIf="loadingAvailableStock">
           <p>Cargando inventario disponible </p>
           <div class="progress">
-            <div class="progress-bar progress-bar-warning progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0"
-              aria-valuemax="100" style="width: 100%;">
+            <div class="progress-bar progress-bar-warning progress-bar-striped active" role="progressbar" aria-valuenow="100"
+              aria-valuemin="0" aria-valuemax="100" style="width: 100%;">
               <span class="sr-only">100% Complete</span>
             </div>
           </div>
         </div>
         <div *ngIf="!loadingAvailableStock">
           <p>La orden
-            <b>{{allStockAvailable ? '' : 'NO'}}</b> tiene inventario disponible en ubicaciones de picking para todas sus referencias.
-            <b>{{allStockAvailable ? 'Haz clic en habilitar para cambiar el estado y terminar el proceso de picking.' : ''}}</b>
+            <b>{{allStockAvailable ? '' : 'NO'}}</b> tiene inventario disponible en ubicaciones de picking para todas
+            sus referencias.
+            <b>{{allStockAvailable ? 'Haz clic en habilitar para cambiar el estado y terminar el proceso de picking.' :
+              ''}}</b>
           </p>
           <table class="table">
             <tr>
@@ -70,11 +72,16 @@
               <span class="icon-user"></span>
             </button>
           </span>
-          <input type="text" class="form-control input-lg" id="filter" name="filter" placeholder="escribe para filtrar" [(ngModel)]="filter" (keyup)="filterOrders(false)"
-            autocomplete="off" />
+          <input type="text" class="form-control input-lg" id="filter" name="filter" placeholder="escribe para filtrar"
+            [(ngModel)]="filter" (keyup)="filterOrders(false)" autocomplete="off" />
           <span class="input-group-btn">
-            <button type="button" class="btn btn-default btn-lg" (click)="toggleEye()">
+            <button type="button" class="btn btn-default btn-lg" (click)="toggleEye()" style="border-radius: 0px;">
               <span class="icon-eye" [ngClass]="{'icon-eye': !showApprovedOnly, 'icon-eye-off': showApprovedOnly}"></span>
+            </button>
+          </span>
+          <span class="input-group-btn">
+            <button type="button" [class.box]="filterGroup" class="btn btn-default btn-lg" (click)="filterGroupOrders()">
+              <span class="icon-groups" title="Filtar grupos"></span>
             </button>
           </span>
         </div>
@@ -84,8 +91,8 @@
   <br />
   <div class="row">
     <div class="col-xs-12 col-md-6" *ngFor="let order of filteredOrders">
-      <div class="order" [class.warning]="order.status == 'warning'" [class.unauthorized]="order.confirmed === 'N' || order.address.length === 0 || order.transp.length === 0" 
-           [class.selected]="selectedOrders.has(order.docNum)" (click)="selectOrder(order)">
+      <div class="order" [class.warning]="order.status == 'warning'" [class.unauthorized]="order.confirmed === 'N' || order.address.length === 0 || order.transp.length === 0"
+        [class.selected]="selectedOrders.has(order.docNum)" (click)="selectOrder(order)">
         <div class="order-number">
           {{order.docNum}}
           <span *ngIf="order.assignedPickingEmployee" class="assigned-employee">
