@@ -29,4 +29,9 @@ export class BinLocationService {
         return this._http.get(this.url + 'binlocation/binabs/' + binCode, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
+
+    public getLocationFixed(item: string) {
+        return this._http.get(this.url + 'binlocation/locationFixed/' + item, { headers: new IGBHeaders().loadHeaders() })
+            .map(res => res.json());
+    }
 }

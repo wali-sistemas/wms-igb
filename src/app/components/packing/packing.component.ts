@@ -26,7 +26,6 @@ export class PackingComponent implements OnInit {
     public processClosePackingOrderStatus: string = 'none';
     public processPrintLabelsStatus: string = 'none';
     public processInvoiceStatus: string = 'none';
-
     public selectedPrinter: string = '';
     public deliveryErrorMessage: string = '';
     public itemCodeErrorMessage: string = '';
@@ -54,11 +53,12 @@ export class PackingComponent implements OnInit {
     public customersListDisabled: boolean = false;
     public packingOrdersComplete: boolean = false;
     public qtyBox: number;
+    public orderNumber: number;
     private identity;
     private idPackingList: number;
     private idPackingOrder: number;
-
     public errorMessage: string;
+    public exitMessage: String;
     public specialPacking: Array<any>;
 
     constructor(
@@ -311,6 +311,10 @@ export class PackingComponent implements OnInit {
         this.isVisibleItemCode = false;
         this.packedItemCodeValidated = false;
         this.packedItemQuantityValidated = false;
+        this.exitMessage = '';
+        this.errorMessage = '';
+        this.orderNumber = null;
+        this.qtyBox = null;
         this.canBoxesBeAdded();
     }
 
@@ -521,6 +525,8 @@ export class PackingComponent implements OnInit {
         this.packedItemCodeValidated = false;
         this.qtyBox = null;
         this.customersListDisabled = false;
+        this.exitMessage = '';
+        this.errorMessage = '';
     }
 
     public getPackingOrders() {
@@ -617,7 +623,11 @@ export class PackingComponent implements OnInit {
                                     this.loadPrinters();
                                 }
                             },
-                            error => { console.error(error); }
+                            error => {
+                                $('#modal_transfer_process').modal('hide');
+                                this.errorMessage = "Lo sentimos. Se produjo un error interno."
+                                console.error(error);
+                            }
                         );
                     }
 
@@ -627,5 +637,53 @@ export class PackingComponent implements OnInit {
                 }
             }, error => { console.error(error); }
         );
+    }
+
+    public getReprintOrder() {
+        this.reset();
+        this.printersList = new Array<Printer>();
+        $("#reimprimir").modal('show');
+        $("#orderNumber").focus();
+
+        this._printService.listEnabledPrinters().subscribe(
+            response => {
+                if (response.code == 0) {
+                    this.printersList = response.content;
+                }
+            }, error => { console.error(error); }
+        );
+    }
+
+    public reprintOrder() {
+        $("#reimprimir").modal('hide');
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+
+        if (this.orderNumber == null || this.orderNumber <= 0 || this.qtyBox == null || this.qtyBox <= 0 ||
+            this.selectedPrinter == null || this.selectedPrinter.length <= 0) {
+            $("#reimprimir").modal('hide');
+            $('#modal_transfer_process').modal('hide');
+            this.errorMessage = 'Debe ingresar todos los datos obligatorios.'
+        } else {
+            let RePrintDTO = {
+                "orderNumber": this.orderNumber,
+                "boxNumber": this.qtyBox,
+                "printerName": this.selectedPrinter
+            }
+            this._printService.reprintOrder(RePrintDTO).subscribe(
+                response => {
+                    $('#modal_transfer_process').modal('hide');
+                    this.exitMessage = 'Se reimprimieron las etiquetas exitosamente.';
+                },
+                error => {
+                    $('#modal_transfer_process').modal('hide');
+                    this.errorMessage = "Lo sentimos. Se produjo un error interno."
+                    console.error(error);
+                }
+            );
+        }
     }
 }

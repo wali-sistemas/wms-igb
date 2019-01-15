@@ -143,7 +143,7 @@ export class ResupplyComponent implements OnInit {
         this._resupplyService.saveLocationLimit(locationLimitDTO).subscribe(
             response => {
                 if (response.code === -1) {
-                    this.message = response.content;
+                    this.errorMessageModal = response.content;
                     return;
                 }
                 this.clean();
@@ -154,6 +154,7 @@ export class ResupplyComponent implements OnInit {
 
     public deleteLocationLimit() {
         this.errorMessageModal = "";
+        this.message = "";
         if (this.limitSelect[0] == null || this.limitSelect[0].length <= 0) {
             this.errorMessageModal = "Sin límite seleccionado para eliminar.";
             return;

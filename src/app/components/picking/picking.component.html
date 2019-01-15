@@ -88,7 +88,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary btn-lg" (click)="choosePickingMethod()" [disabled]="selectedPickingMethod == pickingMethod || (selectedPickingMethod === 'single' && selectedOrder === '')">Guardar</button>
+                    <button type="submit" class="btn btn-primary btn-lg" (click)="choosePickingMethod()">Guardar</button>
                 </div>
             </form>
         </div>
@@ -167,7 +167,7 @@
 
     <div class="row" *ngIf="availableCarts.length > 0 && !warningMessageNoOrders">
         <div class="col-xs-12">
-            <select class="form-control input-lg" [(ngModel)]="selectedCart" (change)="loadAvailablePickingCarts()" [disabled] = "selectedOrder === ''">
+            <select class="form-control input-lg" [(ngModel)]="selectedCart" (change)="loadAvailablePickingCarts()" [disabled] = "disabledSelectCart">
                 <option style="display:none" disabled value="0">Selecciona un carrito</option>
                 <option *ngFor="let cart of availableCarts" value="{{cart.binAbs}}">{{cart.binName}} ({{cart.items}} refs, {{cart.pieces}} ítems)</option>
             </select>

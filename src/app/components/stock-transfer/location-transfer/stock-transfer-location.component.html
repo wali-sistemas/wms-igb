@@ -16,6 +16,27 @@
     </div>
 </div>
 
+<!--Modal Advertencia ubicación fija-->
+<div id="modal_confirmar_ubicacion_fija" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="text-align: center;">
+                <span class="icon-alert-triangle" style="font-size: 40px;"></span>
+            </div>
+            <div class="modal-body">
+                <p style="text-align: center">La ubicación de destino no corresponde a la <b>ubicación fija</b> del
+                    ítem.
+                    <br />¿Está seguro que desea continuar?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">No</button>
+                <button type="button" class="btn btn-danger btn-lg" (click)="agregarReferenciaConfirmada()">Si</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="container content">
     <h3>Transferencia entre ubicaciones</h3>
     <div class="row" *ngIf="stockTransferErrorMessage">
@@ -48,7 +69,19 @@
             <form (submit)="validarUbicacion(fromBin, 'from')">
                 <label for="fromBin">Origen*</label>
                 <input type="text" class="form-control input-lg" autocomplete="off" id="fromBin" name="fromBin"
-                    placeholder="escanea la ubicación de origen" [(ngModel)]="fromBin" (blur)="validarUbicacion(fromBin, 'from')" [disabled]= "disabled">
+                    placeholder="escanea la ubicación de origen" [(ngModel)]="fromBin" (blur)="validarUbicacion(fromBin, 'from')"
+                    [disabled]="disabled">
+            </form>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-xs-12">
+            <form (submit)="validarUbicacion(fromBin, 'from')">
+                <label for="fromBin">Origen*</label>
+                <input type="text" class="form-control input-lg" autocomplete="off" id="fromBin" name="fromBin"
+                    placeholder="escanea la ubicación de origen" [(ngModel)]="fromBin" (blur)="validarUbicacion(fromBin, 'from')"
+                    [disabled]="disabled">
             </form>
         </div>
     </div>
@@ -58,7 +91,7 @@
             <form (submit)="validarUbicacion(toBin, 'to')">
                 <label for="toBin">Destino*</label>
                 <input type="text" class="form-control input-lg" autocomplete="off" id="toBin" name="toBin" placeholder="escanea la ubicación de destino"
-                    [(ngModel)]="toBin" (blur)="validarUbicacion(toBin, 'to')" [disabled]= "disabled">
+                    [(ngModel)]="toBin" (blur)="validarUbicacion(toBin, 'to')" [disabled]="disabled">
             </form>
         </div>
     </div>
@@ -107,7 +140,8 @@
                     <td class="detail">{{item.toBin}}</td>
                     <td class="detail">{{item.quantity}}</td>
                     <td class="detail">
-                        <span class="refresh" (click)="eliminarItem(item.itemCode)" style="font-size: 25px;"><span class="icon-delete"></span></span>
+                        <span class="refresh" (click)="eliminarItem(item.itemCode)" style="font-size: 25px;"><span
+                                class="icon-delete"></span></span>
                     </td>
                 </tr>
             </table>
