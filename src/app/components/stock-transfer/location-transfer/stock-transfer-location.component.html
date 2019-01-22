@@ -97,30 +97,19 @@
     </div>
     <br />
     <div class="row">
-        <div class="col-xs-10">
+        <div class="col-xs-12">
             <form (submit)="agregarReferencia()">
-                <label for="quantity">Cant*</label>
-                <input type="number" class="form-control input-lg" autocomplete="off" id="quantity" name="quantity"
-                    [(ngModel)]="quantity">
+                <label for="quantity">Cantidad*</label>
+                <div class="input-group">
+                    <input type="number" class="form-control input-lg" autocomplete="off" id="quantity" name="quantity"
+                        [(ngModel)]="quantity">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default btn-lg" type="button" (click)="agregarReferencia()">
+                            <span class="glyphicon glyphicon-forward"></span>
+                        </button>
+                    </span>
+                </div>
             </form>
-        </div>
-        <div class="col-xs-2">
-            <button class="btn btn-default btn-lg" type="button" (click)="agregarReferencia()" style="margin-top: 25px; margin-left: -29px;">
-                <span class="glyphicon glyphicon-forward"></span>
-            </button>
-        </div>
-    </div>
-    <br />
-    <div class="row">
-        <div class="col-xs-6">
-            <button class="btn btn-lg" type="button" (click)="limpiarTodo()">
-                Limpiar
-            </button>
-        </div>
-        <div class="col-xs-6">
-            <button class="btn btn-danger btn-lg" type="button" (click)="crearTraslado()" [disabled]="items.length == 0">
-                Finalizar
-            </button>
         </div>
     </div>
     <br />
@@ -128,10 +117,10 @@
         <div class="col-xs-12">
             <table *ngIf="items.length > 0" class="table table-striped">
                 <tr>
-                    <th class="detail">Referencia</th>
+                    <th class="detail">Ítem</th>
                     <th class="detail">Origen</th>
                     <th class="detail">Destino</th>
-                    <th class="detail">Cantidad</th>
+                    <th class="detail">Cant</th>
                     <th class="detail"></th>
                 </tr>
                 <tr *ngFor="let item of items">
@@ -145,6 +134,19 @@
                     </td>
                 </tr>
             </table>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-xs-6">
+            <button class="btn btn-lg" type="button" (click)="limpiarTodo()">
+                Limpiar
+            </button>
+        </div>
+        <div class="col-xs-6">
+            <button class="btn btn-danger btn-lg" type="button" (click)="crearTraslado()" [disabled]="items.length == 0">
+                Finalizar
+            </button>
         </div>
     </div>
 </div>
