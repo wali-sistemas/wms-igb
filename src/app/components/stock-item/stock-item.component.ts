@@ -47,6 +47,7 @@ export class StockItemComponent implements OnInit {
     }
 
     public limpiarTodo() {
+        this.stockItemErrorMessage = '';
         this.toBin = '';
         this.toBinId = null;
         this.fromBin = '';
@@ -77,6 +78,7 @@ export class StockItemComponent implements OnInit {
                 },
                 error => {
                     console.error(error);
+                    $('#modal_transfer_process').modal('hide');
                     this.stockItemErrorMessage = 'Lo sentimos. Se produjo un error interno';
                 }
             );

@@ -81,23 +81,23 @@ export class PickingComponent implements OnInit {
         this.availableCarts = new Array<BinLocation>();
         this.errorMessagePickingCarts = '';
         this._binLocationService.listAvailablePickingCarts().subscribe(
-            result => {
-                console.log('picking carts: ', result);
-                if (result.length === 0) {
+            response => {
+                if (response.length === 0) {
                     this.errorMessagePickingCarts = 'No se encontraron carritos de picking habilitados. Se deben configurar ubicaciones tipo CART en SAP, asegurándose de agregar el nombre de cada carrito en el campo descripción';
                 } else {
-                    for (let i = 0; i < result.length; i++) {
+                    for (let i = 0; i < response.length; i++) {
                         const binLocation = new BinLocation();
-                        binLocation.binAbs = result[i].binAbs;
-                        binLocation.binCode = result[i].binCode;
-                        binLocation.binName = result[i].binName;
-                        binLocation.items = result[i].items;
-                        binLocation.pieces = result[i].pieces;
+                        binLocation.binAbs = response[i].binAbs;
+                        binLocation.binCode = response[i].binCode;
+                        binLocation.binName = response[i].binName;
+                        binLocation.items = response[i].items;
+                        binLocation.pieces = response[i].pieces;
                         this.availableCarts.push(binLocation);
                     }
                     if (this.selectedCart > 0) {
                         this.loadNextItem();
                     }
+                    document.getElementById("loc").style.display = "inline";
                 }
             }, error => {
                 console.error(error);
@@ -109,19 +109,18 @@ export class PickingComponent implements OnInit {
     private loadAssignedOrders() {
         this.assignedOrders = new Array<SalesOrder>();
         this.warningMessageNoOrders = '';
+        this.errorMessageNextItem = '';
         this._salesOrderService.listUserOrders(this.identity.username).subscribe(
-            result => {
-                if (result.code === 0) {
-                    console.log('assigned orders:', result.content);
-                    for (let i = 0; i < result.content.length; i++) {
+            response => {
+                if (response.code === 0) {
+                    for (let i = 0; i < response.content.length; i++) {
                         const order: SalesOrder = new SalesOrder();
-                        order.docNum = result.content[i][0];
-                        order.cardName = result.content[i][1];
+                        order.docNum = response.content[i][0];
+                        order.cardName = response.content[i][1];
                         this.assignedOrders.push(order);
                     }
                 } else {
-                    //this._router.navigate(['home']);
-                    this.warningMessageNoOrders = 'No se encontraron órdenes asignadas para picking';
+                    this.warningMessageNoOrders = 'No se encontraron órdenes asignadas para picking.';
                 }
             }, error => {
                 console.error(error);
@@ -132,29 +131,51 @@ export class PickingComponent implements OnInit {
 
     private loadNextItem() {
         this.errorMessageNextItem = '';
+        this.warningMessageNoOrders = '';
+        this.errorMessageBinLocation = '';
+        document.getElementById("item").style.display = "none";
+        document.getElementById("qty").style.display = "none";
+        this.pickedItemQuantity = null;
+        this.pickedItemQuantityValidated = false;
+        this.pickedItemCode = '';
+        this.pickedItemCodeValidated = false;
+        this.nextBinLocationCode = null;
+        this.nextBinAbs = null;
+        this.nextBinStock = null;
+        this.nextItemCode = '';
+        this.nextItemName = '';
+        this.nextItemQuantity = null;
+        this.nextBinType = '';
+        this.confirmingItemQuantity = false;
+        this.confirmBinCode = '';
+
+        $('#binLoc').focus();
         $('#modal_loading_next').modal({
             backdrop: 'static',
             keyboard: false,
             show: true
         });
         this._pickingService.getNextPickingItem(this.identity.username, this.selectedOrder).subscribe(
-            result => {
-                $('#modal_loading_next').modal('hide');
-                this.loadAssignedOrders();
-                console.log(result);
-                if (result.code === 0) {
-                    this.nextItemCode = result.content.itemCode.trim();
-                    this.nextItemQuantity = result.content.pendingQuantity;
-                    this.nextBinAbs = result.content.binAbs;
-                    this.nextBinStock = result.content.availableQuantity;
-                    this.nextBinLocationCode = result.content.binCode;
-                    this.nextItemName = result.content.itemName;
-                    this.nextOrderNumber = result.content.orderNumber;
-                    this.nextBinType = result.content.binLocationType;
-                } else if (result.code === -1) {
-                    for (let i = 0; i < result.content.length; i++) {
-                        this.errorMessageNextItem += result.content[i].message + '<br>';
+            response => {
+                if (response.code === 0) {
+                    this.loadAssignedOrders();
+                    this.nextItemCode = response.content.itemCode.trim();
+                    this.nextItemQuantity = response.content.pendingQuantity;
+                    this.nextBinAbs = response.content.binAbs;
+                    this.nextBinStock = response.content.availableQuantity;
+                    this.nextBinLocationCode = response.content.binCode;
+                    this.nextItemName = response.content.itemName;
+                    this.nextOrderNumber = response.content.orderNumber;
+                    this.nextBinType = response.content.binLocationType;
+                    $('#modal_loading_next').modal('hide');
+                    $('#binLoc').focus();
+                } else if (response.code === -1) {
+                    for (let i = 0; i < response.content.length; i++) {
+                        this.errorMessageNextItem += response.content[i].message;
                     }
+                    $('#modal_loading_next').modal('hide');
+                    document.getElementById("loc").style.display = "none";
+                    this.disabledSelectCart = true;
                 }
             }, error => {
                 $('#modal_loading_next').modal('hide');
@@ -162,14 +183,12 @@ export class PickingComponent implements OnInit {
                 this.errorMessage = 'Ocurrió un error al consultar el siguiente ítem para picking. ';
             }
         );
-        $('#binLoc').focus();
     }
 
     private closeOrderAssignation(username, orderNumber) {
         console.log('closing picking assignation for ' + (orderNumber == null ? 'all orders' : 'order ' + orderNumber));
         this._pickingService.finishPicking(username, orderNumber).subscribe(
-            result => {
-                console.log('finished closing order picking assignation. ', result);
+            response => {
                 if (this.pickingMethod === 'single') {
                     $('#modal_change_picking_method').modal({
                         backdrop: 'static',
@@ -187,17 +206,19 @@ export class PickingComponent implements OnInit {
         this.confirmBinCode = this.confirmBinCode.trim();
         if (this.confirmBinCode !== this.nextBinLocationCode) {
             console.error('no estas en la ubicacion correcta');
-            this.errorMessageBinLocation = 'No estás en la ubicación correcta. Revisa el número e intenta de nuevo';
+            this.errorMessageBinLocation = 'No estás en la ubicación correcta. Revisa el número e intenta de nuevo.';
             return;
         }
         this.confirmingItemQuantity = true;
-        $('#filter').focus();
+        document.getElementById("item").style.display = "inline";
+        $('#input_pickedItem').focus();
     }
 
     public confirmItemCode() {
         this.pickedItemCode = this.pickedItemCode.replace(/\s/g, '');
         if (this.pickedItemCode === this.nextItemCode) {
             this.pickedItemCodeValidated = true;
+            document.getElementById("qty").style.display = "inline";
             $('#input_pickedQuantity').focus();
         }
     }
@@ -216,6 +237,7 @@ export class PickingComponent implements OnInit {
     }
 
     public confirmItemQuantity() {
+        $('#binLoc').focus();
         $('#modal_confirm_quantity_diff').modal('hide');
         console.log('confirmando cantidad para trasladar item, ' + this.nextItemQuantity + ', ' + this.pickedItemQuantity);
         this.pickedItemQuantityValidated = true;
@@ -238,14 +260,14 @@ export class PickingComponent implements OnInit {
         this.errorMessageBinTransfer = '';
         this._stockTransferService.transferSingleItem(itemTransfer).subscribe(
             response => {
-                console.log(response);
                 if (response.code === 0) {
                     //Clears bin location, item code and quantity fields; then loads cart inventory and next item
                     this.resetForm();
+                    $('#modal_transfer_process').modal('hide');
                 } else {
+                    $('#modal_transfer_process').modal('hide');
                     this.errorMessageBinTransfer = response.content;
                 }
-                $('#modal_transfer_process').modal('hide');
             }, error => {
                 $('#modal_transfer_process').modal('hide');
                 console.error(error);
@@ -255,8 +277,6 @@ export class PickingComponent implements OnInit {
     }
 
     public resetForm() {
-        console.log('reseting form');
-
         //clean picked quantity
         this.pickedItemQuantity = null;
         this.pickedItemQuantityValidated = false;
@@ -281,6 +301,10 @@ export class PickingComponent implements OnInit {
         //reload carts and inventory
         this.loadAvailablePickingCarts();
 
+        document.getElementById("qty").style.display = "none";
+        document.getElementById("item").style.display = "none";
+        document.getElementById("loc").style.display = "none";
+
         //reload next item
         if (this.selectedCart <= 0) {
             this.loadNextItem();
@@ -290,7 +314,9 @@ export class PickingComponent implements OnInit {
     public choosePickingMethod() {
         this.pickingMethod = this.selectedPickingMethod;
         this.disabledSelectCart = false;
+        this.selectedCart = 0;
         $('#modal_config').modal('hide');
+        console.log('Entro a loadNextItem');
         this.loadNextItem();
     }
 
@@ -359,7 +385,6 @@ export class PickingComponent implements OnInit {
         this.errorMessageBinLocation = '';
         this._stockTransferService.transferSingleItem(itemTransfer).subscribe(
             response => {
-                console.log(response);
                 if (response.code === 0) {
                     //Clears bin location, item code and quantity fields; then loads cart inventory and next item
                     this.resetForm();
