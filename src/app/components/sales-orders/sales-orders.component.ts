@@ -59,7 +59,7 @@ export class SalesOrdersComponent implements OnInit {
     this.selectedOrders = new Map<String, any>();
 
     this._salesOrdersService.listOpenOrders(this.showApprovedOnly, this.filterGroup).subscribe(
-      response => { 
+      response => {
         this.orders = response;
         console.log('loaded orders: ', this.orders);
         //TODO: validar ordenes asignadas
@@ -131,7 +131,7 @@ export class SalesOrdersComponent implements OnInit {
   }
 
   public filterOrders(force) {
-    if (this.filter !== this.searchFilter || force) {
+    if (this.filter.length > 0/*this.filter !== this.searchFilter || force*/) {
       this.searchFilter = this.filter.toLowerCase();
       this.filteredOrders = new Array<SalesOrder>();
       for (let i = 0; i < this.orders.length; i++) {
@@ -197,5 +197,10 @@ export class SalesOrdersComponent implements OnInit {
         console.error(error);
       }
     );
+  }
+
+  public getScrollTop() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
   }
 }

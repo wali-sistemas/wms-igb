@@ -64,7 +64,7 @@ export class PurchaseOrdersComponent implements OnInit {
 
   public filterOrders() {
     console.log('filtrando');
-    if (this.filter != this.searchFilter) {
+    if (this.filter !== this.searchFilter) {
       console.log(this.filter);
       this.searchFilter = this.filter.toLowerCase();
       this.filteredOrders = new Array<PurchaseOrder>();
@@ -77,5 +77,10 @@ export class PurchaseOrdersComponent implements OnInit {
         }
       }
     }
+  }
+
+  public getScrollTop() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
   }
 }

@@ -90,7 +90,7 @@ export class SalesOrderComponent implements OnInit {
             this.generalErrorMessage = 'Ocurrió un error al consultar la información de la órden en SAP. Por favor espera un momento o comunícate con el departamento de sistemas.';
             console.error(error);
             const errorResponse = <any>error;
-            if (errorResponse != null) {
+            if (errorResponse !== null) {
               console.error(errorResponse._body);
             }
           }

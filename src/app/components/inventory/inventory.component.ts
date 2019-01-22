@@ -151,7 +151,7 @@ export class InventoryComponent implements OnInit {
   public inventoryHistory() {
     this.messageProgress = 'Procesando su petición.';
     $('#modal_process').modal('show');
-    if (this.history != null && this.history.length > 0) {
+    if (this.history !== null && this.history.length > 0) {
       console.log('Cerrando historial');
       this.history = new Array<any>();
       $('#modal_process').modal('hide');
@@ -179,7 +179,7 @@ export class InventoryComponent implements OnInit {
       response => {
         console.log(response);
         this.differences = response;
-        if (this.differences != null && this.differences.length > 0) {
+        if (this.differences !== null && this.differences.length > 0) {
           $('#modalDiferencias').modal('show');
         }
         console.log(this.differences);
