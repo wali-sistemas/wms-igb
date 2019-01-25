@@ -72,7 +72,7 @@
             <form (submit)="validarUbicacion(fromBin, 'from')">
                 <label for="fromBin">Ubicación Origen*</label>
                 <input type="text" class="form-control input-lg" autocomplete="off" id="fromBin" name="fromBin"
-                    placeholder="escanea la ubicación de origen" [(ngModel)]="fromBin" (keyup)="validarUbicacion(fromBin, 'from')">
+                    placeholder="escanea la ubicación de origen" [(ngModel)]="fromBin" (change)="validarUbicacion(fromBin, 'from')">
             </form>
         </div>
     </div>

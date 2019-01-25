@@ -51,11 +51,19 @@
     font-size: 11px;
 }
 
+.box .box-wharehousename {
+    position: relative;
+    top: 60px;
+    right: 48px;
+    font-size: 10px;
+    font-weight: 900;
+}
+
 .box .box-wharehouse::before {
     font-weight: bold;
     font-size: 12px;
     position: relative;
-    content: 'Sucursal';
+    content: 'Bodega';
     display: block;
 }
 
