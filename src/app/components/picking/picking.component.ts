@@ -174,7 +174,10 @@ export class PickingComponent implements OnInit {
                     }
                     $('#modal_loading_next').modal('hide');
                     document.getElementById("loc").style.display = "none";
-                    this.disabledSelectCart = true;
+                } else {
+                    this.errorMessageNextItem = response.content;
+                    $('#modal_loading_next').modal('hide');
+                    document.getElementById("loc").style.display = "none";
                 }
                 this.loadAssignedOrders();
             }, error => {
