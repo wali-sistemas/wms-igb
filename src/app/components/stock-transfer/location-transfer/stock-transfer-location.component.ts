@@ -231,6 +231,7 @@ export class StockTransferLocationComponent implements OnInit {
                     this.limpiarTodo();
                     $('#modal_transfer_process').modal('hide');
                     this.stockTransferExitMessage = 'Traslado creado correctamente.';
+                    $('#itemCode').focus();
                 } else {
                     this.stockTransferErrorMessage = response.content;
                 }
