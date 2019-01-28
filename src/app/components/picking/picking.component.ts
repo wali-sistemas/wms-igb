@@ -179,7 +179,6 @@ export class PickingComponent implements OnInit {
                     $('#modal_loading_next').modal('hide');
                     document.getElementById("loc").style.display = "none";
                 }
-
                 this.loadAssignedOrders();
             }, error => {
                 $('#modal_loading_next').modal('hide');
