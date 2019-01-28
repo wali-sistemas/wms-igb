@@ -158,7 +158,6 @@ export class PickingComponent implements OnInit {
         this._pickingService.getNextPickingItem(this.identity.username, this.selectedOrder).subscribe(
             response => {
                 if (response.code === 0) {
-                    this.loadAssignedOrders();
                     this.nextItemCode = response.content.itemCode.trim();
                     this.nextItemQuantity = response.content.pendingQuantity;
                     this.nextBinAbs = response.content.binAbs;
@@ -176,8 +175,8 @@ export class PickingComponent implements OnInit {
                     $('#modal_loading_next').modal('hide');
                     document.getElementById("loc").style.display = "none";
                     this.disabledSelectCart = true;
-                    this.loadAssignedOrders();
                 }
+                this.loadAssignedOrders();
             }, error => {
                 $('#modal_loading_next').modal('hide');
                 console.error(error);
