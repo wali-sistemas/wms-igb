@@ -431,7 +431,7 @@
     <br>
 
     <div class="row" *ngIf="selectedCustomer">
-        <div class="col-xs-12">
+        <div class="col-xs-12" *ngIf="packedItemQuantityValidated">
             <h4>¿En cuál caja deseas empacar?</h4>
         </div>
         <div class="col-xs-6" *ngFor="let box of boxes; let idx = index">
@@ -463,7 +463,7 @@
                     data-target="#close_confirmation">
                     Finalizar
                 </button>
-                <button class="btn btn-danger btn-lg" type="button" (click)="nextOrden()">
+                <button *ngIf="selectedOrder > 0" class="btn btn-danger btn-lg" type="button" (click)="nextOrden()">
                     Sigt Orden <span class="icon-refresh"></span>
                 </button>
             </div>
