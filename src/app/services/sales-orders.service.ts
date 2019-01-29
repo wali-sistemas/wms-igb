@@ -50,4 +50,10 @@ export class SalesOrdersService {
     return this._http.put(this.url + 'salesorder/enable', orderNumber, { headers: igbHeaders })
       .map(res => res.json());
   }
+
+  public deleteAssignOrders(orderNumber){
+    let igbHeaders = new IGBHeaders().loadHeaders();
+    return this._http.delete(this.url + 'salesorder/reset-assigned/' + orderNumber, { headers: igbHeaders })
+    .map(res => res.json());
+  }
 }

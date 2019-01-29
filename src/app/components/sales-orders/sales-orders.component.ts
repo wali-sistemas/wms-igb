@@ -130,6 +130,21 @@ export class SalesOrdersComponent implements OnInit {
     );
   }
 
+  public resetAssignOrder() {
+    let orders = Array.from(this.selectedOrders.entries());
+    for (let i = 0; i < orders.length; i++) {
+      this._salesOrdersService.deleteAssignOrders(orders[i][0]).subscribe(
+        response => {
+          console.log(response);
+          $('#modal_users').modal('hide');
+          this.listOpenOrders();
+          this.selectedUser = '';
+        },
+        error => { console.error(error); }
+      );
+    }
+  }
+
   public filterOrders(force) {
     if (this.filter.length > 0/*this.filter !== this.searchFilter || force*/) {
       this.searchFilter = this.filter.toLowerCase();
