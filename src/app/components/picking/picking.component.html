@@ -147,6 +147,25 @@
     </div>
 </div>
 
+<!--Modal Confirmar-->
+<div id="modal_confirmar" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="text-align: center;">
+                <span class="icon-alert-triangle" style="font-size: 40px;"></span>
+            </div>
+            <div class="modal-body">
+                <p style="text-align: center">¿Está seguro que desea saltar a ubicación de almacenamiento?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">No</button>
+                <button type="button" class="btn btn-danger btn-lg" (click)="skipItem()">Si</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="container content" *ngIf="errorMessagePickingCarts">
     <div class="alert alert-danger" role="alert" *ngIf="errorMessagePickingCarts">
         {{errorMessagePickingCarts}}
@@ -199,7 +218,7 @@
                             <button class="btn btn-danger btn-lg danger" type="button" (click)="resetForm()" *ngIf="confirmingItemQuantity">
                                 <span class="glyphicon glyphicon-erase"></span>
                             </button>
-                            <button class="btn btn-default btn-lg" type="button" (click)="skipItem()" *ngIf="!confirmingItemQuantity"
+                            <button class="btn btn-default btn-lg" type="button" data-toggle="modal" data-target="#modal_confirmar" *ngIf="!confirmingItemQuantity"
                                 [disabled]="nextBinType === 'STORAGE'">
                                 <span class="glyphicon glyphicon-forward"></span>
                             </button>
