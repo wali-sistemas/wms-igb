@@ -366,6 +366,7 @@ export class PickingComponent implements OnInit {
     }
 
     public skipItem() {
+        $('#modal_confirmar').modal('hide');
         console.log('saltando item, ' + this.nextItemQuantity);
         this.pickedItemQuantityValidated = true;
         const itemTransfer = {

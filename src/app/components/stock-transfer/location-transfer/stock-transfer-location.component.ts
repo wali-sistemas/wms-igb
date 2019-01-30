@@ -132,35 +132,47 @@ export class StockTransferLocationComponent implements OnInit {
                             }
                         }
                     }
-
                     if (response[2] >= this.quantity) {
-                        this._binLocationService.getLocationFixed(this.itemCode).subscribe(
-                            response => {
-                                if (response.code < 0) {
-                                    this.stockTransferErrorMessage = 'Error';
-                                    $('#modal_transfer_process').modal('hide');
-                                } else if (response.content !== this.toBin) {
-                                    $('#modal_transfer_process').modal('hide');
-                                    $('#modal_confirmar_ubicacion_fija').modal('show');
-                                } else {
-                                    const newItem = {
-                                        itemCode: this.itemCode,
-                                        quantity: this.quantity,
-                                        toBin: this.toBin,
-                                        fromBin: this.fromBin
-                                    };
-                                    this.items.unshift(newItem);
-                                    this.limpiarLinea();
-                                    this.disabled = true;
-                                    $('#modal_transfer_process').modal('hide');
-                                }
-                            },
-                            error => {
-                                $('#modal_transfer_process').modal('hide');
-                                this.stockTransferErrorMessage = 'Lo sentimos. Se produjo un error interno.';
-                                console.error(error);
-                            }
-                        );
+                        //TODO: Ubicación fija aplica solo para IGB en ubicaciones de picking
+                        if (this.identity.selectedCompany === 'VARROC') {
+                            this.addItem();
+                            this.limpiarLinea();
+                            this.disabled = true;
+                            $('#modal_transfer_process').modal('hide');
+                        } else {
+                            this._binLocationService.getLocationAttribute(this.toBin).subscribe(
+                                response => {
+                                    if (response.code == 0) {
+                                        if (response.content[3] === 'PICKING') {
+                                            this._binLocationService.getLocationFixed(this.itemCode).subscribe(
+                                                response => {
+                                                    if (response.code < 0) {
+                                                        this.stockTransferErrorMessage = 'Lo sentimos. Se produjo un error interno.';
+                                                        $('#modal_transfer_process').modal('hide');
+                                                    } else if (response.content !== this.toBin) {
+                                                        $('#modal_transfer_process').modal('hide');
+                                                        $('#modal_confirmar_ubicacion_fija').modal('show');
+                                                    } else {
+                                                        this.addItem();
+                                                        this.limpiarLinea();
+                                                        this.disabled = true;
+                                                        $('#modal_transfer_process').modal('hide');
+                                                    }
+                                                },
+                                                error => {
+                                                    $('#modal_transfer_process').modal('hide');
+                                                    this.stockTransferErrorMessage = 'Lo sentimos. Se produjo un error interno.';
+                                                    console.error(error);
+                                                }
+                                            );
+                                        }
+                                    } else {
+                                        this.stockTransferErrorMessage = 'Lo sentimos. Se produjo un error interno.';
+                                    }
+                                },
+                                error => { console.error(error); }
+                            );
+                        }
                     } else {
                         $('#modal_transfer_process').modal('hide');
                         this.stockTransferErrorMessage = 'No hay suficiente stock. Disponible: ' + response[2];
@@ -178,6 +190,16 @@ export class StockTransferLocationComponent implements OnInit {
                 console.error(error);
             }
         );
+    }
+
+    private addItem() {
+        const newItem = {
+            itemCode: this.itemCode,
+            quantity: this.quantity,
+            toBin: this.toBin,
+            fromBin: this.fromBin
+        };
+        this.items.unshift(newItem);
     }
 
     public limpiarLinea() {

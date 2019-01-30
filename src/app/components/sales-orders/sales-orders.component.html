@@ -1,5 +1,6 @@
 <igb-navbar></igb-navbar>
 
+<!--Modal user-->
 <div id="modal_users" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -14,6 +15,7 @@
         </form>
       </div>
       <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-lg" (click)="resetAssignOrder()">Des-asignar</button>
         <button type="button" class="btn btn-default btn-lg" data-dismiss="modal">Cerrar</button>
         <button type="button" class="btn btn-primary btn-lg" (click)="assignOrders()">Asignar</button>
       </div>
