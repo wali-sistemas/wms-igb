@@ -31,7 +31,12 @@ export class BinLocationService {
     }
 
     public getLocationFixed(item: string) {
-        return this._http.get(this.url + 'binlocation/locationFixed/' + item, { headers: new IGBHeaders().loadHeaders() })
+        return this._http.get(this.url + 'binlocation/location-fixed/' + item, { headers: new IGBHeaders().loadHeaders() })
+            .map(res => res.json());
+    }
+
+    public getLocationAttribute(binCode: string) {
+        return this._http.get(this.url + 'binlocation/attributes/' + binCode, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
 }
