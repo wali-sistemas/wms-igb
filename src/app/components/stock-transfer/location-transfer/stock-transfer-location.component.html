@@ -77,17 +77,6 @@
     <br />
     <div class="row">
         <div class="col-xs-12">
-            <form (submit)="validarUbicacion(fromBin, 'from')">
-                <label for="fromBin">Origen*</label>
-                <input type="text" class="form-control input-lg" autocomplete="off" id="fromBin" name="fromBin"
-                    placeholder="escanea la ubicación de origen" [(ngModel)]="fromBin" (blur)="validarUbicacion(fromBin, 'from')"
-                    [disabled]="disabled">
-            </form>
-        </div>
-    </div>
-    <br />
-    <div class="row">
-        <div class="col-xs-12">
             <form (submit)="validarUbicacion(toBin, 'to')">
                 <label for="toBin">Destino*</label>
                 <input type="text" class="form-control input-lg" autocomplete="off" id="toBin" name="toBin" placeholder="escanea la ubicación de destino"

@@ -146,10 +146,7 @@ export class StockTransferLocationComponent implements OnInit {
                                         if (response.content[3] === 'PICKING') {
                                             this._binLocationService.getLocationFixed(this.itemCode).subscribe(
                                                 response => {
-                                                    if (response.code < 0) {
-                                                        this.stockTransferErrorMessage = 'Lo sentimos. Se produjo un error interno.';
-                                                        $('#modal_transfer_process').modal('hide');
-                                                    } else if (response.content !== this.toBin) {
+                                                    if (response.content !== this.toBin) {
                                                         $('#modal_transfer_process').modal('hide');
                                                         $('#modal_confirmar_ubicacion_fija').modal('show');
                                                     } else {
