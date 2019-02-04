@@ -130,15 +130,15 @@ export class StockTransferLocationComponent implements OnInit {
                                 this.limpiarLinea();
                                 return;
                             }
+                        } else {
+                            this.stockTransferErrorMessage = 'El ítem no existe o esta mal ingresado.';
+                            $('#modal_transfer_process').modal('hide');
                         }
                     }
                     if (response[2] >= this.quantity) {
                         //TODO: Ubicación fija aplica solo para IGB en ubicaciones de picking
                         if (this.identity.selectedCompany === 'VARROC') {
                             this.addItem();
-                            this.limpiarLinea();
-                            this.disabled = true;
-                            $('#modal_transfer_process').modal('hide');
                         } else {
                             this._binLocationService.getLocationAttribute(this.toBin).subscribe(
                                 response => {
@@ -146,17 +146,11 @@ export class StockTransferLocationComponent implements OnInit {
                                         if (response.content[3] === 'PICKING') {
                                             this._binLocationService.getLocationFixed(this.itemCode).subscribe(
                                                 response => {
-                                                    if (response.code < 0) {
-                                                        this.stockTransferErrorMessage = 'Lo sentimos. Se produjo un error interno.';
-                                                        $('#modal_transfer_process').modal('hide');
-                                                    } else if (response.content !== this.toBin) {
+                                                    if (response.content !== this.toBin) {
                                                         $('#modal_transfer_process').modal('hide');
                                                         $('#modal_confirmar_ubicacion_fija').modal('show');
                                                     } else {
                                                         this.addItem();
-                                                        this.limpiarLinea();
-                                                        this.disabled = true;
-                                                        $('#modal_transfer_process').modal('hide');
                                                     }
                                                 },
                                                 error => {
@@ -165,12 +159,19 @@ export class StockTransferLocationComponent implements OnInit {
                                                     console.error(error);
                                                 }
                                             );
+                                        } else {
+                                            this.addItem();
                                         }
                                     } else {
+                                        $('#modal_transfer_process').modal('hide');
                                         this.stockTransferErrorMessage = 'Lo sentimos. Se produjo un error interno.';
                                     }
                                 },
-                                error => { console.error(error); }
+                                error => {
+                                    $('#modal_transfer_process').modal('hide');
+                                    this.stockTransferErrorMessage = 'Lo sentimos. Se produjo un error interno.';
+                                    console.error(error);
+                                }
                             );
                         }
                     } else {
@@ -200,6 +201,9 @@ export class StockTransferLocationComponent implements OnInit {
             fromBin: this.fromBin
         };
         this.items.unshift(newItem);
+        this.limpiarLinea();
+        this.disabled = true;
+        $('#modal_transfer_process').modal('hide');
     }
 
     public limpiarLinea() {
