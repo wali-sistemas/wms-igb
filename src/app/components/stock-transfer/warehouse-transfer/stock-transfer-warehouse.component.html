@@ -39,8 +39,8 @@
             <select id="warehouse" class="form-control input-lg" [(ngModel)]="selectedWarehouseFrom" name="selectedWarehouseFrom"
                 (change)="updateWarehouseFrom()" disabled="{{disabledWhFrom}}">
                 <option value="" disabled>Seleccione uno</option>
-                <option *ngFor="let warehouse of warehousesFrom" value="{{warehouse.whsCode}}">({{warehouse.whsCode}})
-                    {{warehouse.whsName}}</option>
+                <option *ngFor="let warehouse of warehousesFrom" value="{{warehouse.code}}">({{warehouse.code}})
+                    {{warehouse.name}}</option>
             </select>
         </div>
     </div>
@@ -51,8 +51,8 @@
             <select id="warehouse" class="form-control input-lg" [(ngModel)]="selectedWarehouseTo" name="selectedWarehouseTo"
                 (change)="updateWarehouseTo()">
                 <option value="" disabled>Seleccione uno</option>
-                <option *ngFor="let warehouse of warehousesTo" value="{{warehouse.whsCode}}">({{warehouse.whsCode}})
-                    {{warehouse.whsName}}</option>
+                <option *ngFor="let warehouse of warehousesTo" value="{{warehouse.code}}">({{warehouse.code}})
+                    {{warehouse.name}}</option>
             </select>
         </div>
     </div>
@@ -125,7 +125,7 @@
             </button>
         </div>
         <div class="col-xs-6">
-            <button class="btn btn-danger btn-lg" type="button" (click)="crearTraslado()" [disabled]="items.length == 0">
+            <button class="btn btn-danger btn-lg" type="button" (click)="crearTraslado()" [disabled]="items.length == 0" style="float: right;">
                 Finalizar
             </button>
         </div>
