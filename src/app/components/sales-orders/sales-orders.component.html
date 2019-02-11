@@ -83,12 +83,12 @@
             [(ngModel)]="filter" (keyup)="filterOrders(false)" autocomplete="off" />
           <span class="input-group-btn">
             <button type="button" class="btn btn-default btn-lg" (click)="toggleEye()" style="border-radius: 0px;">
-              <span class="icon-eye" [ngClass]="{'icon-eye': !showApprovedOnly, 'icon-eye-off': showApprovedOnly}"></span>
+              <span class="icon-eye" [ngClass]="{'icon-eye': !showApprovedOnly, 'icon-eye-off': showApprovedOnly}" title="No autorizados"></span>
             </button>
           </span>
           <span class="input-group-btn">
             <button type="button" [class.box]="filterGroup" class="btn btn-default btn-lg" (click)="filterGroupOrders()">
-              <span class="icon-groups" title="Filtar grupos"></span>
+              <span class="icon-groups" title="Filtrar grupos"></span>
             </button>
           </span>
         </div>

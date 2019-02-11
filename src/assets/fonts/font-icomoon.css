@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?wikykj');
-  src:  url('fonts/icomoon.eot?wikykj#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?wikykj') format('truetype'),
-    url('fonts/icomoon.woff?wikykj') format('woff'),
-    url('fonts/icomoon.svg?wikykj#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?88kto1');
+  src:  url('fonts/icomoon.eot?88kto1#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?88kto1') format('truetype'),
+    url('fonts/icomoon.woff?88kto1') format('woff'),
+    url('fonts/icomoon.svg?88kto1#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -249,6 +249,9 @@
 .icon-warehouse-all:before {
   content: "\e7f1";
 }
+.icon-redo:before {
+  content: "\e15a";
+}
 .icon-sms:before {
   content: "\e0d8";
 }
@@ -267,8 +270,17 @@
 .icon-arrow-left:before {
   content: "\e94d";
 }
+.icon-chevron-left:before {
+  content: "\e95a";
+}
+.icon-chevron-right:before {
+  content: "\e95b";
+}
 .icon-chevron-up:before {
   content: "\e959";
+}
+.icon-chevrons-right:before {
+  content: "\e95c";
 }
 .icon-delete:before {
   content: "\e955";
