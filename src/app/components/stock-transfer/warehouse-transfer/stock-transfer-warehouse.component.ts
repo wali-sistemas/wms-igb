@@ -56,13 +56,11 @@ export class StockTransferWarehouseComponent implements OnInit {
             this._router.navigate(['/']);
         }
 
-        this.selectedWarehouseFrom = JSON.parse(localStorage.getItem('igb.identity')).warehouseCode;
-        this.disabledWhFrom = true;
         this.listAvailableWarehouses();
     }
 
     private listAvailableWarehouses() {
-        this._genericService.listActivesWarehouses().subscribe(
+        this._genericService.listAvailableWarehouses().subscribe(
             response => {
                 this.warehousesFrom = response.content;
                 this.warehousesTo = response.content;
@@ -74,13 +72,13 @@ export class StockTransferWarehouseComponent implements OnInit {
         this.disabledWhFrom = true;
     }
 
-    public updateWarehouseTo() {  
-    for (let i = 0; i < this.warehousesTo.length; i++) {
-        if (this.warehousesTo[i].whsCode == this.selectedWarehouseTo) {
-          this.dftBinAbs = this.warehousesTo[i].dftBinAbs;
-          break;
+    public updateWarehouseTo() {
+        for (let i = 0; i < this.warehousesTo.length; i++) {
+            if (this.warehousesTo[i].code == this.selectedWarehouseTo) {
+                this.dftBinAbs = this.warehousesTo[i].dftBinAbs;
+                break;
+            }
         }
-      }
     }
 
     public validarReferencia() {
@@ -140,7 +138,7 @@ export class StockTransferWarehouseComponent implements OnInit {
                 return;
             }
 
-            this._stockItemService.stockFind(this.itemCode).subscribe(
+            this._stockItemService.stockFind(this.itemCode, this.selectedWarehouseFrom).subscribe(
                 response => {
                     let disponible;
                     for (let i = 0; i < response.length; i++) {
@@ -190,6 +188,7 @@ export class StockTransferWarehouseComponent implements OnInit {
         this.fromBinId = null;
         this.items = new Array<any>();
         this.selectedWarehouseTo = '';
+        this.selectedWarehouseFrom = '';
     }
 
     public crearTraslado() {
@@ -210,7 +209,6 @@ export class StockTransferWarehouseComponent implements OnInit {
             filler: this.selectedWarehouseFrom,
             lines: this.items
         };
-
         this._stockTransferService.stockTransferBetweenWarehouse(stockTransfer).subscribe(
             response => {
                 if (response.code === 0) {

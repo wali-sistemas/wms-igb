@@ -46,6 +46,8 @@ export class PickingComponent implements OnInit {
     public warningMessageNoOrders: string = '';
     public availableCarts: Array<BinLocation>;
     public assignedOrders: Array<SalesOrder>;
+    public pickingItems: Array<any>;
+    public position: number = 0;
 
     constructor(private _userService: UserService,
         private _salesOrderService: SalesOrdersService,
@@ -148,6 +150,7 @@ export class PickingComponent implements OnInit {
         this.nextBinType = '';
         this.confirmingItemQuantity = false;
         this.confirmBinCode = '';
+        this.pickingItems = new Array<any>();
 
         $('#binLoc').focus();
         $('#modal_loading_next').modal({
@@ -157,15 +160,17 @@ export class PickingComponent implements OnInit {
         });
         this._pickingService.getNextPickingItem(this.identity.username, this.selectedOrder).subscribe(
             response => {
+                console.log("Lista de ítem para picking ", response);
                 if (response.code === 0) {
-                    this.nextItemCode = response.content.itemCode.trim();
-                    this.nextItemQuantity = response.content.pendingQuantity;
-                    this.nextBinAbs = response.content.binAbs;
-                    this.nextBinStock = response.content.availableQuantity;
-                    this.nextBinLocationCode = response.content.binCode;
-                    this.nextItemName = response.content.itemName;
-                    this.nextOrderNumber = response.content.orderNumber;
-                    this.nextBinType = response.content.binLocationType;
+                    this.pickingItems = response.content;
+                    this.nextItemCode = response.content[this.position].itemCode.trim();
+                    this.nextItemQuantity = response.content[this.position].pendingQuantity;
+                    this.nextBinAbs = response.content[this.position].binAbs;
+                    this.nextBinStock = response.content[this.position].availableQuantity;
+                    this.nextBinLocationCode = response.content[this.position].binCode;
+                    this.nextItemName = response.content[this.position].itemName;
+                    this.nextOrderNumber = response.content[this.position].orderNumber;
+                    this.nextBinType = response.content[this.position].binLocationType;
                     $('#modal_loading_next').modal('hide');
                     $('#binLoc').focus();
                 } else if (response.code === -1) {
@@ -309,6 +314,7 @@ export class PickingComponent implements OnInit {
         document.getElementById("loc").style.display = "none";
 
         //reload next item
+        this.position = 0;
         if (this.selectedCart <= 0) {
             this.loadNextItem();
         }
@@ -319,8 +325,6 @@ export class PickingComponent implements OnInit {
         this.disabledSelectCart = false;
         this.selectedCart = 0;
         $('#modal_config').modal('hide');
-        console.log('Entro a loadNextItem');
-        this.loadNextItem();
     }
 
     public changePickingMethod() {
@@ -367,7 +371,7 @@ export class PickingComponent implements OnInit {
 
     public skipItem() {
         $('#modal_confirmar').modal('hide');
-        console.log('saltando item, ' + this.nextItemQuantity);
+        console.log('saltando item, ' + this.nextItemCode);
         this.pickedItemQuantityValidated = true;
         const itemTransfer = {
             binAbsFrom: this.nextBinAbs,
@@ -402,5 +406,31 @@ export class PickingComponent implements OnInit {
                 this.errorMessageBinLocation = JSON.parse(error._body).content;
             }
         );
+    }
+
+    public getBackItem() {
+        if (this.position > 0) {
+            this.position--;
+            this.loadNextItem();
+        }
+    }
+
+    public getNextItem() {
+        if (this.position < this.pickingItems.length - 1) {
+            this.position++;
+        } else {
+            this.position = 0;
+        }
+        this.loadNextItem();
+    }
+
+    public getBinLocation(bin) {
+        this.confirmBinCode = bin.trim();
+        $('#binLoc').focus();
+    }
+
+    public getPickedItemCode(item){
+        this.pickedItemCode = item.trim();
+        $('#input_pickedItem').focus();
     }
 }

@@ -199,28 +199,54 @@
     <div class="row" *ngIf="selectedCart > 0">
         <div class="col-xs-12">
             <form (submit)="scanBinLocation()">
-                <label *ngIf="!confirmingItemQuantity && nextBinLocationCode" for="binLocation">
-                    Procesando {{nextItemQuantity}} unidades del ítem {{nextItemCode}}
-                </label>
-                <br />
-                <label *ngIf="!confirmingItemQuantity && nextBinLocationCode" for="binLocation">Escanea la ubicación
-                    <span data-toggle="modal" data-target="#modal_bin_detail">{{nextBinLocationCode}}</span>
-                    [{{nextBinType}}]
-                </label>
-                <label *ngIf="confirmingItemQuantity" for="binLocation">Tomando items desde
-                    <span class="icon-info" data-toggle="modal" data-target="#modal_bin_detail" title="Detalle ubicación"></span>
-                </label>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <label *ngIf="!confirmingItemQuantity && nextBinLocationCode" for="binLocation">
+                            Procesando {{nextItemQuantity}} unidades del ítem {{nextItemCode}} ({{nextItemName}})
+                        </label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <label *ngIf="!confirmingItemQuantity && nextBinLocationCode" for="binLocation">Escanea la
+                            ubicación
+                            <span (click)="getBinLocation(nextBinLocationCode)">{{nextBinLocationCode}}</span>
+                            <span class="icon-info" data-toggle="modal" data-target="#modal_bin_detail"></span>
+                            [{{nextBinType}}]
+                        </label>
+                    </div>
+                    <div class="col-xs-6">
+                        <button *ngIf="!confirmingItemQuantity && nextBinLocationCode" class="btn btn-default btn-lg" type="button"
+                            data-toggle="modal" data-target="#modal_confirmar" [disabled]="nextBinType === 'STORAGE'"
+                            style="float: right!important;" title="Saltar Picking">
+                            <span class="icon-redo"></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <label *ngIf="confirmingItemQuantity" for="binLocation">Tomando items desde
+                            <span class="icon-info" data-toggle="modal" data-target="#modal_bin_detail" title="Detalle ubicación"></span>
+                        </label>
+                    </div>
+                </div>
                 <div id="loc" class="input-focus">
                     <div class="input-group">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default btn-lg" type="button" (click)="getBackItem()" *ngIf="!confirmingItemQuantity"
+                                title="Anterior ítem" [disabled]="position == 0">
+                                <span class="icon-chevron-left"></span>
+                            </button>
+                        </span>
                         <input id="binLoc" name="binLocation" class="form-control input-lg" type="text" [(ngModel)]="confirmBinCode"
                             placeholder="escanea aquí" autocomplete="off" [disabled]="confirmingItemQuantity">
                         <span class="input-group-btn">
                             <button class="btn btn-danger btn-lg danger" type="button" (click)="resetForm()" *ngIf="confirmingItemQuantity">
                                 <span class="glyphicon glyphicon-erase"></span>
                             </button>
-                            <button class="btn btn-default btn-lg" type="button" data-toggle="modal" data-target="#modal_confirmar" *ngIf="!confirmingItemQuantity"
-                                [disabled]="nextBinType === 'STORAGE'">
-                                <span class="glyphicon glyphicon-forward"></span>
+                            <button class="btn btn-default btn-lg" type="button" (click)="getNextItem()" *ngIf="!confirmingItemQuantity"
+                                title="Sigt ítem">
+                                <span class="icon-chevron-right"></span>
                             </button>
                         </span>
                     </div>
@@ -238,7 +264,7 @@
                 <div class="confirm-item">
                     <div class="row">
                         <div class="col-xs-12">
-                            <h4>({{nextItemCode}}) {{nextItemName}}</h4>
+                            <h4><span (click)="getPickedItemCode(nextItemCode)">({{nextItemCode}}) {{nextItemName}}</span></h4>
                         </div>
                         <form (submit)="confirmItemCode()">
                             <div class="col-xs-12" *ngIf="!pickedItemCodeValidated">

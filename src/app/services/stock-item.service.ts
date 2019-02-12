@@ -10,8 +10,8 @@ export class StockItemService {
     this.url = GLOBAL.url;
   }
 
-  public stockFind(itemCode) {
-    return this._http.get(this.url + 'stockitem/find/' + itemCode, { headers: new IGBHeaders().loadHeaders() })
+  public stockFind(itemCode, whsCode) {
+    return this._http.get(this.url + 'stockitem/find/' + itemCode + '/' + whsCode, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 
