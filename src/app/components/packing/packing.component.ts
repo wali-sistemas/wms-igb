@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
+import { GLOBAL } from '../../services/global';
 
 import { PackingBox } from './../../models/packing-box';
 import { PackingRecord } from '../../models/packing-record';
@@ -9,6 +10,7 @@ import { UserService } from '../../services/user.service';
 import { PackingService } from '../../services/packing.service';
 import { InvoiceService } from '../../services/invoice.service';
 import { PrintService } from '../../services/print.service';
+import { GenericService } from '../../services/generic';
 
 import 'rxjs/Rx'
 import { ResupplyComponent } from '../resupply/resupply.component';
@@ -18,7 +20,7 @@ declare var $: any;
 @Component({
     templateUrl: './packing.component.html',
     styleUrls: ['./packing.component.css'],
-    providers: [UserService, PackingService, InvoiceService, PrintService]
+    providers: [UserService, PackingService, InvoiceService, PrintService, GenericService]
 })
 export class PackingComponent implements OnInit {
 
@@ -54,19 +56,23 @@ export class PackingComponent implements OnInit {
     public packingOrdersComplete: boolean = false;
     public qtyBox: number;
     public orderNumber: number;
-    private identity;
-    private idPackingList: number;
-    private idPackingOrder: number;
+    public identity;
+    public idPackingList: number;
+    public idPackingOrder: number;
+    public picked: number;
     public errorMessage: string;
     public exitMessage: String;
     public specialPacking: Array<any>;
+
+    public urlShared: String = GLOBAL.urlShared;
 
     constructor(
         private _userService: UserService,
         private _packingService: PackingService,
         private _invoiceService: InvoiceService,
         private _printService: PrintService,
-        private _router: Router) {
+        private _router: Router,
+        private _generic: GenericService) {
         this.start();
     }
 
@@ -98,9 +104,7 @@ export class PackingComponent implements OnInit {
     private listOpenJobs() {
         this._packingService.listOpenJobRecords(this.identity.username).subscribe(
             response => {
-                console.log('registros de packing abiertos: ', response);
                 if (response.content.length > 0) {
-                    console.log('procesando registros...');
                     this.customersListDisabled = true;
                     const firstRecord = response.content[0];
                     this.selectedOrder = firstRecord[2];
@@ -123,12 +127,10 @@ export class PackingComponent implements OnInit {
                         }
                     }
                     this.loadCustomerOrders();
-                    console.log('termino de procesar los registros. ' + this.boxes.length + ' cajas agregadas');
                 }
-                this.canBoxesBeAdded();
-            }, error => {
-                console.error(error);
-            }
+                //this.canBoxesBeAdded();
+                this.showAllItems();
+            }, error => { console.error(error); }
         );
     }
 
@@ -143,11 +145,10 @@ export class PackingComponent implements OnInit {
     private loadCustomers() {
         this._packingService.listCustomers().subscribe(
             response => {
-                console.log('se encontraron los siguientes clientes: ', response.content);
                 this.customersList = response.content;
             },
             error => {
-                console.error('Ocurrio un error no identificado. ', error);
+                console.error("ocurrio un error listando los cliente. ", error);
                 this.redirectIfSessionInvalid(error);
             }
         );
@@ -156,13 +157,11 @@ export class PackingComponent implements OnInit {
     public loadCustomerOrders() {
         this._packingService.listCustomerOrders(this.selectedCustomer).subscribe(
             response => {
-                console.log('se encontraron las siguientes ordenes: ', response.content);
                 this.ordersList = response.content;
             },
-            error => {
-                console.error('ocurrio un error al consultar las ordenes del cliente', error);
-            }
+            error => { console.error('ocurrio un error al consultar las ordenes del cliente. ', error); }
         );
+        this.orderItemsList = new Array<any>();
     }
 
     public validateScannedBin() {
@@ -170,18 +169,16 @@ export class PackingComponent implements OnInit {
         if (!this.binCode || this.binCode.length === 0) {
             return;
         }
-        console.log('validando si la ubicacion ' + this.binCode + ' contiene items de la orden seleccionada');
+
         this._packingService.validateBinCode(this.binCode, this.selectedOrder).subscribe(
             response => {
-                console.log('existen ' + response.content + ' items en la ubicacion ' + this.binCode + ' para la orden ' + this.selectedOrder);
+                //console.log('existen ' + response.content + ' items en la ubicacion ' + this.binCode + ' para la orden ' + this.selectedOrder);
                 if (response && response.content && response.content > 0) {
                     this.isVisibleItemCode = true;
                 } else {
                     this.binErrorMessage = 'No hay items pendientes en la ubicación ingresada para la orden';
                 }
-            }, error => {
-                console.error('ocurrio un error al validar la ubicacion. ', error);
-            }
+            }, error => { console.error('ocurrio un error al validar la ubicacion. ', error); }
         );
     }
 
@@ -190,7 +187,7 @@ export class PackingComponent implements OnInit {
             return;
         }
         this.itemCodeErrorMessage = '';
-        console.log('validando el item ' + this.itemCode);
+        //console.log('validando el item ' + this.itemCode);
         this._packingService.validateItem(this.itemCode, this.binCode, this.selectedOrder).subscribe(
             response => {
                 if (response && response.code == 0 && response.content && response.content.items > 0) {
@@ -198,26 +195,28 @@ export class PackingComponent implements OnInit {
                     this.itemName = response.content.itemName;
                     this.packedItemCodeValidated = true;
                 } else {
-                    console.warn('el item ' + this.itemCode + ' no se encuentra pendiente por packing en la orden y ubicacion seleccionadas');
+                    //console.warn('el item ' + this.itemCode + ' no se encuentra pendiente por packing en la orden y ubicacion seleccionadas');
                     this.itemCodeErrorMessage = 'La referencia ingresada no se encuentra pendiente por packing para la orden y el carrito seleccionados';
                 }
-            }, error => {
-                console.error('ocurrio un error al validar la ubicacion. ', error);
-            }
+            }, error => { console.error('ocurrio un error al validar la ubicacion. ', error); }
         );
     }
 
     public validateItemQuantity() {
         $('#cantidad').modal('hide');
-        this.quantityErrorMessage = '';
-        console.log('validando la cantidad ');
-        if (!this.itemQuantity || this.itemQuantity <= 0 || this.itemQuantity > this.expectedItemQuantity) {
-            this.quantityErrorMessage = 'La cantidad que ingresaste es superior a la cantidad pendiente (' + this.expectedItemQuantity + ') o no es válida';
+        this.errorMessage = '';
+
+        if (this.itemQuantity == null || this.itemQuantity <= 0 || this.qtyBox == null || this.qtyBox <= 0) {
+            this.errorMessage = 'Debe ingresar todos los campos obligatorios.'
+            return;
+        }
+        if (this.picked < this.itemQuantity) {
+            this.errorMessage = 'La cantidad que ingresaste es superior a la cantidad pendiente (' + this.picked + ') o no es válida';
             return;
         } else {
             this.packedItemQuantityValidated = true;
+            this.addItemToBox();
         }
-        this.canBoxesBeAdded();
     }
 
     private canBoxesBeAdded() {
@@ -228,7 +227,6 @@ export class PackingComponent implements OnInit {
         } else {
             this.addNewBoxEnabled = true;
         }
-        console.log('canBoxesBeAdded? ' + this.addNewBoxEnabled);
     }
 
     public addBox() {
@@ -253,54 +251,48 @@ export class PackingComponent implements OnInit {
     }
 
     public addItemToBox() {
-        if (this.boxes.length > 0) {
-            $('#confirm_add').modal('hide');
-            $('#modal_transfer_process').modal({
-                backdrop: 'static',
-                keyboard: false,
-                show: true
-            });
-            const packingRecord = new PackingRecord();
-            packingRecord.idPackingList = this.idPackingList;
-            packingRecord.binCode = this.binCode;
-            packingRecord.itemCode = this.itemCode;
-            packingRecord.itemName = this.itemName;
-            packingRecord.quantity = this.itemQuantity;
-            packingRecord.boxNumber = this.boxes[this.addToBox].boxNumber;
-            packingRecord.customerId = this.selectedCustomer;
-            packingRecord.orderNumber = this.selectedOrder;
-            packingRecord.employee = this.identity.username;
-            packingRecord.idPackingOrder = this.idPackingOrder;
+        $('#confirm_add').modal('hide');
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+        const packingRecord = new PackingRecord();
+        packingRecord.idPackingList = this.idPackingList;
+        packingRecord.binCode = this.binCode;
+        packingRecord.itemCode = this.itemCode;
+        packingRecord.itemName = this.itemName;
+        packingRecord.quantity = this.itemQuantity;
+        packingRecord.boxNumber = this.qtyBox;
+        packingRecord.customerId = this.selectedCustomer;
+        packingRecord.orderNumber = this.selectedOrder;
+        packingRecord.employee = this.identity.username;
+        packingRecord.idPackingOrder = this.idPackingOrder;
 
-            this._packingService.createPackingRecord(packingRecord).subscribe(
-                response => {
-                    $('#modal_transfer_process').modal('hide');
-                    console.log(response.content);
-                    if (response.code === 0) {
-                        this.idPackingList = response.content.idPackingList;
-                        this.boxes[this.addToBox].addItem(this.itemCode, this.itemQuantity);
-
-                        this.reset();
-                        this.isPackingComplete();
-                    } else {
-                        this.processDeliveryStatus = 'error';
-                        this.deliveryErrorMessage = response.content;
-                        if (response.code == -2) {
-                            //mostrar panel de confirmacion para limpiar proceso de packing
-                            $('#process_status').modal('hide');
-                            $('#clean_confirmation').modal({
-                                backdrop: 'static',
-                                keyboard: false,
-                                show: true
-                            });
-                        }
+        this._packingService.createPackingRecord(packingRecord).subscribe(
+            response => {
+                $('#modal_transfer_process').modal('hide');
+                if (response.code === 0) {
+                    this.idPackingList = response.content.idPackingList;
+                    $('#cantidad').modal('hide');
+                    this.showAllItems();
+                } else {
+                    this.processDeliveryStatus = 'error';
+                    this.deliveryErrorMessage = response.content;
+                    if (response.code == -2) {
+                        $('#process_status').modal('hide');
+                        $('#clean_confirmation').modal({
+                            backdrop: 'static',
+                            keyboard: false,
+                            show: true
+                        });
                     }
-                }, error => {
-                    $('#modal_transfer_process').modal('hide');
-                    console.error(error);
                 }
-            );
-        }
+            }, error => {
+                $('#modal_transfer_process').modal('hide');
+                console.error(error);
+            }
+        );
     }
 
     private reset() {
@@ -320,9 +312,8 @@ export class PackingComponent implements OnInit {
 
     private isPackingComplete() {
         this._packingService.arePackingOrdersComplete().subscribe(
-            result => {
-                console.log(result);
-                this.packingOrdersComplete = result.content;
+            response => {
+                this.packingOrdersComplete = response.content;
             }, error => { console.error(error); }
         );
     }
@@ -334,18 +325,17 @@ export class PackingComponent implements OnInit {
                 break;
             }
         }
+        this.showAllItems();
     }
 
     public showAllItems() {
         this.orderItemsList = new Array<any>();
         this._packingService.listOrderItems(this.idPackingOrder).subscribe(
             response => {
+                console.log('************');
+                console.log(response.content);
+                console.log('************');
                 this.orderItemsList = response.content;
-                $('#order_items').modal({
-                    backdrop: 'static',
-                    keyboard: false,
-                    show: true
-                });
             }, error => { console.error(error); }
         );
     }
@@ -353,8 +343,6 @@ export class PackingComponent implements OnInit {
     public showPackingDetail(boxIndex) {
         this.selectedBox = this.boxes[boxIndex];
         this.selectedBoxItems = this.selectedBox.items;
-        console.log(this.selectedBox);
-        console.log(this.selectedBoxItems);
         $('#packing_detail').modal('show');
     }
 
@@ -370,20 +358,20 @@ export class PackingComponent implements OnInit {
             show: true
         });
         this.deliveryErrorMessage = '';
-        console.log('creando documento sap para idPackingOrder=' + this.idPackingOrder);
+
         this._packingService.createDelivery(this.idPackingOrder).subscribe(
-            result => {
-                console.log(result);
-                if (result.code == 0) {
+            response => {
+                if (response.code == 0) {
                     this.processDeliveryStatus = 'done';
                     this.closePackingOrder(this.idPackingOrder, this.identity.username);
-                    this.createInvoice(result.content);
+                    this.createInvoice(response.content);
                     this.printLabels();
+                    this.idPackingOrder = null;
+                    this.customersListDisabled = true;
                 } else {
                     this.processDeliveryStatus = 'error';
-                    this.deliveryErrorMessage = result.content;
-                    if (result.code == -2) {
-                        //mostrar panel de confirmacion para limpiar proceso de packing
+                    this.deliveryErrorMessage = response.content;
+                    if (response.code == -2) {
                         $('#process_status').modal('hide');
                         $('#clean_confirmation').modal({
                             backdrop: 'static',
@@ -408,7 +396,7 @@ export class PackingComponent implements OnInit {
             keyboard: false,
             show: true
         });
-        console.log('cancelando packing order ' + this.idPackingOrder);
+
         this._packingService.cleanPackingOrder(this.idPackingOrder).subscribe(
             result => {
                 $('#modal_transfer_process').modal('hide');
@@ -421,11 +409,9 @@ export class PackingComponent implements OnInit {
     }
 
     public loadPrinters() {
-        console.log('listando impresoras habilitadas...');
         $('#close_confirmation').modal('hide');
         this._printService.listEnabledPrinters().subscribe(
             response => {
-                console.log(response);
                 if (response.code == 0) {
                     this.printersList = response.content;
                     $('#printer_selection').modal('show');
@@ -437,9 +423,9 @@ export class PackingComponent implements OnInit {
     private printLabels() {
         this.processPrintLabelsStatus = 'inprogress';
         this._printService.printLabels(this.idPackingOrder, this.selectedPrinter).subscribe(
-            result => {
-                if (result.code == 0) {
-                    if (result.content) {
+            response => {
+                if (response.code == 0) {
+                    if (response.content) {
                         //todas las etiquetas se imprimieron
                         this.processPrintLabelsStatus = 'done';
                     } else {
@@ -448,7 +434,7 @@ export class PackingComponent implements OnInit {
                     }
                 } else {
                     this.processPrintLabelsStatus = 'error';
-                    this.deliveryErrorMessage += result.content;
+                    this.deliveryErrorMessage += response.content;
                 }
             }, error => {
                 console.error(error);
@@ -482,7 +468,6 @@ export class PackingComponent implements OnInit {
         this.processInvoiceStatus = 'inprogress';
         this._invoiceService.createInvoice(docEntryDelivery).subscribe(
             response => {
-                console.log(response);
                 if (response.code == 0) {
                     this.processInvoiceStatus = 'done';
                 } else {
@@ -503,13 +488,20 @@ export class PackingComponent implements OnInit {
             || this.processPrintLabelsStatus === 'inprogress';
     }
 
-    public selectItemTable(orderList: any) {
+    public selectItem(orderList: any) {
+        this.errorMessage = '';
         this.itemCode = orderList[3];
         this.binCode = orderList[0];
+        this.picked = orderList[2];
 
         $('#order_items').modal('hide');
-        $('#cantidad').modal('show');
-        $('#input_packedQuantity').focus();
+
+        if (this.picked > 0) {
+            this.itemQuantity = null;
+            this.qtyBox = null;
+            $('#cantidad').modal('show');
+            $('#input_packedQuantity').focus();
+        }
 
         this.isVisibleItemCode = true;
         this.packedItemCodeValidated = true;
@@ -537,11 +529,10 @@ export class PackingComponent implements OnInit {
                 if (response.content.length > 0) {
                     this.specialPacking = response.content;
                     $('#magicTable').modal('show');
-                    console.log(this.specialPacking);
                 } else {
-                    this.errorMessage = 'No se encontraron ítems pendientes por empacar';
+                    this.errorMessage = 'No se encontraron ítems pendientes por empacar.';
                 }
-            }, error => { }
+            }, error => { console.error(error); }
         );
     }
 
@@ -599,7 +590,6 @@ export class PackingComponent implements OnInit {
                 $('#modal_transfer_process').modal('hide');
                 if (response.content.length > 0) {
                     for (let i = 0; i < response.content.length; i++) {
-                        console.log('Registrando packExpress para el item [' + response.content[i][3] + "]");
                         const packingRecord = new PackingRecord();
                         packingRecord.idPackingList = this.idPackingList;
                         packingRecord.binCode = response.content[i][0];
@@ -685,5 +675,10 @@ export class PackingComponent implements OnInit {
                 }
             );
         }
+    }
+
+    public getScrollTop() {
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
     }
 }
