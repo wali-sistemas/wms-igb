@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?88kto1');
-  src:  url('fonts/icomoon.eot?88kto1#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?88kto1') format('truetype'),
-    url('fonts/icomoon.woff?88kto1') format('woff'),
-    url('fonts/icomoon.svg?88kto1#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?fft8ey');
+  src:  url('fonts/icomoon.eot?fft8ey#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?fft8ey') format('truetype'),
+    url('fonts/icomoon.woff?fft8ey') format('woff'),
+    url('fonts/icomoon.svg?fft8ey#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -24,6 +24,18 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-lubricante:before {
+  content: "\e95e";
+}
+.icon-llanta:before {
+  content: "\e95f";
+}
+.icon-repuesto:before {
+  content: "\e960";
+}
+.icon-accesorios:before {
+  content: "\e961";
+}
 .icon-encuesta:before {
   content: "\e929";
 }
@@ -287,6 +299,9 @@
 }
 .icon-download:before {
   content: "\e941";
+}
+.icon-edit-3:before {
+  content: "\e95d";
 }
 .icon-eye:before {
   content: "\e94f";
