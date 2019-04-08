@@ -2,7 +2,8 @@ import { Headers } from '@angular/http';
 
 export let GLOBAL = {
     url: 'http://wali.igbcolombia.com:8080/igb/res/',
-    urlShared: 'http://wali.igbcolombia.com:8080/shared/images/'
+    urlShared: 'http://wali.igbcolombia.com:8080/shared/images/',
+    urlManager: 'http://wali.igbcolombia.com:8080/manager/res/'
 };
 
 export class IGBHeaders {
