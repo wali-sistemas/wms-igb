@@ -21,6 +21,7 @@ import { StockTransferLocationComponent } from './components/stock-transfer/loca
 import { StockTransferWarehouseComponent } from './components/stock-transfer/warehouse-transfer/stock-transfer-warehouse.component';
 import { TransferComponent } from './components/stock-transfer/transfer.component';
 import { StockItemComponent } from './components/stock-item/stock-item.component';
+import { ClientComponent } from './components/client/client.component';
 
 import { routing, appRoutingProviders } from './app.routing';
 
@@ -42,7 +43,8 @@ import { routing, appRoutingProviders } from './app.routing';
     StockTransferLocationComponent,
     StockTransferWarehouseComponent,
     TransferComponent,
-    StockItemComponent
+    StockItemComponent,
+    ClientComponent
   ],
   imports: [
     BrowserModule,

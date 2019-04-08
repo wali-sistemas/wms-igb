@@ -15,6 +15,7 @@ import { StockTransferLocationComponent } from './components/stock-transfer/loca
 import { StockTransferWarehouseComponent } from './components/stock-transfer/warehouse-transfer/stock-transfer-warehouse.component';
 import { TransferComponent } from './components/stock-transfer/transfer.component';
 import { StockItemComponent } from './components/stock-item/stock-item.component';
+import { ClientComponent } from './components/client/client.component'; 
 
 const appRoutes: Routes = [
     { path: '', component: LoginComponent },
@@ -30,7 +31,8 @@ const appRoutes: Routes = [
 	{ path: 'transfer', component: TransferComponent },
     { path: 'stock-item', component: StockItemComponent },
     { path: 'resupply', component: ResupplyComponent },
-    { path: 'report', component: ReportComponent }
+    { path: 'report', component: ReportComponent },
+    { path: 'feria', component: ClientComponent }
 ];
 
 export const appRoutingProviders: any[] = [];

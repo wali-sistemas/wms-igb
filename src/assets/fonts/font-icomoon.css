@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?88kto1');
-  src:  url('fonts/icomoon.eot?88kto1#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?88kto1') format('truetype'),
-    url('fonts/icomoon.woff?88kto1') format('woff'),
-    url('fonts/icomoon.svg?88kto1#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?hkvko0');
+  src:  url('fonts/icomoon.eot?hkvko0#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?hkvko0') format('truetype'),
+    url('fonts/icomoon.woff?hkvko0') format('woff'),
+    url('fonts/icomoon.svg?hkvko0#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -24,6 +24,18 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-lubricante:before {
+  content: "\e95e";
+}
+.icon-llanta:before {
+  content: "\e95f";
+}
+.icon-repuesto:before {
+  content: "\e960";
+}
+.icon-accesorios:before {
+  content: "\e961";
+}
 .icon-encuesta:before {
   content: "\e929";
 }
@@ -288,6 +300,9 @@
 .icon-download:before {
   content: "\e941";
 }
+.icon-edit-3:before {
+  content: "\e95d";
+}
 .icon-eye:before {
   content: "\e94f";
 }
@@ -326,4 +341,148 @@
 }
 .icon-groups:before {
   content: "\e956";
+}
+.icon-www:before {
+  content: "\e93a";
+}
+.icon-uno:before {
+  content: "\e93f";
+}
+.icon-dos-cuatro:before {
+  content: "\e93b";
+}
+.icon-mas-cinco:before {
+  content: "\e93c";
+}
+.icon-mujer:before {
+  content: "\e93d";
+}
+.icon-hombre:before {
+  content: "\e93e";
+}
+.icon-bisturi:before {
+  content: "\e900";
+}
+.icon-caja_fuerte:before {
+  content: "\e901";
+}
+.icon-tool_box:before {
+  content: "\e902";
+}
+.icon-caja_menor:before {
+  content: "\e903";
+}
+.icon-camisa:before {
+  content: "\e904";
+}
+.icon-careta:before {
+  content: "\e905";
+}
+.icon-cargador:before {
+  content: "\e906";
+}
+.icon-cartera:before {
+  content: "\e907";
+}
+.icon-chaqueta:before {
+  content: "\e908";
+}
+.icon-e_mail:before {
+  content: "\e909";
+}
+.icon-cuaderno:before {
+  content: "\e90a";
+}
+.icon-cuenta_bancaria:before {
+  content: "\e90b";
+}
+.icon-d_usb:before {
+  content: "\e90c";
+}
+.icon-extension:before {
+  content: "\e90d";
+}
+.icon-gafas:before {
+  content: "\e90e";
+}
+.icon-guantes:before {
+  content: "\e90f";
+}
+.icon-ipad:before {
+  content: "\e910";
+}
+.icon-ipad_mini:before {
+  content: "\e911";
+}
+.icon-metro:before {
+  content: "\e912";
+}
+.icon-micropunta:before {
+  content: "\e913";
+}
+.icon-opticon:before {
+  content: "\e914";
+}
+.icon-pantalon:before {
+  content: "\e915";
+}
+.icon-parker:before {
+  content: "\e916";
+}
+.icon-pda:before {
+  content: "\e917";
+}
+.icon-pilas:before {
+  content: "\e918";
+}
+.icon-portaminas:before {
+  content: "\e919";
+}
+.icon-p_oidos:before {
+  content: "\e91a";
+}
+.icon-resaltador:before {
+  content: "\e91b";
+}
+.icon-skype:before {
+  content: "\e91c";
+}
+.icon-t_asus:before {
+  content: "\e91d";
+}
+.icon-tapa_boca:before {
+  content: "\e91e";
+}
+.icon-t_credito:before {
+  content: "\e91f";
+}
+.icon-telefono:before {
+  content: "\e920";
+}
+.icon-t_panasonic:before {
+  content: "\e921";
+}
+.icon-usuarios:before {
+  content: "\e922";
+}
+.icon-vonage:before {
+  content: "\e923";
+}
+.icon-zapatos:before {
+  content: "\e924";
+}
+.icon-radio_uncheck:before {
+  content: "\e925";
+}
+.icon-radio_checked:before {
+  content: "\e926";
+}
+.icon-block:before {
+  content: "\e14b";
+}
+.icon-packingList:before {
+  content: "\e9b8";
+}
+.icon-delivery:before {
+  content: "\e963";
 }
