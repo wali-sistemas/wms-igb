@@ -30,7 +30,7 @@ export class NavBarComponent implements OnInit {
       this._router.navigate(['/']);
     }
 
-    if (this.identity.selectedCompany == 'VARROC') {
+    if (this.identity.selectedCompany == 'VARROC' || this.identity.selectedCompany == 'VARROCPruebas') {
       this.logo = 'logo-mtz.png';
     } else {
       this.logo = 'logo-igb.png';

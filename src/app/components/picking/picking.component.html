@@ -166,6 +166,27 @@
     </div>
 </div>
 
+<!--Modal error-->
+<div id="modal_error" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    data-backdrop="static" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="text-align: center;">
+                <span class="icon-alert-triangle" style="font-size: 40px;"></span>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger" role="alert" *ngIf="errorMessageBinLocation">
+                    {{errorMessageBinLocation}}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-danger btn-lg" (click)="resetSesionId()">Reiniciar sesionID</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="container content" *ngIf="errorMessagePickingCarts">
     <div class="alert alert-danger" role="alert" *ngIf="errorMessagePickingCarts">
         {{errorMessagePickingCarts}}
@@ -250,9 +271,6 @@
                             </button>
                         </span>
                     </div>
-                </div>
-                <div class="alert alert-danger" role="alert" *ngIf="errorMessageBinLocation">
-                    {{errorMessageBinLocation}}
                 </div>
             </form>
         </div>

@@ -1,4 +1,11 @@
-<!--<igb-navbar></igb-navbar>-->
+<nav class="topnav visible-md visible-lg">
+    <a class="topnav-logo"><img src="/assets/images/logo-igb.png" /></a>
+</nav>
+<nav class="topnav visible-xs visible-sm">
+    <a class="topnav-logo"><img src="/assets/images/logo-igb.png" /></a>
+</nav>
+<div id="myNav" class="overlay visible-xs visible-sm">
+</div>
 
 <script src="assets/js/scroll.js"></script>
 
@@ -40,9 +47,9 @@
     <form id="form">
         <div class="row">
             <div class="col-xs-12 margin-bottom-10">
-                <input type="checkbox" name="authorizeData" [(ngModel)]="authorizeData" (change)="getData()">
-                Autoriza a IGB S.A.S al uso de los datos.<br />
-                <i>(Artículo 20 Decreto Reglamentario 1377 de 2013 de la Ley de Habeas Data)</i>
+                <input id="data" type="checkbox" name="authorizeData" [(ngModel)]="authorizeData" (change)="getData()">
+                <label for="data" class="lblData">Autoriza a IGB S.A.S al uso de los datos.<br />
+                    <i>(Artículo 20 Decreto Reglamentario 1377 de 2013 de la Ley de Habeas Data)</i></label>
             </div>
         </div>
         <br />
@@ -87,6 +94,13 @@
         <br />
         <div class="row">
             <div class="col-xs-12 margin-bottom-10">
+                <input type="text" class="form-control input-lg" [(ngModel)]="city" autocomplete="off" name="city"
+                    autocorrect="off" autocapitalize="none" placeholder="Ciudad" [disabled]="!authorizeData">
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-xs-12 margin-bottom-10">
                 <input type="number" class="form-control input-lg" [(ngModel)]="phone" autocomplete="off" name="phone"
                     autocorrect="off" autocapitalize="none" placeholder="Teléfono de contacto" [class.required-field]="!validPhone"
                     [disabled]="!authorizeData" required>
@@ -95,8 +109,9 @@
         <br />
         <div class="row">
             <div class="col-xs-12 margin-bottom-10">
-                <input type="text" class="form-control input-lg" [(ngModel)]="mail" autocomplete="off" name="mail"
-                    autocorrect="off" autocapitalize="none" placeholder="Correo electrónico" [disabled]="!authorizeData">
+                <input type="email" class="form-control input-lg" [(ngModel)]="mail" autocomplete="off" name="mail"
+                    autocorrect="off" autocapitalize="none" placeholder="Correo electrónico" pattern="[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*@[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{1,5}"
+                    [class.required-field]="!validMail" [disabled]="!authorizeData" required>
             </div>
         </div>
         <br />

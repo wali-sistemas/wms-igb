@@ -15,6 +15,7 @@ export class ClientComponent implements OnInit {
     public whsName: string;
     public document: string;
     public selectedRegion: string = "";
+    public city: string;
     public phone: string;
     public mail: string;
     public warningMessage: string;
@@ -24,6 +25,7 @@ export class ClientComponent implements OnInit {
     public validContact: boolean = true;
     public validPhone: boolean = true;
     public validDocument: boolean = true;
+    public validMail: boolean = true;
     public validSelectRegion: boolean = true;
     public authorizeData: boolean = false;
 
@@ -91,12 +93,13 @@ export class ClientComponent implements OnInit {
 
         let clientFeriaDTO = {
             "documento": this.document,
-            "nombreCompleto": this.contact,
+            "nombreCompleto": this.contact.toUpperCase(),
             "telefono": this.phone,
-            "correo": this.mail,
-            "almacen": this.whsName,
+            "correo": this.mail.toUpperCase(),
+            "almacen": this.whsName.toUpperCase(),
             "interes": interes.trim(),
-            "regional": this.selectedRegion
+            "regional": this.selectedRegion,
+            "ciudad": this.city
         }
         console.log(clientFeriaDTO);
 
@@ -125,9 +128,6 @@ export class ClientComponent implements OnInit {
         this.errorMessage = "";
         this.exitMessage = "";
         console.log('Autoriza el habeas data', this.authorizeData);
-        if (this.authorizeData) {
-            $('#txtContact').focus();
-        }
     }
 
     public clearForm() {
@@ -141,7 +141,7 @@ export class ClientComponent implements OnInit {
         this.selected = new Map<number, string>();
         this.errorMessage = "";
         this.exitMessage = "";
-        $('#txtContact').focus();
+        this.city = "";
     }
 
     public getScrollTop() {

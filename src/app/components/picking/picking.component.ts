@@ -7,13 +7,14 @@ import { BinLocationService } from '../../services/bin-locations.service';
 import { PickingService } from '../../services/picking.service';
 import { BinLocation } from '../../models/bin-location';
 import { SalesOrder } from '../../models/sales-order';
+import { Healthchek } from '../../services/healthchek.service';
 
 declare var $: any;
 
 @Component({
     templateUrl: './picking.component.html',
     styleUrls: ['./picking.component.css'],
-    providers: [UserService, SalesOrdersService, BinLocationService, StockTransferService, PickingService]
+    providers: [UserService, SalesOrdersService, BinLocationService, StockTransferService, PickingService, Healthchek]
 })
 export class PickingComponent implements OnInit {
     public identity;
@@ -55,7 +56,8 @@ export class PickingComponent implements OnInit {
         private _stockTransferService: StockTransferService,
         private _pickingService: PickingService,
         private _route: ActivatedRoute,
-        private _router: Router) {
+        private _router: Router,
+        private _healthchek: Healthchek) {
         this.availableCarts = new Array<BinLocation>();
     }
 
@@ -274,7 +276,7 @@ export class PickingComponent implements OnInit {
                     $('#modal_transfer_process').modal('hide');
                 } else {
                     $('#modal_transfer_process').modal('hide');
-                    this.errorMessageBinTransfer = response.content;
+                    this.errorMessageBinTransfer = response.content + "Verifique si hay suficiente stock.";
                 }
             }, error => {
                 $('#modal_transfer_process').modal('hide');
@@ -398,12 +400,14 @@ export class PickingComponent implements OnInit {
                     this.resetForm();
                 } else {
                     this.errorMessageBinLocation = response.content;
+                    $('#modal_error').modal('show');
                 }
                 $('#modal_transfer_process').modal('hide');
             }, error => {
                 $('#modal_transfer_process').modal('hide');
                 console.error(error);
                 this.errorMessageBinLocation = JSON.parse(error._body).content;
+                $('#modal_error').modal('show');
             }
         );
     }
@@ -429,8 +433,20 @@ export class PickingComponent implements OnInit {
         $('#binLoc').focus();
     }
 
-    public getPickedItemCode(item){
+    public getPickedItemCode(item) {
         this.pickedItemCode = item.trim();
         $('#input_pickedItem').focus();
+    }
+
+    public resetSesionId() {
+        this._healthchek.resetSessionId().subscribe(
+            response => {
+                $('#modal_error').modal('hide');
+            },
+            error => { 
+                console.error("Ocurrio un error al reiniciar los sesion Id", error);
+                $('#modal_error').modal('hide');
+            }
+        );
     }
 }
