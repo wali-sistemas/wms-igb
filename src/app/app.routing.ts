@@ -15,7 +15,8 @@ import { StockTransferLocationComponent } from './components/stock-transfer/loca
 import { StockTransferWarehouseComponent } from './components/stock-transfer/warehouse-transfer/stock-transfer-warehouse.component';
 import { TransferComponent } from './components/stock-transfer/transfer.component';
 import { StockItemComponent } from './components/stock-item/stock-item.component';
-import { ClientComponent } from './components/client/client.component'; 
+import { ClientIgbComponent } from './components/event-feria/client-igb/client-igb.component';
+import { ClientMtzComponent } from './components/event-feria/client-mtz/client-mtz.component';
 
 const appRoutes: Routes = [
     { path: '', component: LoginComponent },
@@ -28,11 +29,12 @@ const appRoutes: Routes = [
     { path: 'inventory', component: InventoryComponent },
     { path: 'transfer-location', component: StockTransferLocationComponent },
     { path: 'transfer-warehouse', component: StockTransferWarehouseComponent },
-	{ path: 'transfer', component: TransferComponent },
+    { path: 'transfer', component: TransferComponent },
     { path: 'stock-item', component: StockItemComponent },
     { path: 'resupply', component: ResupplyComponent },
     { path: 'report', component: ReportComponent },
-    { path: 'feria', component: ClientComponent }
+    { path: 'feria/igb', component: ClientIgbComponent },
+    { path: 'feria/motozone', component: ClientMtzComponent }
 ];
 
 export const appRoutingProviders: any[] = [];

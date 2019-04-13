@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { User } from '../../models/user.model';
-import { EventService } from '../../services/event.service';
+import { User } from '../../../models/user.model';
+import { EventService } from '../../../services/event.service';
 
 declare var $: any;
 
 @Component({
-    templateUrl: './client.component.html',
-    styleUrls: ['./client.component.css'],
+    templateUrl: './client-igb.component.html',
+    styleUrls: ['./client-igb.component.css'],
     providers: [EventService]
 })
-export class ClientComponent implements OnInit {
+export class ClientIgbComponent implements OnInit {
     public identity;
     public contact: string;
     public whsName: string;
@@ -99,7 +99,8 @@ export class ClientComponent implements OnInit {
             "almacen": this.whsName.toUpperCase(),
             "interes": interes.trim(),
             "regional": this.selectedRegion,
-            "ciudad": this.city
+            "ciudad": this.city,
+            "companyName": "IGB"
         }
         console.log(clientFeriaDTO);
 
@@ -110,7 +111,7 @@ export class ClientComponent implements OnInit {
                     this.clearForm();
                     this.exitMessage = response.content;
                 } else {
-                    this.errorMessage = response.content + "[" + this.document + "]."
+                    this.errorMessage = response.content;
                 }
                 this.getScrollTop();
                 $('#modal_transfer_process').modal('hide');
