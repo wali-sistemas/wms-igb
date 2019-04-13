@@ -21,7 +21,8 @@ import { StockTransferLocationComponent } from './components/stock-transfer/loca
 import { StockTransferWarehouseComponent } from './components/stock-transfer/warehouse-transfer/stock-transfer-warehouse.component';
 import { TransferComponent } from './components/stock-transfer/transfer.component';
 import { StockItemComponent } from './components/stock-item/stock-item.component';
-import { ClientComponent } from './components/client/client.component';
+import { ClientIgbComponent } from './components/event-feria/client-igb/client-igb.component';
+import { ClientMtzComponent } from './components/event-feria/client-mtz/client-mtz.component';
 
 import { routing, appRoutingProviders } from './app.routing';
 
@@ -44,7 +45,8 @@ import { routing, appRoutingProviders } from './app.routing';
     StockTransferWarehouseComponent,
     TransferComponent,
     StockItemComponent,
-    ClientComponent
+    ClientIgbComponent,
+    ClientMtzComponent
   ],
   imports: [
     BrowserModule,
