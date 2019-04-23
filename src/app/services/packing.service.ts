@@ -85,4 +85,9 @@ export class PackingService {
         return this._http.get(this.url + 'packing/cancel-packing-order/' + idPackingOrder, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
+
+    public getUrlPackingList(idPackingOrder: number, username: string) {
+        return this._http.get(this.url + 'packing/pdf/' + username + '/' + idPackingOrder, { headers: new IGBHeaders().loadHeaders() })
+            .map(res => res);
+    }
 }
