@@ -139,7 +139,7 @@
                 <div class="row">
                     <div class="col-xs-12">
                         <form (submit)="validateItemQuantity()">
-                            <input id="input_packedQuantity" type="number" class="form-control input-lg" name="filter"
+                            <input id="input_packedQuantity" type="number" class="form-control input-lg" name="itemQuantity"
                                 placeholder="Confirme cantidad" [(ngModel)]="itemQuantity" autocomplete="off">
                         </form>
                         <br />
@@ -147,8 +147,8 @@
                             <select class="form-control input-lg" [(ngModel)]="qtyBox" name="qtyBox" (change)="confirmAddToBox(qtyBox)">
                                 <option style="display:none" disabled value="null">Selecciona caja a empacar</option>
                                 <option value="0">Nueva caja</option>
-                                <ng-container *ngFor="let box of boxes">
-                                    <option value="{{box.boxNumber}}">{{box.boxDisplayName}}</option>
+                                <ng-container *ngFor="let usedBox of usedBoxesList">
+                                    <option value="{{usedBox.boxNumber}}">{{usedBox.boxDisplayName}}</option>
                                 </ng-container>
                             </select>
                         </form>
@@ -337,7 +337,7 @@
     </div>
     <div class="row">
         <div class="col-xs-12">
-            <button class="btn btn-danger btn-lg" type="button" data-toggle="modal" data-target="#close_confirmation">
+            <button *ngIf="selectedOrder > 0" class="btn btn-danger btn-lg" type="button" data-toggle="modal" data-target="#close_confirmation">
                 Finalizar
             </button>
             <button *ngIf="selectedOrder > 0" class="btn btn-danger btn-lg" type="button" (click)="nextOrden()">
