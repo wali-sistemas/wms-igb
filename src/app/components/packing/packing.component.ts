@@ -221,7 +221,7 @@ export class PackingComponent implements OnInit {
         );
     }
 
-    public confirmAddToBox(idx) { 
+    public confirmAddToBox(idx) {
         this.errorMessage = '';
         this.errorMessageModal = '';
         if (idx >= 0) {
@@ -404,14 +404,7 @@ export class PackingComponent implements OnInit {
                 if (response.code == 0) {
                     this.printersList = response.content;
                     $('#modal_transfer_process').modal('hide');
-
-                    /*for (let i = 0; i < this.orderItemsList.length; i++) {
-                        if (this.orderItemsList[i][6]) {
-
-                        }
-                        console.log('Nro de etiqueta a imprimir: ' + this.orderItemsList[i][6]);
-                    }*/
-
+                    console.log('Nro de etiqueta a imprimir: ' + this.qtyBox);
                     $('#printer_selection').modal('show');
                 }
             }, error => {
