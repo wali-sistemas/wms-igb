@@ -109,7 +109,7 @@
             <div class="order-num"><b>Orden # {{order.docNum}}</b></div>
           </div>
           <div class="col-sm-4"><span *ngIf="order.status == 'warning'" class="glyphicon glyphicon-warning-sign warn"></span>
-            <div class="assigned-employee" *ngIf="order.assignedPickingEmployee"><span class="icon-user"></span>{{order.assignedPickingEmployee}}</div>
+            <div class="assigned-employee" *ngIf="order.assignedPickingEmployee"><span class="icon-user" style="font-size: 18px;"></span>{{order.assignedPickingEmployee}}</div>
           </div>
         </div>
         <br>
