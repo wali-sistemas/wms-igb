@@ -20,3 +20,7 @@
 .grayed-order {
     color: #999;
 }
+
+.radioLoc {
+    border-radius: 6px 0px 0px 6px;
+}

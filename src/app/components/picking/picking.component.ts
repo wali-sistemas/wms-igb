@@ -217,6 +217,7 @@ export class PickingComponent implements OnInit {
         if (this.confirmBinCode !== this.nextBinLocationCode) {
             console.error('no estas en la ubicacion correcta');
             this.errorMessageBinLocation = 'No estás en la ubicación correcta. Revisa el número e intenta de nuevo.';
+            $('#modal_error').modal('show');
             return;
         }
         this.confirmingItemQuantity = true;
@@ -276,12 +277,14 @@ export class PickingComponent implements OnInit {
                     $('#modal_transfer_process').modal('hide');
                 } else {
                     $('#modal_transfer_process').modal('hide');
-                    this.errorMessageBinTransfer = response.content + "Verifique si hay suficiente stock.";
+                    this.errorMessageBinTransfer = response.content;
+                    $('#modal_error').modal('show');
                 }
             }, error => {
                 $('#modal_transfer_process').modal('hide');
                 console.error(error);
                 this.errorMessageBinTransfer = JSON.parse(error._body).content;
+                $('#modal_error').modal('show');
             }
         );
     }
@@ -439,13 +442,21 @@ export class PickingComponent implements OnInit {
     }
 
     public resetSesionId() {
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
         this._healthchek.resetSessionId().subscribe(
             response => {
+                $('#modal_transfer_process').modal('hide');
                 $('#modal_error').modal('hide');
             },
-            error => { 
+            error => {
+                this.errorMessageBinLocation = "";
+                $('#modal_transfer_process').modal('hide');
                 console.error("Ocurrio un error al reiniciar los sesion Id", error);
-                $('#modal_error').modal('hide');
+                this.errorMessageBinLocation = "Ocurrio un error al reiniciar los sesion Id";
             }
         );
     }

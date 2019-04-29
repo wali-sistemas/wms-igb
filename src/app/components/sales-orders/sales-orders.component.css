@@ -3,11 +3,26 @@
 }
 
 .order {
-  height: 175px;
+  min-height: 200px;
   border: 1px solid #ccc;
   margin-bottom: 10px;
-  /*max-height: 100px;
-  overflow-y: hidden;*/
+  padding: 10px;
+}
+
+.order p {
+  font-size: 12px;
+  margin-bottom: 0;
+}
+
+.order hr {
+  margin: 5px 0px;
+}
+
+.order-num {
+  background-color: #ececec;
+  border-radius: 10px;
+  color: #333;
+  text-align: center;
 }
 
 .order:hover {
@@ -52,7 +67,6 @@
   position: absolute;
   top: 35px;
   width: 80%;
-  /*text-align: center;*/
   left: 20px;
 }
 
@@ -74,7 +88,6 @@
   border-top: 1px solid #ddd;
   position: absolute;
   top: 60px;
-  /*width: 80%;*/
   left: 20px;
 }
 
@@ -110,6 +123,8 @@
 
 .assigned-employee {
   color: #037040;
+  font-weight: bold;
+  text-align: right;
 }
 
 .check {
@@ -157,4 +172,13 @@
 
 .scrollTop:hover {
   background-color: #333;
+}
+
+@media only screen and (max-width: 769px) {
+  .date {
+    text-align: center;
+  }
+  .assigned-employee {
+    text-align: center;
+  }
 }
