@@ -80,6 +80,12 @@ export class ClientIgbComponent implements OnInit {
             $('#modal_transfer_process').modal('hide');
             return;
         }
+        if (this.mail == null || this.mail.length <= 0) {
+            this.validMail = false;
+            this.getScrollTop();
+            $('#modal_transfer_process').modal('hide');
+            return;
+        }
 
         for (let key of Array.from(this.selected.keys())) {
             interes += this.selected.get(key) + " ";
@@ -96,7 +102,7 @@ export class ClientIgbComponent implements OnInit {
             "nombreCompleto": this.contact.toUpperCase(),
             "telefono": this.phone,
             "correo": this.mail.toUpperCase(),
-            "almacen": this.whsName.toUpperCase(),
+            "almacen": this.whsName,
             "interes": interes.trim(),
             "regional": this.selectedRegion,
             "ciudad": this.city,
