@@ -93,6 +93,10 @@
                 </div>
             </div>
             <div class="modal-footer">
+                <button *ngIf="selectedOrder > 0" class="btn btn-danger btn-lg" type="button" data-dismiss="modal" data-toggle="modal"
+                    data-target="#close_confirmation" [disabled]="inProgress()">
+                    Intentar Finalizar
+                </button>
                 <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" [disabled]="inProgress()"
                     (click)="cleanItemTable()">
                     Cerrar
@@ -337,7 +341,8 @@
     </div>
     <div class="row">
         <div class="col-xs-12">
-            <button *ngIf="selectedOrder > 0" class="btn btn-danger btn-lg" type="button" data-toggle="modal" data-target="#close_confirmation">
+            <button *ngIf="selectedOrder > 0" class="btn btn-danger btn-lg" type="button" data-toggle="modal"
+                data-target="#close_confirmation">
                 Finalizar
             </button>
             <button *ngIf="selectedOrder > 0" class="btn btn-danger btn-lg" type="button" (click)="nextOrden()">
