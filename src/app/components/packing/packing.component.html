@@ -234,18 +234,46 @@
         </div>
     </div>
 </div>
+<!--Modal ver documentos-->
+<div id="verDoc" class="modal slide" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input id="orderNumber" type="text" class="form-control input-lg" name="box" [(ngModel)]="orderNumber"
+                            autocomplete="off" placeholder="Ingrese # orden">
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-xs-6" style="text-align:  center; font-size:  35px; cursor:  pointer; color:  #da0611;">
+                        <span class="icon-packingList" title="Lista Empaque" data-toggle="modal" data-target="#verDoc"
+                            (click)="openReport('packingList','W')"></span>
+                    </div>
+                    <div class="col-xs-6" style="text-align:  center; font-size:  35px; cursor:  pointer; color:  #da0611;">
+                        <span class="icon-delivery" title="Entrega" data-toggle="modal" data-target="#verDoc" (click)="openReport('delivery','S')"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span class="icon-chevron-up"></span></button>
 <div class="container content">
     <h3>Packing </h3>
     <div class="row">
-        <div class="col-xs-8" style="text-align:  right; font-size:  35px; cursor:  pointer; color:  #da0611;">
+        <div class="col-xs-6" style="text-align:  right; font-size:  35px; cursor:  pointer; color:  #da0611;">
+            <span class="icon-eye" (click)="checkOut()" title="Check-out"></span>
+        </div>
+        <div class="col-xs-2" style="text-align:  right; font-size:  35px; cursor:  pointer; color:  #da0611;">
             <span class="icon-printer" (click)="getReprintOrder()" title="Reimprimir Etiqueta"></span>
         </div>
         <div class="col-xs-2" style="text-align:  right; font-size:  35px; cursor:  pointer; color:  #da0611;">
             <span class="icon-package" *ngIf="selectedOrder > 0" data-toggle="modal" data-target="#caja" title="Express-Pack"></span>
         </div>
         <div class="col-xs-2" style="text-align:  right; font-size:  35px; cursor:  pointer; color:  #da0611;">
-            <span class="icon-layers" title="Listar Ordenes"></span>
+            <span class="icon-layers" title="Ver Documentos" data-toggle="modal" data-target="#verDoc"></span>
         </div>
     </div>
     <div class="row" *ngIf="errorMessage != null && errorMessage.length > 0">
