@@ -17,6 +17,7 @@ import { TransferComponent } from './components/stock-transfer/transfer.componen
 import { StockItemComponent } from './components/stock-item/stock-item.component';
 import { ClientIgbComponent } from './components/event-feria/client-igb/client-igb.component';
 import { ClientMtzComponent } from './components/event-feria/client-mtz/client-mtz.component';
+import { CheckOutComponent } from './components/packing/check-out/check-out.component';
 
 const appRoutes: Routes = [
     { path: '', component: LoginComponent },
@@ -34,7 +35,8 @@ const appRoutes: Routes = [
     { path: 'resupply', component: ResupplyComponent },
     { path: 'report', component: ReportComponent },
     { path: 'feria/igb', component: ClientIgbComponent },
-    { path: 'feria/motozone', component: ClientMtzComponent }
+    { path: 'feria/motozone', component: ClientMtzComponent },
+    { path: 'check-out', component: CheckOutComponent}
 ];
 
 export const appRoutingProviders: any[] = [];
