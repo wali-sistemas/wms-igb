@@ -478,6 +478,36 @@ export class PackingComponent implements OnInit {
         );
     }
 
+    public openReport(documento: string, origen: string) {
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+        if (this.orderNumber != null) {
+            let printReportDTO = {
+                "id": this.orderNumber, "copias": 0, "documento": documento, "companyName": this.identity.selectedCompany, "origen": origen, "imprimir": false
+            }
+            this._reportService.generateReport(printReportDTO).subscribe(
+                response => {
+                    if (response.code == 0) {
+                        let landingUrl = this.urlShared + this.identity.selectedCompany + "/" + documento + "/" + this.orderNumber + ".pdf";
+                        window.open(landingUrl);
+                    }
+                    $('#modal_transfer_process').modal('hide');
+                },
+                error => {
+                    console.error('Ocurrio un error al guardar la lista de empaque.', error);
+                    $('#modal_transfer_process').modal('hide');
+                }
+            );
+        }
+    }
+
+    public checkOut(){
+        this._router.navigate(['/check-out']);
+    }
+
     private createInvoice(docEntryDelivery) {
         this.processInvoiceStatus = 'inprogress';
         this._invoiceService.createInvoice(docEntryDelivery).subscribe(

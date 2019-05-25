@@ -95,4 +95,9 @@ export class PackingService {
         return this._http.get(this.url + 'packing/list-boxes/' + username, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
+
+    public getDetailDelivery(entrega: string) {
+        return this._http.get(this.url + 'packing/get-detail-delivery/' + entrega, { headers: new IGBHeaders().loadHeaders() })
+            .map(res => res.json());
+    }
 }
