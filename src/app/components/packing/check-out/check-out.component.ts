@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { GLOBAL } from '../../../services/global';
+
 import { UserService } from '../../../services/user.service';
 import { PrintService } from '../../../services/print.service';
 
@@ -12,6 +13,7 @@ import { Printer } from 'app/models/printer';
 
 import { PackingService } from '../../../services/packing.service';
 import { from } from 'rxjs/observable/from';
+
 
 declare var $: any;
 
@@ -199,12 +201,6 @@ export class CheckOutComponent implements OnInit {
     }
 
     public confirmCheckOut() {
-        /*$('#modal_transfer_process').modal({
-            backdrop: 'static',
-            keyboard: false,
-            show: true
-        });*/
-
         for (let i = 0; i < this.detailDelivery.length; i++) {
             for (let j = 0; j < this.listScaners.length; j++) {
                 if (this.listScaners[j].item == this.detailDelivery[i].item) {
@@ -243,7 +239,6 @@ export class CheckOutComponent implements OnInit {
                     this.listScaners[i].qty = 0;
                     this.listScaners[i].qty = this.qtyEdit;
                 }
-
             }
         }
         this.closedModal();
@@ -311,7 +306,4 @@ export class CheckOutComponent implements OnInit {
         document.body.scrollTop = 0;
         document.documentElement.scrollTop = 0;
     }
-
-
-
 }
