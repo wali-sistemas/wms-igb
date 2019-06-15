@@ -100,4 +100,14 @@ export class PackingService {
         return this._http.get(this.url + 'packing/get-detail-delivery/' + entrega, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
+
+    public addCheckOutOrder(CheckOutDTO) {
+        return this._http.post(this.url + 'packing/add-checkout-order', CheckOutDTO, { headers: new IGBHeaders().loadHeaders() })
+            .map(res => res.json());
+    }
+
+    public findCheckOut(orderNumber: string) {
+        return this._http.get(this.url + 'packing/find-checkout/' + orderNumber, { headers: new IGBHeaders().loadHeaders() })
+            .map(res => res.json());
+    }
 }

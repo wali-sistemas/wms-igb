@@ -221,3 +221,26 @@
   .list {
       text-align: center
   }
+
+  .input-focus {
+    display: none;
+  }
+
+.new-box{
+    height: 70px;
+    background-color: #333;
+    color: #ddd;
+    font-size: 40px;
+    text-align: center;
+    width: 80px;
+    float: right;
+}
+
+.new-box:hover {
+    color: #ddd;
+    background-color: #da0611;
+}
+
+.text-modal {
+    text-align: center;
+}

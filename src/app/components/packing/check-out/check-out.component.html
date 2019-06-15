@@ -42,6 +42,68 @@
         </div>
     </div>
 </div>
+<!--Modal confirmar check-out-->
+<div id="modal_confirmar" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="text-align: center;">
+                <span class="icon-alert-triangle" style="font-size: 40px;"></span>
+            </div>
+            <div class="modal-body">
+                <p class="text-modal">¿Está seguro que desea confirmar el check-out?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">No</button>
+                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" (click)="loadPrinters()">Si</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal confirmar new-Box-->
+<div id="modal_confirmar_newBox" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="text-align: center;">
+                <span class="icon-alert-triangle" style="font-size: 40px;"></span>
+            </div>
+            <div class="modal-body">
+                <div class="text-modal">
+                    <p>¿Está seguro que desea agregar una nueva caja?</p>
+                    <h3>Caja # {{newBox + 1}}</h3>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">No</button>
+                <button type="button" class="btn btn-danger btn-lg" (click)="addNewBox()">Si</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal imprimir-->
+<div id="modal_printer_selection" class="modal slide" tabindex="-1" role="dialog" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <label for="printer">Se imprimirá en</label>
+                        <select id="printer" class="form-control input-lg" [(ngModel)]="selectedPrinter" name="selectedPrinter">
+                            <option style="display:none" disabled value="">Selecciona una impresora</option>
+                            <option *ngFor="let printer of printersList" value="{{printer.printServiceName}}">
+                                {{printer.printerName}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" style="float: left;">Cancelar</button>
+                <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal" (click)="printOrder()">Continuar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span class="icon-chevron-up"></span></button>
 
@@ -52,7 +114,7 @@
             <form (submit)="getDetailDelivery()">
                 <div class="input-group">
                     <input type="text" class="form-control input-lg" autocomplete="off" id="delivery" name="delivery"
-                        placeholder="Ingrese # entrega" [(ngModel)]="delivery">
+                        placeholder="Ingrese # entrega" [(ngModel)]="delivery" [disabled]="detailDelivery.length > 0">
                     <span class="input-group-btn">
                         <button class="btn btn-default btn-lg" type="button" (click)="reset()">
                             <span class="icon-refresh"></span>
@@ -63,10 +125,37 @@
         </div>
     </div>
     <br />
+    <div class="row" *ngIf="errorMessage != null && errorMessage.length > 0">
+        <div class="col-xs-12">
+            <div class="alert alert-danger" role="alert">
+                <p>{{errorMessage}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="row" *ngIf="exitMessage">
+        <div class="col-xs-12">
+            <div class="alert alert-success">
+                {{exitMessage}}
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-xs-6">
-            <br />
-            <hr />
+            <div class="row">
+                <div class="col-xs-6" style="top: 12px;">
+                    <div>
+                        <button *ngIf="listScaners.length > 0" class="btn btn-default btn-lg" type="button" data-toggle="modal"
+                            data-target="#modal_confirmar"><span class="icon-check-out"></span> Confirmar
+                        </button>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <div class="new-box" *ngIf="listScaners.length > 0" data-toggle="modal" data-target="#modal_confirmar_newBox">
+                        <span class="icon-box"></span>
+                    </div>
+                </div>
+            </div>
+            <hr *ngIf="listScaners.length > 0" style="margin-top: 10px; margin-bottom: 10px;" />
             <div class="list">
                 <div class="row" *ngFor="let det of detailDelivery; let i = index">
                     <div class="col-xs-1">
@@ -86,31 +175,29 @@
             </div>
         </div>
         <div class="col-xs-6">
-            <form (submit)="validateItem(itemCode)">
-                <input type="text" class="form-control input-lg" autocomplete="off" id="itemCode" name="itemCode"
-                    placeholder="Escanea la referencia" [(ngModel)]="itemCode">
+            <form (submit)="validateItem()">
+                <div id="item" class="input-focus">
+                    <input type="text" class="form-control input-lg" autocomplete="off" id="itemCode" name="itemCode"
+                        placeholder="Escanea la referencia" [(ngModel)]="itemCode">
+                </div>
             </form>
             <br />
             <div class="row" *ngFor="let det of listScaners; let i = index">
-                <div class="col-xs-1">
-                    <span class="icon-edit-3" style="font-size: 20px;" (click)="openModal(det.item)"></span>
-                </div>
-                <div class="col-xs-3">
-                    <label for="itemcode">{{det.item}}</label>
-                </div>
-                <div class="col-xs-3">
-                    <label for="itemcode"><span class="badge">{{det.qty}}</span></label>
+                <div class="checkBox">
+                    <div class="col-xs-1">
+                        <span class="icon-edit-3" style="font-size: 20px;" (click)="openModalEditCant(det.item)"></span>
+                    </div>
+                    <div class="col-xs-3">
+                        <label for="itemcode">{{det.item}}</label>
+                    </div>
+                    <div class="col-xs-3">
+                        <label for="itemcode"><span class="badge">{{det.qty}}</span></label>
+                    </div>
+                    <div class="col-xs-3">
+                        <label for="box"><span class="badge">Caja # {{det.box}}</span></label>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <hr />
-    <br />
-    <div class="row">
-        <div class="col-xs-12">
-            <button *ngIf="print" class="btn btn-danger btn-lg" type="button" (click)="confirmCheckOut()">
-                Confirmar Check-out
-            </button>
         </div>
     </div>
 </div>
