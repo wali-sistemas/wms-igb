@@ -51,9 +51,9 @@ export class CheckOutComponent implements OnInit {
         }
         $('#delivery').focus();
         //TODO: bloqueo de actualizacion de pagina.
-        /*window.onbeforeunload = function() {
+        window.onbeforeunload = function() {
             return "¿Desea recargar la página web?";
-        };*/
+        };
     }
 
     private start() {
@@ -142,13 +142,13 @@ export class CheckOutComponent implements OnInit {
         } else {
             //TODO: Homologar item, codigo de barras errado Baterias.(igb #item)
             if (this.itemCode.trim().substr(0, 3) === "igb") {
-                item = this.itemCode.trim().substr(4, this.itemCode.length)
+                item = this.itemCode.trim().substr(3, this.itemCode.length)
             } else {
                 item = this.itemCode.trim();
             }
             let aux = 0;
             for (let i = 0; i < this.detailDelivery.length; i++) {
-                if (this.detailDelivery[i].item != item.toUpperCase()) {
+                if (this.detailDelivery[i].item != item.trim().toUpperCase()) {
                     aux++;
                 }
             }
@@ -158,7 +158,7 @@ export class CheckOutComponent implements OnInit {
         }
 
         for (let i = 0; i < this.listScaners.length; i++) {
-            if (this.listScaners[i].item == item.toUpperCase()) {
+            if (this.listScaners[i].item == item.trim().toUpperCase()) {
                 this.listScaners[i].qty++;
                 this.itemCode = "";
                 $('#itemCode').focus();
