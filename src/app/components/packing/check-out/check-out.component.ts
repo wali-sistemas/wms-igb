@@ -56,6 +56,14 @@ export class CheckOutComponent implements OnInit {
         };
     }
 
+    private redirectIfSessionInvalid(error) {
+        if (error && error.status && error.status === 401) {
+            localStorage.removeItem('igb.identity');
+            localStorage.removeItem('igb.selectedCompany');
+            this._router.navigate(['/']);
+        }
+    }
+
     private start() {
         this.detailDelivery = new Array<PackingDetail>();
         this.listScaners = new Array<PackingDetail>();
@@ -68,10 +76,10 @@ export class CheckOutComponent implements OnInit {
     private compareDifferences() {
         for (let i = 0; i < this.detailDelivery.length; i++) {
             for (let j = 0; j < this.listScaners.length; j++) {
-                if ((this.listScaners[j].item == this.detailDelivery[i].item) && (this.listScaners[j].qty == this.detailDelivery[i].qty)) {
+                if ((this.listScaners[j].item.trim() == this.detailDelivery[i].item.trim()) && (this.listScaners[j].qty == this.detailDelivery[i].qty)) {
                     this.detailDelivery[i].status = 'A';
                     break;
-                } else if ((this.listScaners[j].item == this.detailDelivery[i].item) && (this.listScaners[j].qty > this.detailDelivery[i].qty)) {
+                } else if ((this.listScaners[j].item.trim() == this.detailDelivery[i].item.trim()) && (this.listScaners[j].qty > this.detailDelivery[i].qty)) {
                     this.detailDelivery[i].status = 'E';
                     break;
                 } else {
@@ -109,7 +117,7 @@ export class CheckOutComponent implements OnInit {
                                     for (let i = 0; i < response.length; i++) {
                                         const detail = new PackingDetail();
                                         detail.row = i + 1;
-                                        detail.item = response[i].itemCode;
+                                        detail.item = response[i].itemCode.trim();
                                         detail.qty = response[i].quantity;
                                         detail.status = 'C';
                                         detail.orderNumber = response[i].orderNumber;
@@ -130,6 +138,7 @@ export class CheckOutComponent implements OnInit {
                 error => {
                     $('#modal_transfer_process').modal('hide');
                     console.error('Ocurrio un error validando check-out', error);
+                    this.redirectIfSessionInvalid(error);
                 }
             );
         }
@@ -148,7 +157,7 @@ export class CheckOutComponent implements OnInit {
             }
             let aux = 0;
             for (let i = 0; i < this.detailDelivery.length; i++) {
-                if (this.detailDelivery[i].item != item.trim().toUpperCase()) {
+                if (this.detailDelivery[i].item.trim() != item.trim().toUpperCase()) {
                     aux++;
                 }
             }
@@ -158,7 +167,7 @@ export class CheckOutComponent implements OnInit {
         }
 
         for (let i = 0; i < this.listScaners.length; i++) {
-            if (this.listScaners[i].item == item.trim().toUpperCase()) {
+            if (this.listScaners[i].item.trim() == item.trim().toUpperCase()) {
                 this.listScaners[i].qty++;
                 this.itemCode = "";
                 $('#itemCode').focus();
@@ -203,7 +212,7 @@ export class CheckOutComponent implements OnInit {
     public confirmCheckOut() {
         for (let i = 0; i < this.detailDelivery.length; i++) {
             for (let j = 0; j < this.listScaners.length; j++) {
-                if (this.listScaners[j].item == this.detailDelivery[i].item) {
+                if (this.listScaners[j].item.trim() == this.detailDelivery[i].item.trim()) {
                     this.checkOutDTO = new PackingCheckOut(this.detailDelivery[i].orderNumber, +this.delivery, this.detailDelivery[i].item.trim(), this.detailDelivery[i].qty, this.listScaners[j].qty,
                         null, this.identity.username, null, this.listScaners[j].box, this.identity.selectedCompany);
                     break;
@@ -231,7 +240,7 @@ export class CheckOutComponent implements OnInit {
 
     public editQtyItem(item: string) {
         for (let i = 0; i < this.listScaners.length; i++) {
-            if (this.listScaners[i].item == item.trim().toUpperCase()) {
+            if (this.listScaners[i].item.trim() == item.trim().toUpperCase()) {
                 if (this.qtyEdit <= 0) {
                     this.listScaners.splice(i, 1);
                 }
