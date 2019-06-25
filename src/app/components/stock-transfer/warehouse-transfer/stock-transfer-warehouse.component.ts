@@ -59,12 +59,23 @@ export class StockTransferWarehouseComponent implements OnInit {
         this.listAvailableWarehouses();
     }
 
+    private redirectIfSessionInvalid(error) {
+        if (error && error.status && error.status === 401) {
+            localStorage.removeItem('igb.identity');
+            localStorage.removeItem('igb.selectedCompany');
+            this._router.navigate(['/']);
+        }
+    }
+
     private listAvailableWarehouses() {
         this._genericService.listAvailableWarehouses().subscribe(
             response => {
                 this.warehousesFrom = response.content;
                 this.warehousesTo = response.content;
-            }, error => { console.error(error); }
+            }, error => { 
+                console.error(error);
+                this.redirectIfSessionInvalid(error);
+            }
         );
     }
 
@@ -166,6 +177,7 @@ export class StockTransferWarehouseComponent implements OnInit {
                 },
                 error => {
                     console.error(error);
+                    this.redirectIfSessionInvalid(error);
                     $('#modal_transfer_process').modal('hide');
                     this.stockTransferErrorMessage = 'Lo sentimos. Se produjo un error interno';
                 }
@@ -221,6 +233,7 @@ export class StockTransferWarehouseComponent implements OnInit {
                 }
             }, error => {
                 console.error(error);
+                this.redirectIfSessionInvalid(error);
                 if (error._body) {
                     $('#modal_transfer_process').modal('hide');
                     this.stockTransferErrorMessage = JSON.parse(error._body).content;

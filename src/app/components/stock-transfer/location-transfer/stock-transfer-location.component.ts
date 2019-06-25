@@ -49,6 +49,14 @@ export class StockTransferLocationComponent implements OnInit {
         }
     }
 
+    private redirectIfSessionInvalid(error) {
+        if (error && error.status && error.status === 401) {
+            localStorage.removeItem('igb.identity');
+            localStorage.removeItem('igb.selectedCompany');
+            this._router.navigate(['/']);
+        }
+    }
+
     public validarUbicacion(binCode, type) {
         this.stockTransferErrorMessage = '';
         this.stockTransferExitMessage = '';
@@ -69,6 +77,7 @@ export class StockTransferLocationComponent implements OnInit {
                 }
             }, error => {
                 console.error(error);
+                this.redirectIfSessionInvalid(error);
                 if (type === 'to') {
                     this.toBinId = null;
                     this.stockTransferErrorMessage = 'La ubicación de destino no es válida';
@@ -186,9 +195,10 @@ export class StockTransferLocationComponent implements OnInit {
                 }
             },
             error => {
+                console.error(error);
+                this.redirectIfSessionInvalid(error);
                 $('#modal_transfer_process').modal('hide');
                 this.stockTransferErrorMessage = 'Lo sentimos. Se produjo un error interno.';
-                console.error(error);
             }
         );
     }
@@ -263,6 +273,7 @@ export class StockTransferLocationComponent implements OnInit {
                 }
             }, error => {
                 console.error(error);
+                this.redirectIfSessionInvalid(error);
                 if (error._body) {
                     $('#modal_transfer_process').modal('hide');
                     this.stockTransferErrorMessage = JSON.parse(error._body).content;

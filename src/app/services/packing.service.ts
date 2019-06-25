@@ -96,8 +96,8 @@ export class PackingService {
             .map(res => res.json());
     }
 
-    public getDetailDelivery(entrega: string) {
-        return this._http.get(this.url + 'packing/get-detail-delivery/' + entrega, { headers: new IGBHeaders().loadHeaders() })
+    public getDetailDelivery(orderNumber: string) {
+        return this._http.get(this.url + 'packing/get-detail-delivery/' + orderNumber, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
 
