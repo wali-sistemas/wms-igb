@@ -42,6 +42,14 @@ export class StockItemComponent implements OnInit {
         }
     }
 
+    private redirectIfSessionInvalid(error) {
+        if (error && error.status && error.status === 401) {
+            localStorage.removeItem('igb.identity');
+            localStorage.removeItem('igb.selectedCompany');
+            this._router.navigate(['/']);
+        }
+    }
+
     public validarReferencia() {
         this.itemCode = this.itemCode.replace(/\s/g, '');
     }
@@ -80,6 +88,7 @@ export class StockItemComponent implements OnInit {
                     console.error(error);
                     $('#modal_transfer_process').modal('hide');
                     this.stockItemErrorMessage = 'Lo sentimos. Se produjo un error interno';
+                    this.redirectIfSessionInvalid(error);
                 }
             );
         }

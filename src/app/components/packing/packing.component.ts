@@ -327,6 +327,7 @@ export class PackingComponent implements OnInit {
             }, error => {
                 $('#modal_transfer_process').modal('hide');
                 console.error(error);
+                this.redirectIfSessionInvalid(error);
             }
         );
     }

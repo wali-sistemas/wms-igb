@@ -12,6 +12,7 @@ import { PackingCheckOut } from 'app/models/packing-check-out';
 import { Printer } from 'app/models/printer';
 
 import { PackingService } from '../../../services/packing.service';
+import { ReportService } from '../../../services/report.service';
 import { from } from 'rxjs/observable/from';
 
 
@@ -20,7 +21,7 @@ declare var $: any;
 @Component({
     templateUrl: './check-out.component.html',
     styleUrls: ['./check-out.component.css'],
-    providers: [PackingService, UserService, PrintService]
+    providers: [PackingService, UserService, PrintService, ReportService]
 })
 export class CheckOutComponent implements OnInit {
 
@@ -29,7 +30,8 @@ export class CheckOutComponent implements OnInit {
 
     public qtyEdit: number;
     public newBox: number;
-    public delivery: string;
+    public selectedBox: number;
+    public orderNumber: string;
     public itemCode: string;
     public exitMessage: string;
     public errorMessage: string;
@@ -40,7 +42,7 @@ export class CheckOutComponent implements OnInit {
     public listScaners: Array<PackingDetail>;
     public printersList: Array<Printer>;
 
-    constructor(private _packingService: PackingService, private _router: Router, private _userService: UserService, private _printerService: PrintService) {
+    constructor(private _packingService: PackingService, private _router: Router, private _userService: UserService, private _printerService: PrintService, private _reportService: ReportService) {
         this.start();
     }
 
@@ -49,9 +51,9 @@ export class CheckOutComponent implements OnInit {
         if (this.identity === null) {
             this._router.navigate(['/']);
         }
-        $('#delivery').focus();
+        $('#orderNumber').focus();
         //TODO: bloqueo de actualizacion de pagina.
-        window.onbeforeunload = function() {
+        window.onbeforeunload = function () {
             return "¿Desea recargar la página web?";
         };
     }
@@ -68,23 +70,37 @@ export class CheckOutComponent implements OnInit {
         this.detailDelivery = new Array<PackingDetail>();
         this.listScaners = new Array<PackingDetail>();
         this.newBox = 1;
-        this.exitMessage = '';
-        this.errorMessage = '';
-        this.selectedPrinter = '';
+        this.exitMessage = "";
+        this.errorMessage = "";
+        this.selectedPrinter = "";
     }
 
     private compareDifferences() {
         for (let i = 0; i < this.detailDelivery.length; i++) {
+            let qtyAcumulada = 0;
             for (let j = 0; j < this.listScaners.length; j++) {
-                if ((this.listScaners[j].item.trim() == this.detailDelivery[i].item.trim()) && (this.listScaners[j].qty == this.detailDelivery[i].qty)) {
+                if (this.listScaners[j].item.trim() == this.detailDelivery[i].item.trim()) {
+                    qtyAcumulada += this.listScaners[j].qty;
+                }
+
+                if (this.listScaners[j].item.trim() == this.detailDelivery[i].item.trim() && qtyAcumulada == this.detailDelivery[i].qty) {
                     this.detailDelivery[i].status = 'A';
+                    qtyAcumulada = 0;
                     break;
-                } else if ((this.listScaners[j].item.trim() == this.detailDelivery[i].item.trim()) && (this.listScaners[j].qty > this.detailDelivery[i].qty)) {
+                }
+
+                if (this.listScaners[j].item.trim() == this.detailDelivery[i].item.trim() && qtyAcumulada > this.detailDelivery[i].qty) {
                     this.detailDelivery[i].status = 'E';
+                    qtyAcumulada = 0;
                     break;
                 } else {
                     this.detailDelivery[i].status = 'C';
                 }
+            }
+
+            if (this.listScaners.length <= 0) {
+                this.detailDelivery[i].status = 'C';
+                break;
             }
         }
     }
@@ -102,31 +118,40 @@ export class CheckOutComponent implements OnInit {
             show: true
         });
 
-        if (this.delivery != null || this.delivery.length > 0) {
+        if (this.orderNumber.trim() != null || this.orderNumber.trim().length > 0) {
             //TODO: validando si check-out existe en base de datos.
-            this._packingService.findCheckOut(this.delivery).subscribe(
+            this._packingService.findCheckOut(this.orderNumber.trim()).subscribe(
                 response => {
                     if (response.code === 0) {
                         $('#modal_transfer_process').modal('hide');
-                        this.errorMessage = 'Ya existe un check-out para la entrega #' + this.delivery;
+                        this.errorMessage = 'Ya existe un check-out para la orden #' + this.orderNumber.trim();
                         return;
                     } else {
-                        this._packingService.getDetailDelivery(this.delivery).subscribe(
+                        this._packingService.getDetailDelivery(this.orderNumber.trim()).subscribe(
                             response => {
-                                if (response.length > 0) {
-                                    for (let i = 0; i < response.length; i++) {
+                                if (response.code < 0) {
+                                    this.errorMessage = response.content;
+                                    $('#modal_transfer_process').modal('hide');
+                                    return;
+                                }
+
+                                if (response.lines.length > 0) {
+                                    for (let i = 0; i < response.lines.length; i++) {
                                         const detail = new PackingDetail();
                                         detail.row = i + 1;
-                                        detail.item = response[i].itemCode.trim();
-                                        detail.qty = response[i].quantity;
+                                        detail.item = response.lines[i].itemCode.trim();
+                                        detail.qty = response.lines[i].quantity;
                                         detail.status = 'C';
-                                        detail.orderNumber = response[i].orderNumber;
+                                        detail.box = null;
+                                        detail.orderNumber = +this.orderNumber.trim();
+                                        detail.deliveryNumber = response.docNum;
                                         this.detailDelivery.push(detail);
                                     }
-                                    $('#modal_transfer_process').modal('hide');
-                                    document.getElementById("item").style.display = "inline";
-                                    $('#itemCode').focus();
                                 }
+
+                                $('#modal_transfer_process').modal('hide');
+                                document.getElementById("item").style.display = "inline";
+                                $('#itemCode').focus();
                             },
                             error => {
                                 $('#modal_transfer_process').modal('hide');
@@ -167,7 +192,7 @@ export class CheckOutComponent implements OnInit {
         }
 
         for (let i = 0; i < this.listScaners.length; i++) {
-            if (this.listScaners[i].item.trim() == item.trim().toUpperCase()) {
+            if (this.listScaners[i].item.trim() == item.trim().toUpperCase() && this.listScaners[i].box == this.newBox) {
                 this.listScaners[i].qty++;
                 this.itemCode = "";
                 $('#itemCode').focus();
@@ -181,7 +206,8 @@ export class CheckOutComponent implements OnInit {
             qty: 1,
             status: 'C',
             box: this.newBox,
-            orderNumber: this.detailDelivery[0].orderNumber
+            orderNumber: this.detailDelivery[0].orderNumber,
+            deliveryNumber: this.detailDelivery[0].deliveryNumber
         };
         this.listScaners.unshift(newItem);
         this.itemCode = "";
@@ -192,13 +218,15 @@ export class CheckOutComponent implements OnInit {
     public reset() {
         this.start();
         document.getElementById("item").style.display = "none";
-        this.delivery = "";
-        $('#delivery').focus();
+        this.orderNumber = "";
+        this.itemCode = "";
+        $('#orderNumber').focus();
     }
 
-    public openModalEditCant(item: string) {
+    public openModalEditCant(item: string, box: number) {
         this.qtyEdit = null;
         this.itemCode = item;
+        this.selectedBox = box;
         $('#modal_editar_cant').modal('show');
         $('#qtyEdit').focus();
     }
@@ -213,11 +241,11 @@ export class CheckOutComponent implements OnInit {
         for (let i = 0; i < this.detailDelivery.length; i++) {
             for (let j = 0; j < this.listScaners.length; j++) {
                 if (this.listScaners[j].item.trim() == this.detailDelivery[i].item.trim()) {
-                    this.checkOutDTO = new PackingCheckOut(this.detailDelivery[i].orderNumber, +this.delivery, this.detailDelivery[i].item.trim(), this.detailDelivery[i].qty, this.listScaners[j].qty,
+                    this.checkOutDTO = new PackingCheckOut(this.detailDelivery[i].orderNumber, this.detailDelivery[i].deliveryNumber, this.detailDelivery[i].item.trim(), this.detailDelivery[i].qty, this.listScaners[j].qty,
                         null, this.identity.username, null, this.listScaners[j].box, this.identity.selectedCompany);
                     break;
                 } else {
-                    this.checkOutDTO = new PackingCheckOut(this.detailDelivery[i].orderNumber, +this.delivery, this.detailDelivery[i].item.trim(), this.detailDelivery[i].qty, 0, null,
+                    this.checkOutDTO = new PackingCheckOut(this.detailDelivery[i].orderNumber, this.detailDelivery[i].deliveryNumber, this.detailDelivery[i].item.trim(), this.detailDelivery[i].qty, 0, null,
                         this.identity.username, null, 0, this.identity.selectedCompany);
                 }
             }
@@ -226,6 +254,7 @@ export class CheckOutComponent implements OnInit {
                 response => {
                     if (response.code == 0) {
                         this.reset();
+                        this.openReport(this.checkOutDTO.orderNumber, 'W');
                         this._router.navigate(['/packing']);
                     }
                     $('#modal_transfer_process').modal('hide');
@@ -240,7 +269,7 @@ export class CheckOutComponent implements OnInit {
 
     public editQtyItem(item: string) {
         for (let i = 0; i < this.listScaners.length; i++) {
-            if (this.listScaners[i].item.trim() == item.trim().toUpperCase()) {
+            if (this.listScaners[i].item.trim() == item.trim().toUpperCase() && this.listScaners[i].box == this.selectedBox) {
                 if (this.qtyEdit <= 0) {
                     this.listScaners.splice(i, 1);
                 }
@@ -263,6 +292,8 @@ export class CheckOutComponent implements OnInit {
     }
 
     public loadPrinters() {
+        this.exitMessage = "";
+        this.errorMessage = "";
         console.log('listando impresoras habilitadas...');
         this._printerService.listEnabledPrinters().subscribe(
             response => {
@@ -275,7 +306,6 @@ export class CheckOutComponent implements OnInit {
     }
 
     public printOrder() {
-        //$("#modal_printer_selection").modal('hide');
         $('#modal_transfer_process').modal({
             backdrop: 'static',
             keyboard: false,
@@ -286,7 +316,6 @@ export class CheckOutComponent implements OnInit {
         let orderNumber = this.listScaners[0].orderNumber;
 
         if (orderNumber == null || orderNumber <= 0 || box == null || box <= 0 || this.selectedPrinter == null || this.selectedPrinter.length <= 0) {
-            //$("#reimprimir").modal('hide');
             $('#modal_transfer_process').modal('hide');
             this.errorMessage = 'Debe ingresar todos los datos obligatorios.'
         } else {
@@ -297,18 +326,43 @@ export class CheckOutComponent implements OnInit {
             }
             this._printerService.reprintOrder(PrintDTO).subscribe(
                 response => {
-                    //$('#modal_transfer_process').modal('hide');
-                    //$("#reimprimir").modal('hide');
                     this.confirmCheckOut();
                 },
                 error => {
                     $('#modal_transfer_process').modal('hide');
-                    //$("#reimprimir").modal('hide');
                     this.errorMessage = "Lo sentimos. Se produjo un error interno."
                     console.error('Ocurrio un error imprimiendo etiquetas de empaque.', error);
                 }
             );
         }
+    }
+
+    public openReport(orderNumber: number, origen: string) {
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+        if (orderNumber != null) {
+            let printReportDTO = {
+                "id": orderNumber, "copias": 0, "documento": "checkOut", "companyName": this.identity.selectedCompany, "origen": origen, "imprimir": false
+            }
+
+            this._reportService.generateReport(printReportDTO).subscribe(
+                response => {
+                    if (response.code == 0) {
+                        let landingUrl = this.urlShared + this.identity.selectedCompany + "/" + printReportDTO.documento + "/" + printReportDTO.id + ".pdf";
+                        window.open(landingUrl);
+                    }
+                    $('#modal_transfer_process').modal('hide');
+                },
+                error => {
+                    console.error('Ocurrio un error al guardar la lista de empaque.', error);
+                    $('#modal_transfer_process').modal('hide');
+                }
+            );
+        }
+        $('#modal_transfer_process').modal('hide');
     }
 
     public getScrollTop() {

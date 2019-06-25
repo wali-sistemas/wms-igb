@@ -5,5 +5,6 @@ export class PackingDetail {
     public status: string;
     public box: number;
     public orderNumber: number;
+    public deliveryNumber: number;
     constructor() { }
 }
