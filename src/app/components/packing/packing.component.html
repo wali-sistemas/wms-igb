@@ -1,17 +1,17 @@
 <igb-navbar></igb-navbar>
 <!--Modal confirmacion-->
-<div id="close_confirmation" class="modal slide" tabindex="-1" role="dialog">
+<div id="close_confirmation" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-body">
                 <p>
-                    <b>¿Estás seguro que deseas finalizar?</b> Al hacerlo, se crearán la entrega y factura para los
-                    ítems empacados
-                    y se imprimirán las etiquetas. </p>
+                    <b>¿Estás seguro que deseas finalizar?</b> Al hacerlo, se crearán la entrega y se cerrara el
+                    packing para los ítems empacados.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary btn-lg" (click)="loadPrinters()">Sí, finalizar</button>
-                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" (click)="cleanItemTable()">Cancelar</button>
+                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" (click)="cleanItemTable()"
+                    style="float: left;">Cancelar</button>
+                <button type="button" class="btn btn-primary btn-lg" (click)="createDelivery()">Sí,finalizar</button>
             </div>
         </div>
     </div>
@@ -40,27 +40,26 @@
     </div>
 </div>
 <!--Modal estado procesos-->
-<div id="process_status" class="modal slide" tabindex="-1" role="dialog" data-backdrop="static">
-    <div class="modal-dialog" role="document">
+<div id="process_status" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
         <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Procesando orden</h4>
+            </div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-xs-12">
+                        <span *ngIf="processDeliveryStatus === 'none'" class="glyphicon glyphicon-minus-sign"></span>
                         <img *ngIf="processDeliveryStatus === 'inprogress'" height="22" src="/assets/images/loading.gif">
                         <span *ngIf="processDeliveryStatus === 'done'" class="glyphicon glyphicon-ok"></span>
                         <span *ngIf="processDeliveryStatus === 'error'" class="glyphicon glyphicon-exclamation-sign"></span>
-                        <span class="status-text">Creación entrega</span>
-                        <span class="icon-delivery" style="font-size: 24px;float: right;" (click)="getUrlReport('delivery','S')"
-                            title="Documento de entrega"></span>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-12">
-                        <span *ngIf="processInvoiceStatus === 'none'" class="glyphicon glyphicon-minus-sign"></span>
-                        <img *ngIf="processInvoiceStatus === 'inprogress'" height="22" src="/assets/images/loading.gif">
-                        <span *ngIf="processInvoiceStatus === 'done'" class="glyphicon glyphicon-ok"></span>
-                        <span *ngIf="processInvoiceStatus === 'error'" class="glyphicon glyphicon-exclamation-sign"></span>
-                        <span class="status-text">Creación factura</span>
+                        <span class="status-text">Entrega creada </span><i *ngIf="processDeliveryStatus === 'done'"
+                            style="font-size: 12px; color: #da0611;">({{docEntryDelivery}})</i>
+                        <span *ngIf="processDeliveryStatus === 'done'" class="icon-delivery" style="font-size: 24px;float: right;"
+                            (click)="getUrlReport('delivery','S')" title="Documento de entrega"></span>
                     </div>
                 </div>
                 <div class="row">
@@ -69,12 +68,22 @@
                         <img *ngIf="processClosePackingOrderStatus === 'inprogress'" height="22" src="/assets/images/loading.gif">
                         <span *ngIf="processClosePackingOrderStatus === 'done'" class="glyphicon glyphicon-ok"></span>
                         <span *ngIf="processClosePackingOrderStatus === 'error'" class="glyphicon glyphicon-exclamation-sign"></span>
-                        <span class="status-text">Finalización packing</span>
-                        <span class="icon-packingList" style="font-size: 24px;float: right;" (click)="getUrlReport('packingList','W')"
-                            title="Lista de empaque"></span>
+                        <span class="status-text">Packing finalizado</span>
+                        <span *ngIf="processClosePackingOrderStatus === 'done'" class="icon-packingList" style="font-size: 24px;float: right;"
+                            (click)="getUrlReport('packingList','W')" title="Lista de empaque"></span>
                     </div>
                 </div>
                 <div class="row">
+                    <div class="col-xs-12">
+                        <span *ngIf="processInvoiceStatus === 'none'" class="glyphicon glyphicon-minus-sign"></span>
+                        <img *ngIf="processInvoiceStatus === 'inprogress'" height="22" src="/assets/images/loading.gif">
+                        <span *ngIf="processInvoiceStatus === 'done'" class="glyphicon glyphicon-ok"></span>
+                        <span *ngIf="processInvoiceStatus === 'error'" class="glyphicon glyphicon-exclamation-sign"></span>
+                        <span class="status-text">Factura creada </span><i *ngIf="processInvoiceStatus === 'done'"
+                            style="font-size: 12px; color: #da0611;">({{docEntryInvoice}})</i>
+                    </div>
+                </div>
+                <!--<div class="row">
                     <div class="col-xs-12">
                         <span *ngIf="processPrintLabelsStatus === 'none'" class="glyphicon glyphicon-minus-sign"></span>
                         <img *ngIf="processPrintLabelsStatus === 'inprogress'" height="22" src="/assets/images/loading.gif">
@@ -83,7 +92,8 @@
                         <span *ngIf="processPrintLabelsStatus === 'error'" class="glyphicon glyphicon-exclamation-sign"></span>
                         <span class="status-text">Impresión de etiquetas</span>
                     </div>
-                </div>
+                </div>-->
+                <br />
                 <div class="row" *ngIf="deliveryErrorMessage">
                     <div class="col-xs-12">
                         <div class="alert alert-danger">
@@ -92,15 +102,28 @@
                     </div>
                 </div>
             </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12 text-center">
+                        <div *ngIf="processDeliveryStatus === 'done' && (processInvoiceStatus === 'error' || processInvoiceStatus === 'none')"
+                            class="box-invoice" (click)="createInvoice()">
+                            <span class="icon-invoice" style="font-size: 100px"></span>
+                            <h3 class="title">
+                                Crear Factura
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="modal-footer">
-                <button *ngIf="selectedOrder > 0" class="btn btn-danger btn-lg" type="button" data-dismiss="modal" data-toggle="modal"
-                    data-target="#close_confirmation" [disabled]="inProgress()">
-                    Intentar Finalizar
-                </button>
-                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" [disabled]="inProgress()"
-                    (click)="cleanItemTable()">
-                    Cerrar
-                </button>
+                <div class="row">
+                    <div class="col-xs-12 text-center">
+                        <button *ngIf="deliveryErrorMessage" class="btn btn-danger btn-lg" type="button" data-dismiss="modal"
+                            (click)="resetSesionId()" data-toggle="modal" data-target="#close_confirmation" [disabled]="inProgress()">
+                            Intentar Finalizar
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -270,7 +293,7 @@
             <span class="icon-printer" (click)="getReprintOrder()" title="Reimprimir Etiqueta"></span>
         </div>
         <div class="col-xs-2" style="text-align:  right; font-size:  35px; cursor:  pointer; color:  #da0611;">
-            <span class="icon-package" *ngIf="selectedOrder > 0" data-toggle="modal" data-target="#caja" title="Express-Pack"></span>
+            <span class="icon-package" *ngIf="selectedOrder > 0" (click)="expressPack()" title="Express-Pack"></span>
         </div>
         <div class="col-xs-2" style="text-align:  right; font-size:  35px; cursor:  pointer; color:  #da0611;">
             <span class="icon-layers" title="Ver Documentos" data-toggle="modal" data-target="#verDoc"></span>
@@ -369,12 +392,11 @@
     </div>
     <div class="row">
         <div class="col-xs-12">
-            <button *ngIf="selectedOrder > 0" class="btn btn-danger btn-lg" type="button" data-toggle="modal"
-                data-target="#close_confirmation">
-                Finalizar
-            </button>
             <button *ngIf="selectedOrder > 0" class="btn btn-danger btn-lg" type="button" (click)="nextOrden()">
-                <span class="icon-refresh"></span>
+                Actualizar Orden <span class="icon-refresh"></span>
+            </button>
+            <button *ngIf="selectedOrder > 0" class="btn btn-danger btn-lg" type="button" (click)="modal()">
+                Modal <span class="icon-refresh"></span>
             </button>
         </div>
     </div>
