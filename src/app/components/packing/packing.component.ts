@@ -728,6 +728,7 @@ export class PackingComponent implements OnInit {
     }
 
     public resetSesionId() {
+        $('#process_status').modal('hide');
         this.deliveryErrorMessage = "";
         $('#modal_transfer_process').modal({
             backdrop: 'static',
