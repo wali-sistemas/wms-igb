@@ -521,6 +521,7 @@ export class PackingComponent implements OnInit {
     }
 
     public createInvoice() {
+        this.deliveryErrorMessage = "";
         this.processInvoiceStatus = 'inprogress';
         this._invoiceService.createInvoice(this.docEntryDelivery).subscribe(
             response => {     
@@ -727,6 +728,7 @@ export class PackingComponent implements OnInit {
     }
 
     public resetSesionId() {
+        this.deliveryErrorMessage = "";
         $('#modal_transfer_process').modal({
             backdrop: 'static',
             keyboard: false,
