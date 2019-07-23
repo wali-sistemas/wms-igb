@@ -12,6 +12,7 @@ import { InvoiceService } from '../../services/invoice.service';
 import { PrintService } from '../../services/print.service';
 import { GenericService } from '../../services/generic';
 import { ReportService } from '../../services/report.service';
+import { Healthchek } from '../../services/healthchek.service';
 
 import 'rxjs/Rx'
 import { ResupplyComponent } from '../resupply/resupply.component';
@@ -21,7 +22,7 @@ declare var $: any;
 @Component({
     templateUrl: './packing.component.html',
     styleUrls: ['./packing.component.css'],
-    providers: [UserService, PackingService, InvoiceService, PrintService, GenericService, ReportService]
+    providers: [UserService, PackingService, InvoiceService, PrintService, GenericService, ReportService, Healthchek]
 })
 export class PackingComponent implements OnInit {
 
@@ -52,6 +53,8 @@ export class PackingComponent implements OnInit {
     public idPackingList: number;
     public idPackingOrder: number;
     public picked: number;
+    public docEntryDelivery: number;
+    public docEntryInvoice: number;
     public isVisibleItemCode: boolean = false;
     public addNewBoxEnabled: boolean = false;
     public customersListDisabled: boolean = false;
@@ -67,7 +70,7 @@ export class PackingComponent implements OnInit {
     public selectedBoxItems: Map<string, number> = this.selectedBox.items;
     public identity;
 
-    constructor(private _userService: UserService, private _packingService: PackingService, private _invoiceService: InvoiceService, private _printService: PrintService, private _router: Router, private _generic: GenericService, private _reportService: ReportService) {
+    constructor(private _userService: UserService, private _packingService: PackingService, private _invoiceService: InvoiceService, private _printService: PrintService, private _router: Router, private _generic: GenericService, private _reportService: ReportService, private _healthchek: Healthchek) {
         this.start();
     }
 
@@ -333,7 +336,7 @@ export class PackingComponent implements OnInit {
     }
 
     public createDelivery() {
-        $('#printer_selection').modal('hide');
+        $('#close_confirmation').modal('hide');
         this.processDeliveryStatus = 'inprogress';
         this.processClosePackingOrderStatus = 'none';
         this.processPrintLabelsStatus = 'none';
@@ -348,14 +351,13 @@ export class PackingComponent implements OnInit {
         localStorage.setItem('selectedOrder', JSON.stringify(this.selectedOrder));
 
         this._packingService.createDelivery(this.idPackingOrder).subscribe(
-            response => {
+            response => {    
                 if (response.code == 0) {
                     this.processDeliveryStatus = 'done';
                     this.closePackingOrder(this.idPackingOrder, this.identity.username);
-                    this.createInvoice(response.content);
-                    this.printLabels();
                     this.idPackingOrder = null;
                     this.customersListDisabled = true;
+                    this.docEntryDelivery = response.content;
                 } else {
                     this.processDeliveryStatus = 'error';
                     this.deliveryErrorMessage = response.content;
@@ -449,7 +451,7 @@ export class PackingComponent implements OnInit {
                 this.ngOnInit();
             }, error => {
                 this.processClosePackingOrderStatus = 'error';
-                console.error(error);
+                console.error("Ocurrio un error cerrando el packing.", error);
             }
         );
     }
@@ -505,23 +507,36 @@ export class PackingComponent implements OnInit {
         }
     }
 
-    public checkOut(){
+    public checkOut() {
         this._router.navigate(['/check-out']);
     }
 
-    private createInvoice(docEntryDelivery) {
+    public modal() {
+        this.processDeliveryStatus = 'done';
+        this.processClosePackingOrderStatus = 'done';
+        this.processInvoiceStatus = 'done';
+
+        $('#process_status').modal('show');
+
+    }
+
+    public createInvoice() {
+        this.deliveryErrorMessage = "";
         this.processInvoiceStatus = 'inprogress';
-        this._invoiceService.createInvoice(docEntryDelivery).subscribe(
-            response => {
+        this._invoiceService.createInvoice(this.docEntryDelivery).subscribe(
+            response => {     
                 if (response.code == 0) {
                     this.processInvoiceStatus = 'done';
+                    this.docEntryInvoice = response.content;
                 } else {
                     this.processInvoiceStatus = 'error';
+                    this.deliveryErrorMessage = response.content + ". Inténtelo creandola desde SAP.";
                 }
             },
             error => {
                 this.processInvoiceStatus = 'error';
-                console.error(error);
+                this.deliveryErrorMessage = "Error creando factura por favor inténtelo mas tarde.";
+                console.error("Ocurrio un error al crear la factura.", error);
             }
         );
     }
@@ -563,6 +578,7 @@ export class PackingComponent implements OnInit {
         this.exitMessage = '';
         this.errorMessage = '';
         this.errorMessageModal = '';
+        this.nextOrden();
     }
 
     public selectItemMagicTable(specialPacking: any) {
@@ -608,12 +624,11 @@ export class PackingComponent implements OnInit {
     }
 
     public expressPack() {
-        $("#caja").modal('hide');
-        $('#modal_transfer_process').modal({
+        /*$('#modal_transfer_process').modal({
             backdrop: 'static',
             keyboard: false,
             show: true
-        });
+        });*/
         this._packingService.listOrderItems(this.idPackingOrder).subscribe(
             response => {
                 if (response.content.length > 0) {
@@ -624,7 +639,7 @@ export class PackingComponent implements OnInit {
                         packingRecord.itemCode = response.content[i][3];
                         packingRecord.itemName = this.itemName;
                         packingRecord.quantity = response.content[i][2];
-                        packingRecord.boxNumber = this.qtyBox;
+                        packingRecord.boxNumber = 0;/*this.qtyBox;*/
                         packingRecord.customerId = this.selectedCustomer;
                         packingRecord.orderNumber = this.selectedOrder;
                         packingRecord.employee = this.identity.username;
@@ -633,31 +648,35 @@ export class PackingComponent implements OnInit {
                         this._packingService.createPackingRecord(packingRecord).subscribe(
                             response => {
                                 if (response.code < 0) {
-                                    $('#modal_transfer_process').modal('hide');
+                                    //$('#modal_transfer_process').modal('hide');
+                                    //$("#close_confirmation").modal('hide');
                                     this.errorMessage = "Lo sentimos. Se produjo un error interno."
                                     return;
                                 } else {
-                                    $('#modal_transfer_process').modal('hide');
-                                    this.loadPrinters();
+                                    //$('#modal_transfer_process').modal('hide');
+                                    //$("#close_confirmation").modal('hide');
                                 }
                             },
                             error => {
-                                $('#modal_transfer_process').modal('hide');
+                                //$('#modal_transfer_process').modal('hide');
+                                //$("#close_confirmation").modal('hide');
                                 this.errorMessage = "Lo sentimos. Se produjo un error interno."
-                                console.error(error);
+                                console.error("Ocurrio un error creando el expressPack.", error);
                             }
                         );
                     }
                 } else {
                     this.errorMessage = 'No hay items pendientes por empacar.';
-                    $('#modal_transfer_process').modal('hide');
-                    $("#caja").modal('hide');
+                    //$('#modal_transfer_process').modal('hide');
+                    //$("#close_confirmation").modal('hide');
                 }
             }, error => {
-                $('#modal_transfer_process').modal('hide');
-                console.error(error);
+                //$("#close_confirmation").modal('hide');
+                //$('#modal_transfer_process').modal('hide');
+                console.error("Ocurrio un error listando los ítems para expressPack.", error);
             }
         );
+        $("#close_confirmation").modal('show');
     }
 
     public getReprintOrder() {
@@ -706,6 +725,28 @@ export class PackingComponent implements OnInit {
                 }
             );
         }
+    }
+
+    public resetSesionId() {
+        $('#process_status').modal('hide');
+        this.deliveryErrorMessage = "";
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+        this._healthchek.resetSessionId().subscribe(
+            response => {
+                $('#modal_transfer_process').modal('hide');
+                $('#modal_error').modal('hide');
+            },
+            error => {
+                this.errorMessage = "";
+                $('#modal_transfer_process').modal('hide');
+                console.error("Ocurrio un error al reiniciar los sesion Id", error);
+                this.errorMessage = "Ocurrio un error al reiniciar los sesion Id";
+            }
+        );
     }
 
     public getScrollTop() {

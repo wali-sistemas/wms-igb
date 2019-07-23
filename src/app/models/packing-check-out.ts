@@ -9,6 +9,8 @@ export class PackingCheckOut {
         public empId: string,
         public datetimeCheckout: Date,
         public boxNumber: number,
-        public companyName: string
+        public companyName: string,
+        public startTime: string,
+        public endTime: string
     ) { }
 }

@@ -207,19 +207,17 @@
   .underline-on {
     background-color: #77DD77;
     color: #FFFF;
-    border-radius: 10px;
-    height: 23px;
+    border-radius: 5px;
+    width: 90%;
+    padding-left: 30px;
   }
 
   .underline-off {
     background-color: #ED3B58;
     color: #FFFF;
-    border-radius: 10px;
-    height: 23px;
-  }
-  
-  .list {
-      text-align: center
+    border-radius: 5px;
+    width: 90%; 
+    padding-left: 30px;   
   }
 
   .input-focus {
@@ -243,4 +241,14 @@
 
 .text-modal {
     text-align: center;
+}
+
+.inline {
+    display: inline;
+    text-align: left;
+}
+
+hr {
+    margin-top: 10px;
+    margin-bottom: 10px;
 }

@@ -153,7 +153,21 @@
   
   .scrollTop:hover {
     background-color: #333;
-  }
+}
+
+.box-invoice{
+    height: 175px;
+    margin-bottom: 10px;
+    background-color: #333;
+    color: #ddd;
+    /*font-size: 100px;*/
+    text-align: center;
+}
+
+.box-invoice:hover {
+    color: #ddd;
+    background-color: #da0611;
+}
 
 .box-quantity {
     display: block;

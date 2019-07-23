@@ -41,9 +41,20 @@ export class CheckOutComponent implements OnInit {
     public detailDelivery: Array<PackingDetail>;
     public listScaners: Array<PackingDetail>;
     public printersList: Array<Printer>;
+    //TODO: variables cronometro
+    public minutes: number;
+    public seconds: number;
+    public isPaused: boolean;
+    public buttonLabel: string;
+    public disabledTime: boolean;
+    public timerStart: number;
 
     constructor(private _packingService: PackingService, private _router: Router, private _userService: UserService, private _printerService: PrintService, private _reportService: ReportService) {
         this.start();
+        //TODO: Inicializando cronometro
+        this.resetTimer();
+        setInterval(() => this.tick(), 1000);
+        this.disabledTime = false;
     }
 
     ngOnInit() {
@@ -56,6 +67,19 @@ export class CheckOutComponent implements OnInit {
         window.onbeforeunload = function () {
             return "¿Desea recargar la página web?";
         };
+    }
+
+    private tick() {
+        if (!this.isPaused) {
+            this.buttonLabel = 'Pause';
+
+            if (--this.seconds < 0) {
+                this.seconds = 59;
+                if (--this.minutes < 0) {
+                    //this.resetTimer();
+                }
+            }
+        }
     }
 
     private redirectIfSessionInvalid(error) {
@@ -102,6 +126,24 @@ export class CheckOutComponent implements OnInit {
                 this.detailDelivery[i].status = 'C';
                 break;
             }
+        }
+    }
+
+    //TODO: reset conometro
+    public resetTimer() {
+        this.isPaused = true;
+        this.minutes = this.timerStart;
+        this.seconds = 0;
+        this.buttonLabel = 'Start';
+        this.disabledTime = true;
+        this.togglePause();
+    }
+
+    //TODO: Metodo cronometro
+    public togglePause() {
+        this.isPaused = !this.isPaused;
+        if (this.minutes < 24 || this.seconds < 59) {
+            this.buttonLabel = this.isPaused ? 'Resume' : 'Pause';
         }
     }
 
@@ -152,6 +194,8 @@ export class CheckOutComponent implements OnInit {
                                 $('#modal_transfer_process').modal('hide');
                                 document.getElementById("item").style.display = "inline";
                                 $('#itemCode').focus();
+                                this.timerStart = Math.ceil(((this.detailDelivery.length * 42) / 60));
+                                this.resetTimer();
                             },
                             error => {
                                 $('#modal_transfer_process').modal('hide');
@@ -220,6 +264,8 @@ export class CheckOutComponent implements OnInit {
         document.getElementById("item").style.display = "none";
         this.orderNumber = "";
         this.itemCode = "";
+        this.resetTimer();
+        this.disabledTime = false;
         $('#orderNumber').focus();
     }
 
@@ -240,13 +286,14 @@ export class CheckOutComponent implements OnInit {
     public confirmCheckOut() {
         for (let i = 0; i < this.detailDelivery.length; i++) {
             for (let j = 0; j < this.listScaners.length; j++) {
+                let endTime = this.minutes + ":" + this.seconds;
                 if (this.listScaners[j].item.trim() == this.detailDelivery[i].item.trim()) {
                     this.checkOutDTO = new PackingCheckOut(this.detailDelivery[i].orderNumber, this.detailDelivery[i].deliveryNumber, this.detailDelivery[i].item.trim(), this.detailDelivery[i].qty, this.listScaners[j].qty,
-                        null, this.identity.username, null, this.listScaners[j].box, this.identity.selectedCompany);
+                        null, this.identity.username, null, this.listScaners[j].box, this.identity.selectedCompany, this.timerStart.toString(), endTime);
                     break;
                 } else {
                     this.checkOutDTO = new PackingCheckOut(this.detailDelivery[i].orderNumber, this.detailDelivery[i].deliveryNumber, this.detailDelivery[i].item.trim(), this.detailDelivery[i].qty, 0, null,
-                        this.identity.username, null, 0, this.identity.selectedCompany);
+                        this.identity.username, null, 0, this.identity.selectedCompany, this.timerStart.toString(), endTime);
                 }
             }
 
@@ -265,6 +312,11 @@ export class CheckOutComponent implements OnInit {
                 }
             );
         }
+    }
+
+    public getTimer() {
+        console.log("Tiempo inicial: " + this.timerStart);
+        console.log("Tiempo Final: " + this.minutes + ":" + this.seconds);
     }
 
     public editQtyItem(item: string) {
@@ -345,7 +397,7 @@ export class CheckOutComponent implements OnInit {
         });
         if (orderNumber != null) {
             let printReportDTO = {
-                "id": orderNumber, "copias": 0, "documento": "checkOut", "companyName": this.identity.selectedCompany, "origen": origen, "imprimir": false
+                "id": orderNumber, "copias": 0, "documento": "checkOut", "companyName": this.identity.selectedCompany, "origen": origen, "imprimir": true
             }
 
             this._reportService.generateReport(printReportDTO).subscribe(
