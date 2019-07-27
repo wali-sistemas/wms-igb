@@ -7,8 +7,8 @@ import { UserService } from '../../../services/user.service';
 declare var $: any;
 
 @Component({
-  templateUrl: './inventory-random.component.html',
-  styleUrls: ['./inventory-random.component.css'],
+  templateUrl: './inventory-Random.component.html',
+  styleUrls: ['./inventory-Random.component.css'],
   providers: [StockTransferService, InventoryService, UserService]
 })
 export class InventoryRandomComponent implements OnInit {
