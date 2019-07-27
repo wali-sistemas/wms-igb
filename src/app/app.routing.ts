@@ -15,7 +15,7 @@ import { ReportComponent } from './components/report/report.component';
 import { StockTransferLocationComponent } from './components/stock-transfer/location-transfer/stock-transfer-location.component';
 import { StockTransferWarehouseComponent } from './components/stock-transfer/warehouse-transfer/stock-transfer-warehouse.component';
 import { TransferComponent } from './components/stock-transfer/transfer.component';
-import { StockItemComponent } from './components/stock-item/stock-item.component';
+import { StockItemComponent } from './components/inventory/stock/stock-item.component';
 import { ClientIgbComponent } from './components/event-feria/client-igb/client-igb.component';
 import { ClientMtzComponent } from './components/event-feria/client-mtz/client-mtz.component';
 import { CheckOutComponent } from './components/packing/check-out/check-out.component';
