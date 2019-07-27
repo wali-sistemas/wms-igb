@@ -2,18 +2,22 @@
   margin-top: 60px;
 }
 
-.margin-bottom-5 {
-  margin-bottom: 5px;
-}
-
-.right-component {
-  text-align: right;
-}
-
-.justify-component {
-  text-align: justify;
-}
-
-.center-component {
+.box{
+  height: 175px;
+  margin-bottom: 10px;
+  background-color: #333;
+  color: #ddd;
+  font-size: 100px;
   text-align: center;
+}
+
+.box:hover {
+  color: #ddd;
+  background-color: #da0611;
+}
+
+.title {
+  font-size: 17px;
+  font-family: sans-serif;
+  margin: 0;
 }

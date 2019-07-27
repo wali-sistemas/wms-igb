@@ -8,6 +8,7 @@ import { PurchaseOrderComponent } from './components/purchase-orders/purchase-or
 import { SalesOrdersComponent } from './components/sales-orders/sales-orders.component';
 import { PickingComponent } from './components/picking/picking.component';
 import { PackingComponent } from './components/packing/packing.component';
+import { InventoryRandomComponent } from './components/inventory/random/inventory-Random.component';
 import { InventoryComponent } from './components/inventory/inventory.component';
 import { ResupplyComponent } from './components/resupply/resupply.component';
 import { ReportComponent } from './components/report/report.component';
@@ -18,6 +19,7 @@ import { StockItemComponent } from './components/stock-item/stock-item.component
 import { ClientIgbComponent } from './components/event-feria/client-igb/client-igb.component';
 import { ClientMtzComponent } from './components/event-feria/client-mtz/client-mtz.component';
 import { CheckOutComponent } from './components/packing/check-out/check-out.component';
+import { from } from 'rxjs/observable/from';
 
 const appRoutes: Routes = [
     { path: '', component: LoginComponent },
@@ -27,7 +29,8 @@ const appRoutes: Routes = [
     { path: 'sales-orders', component: SalesOrdersComponent },
     { path: 'picking', component: PickingComponent },
     { path: 'packing', component: PackingComponent },
-    { path: 'inventory', component: InventoryComponent },
+    { path: 'inventory', component: InventoryComponent},
+    { path: 'inventory-random', component: InventoryRandomComponent },
     { path: 'transfer-location', component: StockTransferLocationComponent },
     { path: 'transfer-warehouse', component: StockTransferWarehouseComponent },
     { path: 'transfer', component: TransferComponent },
