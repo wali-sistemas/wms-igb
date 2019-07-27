@@ -351,7 +351,7 @@ export class PackingComponent implements OnInit {
         localStorage.setItem('selectedOrder', JSON.stringify(this.selectedOrder));
 
         this._packingService.createDelivery(this.idPackingOrder).subscribe(
-            response => {    
+            response => {
                 if (response.code == 0) {
                     this.processDeliveryStatus = 'done';
                     this.closePackingOrder(this.idPackingOrder, this.identity.username);
@@ -524,7 +524,7 @@ export class PackingComponent implements OnInit {
         this.deliveryErrorMessage = "";
         this.processInvoiceStatus = 'inprogress';
         this._invoiceService.createInvoice(this.docEntryDelivery).subscribe(
-            response => {     
+            response => {
                 if (response.code == 0) {
                     this.processInvoiceStatus = 'done';
                     this.docEntryInvoice = response.content;
@@ -624,11 +624,11 @@ export class PackingComponent implements OnInit {
     }
 
     public expressPack() {
-        /*$('#modal_transfer_process').modal({
+        $('#modal_transfer_process').modal({
             backdrop: 'static',
             keyboard: false,
             show: true
-        });*/
+        });
         this._packingService.listOrderItems(this.idPackingOrder).subscribe(
             response => {
                 if (response.content.length > 0) {
@@ -648,18 +648,16 @@ export class PackingComponent implements OnInit {
                         this._packingService.createPackingRecord(packingRecord).subscribe(
                             response => {
                                 if (response.code < 0) {
-                                    //$('#modal_transfer_process').modal('hide');
-                                    //$("#close_confirmation").modal('hide');
+                                    $('#modal_transfer_process').modal('hide');
                                     this.errorMessage = "Lo sentimos. Se produjo un error interno."
                                     return;
                                 } else {
-                                    //$('#modal_transfer_process').modal('hide');
-                                    //$("#close_confirmation").modal('hide');
+                                    $('#modal_transfer_process').modal('hide');
+                                    $("#close_confirmation").modal('show');
                                 }
                             },
                             error => {
-                                //$('#modal_transfer_process').modal('hide');
-                                //$("#close_confirmation").modal('hide');
+                                $('#modal_transfer_process').modal('hide');
                                 this.errorMessage = "Lo sentimos. Se produjo un error interno."
                                 console.error("Ocurrio un error creando el expressPack.", error);
                             }
@@ -667,16 +665,13 @@ export class PackingComponent implements OnInit {
                     }
                 } else {
                     this.errorMessage = 'No hay items pendientes por empacar.';
-                    //$('#modal_transfer_process').modal('hide');
-                    //$("#close_confirmation").modal('hide');
+                    $('#modal_transfer_process').modal('hide');
                 }
             }, error => {
-                //$("#close_confirmation").modal('hide');
-                //$('#modal_transfer_process').modal('hide');
+                $('#modal_transfer_process').modal('hide');
                 console.error("Ocurrio un error listando los ítems para expressPack.", error);
             }
         );
-        $("#close_confirmation").modal('show');
     }
 
     public getReprintOrder() {

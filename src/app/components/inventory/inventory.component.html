@@ -1,145 +1,22 @@
 <igb-navbar></igb-navbar>
 
-<div id="modal_process" class="modal fade" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        <div class="progress">
-          <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
-            <span class="sr-only">{{messageProgress}}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="modalConfirmacion" class="modal fade" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        <p class="justify-component">
-          Recuerde que se vaciará la ubicación para poder realizar el inventario.
-        </p>
-        <p class="justify-component">
-          <span class="glyphicon glyphicon-warning-sign" style="color: #f0ad4e"></span> Esta seguro(@) que desea realizar un inventario a la ubicación <b>{{location}}</b>.
-        </p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default btn-lg" data-dismiss="modal">No</button>
-        <button type="button" class="btn btn-primary btn-lg" (click)="createInventory()">Sí</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="modalDiferencias" class="modal fade" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document" *ngIf="differences != null && differences.length > 0">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">Diferencias</h4>
-      </div>
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-xs-12">
-            <table class="table table-bordered table-striped">
-              <tr>
-                <th class="center-component">Ítem</th>
-                <th class="center-component">Esperado</th>
-                <th class="center-component">Encontrado</th>
-              </tr>
-              <tr *ngFor="let difference of differences">
-                <td class="center-component">{{difference.item}}</td>
-                <td class="right-component">{{difference.expected}}</td>
-                <td class="right-component">{{difference.found}}</td>
-              </tr>
-            </table>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default btn-lg" data-dismiss="modal" (click)="cleanData()">Cerrar</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <div class="container content">
-  <div class="row">
-    <div class="col-xs-12 col-sm-6 col-sm-offset-3 margin-bottom-5">
-      <form (submit)="preparateInventory()">
-        <div class="input-group">
-          <input id="txt_location" type="text" class="form-control input-lg" placeholder="Ubicación" [(ngModel)]="location" autocomplete="off" name="location" autocorrect="off" autocapitalize="none" [disabled]="idInventory != null && idInventory != 0">
-          <span class="input-group-btn">
-              <button class="btn btn-default btn-lg" type="button" [disabled]="idInventory != null && idInventory != 0" (click)="inventoryRandom()">Aleatoria</button>
-          </span>
-        </div>
-      </form>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-xs-12 col-sm-6 col-sm-offset-3 margin-bottom-5 right-component">
-      <button class="btn btn-primary btn-lg" (click)="preparateInventory()" [disabled]="idInventory != null && idInventory != 0">Crear</button>
-    </div>
-  </div>
-  <div class="row">
-    <div class="alert alert-danger" role="alert" *ngIf="messageError != null && messageError.length > 0">
-      <p>{{messageError}}</p>
-    </div>
-    <div class="alert alert-info" role="alert" *ngIf="messageInfo != null && messageInfo.length > 0">
-      <p>{{messageInfo}}</p>
-    </div>
-  </div>
-  <form #itemForm="ngForm" (ngSubmit)="addItem()" *ngIf="idInventory">
     <div class="row">
-      <div class="col-xs-12 col-sm-4 col-sm-offset-3 margin-bottom-5">
-        <input type="text" class="form-control input-lg" placeholder="Ítem" [(ngModel)]="item" autocomplete="off" name="item" autocorrect="off" autocapitalize="none">
-      </div>
-      <div class="col-xs-12 col-sm-2">
-        <div class="input-group">
-          <input type="text" class="form-control input-lg" placeholder="Cantidad" [(ngModel)]="quantity" autocomplete="off" name="quantity" autocorrect="off" autocapitalize="none">
-          <span class="input-group-btn">
-            <button class="btn btn-default btn-lg" type="submit">
-              <span class="glyphicon glyphicon-plus"></span>
-          </button>
-          </span>
+        <div class="col-xs-12 col-md-6">
+            <div class="box" [routerLink]="['/inventory-random']">
+                <span class="icon-inventory-boxes" style="font-size: 100px"></span>
+                <h3 class="title">
+                    Aleatorio
+                </h3>
+            </div>
         </div>
-      </div>
+        <div class="col-xs-12 col-md-6">
+            <div class="box" [routerLink]="['/stock-item']">
+                <span class="icon-search-stock" style="font-size: 100px"></span>
+                <h3 class="title">
+                    Consultar
+                </h3>
+            </div>
+        </div>
     </div>
-  </form>
-  <hr/>
-  <div class="row" *ngIf="idInventory">
-    <div class="col-xs-12 col-sm-6 col-sm-offset-3">
-      <b>Última referencia</b>
-    </div>
-    <div class="col-xs-12 col-sm-6 col-sm-offset-3 center-component" *ngIf="itemVisible.item && itemVisible.item.length > 0" style="font-size: 30px">
-      {{itemVisible.item}} <span class="badge" style="font-size: 15px">{{itemVisible.quantity}}</span>
-    </div>
-  </div>
-  <div class="row" *ngIf="idInventory">
-    <div class="col-xs-12 col-sm-6 col-sm-offset-3 right-component margin-bottom-5">
-      <button class="btn btn-default btn-lg" type="button" (click)="inventoryHistory()">
-        <span [ngClass]="{'icon-eye': history || history === null, 'icon-eye-off': history != null && history.length > 0}" class="glyphicon"></span> Histórico
-      </button>
-      <button type="button" class="btn btn-primary btn-lg" (click)="finishInventory()">
-        Finalizar
-      </button>
-    </div>
-  </div>
-  <div class="row" *ngIf="history != null && history.length > 0">
-    <div class="col-xs-12 col-sm-6 col-sm-offset-3">
-      <table class="table table-bordered table-striped">
-        <tr>
-          <th class="center-component">Ítem</th>
-          <th class="center-component">Cantidad</th>
-          <th class="center-component">Fecha</th>
-        </tr>
-        <tr *ngFor="let history of history">
-          <td class="center-component">{{history.item}}</td>
-          <td class="right-component">{{history.quantity}}</td>
-          <td class="right-component">{{history.date | date:'dd-MM-yyyy HH:mm:ss'}}</td>
-        </tr>
-      </table>
-    </div>
-  </div>
 </div>

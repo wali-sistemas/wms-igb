@@ -14,6 +14,7 @@ import { SalesOrdersComponent } from './components/sales-orders/sales-orders.com
 import { SalesOrderComponent } from './components/sales-orders/sales-order.component';
 import { PickingComponent } from './components/picking/picking.component';
 import { PackingComponent } from './components/packing/packing.component';
+import { InventoryRandomComponent } from './components/inventory/random/inventory-Random.component';
 import { InventoryComponent } from './components/inventory/inventory.component';
 import { ResupplyComponent } from './components/resupply/resupply.component';
 import { ReportComponent } from './components/report/report.component';
@@ -41,6 +42,7 @@ import { from } from 'rxjs/observable/from';
     PickingComponent,
     PackingComponent,
     InventoryComponent,
+    InventoryRandomComponent,
     ResupplyComponent,
     ReportComponent,
     StockTransferLocationComponent,
