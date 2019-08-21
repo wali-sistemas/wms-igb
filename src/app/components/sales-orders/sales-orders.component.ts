@@ -37,7 +37,6 @@ export class SalesOrdersComponent implements OnInit {
   }
 
   ngOnInit() {
-    $('#filter').focus();
     this.identity = this._userService.getItentity();
     if (this.identity === null) {
       this._router.navigate(['/']);
@@ -54,6 +53,12 @@ export class SalesOrdersComponent implements OnInit {
   }
 
   private listOpenOrders() {
+    $('#modal_transfer_process').modal({
+      backdrop: 'static',
+      keyboard: false,
+      show: true
+    });
+
     this.orders = new Array<SalesOrder>();
     this.filteredOrders = new Array<SalesOrder>();
     this.selectedOrders = new Map<String, any>();
@@ -61,11 +66,15 @@ export class SalesOrdersComponent implements OnInit {
     this._salesOrdersService.listOpenOrders(this.showApprovedOnly, this.filterGroup).subscribe(
       response => {
         this.orders = response;
+        $('#modal_transfer_process').modal('hide');
+        $('#filter').focus();
         console.log('loaded orders: ', this.orders);
         //TODO: validar ordenes asignadas
         this.filterOrders(true);
       },
       error => {
+        $('#modal_transfer_process').modal('hide');
+        $('#filter').focus();
         console.error(error);
         this.redirectIfSessionInvalid(error);
       }
