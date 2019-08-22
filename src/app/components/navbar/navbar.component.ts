@@ -19,10 +19,9 @@ export class NavBarComponent implements OnInit {
   public receptionModuleAccesible: boolean = false;
   public packingModuleAccesible: boolean = false;
   public inventoryModuleAccesible: boolean = false;
+  public shippingModuleAccesible: boolean = false;
 
-
-  constructor(private _userService: UserService, private _route: ActivatedRoute, private _router: Router) {
-  }
+  constructor(private _userService: UserService, private _route: ActivatedRoute, private _router: Router) { }
 
   ngOnInit() {
     this.identity = this._userService.getItentity();
@@ -50,6 +49,7 @@ export class NavBarComponent implements OnInit {
       this.receptionModuleAccesible = userAccess.receptionModuleAccesible;
       this.packingModuleAccesible = userAccess.packingModuleAccesible;
       this.inventoryModuleAccesible = userAccess.inventoryModuleAccesible;
+      this.shippingModuleAccesible = userAccess.shippingModuleAccesible;
       return;
     }
 
@@ -60,7 +60,8 @@ export class NavBarComponent implements OnInit {
       transferModuleAccesible: false,
       receptionModuleAccesible: false,
       packingModuleAccesible: false,
-      inventoryModuleAccesible: false
+      inventoryModuleAccesible: false,
+      shippingModuleAccesible: false
     };
 
     localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
@@ -103,6 +104,20 @@ export class NavBarComponent implements OnInit {
           localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
         } else {
           this.packingModuleAccesible = false;
+        }
+      }, error => { console.error(error); }
+    );
+
+    //validar si el usuario puede acceder al modulo de shipping
+    this._userService.canAccess(this.identity.username, 'shipping').subscribe(
+      response => {
+        if (response.code == 0) {
+          this.shippingModuleAccesible = true;
+          userAccess = JSON.parse(localStorage.getItem('igb.user.access'));
+          userAccess.shippingModuleAccesible = true;
+          localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
+        } else {
+          this.shippingModuleAccesible = false;
         }
       }, error => { console.error(error); }
     );

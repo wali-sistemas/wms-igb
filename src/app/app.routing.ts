@@ -19,6 +19,7 @@ import { StockItemComponent } from './components/inventory/stock/stock-item.comp
 import { ClientIgbComponent } from './components/event-feria/client-igb/client-igb.component';
 import { ClientMtzComponent } from './components/event-feria/client-mtz/client-mtz.component';
 import { CheckOutComponent } from './components/packing/check-out/check-out.component';
+import { ShippingComponent } from './components/shipping/shipping.component';
 import { from } from 'rxjs/observable/from';
 
 const appRoutes: Routes = [
@@ -29,7 +30,7 @@ const appRoutes: Routes = [
     { path: 'sales-orders', component: SalesOrdersComponent },
     { path: 'picking', component: PickingComponent },
     { path: 'packing', component: PackingComponent },
-    { path: 'inventory', component: InventoryComponent},
+    { path: 'inventory', component: InventoryComponent },
     { path: 'inventory-random', component: InventoryRandomComponent },
     { path: 'transfer-location', component: StockTransferLocationComponent },
     { path: 'transfer-warehouse', component: StockTransferWarehouseComponent },
@@ -39,7 +40,8 @@ const appRoutes: Routes = [
     { path: 'report', component: ReportComponent },
     { path: 'feria/igb', component: ClientIgbComponent },
     { path: 'feria/motozone', component: ClientMtzComponent },
-    { path: 'check-out', component: CheckOutComponent}
+    { path: 'check-out', component: CheckOutComponent },
+    { path: 'shipping', component: ShippingComponent }
 ];
 
 export const appRoutingProviders: any[] = [];

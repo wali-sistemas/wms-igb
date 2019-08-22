@@ -1,5 +1,20 @@
 <igb-navbar></igb-navbar>
 
+<!--Modal procesando-->
+<div id="modal_transfer_process" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-body">
+              <div class="progress">
+                  <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
+                      aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                      <span class="sr-only">Procesando transferencia</span>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
 <!--Modal user-->
 <div id="modal_users" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
@@ -27,7 +42,7 @@
     </div>
   </div>
 </div>
-
+<!--Modal status order-->
 <div id="order_status" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -84,7 +99,7 @@
               <span class="icon-user"></span>
             </button>
           </span>
-          <input type="text" class="form-control input-lg" id="filter" name="filter" placeholder="escribe para filtrar"
+          <input type="text" class="form-control input-lg" id="filter" name="filter" placeholder="Escribe para filtrar"
             [(ngModel)]="filter" (keyup)="filterOrders(false)" autocomplete="off" />
           <span class="input-group-btn">
             <button type="button" class="btn btn-default btn-lg" (click)="toggleEye()" style="border-radius: 0px;">

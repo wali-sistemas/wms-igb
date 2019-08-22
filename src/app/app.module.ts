@@ -25,6 +25,7 @@ import { StockItemComponent } from './components/inventory/stock/stock-item.comp
 import { ClientIgbComponent } from './components/event-feria/client-igb/client-igb.component';
 import { ClientMtzComponent } from './components/event-feria/client-mtz/client-mtz.component';
 import { CheckOutComponent } from './components/packing/check-out/check-out.component';
+import { ShippingComponent } from './components/shipping/shipping.component';
 
 import { routing, appRoutingProviders } from './app.routing';
 import { from } from 'rxjs/observable/from';
@@ -51,7 +52,8 @@ import { from } from 'rxjs/observable/from';
     StockItemComponent,
     ClientIgbComponent,
     ClientMtzComponent,
-    CheckOutComponent
+    CheckOutComponent,
+    ShippingComponent
   ],
   imports: [
     BrowserModule,
