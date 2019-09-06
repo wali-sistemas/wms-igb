@@ -717,10 +717,7 @@ export class PackingComponent implements OnInit {
                 "printerName": this.selectedPrinter,
                 "assigBoxInvoice": this.autoBox
             }
-
-            console.log(RePrintDTO);
-            
-            /*this._printService.reprintOrder(RePrintDTO).subscribe(
+            this._printService.reprintOrder(RePrintDTO).subscribe(
                 response => {
                     $('#modal_transfer_process').modal('hide');
                     this.exitMessage = 'Se reimprimieron las etiquetas exitosamente.';
@@ -730,7 +727,7 @@ export class PackingComponent implements OnInit {
                     this.errorMessage = "Lo sentimos. Se produjo un error interno."
                     console.error(error);
                 }
-            );*/
+            );
         }
     }
 
