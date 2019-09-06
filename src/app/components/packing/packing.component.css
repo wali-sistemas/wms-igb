@@ -211,3 +211,23 @@
     position: relative;
     top: 14px;
 }
+
+.mascarar input[type="checkbox"] {
+	display: none;
+}
+
+.mascarar input[type="checkbox"] + label span {
+	display: inline-block;
+	width: 15px;
+	height: 15px;
+	margin: -1px 4px 0 0;
+	vertical-align: middle;
+	background: url("../../../assets/images/checkbox-uncheck.png");
+	background-size: cover;
+	cursor: pointer;
+}
+
+.mascarar input[type="checkbox"]:checked + label span {
+	background: url("../../../assets/images/checkbox-check.png");
+	background-size: cover;
+}

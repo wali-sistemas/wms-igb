@@ -246,6 +246,12 @@
                                 <option *ngFor="let printer of printersList" value="{{printer.printServiceName}}">
                                     {{printer.printerName}}</option>
                             </select>
+                            <br />
+                            <div *ngIf="disabledAutoBox" class="mascarar text-center">
+                                <input type="checkbox" id="autoBox" name="autoBox" [(ngModel)]="autoBox" checked>
+                                <label for="autoBox" style="font-size: 15px; color: #474B4E;"><span></span>Asignar #
+                                    caja a la factura</label>
+                            </div>
                         </form>
                     </div>
                 </div>

@@ -59,6 +59,8 @@ export class PackingComponent implements OnInit {
     public addNewBoxEnabled: boolean = false;
     public customersListDisabled: boolean = false;
     public packingOrdersComplete: boolean = false;
+    public autoBox: boolean = false;
+    public disabledAutoBox: boolean = false;
     public ordersList: Array<number>;
     public customersList: Array<any>;
     public orderItemsList: Array<any>;
@@ -687,6 +689,12 @@ export class PackingComponent implements OnInit {
                 }
             }, error => { console.error(error); }
         );
+
+        if (this.identity.selectedCompany.includes('VARROC')) {
+            this.disabledAutoBox = true;
+        } else {
+            this.disabledAutoBox = false;
+        }
     }
 
     public reprintOrder() {
@@ -706,9 +714,13 @@ export class PackingComponent implements OnInit {
             let RePrintDTO = {
                 "orderNumber": this.orderNumber,
                 "boxNumber": this.qtyBox,
-                "printerName": this.selectedPrinter
+                "printerName": this.selectedPrinter,
+                "assigBoxInvoice": this.autoBox
             }
-            this._printService.reprintOrder(RePrintDTO).subscribe(
+
+            console.log(RePrintDTO);
+            
+            /*this._printService.reprintOrder(RePrintDTO).subscribe(
                 response => {
                     $('#modal_transfer_process').modal('hide');
                     this.exitMessage = 'Se reimprimieron las etiquetas exitosamente.';
@@ -718,7 +730,7 @@ export class PackingComponent implements OnInit {
                     this.errorMessage = "Lo sentimos. Se produjo un error interno."
                     console.error(error);
                 }
-            );
+            );*/
         }
     }
 
