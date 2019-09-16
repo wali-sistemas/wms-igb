@@ -110,4 +110,9 @@ export class PackingService {
         return this._http.get(this.url + 'packing/find-checkout/' + orderNumber, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
+
+    public findOrdersPendingByInvoice() {
+        return this._http.get(this.url + 'packing/find-orders-pending', { headers: new IGBHeaders().loadHeaders() })
+            .map(res => res.json());
+    }
 }

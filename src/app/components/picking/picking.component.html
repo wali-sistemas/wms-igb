@@ -201,13 +201,13 @@
     <div class="alert alert-warning" role="alert" *ngIf="warningMessageNoOrders">
         {{warningMessageNoOrders}}
     </div>
-    <h3 *ngIf="!warningMessageNoOrders">Picking
+    <h4 *ngIf="!warningMessageNoOrders">Picking
         <span *ngIf="pickingMethod === 'multiple' && assignedOrders.length > 0"> ({{assignedOrders.length}} órdenes)</span>
         <span class="grayed-order" *ngIf="pickingMethod === 'multiple' && assignedOrders.length > 0"> -
             {{nextOrderNumber}}</span>
         <span *ngIf="pickingMethod === 'single'"> (orden #{{selectedOrder}})</span>
         <span class="icon-settings pull-right cursor-pointer" data-toggle="modal" data-target="#modal_config" title="Seleccionar Orden"></span>
-    </h3>
+    </h4>
     <div class="alert alert-danger" role="alert" *ngIf="errorMessageNextItem">
         {{errorMessageNextItem}}
     </div>

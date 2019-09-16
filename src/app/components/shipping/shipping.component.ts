@@ -90,6 +90,9 @@ export class ShippingComponent implements OnInit {
             response => {
                 if (response.code == 0) {
                     this.invoicesShipping = response.content;
+                    if (this.invoicesShipping.length <= 0) {
+                        this.warningMessage = 'No se encontraron facturas para despachar.';
+                    }
                     $('#modal_transfer_process').modal('hide');
                     $('#filter').focus();
                 } else {
