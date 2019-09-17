@@ -1,30 +1,100 @@
 <nav class="topnav visible-md visible-lg">
     <a class="topnav-logo"><img src="/assets/images/{{logo}}" /></a>
-    <h3 style="color: white; position: relative; top: -5px;">Informe Gerencia</h3>
+    <h4 style="color: white; position: relative; top: 8px;">CUADRO DE MANDO</h4>
 </nav>
 <nav class="topnav visible-xs visible-sm">
     <a class="topnav-logo"><img src="/assets/images/{{logo}}" /></a>
-    <h3 style="color: white; position: relative; top: -5px;">Informe Gerencia</h3>
+    <h4 style="color: white; position: relative; top: 8px;">CUADRO DE MANDO</h4>
 </nav>
 <script src="assets/js/chart.min.js"></script>
 <br />
 <!--Menu-->
-<div class="row" style="position: relative; top: 37px;">
-    <div class="list-group text-center" id="list-tab" role="tablist">
-        <a class="list-group-item list-group-item-action" [ngClass]="{active: activeSaleAnnual}" id="list-home-list"
-            data-toggle="list" role="tab" style="border-radius: 0px;" (click)="getActiveSaleAnnual()">Ventas
-            Anuales</a>
-        <a class="list-group-item list-group-item-action" [ngClass]="{active: activeSaleMonth}" id="list-profile-list"
-            data-toggle="list" role="tab" style="border-radius: 0px;" (click)="getActiveSaleMonth()">Ventas
-            Mensuales</a>
-        <a class="list-group-item list-group-item-action" [ngClass]="{active: activeMargeAnnual}" id="list-messages-list"
-            data-toggle="list" role="tab" style="border-radius: 0px;" (click)="getActiveMargeAnnual()">Margen
-            Anual</a>
-        <a class="list-group-item list-group-item-action" [ngClass]="{active: activeMargeMonth}" id="list-settings-list"
-            data-toggle="list" role="tab" style="border-radius: 0px;" (click)="getActiveMargeMonth()">Margen
-            Mensual</a>
+<div id="accordion" style="position: relative; margin-top: 35px;">
+    <div class="card">
+        <div class="card-header" id="headingOne">
+            <h5 class="mb-0 text-center" style="margin-top: 0px; margin-bottom: 0px;">
+                <a class="list-group-item list-group-item-action" data-toggle="collapse" data-target="#collapseOne"
+                    aria-expanded="false" aria-controls="collapseOne" style="width: 100%; color: #333; position: relative; border-radius: 0px; border-left: 0px; border-right: 0px;">
+                    Gerencia <span class="icon-chevron-down" style="font-size: 25px; position: relative; top: -4px; float: right"></span></a>
+            </h5>
+        </div>
+        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body text-center">
+                <div class="list-group text-center" id="list-tab" role="tablist">
+                    <a class="list-group-item list-group-item-action" [ngClass]="{active: activeSaleAnnual}" id="list-home-list"
+                        data-toggle="list" role="tab" style="border-radius: 0px;" (click)="getActiveSaleAnnual()">Ventas
+                        Anuales</a>
+                    <a class="list-group-item list-group-item-action" [ngClass]="{active: activeSaleMonth}" id="list-profile-list"
+                        data-toggle="list" role="tab" style="border-radius: 0px;" (click)="getActiveSaleMonth()">Ventas
+                        Mensuales</a>
+                    <a class="list-group-item list-group-item-action" [ngClass]="{active: activeMargeAnnual}" id="list-messages-list"
+                        data-toggle="list" role="tab" style="border-radius: 0px;" (click)="getActiveMargeAnnual()">Margen
+                        Anual</a>
+                    <a class="list-group-item list-group-item-action" [ngClass]="{active: activeMargeMonth}" id="list-settings-list"
+                        data-toggle="list" role="tab" style="border-radius: 0px;" (click)="getActiveMargeMonth()">Margen
+                        Mensual</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="headingTwo">
+            <h5 class="mb-0 text-center" style="margin-top: 0px; margin-bottom: 0px;">
+                <a class="list-group-item list-group-item-action" data-toggle="collapse" data-target="#collapseTwo"
+                    aria-expanded="false" aria-controls="collapseTwo" style="width: 100%; color: #333; border-radius: 0px; border-left: 0px; border-right: 0px;">
+                    Comercial <span class="icon-chevron-down" style="font-size: 25px; position: relative; top: -4px; float: right"></span></a>
+            </h5>
+        </div>
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+            <div class="card-body text-center">
+                Lo sentimos. Esta en desarrollo.
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="headingThree">
+            <h5 class="mb-0 text-center" style="margin-top: 0px; margin-bottom: 0px;">
+                <a class="list-group-item list-group-item-action" data-toggle="collapse" data-target="#collapseThree"
+                    aria-expanded="false" aria-controls="collapseThree" style="width: 100%; color: #333; border-radius: 0px; border-left: 0px; border-right: 0px;">
+                    Finanzas <span class="icon-chevron-down" style="font-size: 25px; position: relative; top: -4px; float: right"></span></a>
+            </h5>
+        </div>
+        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+            <div class="card-body text-center">
+                Lo sentimos. Esta en desarrollo.
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="headingFor">
+            <h5 class="mb-0 text-center" style="margin-top: 0px; margin-bottom: 0px;">
+                <a class="list-group-item list-group-item-action" data-toggle="collapse" data-target="#collapseFor"
+                    aria-expanded="false" aria-controls="collapseFor" style="width: 100%; color: #333; border-radius: 0px; border-left: 0px; border-right: 0px;">
+                    Cartera <span class="icon-chevron-down" style="font-size: 25px; position: relative; top: -4px; float: right"></span></a>
+            </h5>
+        </div>
+        <div id="collapseFor" class="collapse" aria-labelledby="headingFor" data-parent="#accordion">
+            <div class="card-body text-center">
+                Lo sentimos. Esta en desarrollo.
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="headingFive">
+            <h5 class="mb-0 text-center" style="margin-top: 0px; margin-bottom: 0px;">
+                <a class="list-group-item list-group-item-action" data-toggle="collapse" data-target="#collapseFive"
+                    aria-expanded="false" aria-controls="collapseFive" style="width: 100%; color: #333; border-radius: 0px; border-left: 0px; border-right: 0px;">
+                    Logística <span class="icon-chevron-down" style="font-size: 25px; position: relative; top: -4px; float: right"></span></a>
+            </h5>
+        </div>
+        <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordion">
+            <div class="card-body text-center">
+                Lo sentimos. Esta en desarrollo.
+            </div>
+        </div>
     </div>
 </div>
+
 <!--Modal procesando-->
 <div id="modal_transfer_process" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
