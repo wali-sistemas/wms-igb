@@ -83,12 +83,12 @@ export class ReportManagerComponent implements OnInit {
     private initializeMonth() {
         /***Informe mensual***/
         this.barChartDataComercMonth = [{
-            data: [this.ventasMensuales[0].totalSale, this.ventasMensuales[1].totalSale, this.ventasMensuales[2].totalSale, this.ventasMensuales[3].totalSale, this.ventasMensuales[4].totalSale, this.ventasMensuales[5].totalSale, this.ventasMensuales[6].totalSale, this.ventasMensuales[7].totalSale, this.ventasMensuales[8].totalSale, 0, 0, 0],
+            data: [this.ventasMensuales[0].totalSale, this.ventasMensuales[1].totalSale, this.ventasMensuales[2].totalSale, this.ventasMensuales[3].totalSale, this.ventasMensuales[4].totalSale, this.ventasMensuales[5].totalSale, this.ventasMensuales[6].totalSale, this.ventasMensuales[7].totalSale, this.ventasMensuales[8].totalSale, this.ventasMensuales[9].totalSale, this.ventasMensuales[10].totalSale, this.ventasMensuales[11].totalSale],
             label: 'Ventas Mensuales'
         }];
         /***Informe margen mensual***/
         this.barChartDataComercMargeMonth = [{
-            data: [this.ventasMensuales[0].margeSale, this.ventasMensuales[1].margeSale, this.ventasMensuales[2].margeSale, this.ventasMensuales[3].margeSale, this.ventasMensuales[4].margeSale, this.ventasMensuales[5].margeSale, this.ventasMensuales[6].margeSale, this.ventasMensuales[7].margeSale, this.ventasMensuales[8].margeSale, 0, 0, 0],
+            data: [this.ventasMensuales[0].margeSale, this.ventasMensuales[1].margeSale, this.ventasMensuales[2].margeSale, this.ventasMensuales[3].margeSale, this.ventasMensuales[4].margeSale, this.ventasMensuales[5].margeSale, this.ventasMensuales[6].margeSale, this.ventasMensuales[7].margeSale, this.ventasMensuales[8].margeSale, this.ventasMensuales[9].margeSale, this.ventasMensuales[10].margeSale, this.ventasMensuales[11].margeSale],
             label: 'Margen Mensual',
             colors: { backgroundColor: '#333' }
         }];
