@@ -12,6 +12,7 @@ import { InventoryRandomComponent } from './components/inventory/random/inventor
 import { InventoryComponent } from './components/inventory/inventory.component';
 import { ResupplyComponent } from './components/resupply/resupply.component';
 import { ReportComponent } from './components/report/report.component';
+import { ReportManagerComponent } from './components/report/manager/report.manager.component';
 import { StockTransferLocationComponent } from './components/stock-transfer/location-transfer/stock-transfer-location.component';
 import { StockTransferWarehouseComponent } from './components/stock-transfer/warehouse-transfer/stock-transfer-warehouse.component';
 import { TransferComponent } from './components/stock-transfer/transfer.component';
@@ -38,6 +39,7 @@ const appRoutes: Routes = [
     { path: 'stock-item', component: StockItemComponent },
     { path: 'resupply', component: ResupplyComponent },
     { path: 'report', component: ReportComponent },
+    { path: 'report/manager', component: ReportManagerComponent },
     { path: 'feria/igb', component: ClientIgbComponent },
     { path: 'feria/motozone', component: ClientMtzComponent },
     { path: 'check-out', component: CheckOutComponent },

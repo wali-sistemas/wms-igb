@@ -41,8 +41,10 @@ export class PackingComponent implements OnInit {
     public itemName: string = '';
     public dscripction: string = '';
     public selectedCustomer: string = '';
+    public selectedOrderByInvoice: string = '';
     public errorMessage: string;
     public errorMessageModal: string;
+    public warnMessageOrdersByInvoice: string;
     public exitMessage: string;
     public selectedOrder: number = 0;
     public qtyBox: number = null;
@@ -59,10 +61,13 @@ export class PackingComponent implements OnInit {
     public addNewBoxEnabled: boolean = false;
     public customersListDisabled: boolean = false;
     public packingOrdersComplete: boolean = false;
+    public autoBox: boolean = false;
+    public disabledAutoBox: boolean = false;
     public ordersList: Array<number>;
     public customersList: Array<any>;
     public orderItemsList: Array<any>;
     public specialPacking: Array<any>;
+    public ordersByInvoice: Array<any>;
     public usedBoxesList: Array<PackingBox>;
     public boxes: Array<PackingBox>;
     public printersList: Array<Printer>;
@@ -84,6 +89,7 @@ export class PackingComponent implements OnInit {
         this.selectedCustomer = '';
         this.selectedOrder = 0;
         this.specialPacking = new Array<any>();
+        this.ordersByInvoice = new Array<any>();
     }
 
     ngOnInit() {
@@ -687,6 +693,12 @@ export class PackingComponent implements OnInit {
                 }
             }, error => { console.error(error); }
         );
+
+        if (this.identity.selectedCompany.includes('VARROC')) {
+            this.disabledAutoBox = true;
+        } else {
+            this.disabledAutoBox = false;
+        }
     }
 
     public reprintOrder() {
@@ -706,23 +718,32 @@ export class PackingComponent implements OnInit {
             let RePrintDTO = {
                 "orderNumber": this.orderNumber,
                 "boxNumber": this.qtyBox,
-                "printerName": this.selectedPrinter
+                "printerName": this.selectedPrinter,
+                "assigBoxInvoice": this.autoBox
             }
             this._printService.reprintOrder(RePrintDTO).subscribe(
                 response => {
-                    $('#modal_transfer_process').modal('hide');
-                    this.exitMessage = 'Se reimprimieron las etiquetas exitosamente.';
+                    if (response.code == 0) {
+                        $('#modal_transfer_process').modal('hide');
+                        this.exitMessage = 'Reimprimiendo las etiquetas exitosamente.';
+                    } else {
+                        $('#modal_transfer_process').modal('hide');
+                        this.errorMessage = response.content;
+                    }
                 },
                 error => {
                     $('#modal_transfer_process').modal('hide');
                     this.errorMessage = "Lo sentimos. Se produjo un error interno."
-                    console.error(error);
+                    console.error("Ocurrio un error re-imprimiendo las etiquetas de empaque.", error);
                 }
             );
         }
     }
 
     public resetSesionId() {
+        this.errorMessage = '';
+        this.exitMessage = '';
+        this.warnMessageOrdersByInvoice = '';
         $('#process_status').modal('hide');
         this.deliveryErrorMessage = "";
         $('#modal_transfer_process').modal({
@@ -740,6 +761,65 @@ export class PackingComponent implements OnInit {
                 $('#modal_transfer_process').modal('hide');
                 console.error("Ocurrio un error al reiniciar los sesion Id", error);
                 this.errorMessage = "Ocurrio un error al reiniciar los sesion Id";
+            }
+        );
+    }
+
+    public listOrdersPendingByInvoice() {
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+
+        this.warnMessageOrdersByInvoice = '';
+        this.errorMessage = '';
+        this.exitMessage = '';
+        this.ordersByInvoice = new Array<any>();
+
+        this._packingService.findOrdersPendingByInvoice().subscribe(
+            response => {
+                if (response.code == 0) {
+                    $('#modal_delivery_pending').modal('show');
+                    this.ordersByInvoice = response.content;
+                    if (this.ordersByInvoice.length <= 0) {
+                        this.warnMessageOrdersByInvoice = 'No se encontraron órdenes para facturar.';
+                    }
+                    $('#modal_transfer_process').modal('hide');
+                } else {
+                    this.warnMessageOrdersByInvoice = 'Ocurrio un error listando las órdenes.';
+                    $('#modal_transfer_process').modal('hide');
+                }
+            }, error => {
+                console.error("Ocurrio un error listando las órdenes pendientes por factuar.", error);
+                $('#modal_transfer_process').modal('hide');
+                this.redirectIfSessionInvalid(error);
+            }
+        );
+    }
+
+    public createInvoiceByDelivery(i) {
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+
+        let docNum = this.ordersByInvoice[i][0];
+
+        this._invoiceService.createInvoice(docNum).subscribe(
+            response => {
+                if (response.code == 0) {
+                    this.exitMessage = "Factura #[" + response.content + "] creada éxitosamente.";
+                    $('#modal_transfer_process').modal('hide');
+                } else {
+                    this.errorMessage = response.content;
+                    $('#modal_transfer_process').modal('hide');
+                }
+            }, error => {
+                console.error("Ocurrio un error creando la factura.", error);
+                $('#modal_transfer_process').modal('hide');
+                this.redirectIfSessionInvalid(error);
             }
         );
     }

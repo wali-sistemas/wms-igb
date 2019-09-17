@@ -1,0 +1,173 @@
+<nav class="topnav visible-md visible-lg">
+    <a class="topnav-logo"><img src="/assets/images/{{logo}}" /></a>
+    <h3 style="color: white; position: relative; top: -5px;">Informe Gerencia</h3>
+</nav>
+<nav class="topnav visible-xs visible-sm">
+    <a class="topnav-logo"><img src="/assets/images/{{logo}}" /></a>
+    <h3 style="color: white; position: relative; top: -5px;">Informe Gerencia</h3>
+</nav>
+<script src="assets/js/chart.min.js"></script>
+<br />
+<!--Menu-->
+<div class="row" style="position: relative; top: 37px;">
+    <div class="list-group text-center" id="list-tab" role="tablist">
+        <a class="list-group-item list-group-item-action" [ngClass]="{active: activeSaleAnnual}" id="list-home-list"
+            data-toggle="list" role="tab" style="border-radius: 0px;" (click)="getActiveSaleAnnual()">Ventas
+            Anuales</a>
+        <a class="list-group-item list-group-item-action" [ngClass]="{active: activeSaleMonth}" id="list-profile-list"
+            data-toggle="list" role="tab" style="border-radius: 0px;" (click)="getActiveSaleMonth()">Ventas
+            Mensuales</a>
+        <a class="list-group-item list-group-item-action" [ngClass]="{active: activeMargeAnnual}" id="list-messages-list"
+            data-toggle="list" role="tab" style="border-radius: 0px;" (click)="getActiveMargeAnnual()">Margen
+            Anual</a>
+        <a class="list-group-item list-group-item-action" [ngClass]="{active: activeMargeMonth}" id="list-settings-list"
+            data-toggle="list" role="tab" style="border-radius: 0px;" (click)="getActiveMargeMonth()">Margen
+            Mensual</a>
+    </div>
+</div>
+<!--Modal procesando-->
+<div id="modal_transfer_process" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
+                        aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                        <span class="sr-only">Procesando transferencia</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--<button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span class="icon-chevron-up"></span></button>-->
+
+<div class="container content">
+    <!--ventas anuales-->
+    <div class="row" *ngIf="activeSaleAnnual">
+        <div class="col-xs-12">
+            <div class="margin-20">
+                <div style="display: block">
+                    <canvas id="ventasAnuales" baseChart [datasets]="barChartDataComercYear" [labels]="barChartLabelsComercYear"
+                        [legend]="'false'" [chartType]="barChartTypeComercYear" [colors]="'#1be4bf'"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12">
+            <table style="border: solid 1px; width: 100%; border-color: #828282;">
+                <tr>
+                    <td style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
+                        <h4>Año</h4>
+                    </td>
+                    <td style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
+                        <h4>Ventas</h4>
+                    </td>
+                </tr>
+                <tr *ngFor="let venta of ventasAnuales">
+                    <td style="border: solid 1px; border-color: #828282; width: 50%;">
+                        {{venta.year}}
+                    </td>
+                    <td style="border: solid 1px; border-color: #828282; width: 50%;">
+                        $ {{venta.totalSale | number}}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <!--ventas mensuales-->
+    <div class="row" *ngIf="activeSaleMonth">
+        <div class="col-xs-12">
+            <div class="margin-20">
+                <div style="display: block">
+                    <canvas id="ventasMensuales" baseChart [datasets]="barChartDataComercMonth" [labels]="barChartLabelsComercMonth"
+                        [legend]="'false'" [chartType]="barChartTypeComercMonth" [colors]="'#1be4bf'"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12">
+            <h4 class="text-center">Año: {{year}}</h4>
+            <table style="border: solid 1px; width: 100%; border-color: #828282;">
+                <tr>
+                    <td style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
+                        <h4>Mes</h4>
+                    </td>
+                    <td style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
+                        <h4>Ventas</h4>
+                    </td>
+                </tr>
+                <tr *ngFor="let venta of ventasMensuales">
+                    <td style="border: solid 1px; border-color: #828282; width: 50%;">
+                        {{venta.month}}
+                    </td>
+                    <td style="border: solid 1px; border-color: #828282; width: 50%;">
+                        $ {{venta.totalSale | number}}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <!--margen anual-->
+    <div class="row" *ngIf="activeMargeAnnual">
+        <div class="col-xs-12">
+            <div class="margin-20">
+                <div style="display: block">
+                    <canvas baseChart [datasets]="barChartDataComercMargeAnnual" [labels]="barChartLabelsComercMargeAnnual"
+                        [chartType]="barChartTypeComercMargeAnnual" [colors]="'#1be4bf'"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12">
+            <table style="border: solid 1px; width: 100%; border-color: #828282;">
+                <tr>
+                    <td style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
+                        <h4>Año</h4>
+                    </td>
+                    <td style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
+                        <h4>Margen</h4>
+                    </td>
+                </tr>
+                <tr *ngFor="let venta of ventasAnuales">
+                    <td style="border: solid 1px; border-color: #828282; width: 50%;">
+                        {{venta.year}}
+                    </td>
+                    <td style="border: solid 1px; border-color: #828282; width: 50%;">
+                        % {{venta.margeSale | number}}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <!--margen mensual-->
+    <div class="row" *ngIf="activeMargeMonth">
+        <div class="col-xs-12">
+            <div class="margin-20">
+                <div style="display: block">
+                    <canvas baseChart [datasets]="barChartDataComercMargeMonth" [labels]="barChartLabelsComercMargeMonth"
+                        [chartType]="barChartTypeComercMargeMonth" [colors]="'#1be4bf'"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12">
+            <table style="border: solid 1px; width: 100%; border-color: #828282;">
+                <tr>
+                    <td style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
+                        <h4>Mes</h4>
+                    </td>
+                    <td style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
+                        <h4>Margen</h4>
+                    </td>
+                </tr>
+                <tr *ngFor="let venta of ventasMensuales">
+                    <td style="border: solid 1px; border-color: #828282; width: 50%;">
+                        {{venta.month}}
+                    </td>
+                    <td style="border: solid 1px; border-color: #828282; width: 50%;">
+                        % {{venta.margeSale | number}}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <hr>
+</div>
