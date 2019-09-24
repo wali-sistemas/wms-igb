@@ -21,6 +21,8 @@ export class ReportManagerComponent implements OnInit {
     public identity;
     public queryParam;
     public logo: string;
+    /***Contenido***/
+    public activeContent: boolean = false;
     /***Anual***/
     public activeSaleAnnual: boolean = false;
     public activeMargeAnnual: boolean = false;
@@ -166,6 +168,7 @@ export class ReportManagerComponent implements OnInit {
         if (this.activeSaleAnnual) {
             this.activeSaleAnnual = false;
         } else {
+            this.activeContent = true;
             this.activeSaleAnnual = true;
             this.getSalesAnnual();
             this.barChartLabelsComercYear = [(this.year - 4).toString(), (this.year - 3).toString(), (this.year - 2).toString(), (this.year - 1).toString(), this.year.toString()];
@@ -179,6 +182,7 @@ export class ReportManagerComponent implements OnInit {
         if (this.activeSaleMonth) {
             this.activeSaleMonth = false;
         } else {
+            this.activeContent = true;
             this.activeSaleMonth = true;
             this.getSalesMonthly();
             this.barChartLabelsComercMonth = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
@@ -192,6 +196,7 @@ export class ReportManagerComponent implements OnInit {
         if (this.activeMargeAnnual) {
             this.activeMargeAnnual = false;
         } else {
+            this.activeContent = true;
             this.activeMargeAnnual = true;
             this.getSalesAnnual();
             this.barChartLabelsComercMargeAnnual = [(this.year - 4).toString(), (this.year - 3).toString(), (this.year - 2).toString(), (this.year - 1).toString(), this.year.toString()];
@@ -205,6 +210,7 @@ export class ReportManagerComponent implements OnInit {
         if (this.activeMargeMonth) {
             this.activeMargeMonth = false;
         } else {
+            this.activeContent = true;
             this.activeMargeMonth = true;
             this.getSalesMonthly();
             this.barChartLabelsComercMargeMonth = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
