@@ -28,8 +28,8 @@ export class ReportComponent implements OnInit {
     ngOnInit() {
         this.obtainOrdersStatus();
         this.listEmployees();
-        this.listPickingProgress();
-        this.listReportsOrdersClient();
+        //this.listPickingProgress();
+        //this.listReportsOrdersClient();
     }
 
     private obtainOrdersStatus() {
@@ -49,7 +49,7 @@ export class ReportComponent implements OnInit {
         );
     }
 
-    public listPickingProgress() {
+    /*public listPickingProgress() {
         this.pickingProgress = new Array<any>();
         this._reportService.listPickingProgress().subscribe(
             response => {
@@ -65,5 +65,5 @@ export class ReportComponent implements OnInit {
                 this.clientsOrders = response.content;
             }, error => { console.error(error); }
         );
-    }
+    }*/
 }

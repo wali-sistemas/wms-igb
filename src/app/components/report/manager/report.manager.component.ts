@@ -55,10 +55,15 @@ export class ReportManagerComponent implements OnInit {
     public recaudos: Array<any>;
     /***Cartera por Recaudar***/
     public activeByCollection: boolean = false;
-    /***Logistica***/
+    /***Logistica Estado Pedidos***/
     public statusOrders: Array<any>;
     public activeStatusOrder: boolean = false;
     public totalOrder: number;
+    /***Logistica Cedi***/
+    public activeGraphCedi: boolean = false;
+    public doughnutChartType: string = 'doughnut';
+    public doughnutChartData: number[] = [0, 0, 0, 0];
+    public doughnutChartLabels: string[] = ['Ordenes sin asignar', 'Ordenes asignadas', 'Ordenes sin packing', 'Facturas sin despacho'];
 
     constructor(private _userService: UserService, private _router: Router, private _reportService: ReportService, private _routerParam: ActivatedRoute) { }
 
@@ -105,8 +110,7 @@ export class ReportManagerComponent implements OnInit {
         /***Informe margen mensual***/
         this.barChartDataComercMargeMonth = [{
             data: [this.ventasMensuales[0].margeSale, this.ventasMensuales[1].margeSale, this.ventasMensuales[2].margeSale, this.ventasMensuales[3].margeSale, this.ventasMensuales[4].margeSale, this.ventasMensuales[5].margeSale, this.ventasMensuales[6].margeSale, this.ventasMensuales[7].margeSale, this.ventasMensuales[8].margeSale, this.ventasMensuales[9].margeSale, this.ventasMensuales[10].margeSale, this.ventasMensuales[11].margeSale],
-            label: 'Margen Mensual',
-            colors: { backgroundColor: '#333' }
+            label: 'Margen Mensual'
         }];
     }
 
@@ -179,6 +183,7 @@ export class ReportManagerComponent implements OnInit {
             keyboard: false,
             show: true
         });
+
         this._reportService.getSalesAnnual(this.queryParam.id, false).subscribe(
             response => {
                 if (response.code == 0) {
@@ -206,6 +211,7 @@ export class ReportManagerComponent implements OnInit {
             keyboard: false,
             show: true
         });
+
         this._reportService.getSalesMonthly(this.queryParam.id, false).subscribe(
             response => {
                 if (response.code == 0) {
@@ -254,6 +260,7 @@ export class ReportManagerComponent implements OnInit {
     }
 
     public getStatusOrder() {
+        this.activeGraphCedi = false;
         this.activeStatusOrder = true;
         $('#modal_transfer_process').modal({
             backdrop: 'static',
@@ -279,6 +286,28 @@ export class ReportManagerComponent implements OnInit {
             error => {
                 console.error("Ocurrio un error al obtener las ordenes.", error);
                 this.activeStatusOrder = false;
+                $('#modal_transfer_process').modal('hide');
+                this.redirectIfSessionInvalid(error);
+            }
+        );
+    }
+
+    public getOrdersCedi() {
+        this.activeStatusOrder = false;
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+
+        this._reportService.obtainReportsOrders(this.queryParam.id, '01', false).subscribe(
+            response => {
+                this.doughnutChartData = response.content;
+                this.activeGraphCedi = true;
+                $('#modal_transfer_process').modal('hide');
+                this.activeContentLogist = true;
+            }, error => {
+                console.error("Ocurrio un error al obtener el estado de las ordnes de bodega cedi.", error);
                 $('#modal_transfer_process').modal('hide');
                 this.redirectIfSessionInvalid(error);
             }
@@ -347,6 +376,7 @@ export class ReportManagerComponent implements OnInit {
         this.activeCollection = false;
         this.activeByCollection = false;
         this.activeStatusOrder = false;
+        this.activeGraphCedi = false;
     }
 
     public getActiveSaleCollect() {
@@ -357,6 +387,7 @@ export class ReportManagerComponent implements OnInit {
         this.activeMargeAnnual = false;
         this.activeMargeMonth = false;
         this.activeStatusOrder = false;
+        this.activeGraphCedi = false;
     }
 
     public getActiveLogistica() {

@@ -10,8 +10,13 @@ export class ReportService {
         this.url = GLOBAL.url;
     }
 
-    public obtainReportsOrders() {
-        let igbHeaders = new IGBHeaders().loadHeaders();
+    public obtainReportsOrders(companyName: string, warehouseCode: string, testing: boolean) {
+        let igbHeaders = new Headers({
+            'Content-Type': 'application/json',
+            'X-Company-Name': companyName,
+            'X-Warehouse-Code': warehouseCode,
+            'X-Pruebas': testing
+        });
         return this._http.get(this.url + 'report/reports-orders', { headers: igbHeaders })
             .map(res => res.json());
     }
@@ -22,7 +27,7 @@ export class ReportService {
             .map(res => res.json());
     }
 
-    public listPickingProgress() {
+    /*public listPickingProgress() {
         let igbHeaders = new IGBHeaders().loadHeaders();
         return this._http.get(this.url + 'report/reports-picking-progress', { headers: igbHeaders })
             .map(res => res.json());
@@ -32,7 +37,7 @@ export class ReportService {
         let igbHeaders = new IGBHeaders().loadHeaders();
         return this._http.get(this.url + 'report/reports-orders-client', { headers: igbHeaders })
             .map(res => res.json());
-    }
+    }*/
 
     public generateReport(printReportDTO) {
         let igbHeaders = new IGBHeaders().loadHeaders();

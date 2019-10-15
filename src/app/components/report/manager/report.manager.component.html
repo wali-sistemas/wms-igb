@@ -42,7 +42,7 @@
                                     (click)="getActiveSaleCollect()">Cartera</a></li>
                             <li role="presentation"><a href="#logistica" aria-controls="logistica" role="tab"
                                     data-toggle="tab" (click)="getActiveLogistica()">Logística</a></li>
-                            <li role="presentation"><a href="#finanzas" aria-controls="finanzas" role="tab" data-toggle="tab">Finanzas</a></li>
+                            <!-- <li role="presentation"><a href="#finanzas" aria-controls="finanzas" role="tab" data-toggle="tab">Finanzas</a></li> -->
                         </ul>
                         <!-- Tab panel -->
                         <div class="tab-content">
@@ -70,7 +70,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div role="tabpanel" class="tab-pane" id="finanzas">
+                            <!-- <div role="tabpanel" class="tab-pane" id="finanzas">
                                 <div class="row">
                                     <div class="col-xs-10 col-xs-offset-1">
                                         <div class="jumbotron">
@@ -80,7 +80,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                             <div role="tabpanel" class="tab-pane" id="cartera">
                                 <div class="row">
                                     <div class="col-xs-12">
@@ -102,6 +102,9 @@
                                             <a class="list-group-item list-group-item-action" [ngClass]="{active: activeStatusOrder}"
                                                 id="list-recaudo-list" data-toggle="list" role="tab" style="border-radius: 0px;"
                                                 (click)="getStatusOrder()">Estado Pedidos</a>
+                                            <a class="list-group-item list-group-item-action" [ngClass]="{active: activeGraphCedi}"
+                                                id="list-cedi-list" data-toggle="list" role="tab" style="border-radius: 0px;"
+                                                (click)="getOrdersCedi()">Bodega General</a>
                                         </div>
                                     </div>
                                 </div>
@@ -112,7 +115,7 @@
             </div>
         </div>
     </div>
-    <!--Gráficas -->
+    <!--Gráficas gerencia -->
     <div class="container content" *ngIf="activeContentGerencia">
         <!--ventas anuales-->
         <div class="row" *ngIf="activeSaleAnnual">
@@ -310,7 +313,8 @@
 <!-- Logistica -->
 <div class="cartera" *ngIf="activeContentLogist">
     <div class="container">
-        <div class="row">
+        <!--Estado Pedidos-->
+        <div class="row" *ngIf="activeStatusOrder">
             <div class="col-xs-12 col-md-10 col-md-offset-1">
                 <h4 class="text-center" style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">{{monthName}}</h4>
                 <table class="table table-sm">
@@ -331,6 +335,16 @@
                 </table>
                 <h4 class="text-center" style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">{{totalOrder
                     | number}}</h4>
+            </div>
+        </div>
+        <!--Order Cedi-->
+        <div class="row" *ngIf="activeGraphCedi">
+            <div class="col-xs-12">
+                <div class="margin-20">
+                    <div style="display: block">
+                        <canvas baseChart [data]="doughnutChartData" [labels]="doughnutChartLabels" [chartType]="doughnutChartType"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
