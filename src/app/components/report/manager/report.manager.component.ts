@@ -22,7 +22,9 @@ export class ReportManagerComponent implements OnInit {
     public queryParam;
     public logo: string;
     /***Contenido***/
-    public activeContent: boolean = false;
+    public activeContentGerencia: boolean = false;
+    public activeContentCartera: boolean = false;
+    public activeContentLogist: boolean = false;
     /***Anual***/
     public activeSaleAnnual: boolean = false;
     public activeMargeAnnual: boolean = false;
@@ -38,6 +40,7 @@ export class ReportManagerComponent implements OnInit {
     public barChartLabelsComercMonth: string[];
     public barChartDataComercMonth: any[] = [{ data: [], label: '' }];
     public ventasMensuales: Array<SalesMonthly>;
+    public monthName: string;
     /***Margen anual***/
     public barChartTypeComercMargeAnnual: string = 'line';
     public barChartLabelsComercMargeAnnual: string[];
@@ -46,6 +49,23 @@ export class ReportManagerComponent implements OnInit {
     public barChartTypeComercMargeMonth: string = 'bar';
     public barChartLabelsComercMargeMonth: string[];
     public barChartDataComercMargeMonth: any[] = [{ data: [], label: '' }];
+    /***Cartera Recaudo***/
+    public selectedDiasAtraso: string = 'a';
+    public activeCollection: boolean = false;
+    public recaudos: Array<any>;
+    /***Cartera por Recaudar***/
+    public activeByCollection: boolean = false;
+    public byCollect: Array<any>;
+    /***Logistica Estado Pedidos***/
+    public statusOrders: Array<any>;
+    public activeStatusOrder: boolean = false;
+    public totalOrder: number;
+    public totalInvoice: number;
+    /***Logistica Cedi***/
+    public activeGraphCedi: boolean = false;
+    public doughnutChartType: string = 'doughnut';
+    public doughnutChartData: number[] = [0, 0, 0, 0];
+    public doughnutChartLabels: string[] = ['Sin Asignar', 'En Picking', 'En Packing', 'En Shipping'];
 
     constructor(private _userService: UserService, private _router: Router, private _reportService: ReportService, private _routerParam: ActivatedRoute) { }
 
@@ -65,8 +85,9 @@ export class ReportManagerComponent implements OnInit {
             return;
         }
 
-        let year = new Date();
-        this.year = year.getFullYear();
+        let date = new Date();
+        this.year = date.getFullYear();
+        this.setMonthName(date.getMonth());
     }
 
     private initializeAnnual() {
@@ -91,8 +112,7 @@ export class ReportManagerComponent implements OnInit {
         /***Informe margen mensual***/
         this.barChartDataComercMargeMonth = [{
             data: [this.ventasMensuales[0].margeSale, this.ventasMensuales[1].margeSale, this.ventasMensuales[2].margeSale, this.ventasMensuales[3].margeSale, this.ventasMensuales[4].margeSale, this.ventasMensuales[5].margeSale, this.ventasMensuales[6].margeSale, this.ventasMensuales[7].margeSale, this.ventasMensuales[8].margeSale, this.ventasMensuales[9].margeSale, this.ventasMensuales[10].margeSale, this.ventasMensuales[11].margeSale],
-            label: 'Margen Mensual',
-            colors: { backgroundColor: '#333' }
+            label: 'Margen Mensual'
         }];
     }
 
@@ -100,6 +120,12 @@ export class ReportManagerComponent implements OnInit {
         this.barChartLabelsComercYear = [];
         this.barChartDataComercYear = [{ data: [], label: '' }];
         this.ventasAnuales = new Array<SalesAnnual>();
+    }
+
+    private cleanSalesMonthly() {
+        this.barChartLabelsComercMonth = [];
+        this.barChartDataComercMonth = [{ data: [], label: '' }];
+        this.ventasMensuales = new Array<SalesMonthly>();
     }
 
     private redirectIfSessionInvalid(error) {
@@ -110,13 +136,56 @@ export class ReportManagerComponent implements OnInit {
         }
     }
 
+    private setMonthName(month: number) {
+        switch ((month)) {
+            case 0:
+                this.monthName = 'Enero';
+                break;
+            case 1:
+                this.monthName = 'Febrero';
+                break;
+            case 2:
+                this.monthName = 'Marzo';
+                break;
+            case 3:
+                this.monthName = 'Abril';
+                break;
+            case 4:
+                this.monthName = 'Mayo';
+                break;
+            case 5:
+                this.monthName = 'Junio';
+                break;
+            case 6:
+                this.monthName = 'Julio';
+                break;
+            case 7:
+                this.monthName = 'Agosto';
+                break;
+            case 8:
+                this.monthName = 'Septiembre';
+                break;
+            case 9:
+                this.monthName = 'Octubre';
+                break;
+            case 10:
+                this.monthName = 'Noviembre';
+                break;
+            case 11:
+                this.monthName = 'Diciembre';
+                break;
+        }
+    }
+
     public getSalesAnnual() {
+        this.cleanSalesMonthly();
         this.ventasAnuales = new Array<SalesAnnual>();
         $('#modal_transfer_process').modal({
             backdrop: 'static',
             keyboard: false,
             show: true
         });
+
         this._reportService.getSalesAnnual(this.queryParam.id, false).subscribe(
             response => {
                 if (response.code == 0) {
@@ -131,6 +200,7 @@ export class ReportManagerComponent implements OnInit {
             error => {
                 console.error("Ocurrio un error al obtener las ventas anuales.", error);
                 $('#modal_transfer_process').modal('hide');
+                this.redirectIfSessionInvalid(error);
             }
         );
     }
@@ -143,6 +213,7 @@ export class ReportManagerComponent implements OnInit {
             keyboard: false,
             show: true
         });
+
         this._reportService.getSalesMonthly(this.queryParam.id, false).subscribe(
             response => {
                 if (response.code == 0) {
@@ -157,6 +228,123 @@ export class ReportManagerComponent implements OnInit {
             error => {
                 console.error("Ocurrio un error al obtener las ventas mensuales.", error);
                 $('#modal_transfer_process').modal('hide');
+                this.redirectIfSessionInvalid(error);
+            }
+        );
+    }
+
+    public getCollectMonthly() {
+        this.activeByCollection = false;
+        this.activeCollection = true;
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+
+        this._reportService.getSalesCollectMonthly(this.queryParam.id, false).subscribe(
+            response => {
+                if (response.code == 0) {
+                    this.recaudos = response.content;
+                    $('#modal_transfer_process').modal('hide');
+                    this.activeContentCartera = true;
+                } else {
+                    console.error("No encontro datos para mostar.");
+                    $('#modal_transfer_process').modal('hide');
+                }
+            },
+            error => {
+                console.error("Ocurrio un error al obtener el recaudo.", error);
+                this.activeCollection = false;
+                $('#modal_transfer_process').modal('hide');
+                this.redirectIfSessionInvalid(error);
+            }
+        );
+    }
+
+    public getByCollect() {
+        this.activeCollection = false;
+        this.activeByCollection = true;
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+
+        this._reportService.getSalesByCollect(this.queryParam.id, false).subscribe(
+            response => {
+                if (response.code == 0) {
+                    this.byCollect = response.content;
+                    $('#modal_transfer_process').modal('hide');
+                    this.activeContentCartera = true;
+                } else {
+                    console.error("No encontro datos para mostar.");
+                    $('#modal_transfer_process').modal('hide');
+                }
+            },
+            error => {
+                console.error("Ocurrio un error al obtener el recaudo.", error);
+                this.activeCollection = false;
+                $('#modal_transfer_process').modal('hide');
+                this.redirectIfSessionInvalid(error);
+            }
+        );
+    }
+
+
+    public getStatusOrder() {
+        this.activeGraphCedi = false;
+        this.activeStatusOrder = true;
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+
+        this._reportService.getStatesOrder(this.queryParam.id, false).subscribe(
+            response => {
+                if (response.code == 0) {
+                    this.statusOrders = response.content;
+                    this.totalOrder = 0;
+                    this.totalInvoice = 0;
+                    for (let i = 0; i < this.statusOrders.length; i++) {
+                        this.totalOrder += this.statusOrders[i].totalOrder;
+                    }
+                    this.totalInvoice = this.statusOrders[0].totalInvoice;
+                    $('#modal_transfer_process').modal('hide');
+                    this.activeContentLogist = true;
+                } else {
+                    console.error("No encontro datos para mostar.");
+                    $('#modal_transfer_process').modal('hide');
+                }
+            },
+            error => {
+                console.error("Ocurrio un error al obtener las ordenes.", error);
+                this.activeStatusOrder = false;
+                $('#modal_transfer_process').modal('hide');
+                this.redirectIfSessionInvalid(error);
+            }
+        );
+    }
+
+    public getOrdersCedi() {
+        this.activeStatusOrder = false;
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+
+        this._reportService.obtainReportsOrders(this.queryParam.id, '01', false).subscribe(
+            response => {
+                this.doughnutChartData = response.content;
+                this.activeGraphCedi = true;
+                $('#modal_transfer_process').modal('hide');
+                this.activeContentLogist = true;
+            }, error => {
+                console.error("Ocurrio un error al obtener el estado de las ordnes de bodega cedi.", error);
+                $('#modal_transfer_process').modal('hide');
+                this.redirectIfSessionInvalid(error);
             }
         );
     }
@@ -168,7 +356,7 @@ export class ReportManagerComponent implements OnInit {
         if (this.activeSaleAnnual) {
             this.activeSaleAnnual = false;
         } else {
-            this.activeContent = true;
+            this.activeContentGerencia = true;
             this.activeSaleAnnual = true;
             this.getSalesAnnual();
             this.barChartLabelsComercYear = [(this.year - 4).toString(), (this.year - 3).toString(), (this.year - 2).toString(), (this.year - 1).toString(), this.year.toString()];
@@ -182,7 +370,7 @@ export class ReportManagerComponent implements OnInit {
         if (this.activeSaleMonth) {
             this.activeSaleMonth = false;
         } else {
-            this.activeContent = true;
+            this.activeContentGerencia = true;
             this.activeSaleMonth = true;
             this.getSalesMonthly();
             this.barChartLabelsComercMonth = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
@@ -196,7 +384,7 @@ export class ReportManagerComponent implements OnInit {
         if (this.activeMargeAnnual) {
             this.activeMargeAnnual = false;
         } else {
-            this.activeContent = true;
+            this.activeContentGerencia = true;
             this.activeMargeAnnual = true;
             this.getSalesAnnual();
             this.barChartLabelsComercMargeAnnual = [(this.year - 4).toString(), (this.year - 3).toString(), (this.year - 2).toString(), (this.year - 1).toString(), this.year.toString()];
@@ -210,15 +398,41 @@ export class ReportManagerComponent implements OnInit {
         if (this.activeMargeMonth) {
             this.activeMargeMonth = false;
         } else {
-            this.activeContent = true;
+            this.activeContentGerencia = true;
             this.activeMargeMonth = true;
             this.getSalesMonthly();
             this.barChartLabelsComercMargeMonth = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
         }
     }
 
-    public getScrollTop() {
-        document.body.scrollTop = 0;
-        document.documentElement.scrollTop = 0;
+    public getActiveComercial() {
+        this.activeContentCartera = false;
+        this.activeContentLogist = false;
+        this.activeCollection = false;
+        this.activeByCollection = false;
+        this.activeStatusOrder = false;
+        this.activeGraphCedi = false;
+    }
+
+    public getActiveSaleCollect() {
+        this.activeContentGerencia = false;
+        this.activeContentLogist = false;
+        this.activeSaleAnnual = false;
+        this.activeSaleMonth = false;
+        this.activeMargeAnnual = false;
+        this.activeMargeMonth = false;
+        this.activeStatusOrder = false;
+        this.activeGraphCedi = false;
+    }
+
+    public getActiveLogistica() {
+        this.activeContentCartera = false;
+        this.activeContentGerencia = false;
+        this.activeCollection = false;
+        this.activeByCollection = false;
+        this.activeSaleAnnual = false;
+        this.activeSaleMonth = false;
+        this.activeMargeAnnual = false;
+        this.activeMargeMonth = false;
     }
 }
