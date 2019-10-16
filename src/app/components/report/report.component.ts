@@ -26,19 +26,19 @@ export class ReportComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.obtainOrdersStatus();
+        //this.obtainOrdersStatus();
         this.listEmployees();
         //this.listPickingProgress();
         //this.listReportsOrdersClient();
     }
 
-    private obtainOrdersStatus() {
+    /*private obtainOrdersStatus() {
         this._reportService.obtainReportsOrders().subscribe(
             response => {
                 this.doughnutChartData = response.content;
             }, error => { console.log(error); }
         );
-    }
+    }*/
 
     public listEmployees() {
         this.users = new Array<any>();
