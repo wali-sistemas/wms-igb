@@ -55,15 +55,17 @@ export class ReportManagerComponent implements OnInit {
     public recaudos: Array<any>;
     /***Cartera por Recaudar***/
     public activeByCollection: boolean = false;
+    public byCollect: Array<any>;
     /***Logistica Estado Pedidos***/
     public statusOrders: Array<any>;
     public activeStatusOrder: boolean = false;
     public totalOrder: number;
+    public totalInvoice: number;
     /***Logistica Cedi***/
     public activeGraphCedi: boolean = false;
     public doughnutChartType: string = 'doughnut';
     public doughnutChartData: number[] = [0, 0, 0, 0];
-    public doughnutChartLabels: string[] = ['Ordenes sin asignar', 'Ordenes asignadas', 'Ordenes sin packing', 'Facturas sin despacho'];
+    public doughnutChartLabels: string[] = ['Sin Asignar', 'En Picking', 'En Packing', 'En Shipping'];
 
     constructor(private _userService: UserService, private _router: Router, private _reportService: ReportService, private _routerParam: ActivatedRoute) { }
 
@@ -232,6 +234,7 @@ export class ReportManagerComponent implements OnInit {
     }
 
     public getCollectMonthly() {
+        this.activeByCollection = false;
         this.activeCollection = true;
         $('#modal_transfer_process').modal({
             backdrop: 'static',
@@ -259,6 +262,36 @@ export class ReportManagerComponent implements OnInit {
         );
     }
 
+    public getByCollect() {
+        this.activeCollection = false;
+        this.activeByCollection = true;
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+
+        this._reportService.getSalesByCollect(this.queryParam.id, false).subscribe(
+            response => {
+                if (response.code == 0) {
+                    this.byCollect = response.content;
+                    $('#modal_transfer_process').modal('hide');
+                    this.activeContentCartera = true;
+                } else {
+                    console.error("No encontro datos para mostar.");
+                    $('#modal_transfer_process').modal('hide');
+                }
+            },
+            error => {
+                console.error("Ocurrio un error al obtener el recaudo.", error);
+                this.activeCollection = false;
+                $('#modal_transfer_process').modal('hide');
+                this.redirectIfSessionInvalid(error);
+            }
+        );
+    }
+
+
     public getStatusOrder() {
         this.activeGraphCedi = false;
         this.activeStatusOrder = true;
@@ -273,9 +306,11 @@ export class ReportManagerComponent implements OnInit {
                 if (response.code == 0) {
                     this.statusOrders = response.content;
                     this.totalOrder = 0;
+                    this.totalInvoice = 0;
                     for (let i = 0; i < this.statusOrders.length; i++) {
-                        this.totalOrder += this.statusOrders[i][2];
+                        this.totalOrder += this.statusOrders[i].totalOrder;
                     }
+                    this.totalInvoice = this.statusOrders[0].totalInvoice;
                     $('#modal_transfer_process').modal('hide');
                     this.activeContentLogist = true;
                 } else {

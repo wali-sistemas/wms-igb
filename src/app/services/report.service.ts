@@ -75,6 +75,16 @@ export class ReportService {
             .map(res => res.json());
     }
 
+    public getSalesByCollect(companyName: string, testing: boolean) {
+        let igbHeaders = new Headers({
+            'Content-Type': 'application/json',
+            'X-Company-Name': companyName,
+            'X-Pruebas': testing
+        });
+        return this._http.get(this.url + 'report/sales-by-collect', { headers: igbHeaders })
+            .map(res => res.json());
+    }
+
     public getStatesOrder(companyName: string, testing: boolean) {
         let igbHeaders = new Headers({
             'Content-Type': 'application/json',

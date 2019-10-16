@@ -90,7 +90,7 @@
                                                 (click)="getCollectMonthly()">Recaudado</a>
                                             <a class="list-group-item list-group-item-action" [ngClass]="{active: activeByCollection}"
                                                 id="list-sin-recaudar-list" data-toggle="list" role="tab" style="border-radius: 0px;"
-                                                (click)="getByCollectMonthly()">Por recaudar</a>
+                                                (click)="getByCollect()">Por cobrar</a>
                                         </div>
                                     </div>
                                 </div>
@@ -249,7 +249,8 @@
 <!-- Cartera -->
 <div class="cartera" *ngIf="activeContentCartera">
     <div class="container">
-        <div class="row">
+        <!--recaudado-->
+        <div class="row" *ngIf="activeCollection">
             <div class="col-xs-12 col-md-10 col-md-offset-1">
                 <h4 class="text-center" style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">{{year}}</h4>
                 <!-- Tabla Desktop -->
@@ -308,6 +309,21 @@
                 </table>
             </div>
         </div>
+        <!--Por cobrar-->
+        <div class="row" *ngIf="activeByCollection">
+            <div class="col-xs-12 col-md-10 col-md-offset-1">
+                <h4 class="text-center" style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">{{year}}</h4>
+                <!-- Tabla Desktop -->
+                <table class="table table-sm visible-lg visible-md visible-sm visible-xs">
+                    <tbody *ngFor="let cobrar of byCollect">
+                        <tr>
+                            <td>{{cobrar[0]}}</td>
+                            <td>$ {{cobrar[1] | number}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 <!-- Logistica -->
@@ -327,14 +343,27 @@
                     </thead>
                     <tbody *ngFor="let order of statusOrders">
                         <tr>
-                            <td>{{order[0]}}</td>
-                            <td>{{order[1]}}</td>
-                            <td>$ {{order[2] | number}}</td>
+                            <td>{{order.status}}</td>
+                            <td>{{order.orderNumber}}</td>
+                            <td>$ {{order.totalOrder | number}}</td>
                         </tr>
                     </tbody>
                 </table>
-                <h4 class="text-center" style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">{{totalOrder
-                    | number}}</h4>
+                <hr />
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h4 class="text-center" style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">TOTAL
+                            FACTURADO</h4>
+                        <h4 class="text-center">{{totalInvoice | number}}</h4>
+                        <hr />
+                    </div>
+                    <div class="col-sm-6">
+                        <h4 class="text-center" style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">TOTAL
+                            PEDIDOS</h4>
+                        <h4 class="text-center">{{totalOrder | number}}</h4>
+                        <hr />
+                    </div>
+                </div>
             </div>
         </div>
         <!--Order Cedi-->
