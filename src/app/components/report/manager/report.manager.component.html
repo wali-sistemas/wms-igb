@@ -331,10 +331,10 @@
         <div class="row" *ngIf="activeStatusOrder">
             <div class="col-xs-12 col-md-10 col-md-offset-1">
                 <h4 class="text-center" style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">{{monthName}}</h4>
-                <table class="table table-sm">
+                <table class="table table-sm" style="border-collapse: initial !important;">
                     <thead>
                         <tr>
-                            <th scope="col">Estado</th>
+                            <th scope="col" style="border-bottom: 0px;">Estado</th>
                             <th scope="col">Pedidos</th>
                             <th scope="col">Total</th>
                         </tr>
@@ -343,22 +343,29 @@
                         <tr>
                             <td>{{order.status}}</td>
                             <td>{{order.orderNumber}}</td>
-                            <td>$ {{order.totalOrder | number}}</td>
+                            <td>$ {{order.totalPend | number}}</td>
                         </tr>
                     </tbody>
                 </table>
-                <hr />
+                <div class="row">
+                    <div class="col-xs-12">
+                        <h4 class="text-center" style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">Total
+                            Pendiente</h4>
+                        <h4 class="text-center">{{totalPend | number}}</h4>
+                        <hr />
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col-sm-6">
-                        <h4 class="text-center" style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">TOTAL
-                            FACTURADO</h4>
-                        <h4 class="text-center">{{totalInvoice | number}}</h4>
+                        <h4 class="text-center" style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">Total
+                            Pedido</h4>
+                        <h4 class="text-center">{{totalOrder | number}}</h4>
                         <hr />
                     </div>
                     <div class="col-sm-6">
-                        <h4 class="text-center" style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">TOTAL
-                            PEDIDOS</h4>
-                        <h4 class="text-center">{{totalOrder | number}}</h4>
+                        <h4 class="text-center" style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">Total
+                            Facturado</h4>
+                        <h4 class="text-center">{{totalInvoice | number}}</h4>
                         <hr />
                     </div>
                 </div>

@@ -59,6 +59,7 @@ export class ReportManagerComponent implements OnInit {
     /***Logistica Estado Pedidos***/
     public statusOrders: Array<any>;
     public activeStatusOrder: boolean = false;
+    public totalPend: number;
     public totalOrder: number;
     public totalInvoice: number;
     /***Logistica Cedi***/
@@ -295,6 +296,7 @@ export class ReportManagerComponent implements OnInit {
     public getStatusOrder() {
         this.activeGraphCedi = false;
         this.activeStatusOrder = true;
+
         $('#modal_transfer_process').modal({
             backdrop: 'static',
             keyboard: false,
@@ -303,16 +305,29 @@ export class ReportManagerComponent implements OnInit {
 
         this._reportService.getStatesOrder(this.queryParam.id, false).subscribe(
             response => {
+                console.log(response);
+                
                 if (response.code == 0) {
-                    this.statusOrders = response.content;
-                    this.totalOrder = 0;
-                    this.totalInvoice = 0;
-                    for (let i = 0; i < this.statusOrders.length; i++) {
-                        this.totalOrder += this.statusOrders[i].totalOrder;
+                    if (response.content.length == 0) {
+                        this.statusOrders = new Array<any>();
+                        this.totalPend = 0;
+                        this.totalOrder = 0;
+                        this.totalInvoice = 0;
+                        this.activeContentLogist = true;
+                        $('#modal_transfer_process').modal('hide');
+                    } else {
+                        this.statusOrders = response.content;
+                        this.totalPend = 0;
+                        this.totalOrder = 0;
+                        this.totalInvoice = 0;
+                        for (let i = 0; i < this.statusOrders.length; i++) {
+                            this.totalPend += this.statusOrders[i].totalPend;
+                        }
+                        this.totalInvoice = this.statusOrders[0].totalInvoice;
+                        this.totalOrder = this.statusOrders[0].totalOrder;
+                        this.activeContentLogist = true;
+                        $('#modal_transfer_process').modal('hide');
                     }
-                    this.totalInvoice = this.statusOrders[0].totalInvoice;
-                    $('#modal_transfer_process').modal('hide');
-                    this.activeContentLogist = true;
                 } else {
                     console.error("No encontro datos para mostar.");
                     $('#modal_transfer_process').modal('hide');
