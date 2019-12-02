@@ -17,6 +17,8 @@ export class ResupplyComponent implements OnInit {
     public locationConfirm: string;
     public message: string;
     public errorMessageModal: string;
+    public limitSelectOne: string = '';
+    public filterLocation: string = '';
     public admin: boolean = false;
     public locationTo: any;
     public locationFrom: any;
@@ -26,7 +28,6 @@ export class ResupplyComponent implements OnInit {
     public items: Array<any>;
     public locationsStorage: Array<any>;
     public limits: Array<any>;
-    public limitSelectOne: string = '';
 
     constructor(private _router: Router, private _resupplyService: ResupplyService, private _stockTransferService: StockTransferService, private _userService: UserService) {
         this.pass = 1;
@@ -47,21 +48,19 @@ export class ResupplyComponent implements OnInit {
     }
 
     private listLocationsResupply() {
-        this.message = "";
-        this.errorMessageModal = "";
+        this.message = '';
+        this.errorMessageModal = '';
         this.items = new Array<any>();
         this._resupplyService.listLocationsResupply().subscribe(
             response => {
                 this.locationsResupply = response.content;
-            }, error => {
-                console.log(error);
-            }
+            }, error => { console.error("Ocurrio un error listando las ubicaciones fijas. ", error); }
         );
     }
 
     private listItems() {
-        this.message = "";
-        this.errorMessageModal = "";
+        this.message = '';
+        this.errorMessageModal = '';
         this.items = new Array<any>();
         this.locationsResupply = new Array<any>();
         this._resupplyService.listItemsLocation(this.locationTo[1]).subscribe(
@@ -71,13 +70,13 @@ export class ResupplyComponent implements OnInit {
                     this.pass--;
                     this.listLocationsResupply();
                 }
-            }, error => { console.log(error); }
+            }, error => { console.error("Ocurrio un error listando los ítems fijados. ", error); }
         );
     }
 
     private listLocationsStorage() {
-        this.message = "";
-        this.errorMessageModal = "";
+        this.message = '';
+        this.errorMessageModal = '';
         this.items = new Array<any>();
         this._resupplyService.listUbicationsStorage(this.item[0]).subscribe(
             response => {
@@ -87,27 +86,56 @@ export class ResupplyComponent implements OnInit {
                     this.listItems();
                     this.message = "No se encontraron ubicación para re-abastecer el ítem";
                 }
-            }, error => { console.log(error); }
+            }, error => { console.error("Ocurrio un error listando las ubicaciones para reabastecer. ", error); }
         );
     }
 
     public listLocationLimits() {
-        $('#modalConfiguracion').modal('hide');
-        this.clean();
-        this.message = "";
-        this.errorMessageModal = "";
         $('#modal_process').modal('show');
+        document.body.style.overflowY = "hidden";
+        $('#modalConfiguracion').modal('hide');
+
+        this.clean();
+        this.message = '';
+        this.errorMessageModal = '';
+        this.filterLocation = '';
         this.limits = new Array<any>();
-        this._resupplyService.listLocationLimits().subscribe(
+
+        this._resupplyService.listLocationLimits('*').subscribe(
             response => {
                 this.limits = response.content;
                 $('#modalConfiguracion').modal('show');
                 $('#modal_process').modal('hide');
-            }, error => { console.log(error); }
+            }, error => {
+                console.error("Ocurrio un error listando los limites de ubicaciones. ", error);
+                $('#modal_process').modal('hide');
+            }
+        );
+    }
+
+    public filterLimit(parametro: string) {
+        this.errorMessageModal = '';
+        this.message = '';
+        let aux = '*';
+
+        for (let i = 0; i < this.limits.length; i++) {
+            if ((this.limits[i][2] === parametro.trim() || this.limits[i][3] === parametro.trim())) {
+                aux = parametro.trim();
+                break;
+            }
+        }
+
+        this._resupplyService.listLocationLimits(aux).subscribe(
+            response => {
+                this.limits = new Array<any>();
+                this.limits = response.content;
+            }, error => { console.error("Ocurrio un error listando los limites de ubicaciones. ", error); }
         );
     }
 
     public selectLimit(limit) {
+        this.errorMessageModal = '';
+        this.message = '';
         this.limitSelect = limit;
     }
 
@@ -121,8 +149,8 @@ export class ResupplyComponent implements OnInit {
     }
 
     public saveLocationLimit() {
-        this.message = "";
-        this.errorMessageModal = "";
+        this.message = '';
+        this.errorMessageModal = '';
         if (this.limitSelect[2] === null || this.limitSelect[2] === '' || this.limitSelect[2] === undefined
             || this.limitSelect[3] === null || this.limitSelect[3] == '' || this.limitSelect[3] === undefined
             || this.limitSelect[4] === null || this.limitSelect[4] == '' || this.limitSelect[4] === undefined
@@ -132,10 +160,10 @@ export class ResupplyComponent implements OnInit {
         }
 
         let locationLimitDTO = {
-            "code": this.limitSelect[0],
-            "name": this.limitSelect[1],
-            "ubicacion": this.limitSelect[2],
-            "item": this.limitSelect[3],
+            "code": this.limitSelect[0].trim().toUpperCase(),
+            "name": this.limitSelect[1].trim().toUpperCase(),
+            "ubicacion": this.limitSelect[2].trim().toUpperCase(),
+            "item": this.limitSelect[3].trim().toUpperCase(),
             "cantMaxima": this.limitSelect[4],
             "cantMinima": this.limitSelect[5]
         }
@@ -148,13 +176,15 @@ export class ResupplyComponent implements OnInit {
                 }
                 this.clean();
                 $('#modalConfiguracion').modal('hide');
-            }, error => { console.log(error); }
+                this.setScrolling();
+            }, error => { console.error("Ocurrio un error fijando la ubicación. ", error); }
         );
     }
 
     public deleteLocationLimit() {
-        this.errorMessageModal = "";
-        this.message = "";
+        $('#modal_warning_delete').modal('hide');
+        this.errorMessageModal = '';
+        this.message = '';
         if (this.limitSelect[0] == null || this.limitSelect[0].length <= 0) {
             this.errorMessageModal = "Sin límite seleccionado para eliminar.";
             return;
@@ -167,14 +197,15 @@ export class ResupplyComponent implements OnInit {
                 } else {
                     this.clean();
                     $('#modalConfiguracion').modal('hide');
+                    this.setScrolling();
                 }
             }, error => { console.error(error); }
         );
     }
 
     public goToPass(location, item, back: boolean) {
-        this.message = "";
-        this.errorMessageModal = "";
+        this.message = '';
+        this.errorMessageModal = '';
         if (!back && this.pass < 3) {
             this.pass++;
             if (this.pass === 2) {
@@ -195,15 +226,15 @@ export class ResupplyComponent implements OnInit {
     }
 
     public useLocation(storage) {
-        this.message = "";
-        this.errorMessageModal = "";
+        this.message = '';
+        this.errorMessageModal = '';
         this.locationFrom = storage;
         $('#modalUbicacion').modal('show');
     }
 
     public stockTransfer(continuar: boolean) {
-        this.message = "";
-        this.errorMessageModal = "";
+        this.message = '';
+        this.errorMessageModal = '';
         $('#modalUbicacion').modal('hide');
         $('#modalAdvertencia').modal('hide');
         this.locationConfirm = this.locationConfirm.trim();
@@ -258,7 +289,7 @@ export class ResupplyComponent implements OnInit {
                     $('#modalUbicacion').modal('show');
                 }
                 $('#modal_process').modal('hide');
-            }, error => { console.log(error); }
+            }, error => { console.error('Ocurrio un error creando la transferencia. ', error); }
         );
     }
 
@@ -271,7 +302,11 @@ export class ResupplyComponent implements OnInit {
             cantMinima: 0,
             cantMaxima: 0
         }
-        this.errorMessageModal = "";
-        this.message = "";
+        this.errorMessageModal = '';
+        this.message = '';
+    }
+
+    public setScrolling() {
+        document.body.style.overflowY = "scroll";
     }
 }

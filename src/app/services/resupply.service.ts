@@ -25,8 +25,8 @@ export class ResupplyService {
             .map(res => res.json());
     }
 
-    public listLocationLimits() {
-        return this._http.get(this.url + 'resupply/list-location-limits', { headers: new IGBHeaders().loadHeaders() })
+    public listLocationLimits(location: string) {
+        return this._http.get(this.url + 'resupply/list-location-limits/' + location, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
 

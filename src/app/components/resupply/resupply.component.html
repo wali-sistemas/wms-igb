@@ -1,64 +1,50 @@
 <igb-navbar></igb-navbar>
 
-<div class="container content">
-    <div id="modal_process" class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="progress">
-                        <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
-                            aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
-                            <span class="sr-only">Estamos procesando la solicitud</span>
-                        </div>
+<body></body>
+<!--Modal procesando-->
+<div id="modal_process" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
+                        aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                        <span class="sr-only">Estamos procesando la solicitud</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <form #resupplyForm="ngForm" (ngSubmit)="stockTransfer(false)">
-        <div id="modalUbicacion" class="modal fade" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-sm" role="document">
-                <div class="modal-content" *ngIf="locationFrom">
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-xs-12 margin-bottom-10">
-                                <label>Ubicación</label>
-                                <input type="text" class="form-control" [(ngModel)]="locationConfirm" autocomplete="off"
-                                    name="locationConfirm" autocorrect="off" autocapitalize="none">
-                            </div>
-                            <div class="col-xs-12 margin-bottom-10">
-                                <label>Cantidad ({{locationFrom[2]}})</label>
-                                <input type="text" class="form-control" [(ngModel)]="quantityConfirm" autocomplete="off"
-                                    name="quantityConfirm" autocorrect="off" autocapitalize="none">
-                            </div>
-                            <div class="row">
-                                <div class="col-xs-12">
-                                    <div class="alert alert-danger" role="alert" *ngIf="message != null && message.length > 0">
-                                        <p>{{message}}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Aplicar</button>
-                    </div>
-                </div>
+</div>
+<!--Modal advertencia ingresar cantidad maxima-->
+<div id="modalAdvertencia" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Advertencia</h4>
+            </div>
+            <div class="modal-body">
+                <p>La cantidad ingresada supera a la máxima que se puede tener en la ubicación</p>
+                <p class="center-component">¿Desea continuar?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                <button (click)="stockTransfer(true)" type="button" class="btn btn-primary">Continuar</button>
             </div>
         </div>
-    </form>
-
-    <div id="modalConfiguracion" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <h4 class="modal-title">Límite Ubicaciones</h4>
-                </div>
+    </div>
+</div>
+<!--Modal limite ubicacion-->
+<div id="modalConfiguracion" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="setScrolling()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Fijar ubicaciones</h4>
+            </div>
+            <div class="modal-body">
                 <div class="row" *ngIf="errorMessageModal != null && errorMessageModal.length > 0">
                     <div class="col-xs-12 margin-bottom-10">
                         <div class="alert alert-danger" role="alert">
@@ -66,102 +52,138 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-xs-12 col-md-6">
-                            <!--<div class="row">
-                                <div class="col-xs-12 margin-bottom-10">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" placeholder="Buscar">
-                                        <span class="input-group-btn">
-                                            <button class="btn btn-default" type="button">
-                                                <span class="glyphicon glyphicon-search"></span>
-                                            </button>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>-->
-                            <div class="row">
-                                <div class="col-xs-12">
-                                    <div class="hidden-md hidden-lg">
-                                        <select id="limit" class="form-control" [(ngModel)]="limitSelectOne" name="code"
-                                            (change)="changeLimitSelect()">
-                                            <option style="display:none" disabled value="">Seleccione uno</option>
-                                            <option *ngFor="let limit of limits" value="{{limit[0]}}">{{limit[2]}} -
-                                                {{limit[3]}}</option>
-                                        </select>
-                                        <hr />
-                                    </div>
-                                    <div class="hidden-xs hidden-sm" style="max-height: 222px; overflow-y: auto">
-                                        <table class="table table-bordered table-striped">
-                                            <tr class="pointer-cursor" [ngClass]="{'location-limit-active': limitSelect[0] === limit[0], 'location-limit': limitSelect[0] !== limit[0]}"
-                                                *ngFor="let limit of limits" (click)="selectLimit(limit)">
-                                                <td>{{limit[2]}}</td>
-                                                <td>{{limit[3]}}</td>
-                                            </tr>
-                                        </table>
-                                    </div>
+                <div class="row">
+                    <div class="col-xs-12 col-md-6">
+                        <div class="row">
+                            <div class="col-xs-12 margin-bottom-10">
+                                <div class="input-group">
+                                    <form (submit)="filterLimit(filterLocation)">
+                                        <input type="text" class="form-control" autocomplete="off" id="loc" name="loc"
+                                            placeholder="Filtrar ubicación o ítem" [(ngModel)]="filterLocation">
+                                    </form>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" (click)="filterLimit(filterLocation)">
+                                            <span class="glyphicon glyphicon-search"></span>
+                                        </button>
+                                    </span>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-md-6">
-                            <form (ngSubmit)="saveLocationLimit()">
-                                <div class="row">
-                                    <div class="col-xs-12 margin-bottom-10">
-                                        <label>Ubicación*</label>
-                                        <input type="text" class="form-control" [(ngModel)]="limitSelect[2]"
-                                            autocomplete="off" name="ubicacion" autocorrect="off" autocapitalize="none"
-                                            placeholder="escanea la ubicación">
-                                    </div>
-                                    <div class="col-xs-12 margin-bottom-10">
-                                        <label>Ítem*</label>
-                                        <input type="text" class="form-control" [(ngModel)]="limitSelect[3]"
-                                            autocomplete="off" name="item" autocorrect="off" autocapitalize="none"
-                                            placeholder="escanea el ítem">
-                                    </div>
-                                    <div class="col-xs-12 margin-bottom-10">
-                                        <label>Cantidad minima*</label>
-                                        <input type="text" class="form-control" [(ngModel)]="limitSelect[4]"
-                                            autocomplete="off" name="cantMinima" autocorrect="off" autocapitalize="none">
-                                    </div>
-                                    <div class="col-xs-12 margin-bottom-10">
-                                        <label>Cantidad maxima*</label>
-                                        <input type="text" class="form-control" [(ngModel)]="limitSelect[5]"
-                                            autocomplete="off" name="cantMaxima" autocorrect="off" autocapitalize="none">
-                                    </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="hidden-md hidden-lg">
+                                    <select id="limit" class="form-control" [(ngModel)]="limitSelectOne" name="code"
+                                        (change)="changeLimitSelect()">
+                                        <option style="display:none" disabled value="">Seleccione uno</option>
+                                        <option *ngFor="let limit of limits" value="{{limit[0]}}">{{limit[2]}} -
+                                            {{limit[3]}}</option>
+                                    </select>
+                                    <hr />
                                 </div>
-                            </form>
+                                <div class="hidden-xs hidden-sm" style="max-height: 636px; overflow-y: auto">
+                                    <table class="table table-bordered table-striped">
+                                        <tr class="pointer-cursor" [ngClass]="{'location-limit-active': limitSelect[0] === limit[0], 'location-limit': limitSelect[0] !== limit[0]}"
+                                            *ngFor="let limit of limits" (click)="selectLimit(limit)">
+                                            <td>{{limit[2]}}</td>
+                                            <td>{{limit[3]}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-6">
+                        <form (ngSubmit)="saveLocationLimit()">
+                            <div class="row">
+                                <div class="col-xs-12 margin-bottom-10">
+                                    <label>Ubicación*</label>
+                                    <input type="text" class="form-control" [(ngModel)]="limitSelect[2]" autocomplete="off"
+                                        name="ubicacion" autocorrect="off" autocapitalize="none" placeholder="escanea la ubicación">
+                                </div>
+                                <div class="col-xs-12 margin-bottom-10">
+                                    <label>Ítem*</label>
+                                    <input type="text" class="form-control" [(ngModel)]="limitSelect[3]" autocomplete="off"
+                                        name="item" autocorrect="off" autocapitalize="none" placeholder="escanea el ítem">
+                                </div>
+                                <div class="col-xs-12 margin-bottom-10">
+                                    <label>Cantidad minima*</label>
+                                    <input type="number" class="form-control" [(ngModel)]="limitSelect[4]" autocomplete="off"
+                                        name="cantMinima" autocorrect="off" autocapitalize="none">
+                                </div>
+                                <div class="col-xs-12 margin-bottom-10">
+                                    <label>Cantidad maxima*</label>
+                                    <input type="number" class="form-control" [(ngModel)]="limitSelect[5]" autocomplete="off"
+                                        name="cantMaxima" autocorrect="off" autocapitalize="none">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-lg" data-toggle="modal" data-target="#modal_warning_delete"
+                    *ngIf="limitSelect && limitSelect[0] !== null">Eliminar</button>
+                <button type="button" class="btn btn-danger btn-lg" (click)="saveLocationLimit()">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal configuracion de ubicacion-->
+<div id="modalUbicacion" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content" *ngIf="locationFrom">
+            <form #resupplyForm="ngForm" (ngSubmit)="stockTransfer(false)">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-12 margin-bottom-10">
+                            <label>Ubicación</label>
+                            <input type="text" class="form-control" [(ngModel)]="locationConfirm" autocomplete="off"
+                                name="locationConfirm" autocorrect="off" autocapitalize="none">
+                        </div>
+                        <div class="col-xs-12 margin-bottom-10">
+                            <label>Cantidad ({{locationFrom[2]}})</label>
+                            <input type="text" class="form-control" [(ngModel)]="quantityConfirm" autocomplete="off"
+                                name="quantityConfirm" autocorrect="off" autocapitalize="none">
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="alert alert-danger" role="alert" *ngIf="message != null && message.length > 0">
+                                    <p>{{message}}</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-default" (click)="clean()" *ngIf="limitSelect && limitSelect[2] !== null">Cancelar</button>
-                    <button type="button" class="btn btn-default" (click)="deleteLocationLimit()" *ngIf="limitSelect && limitSelect[0] !== null">Eliminar</button>
-                    <button type="button" class="btn btn-primary" (click)="saveLocationLimit()">Guardar</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Aplicar</button>
                 </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--Modal advertencia eliminar-->
+<div id="modal_warning_delete" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="position: relative;top: 150px;">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <span class="icon-alert-triangle" style="font-size: 40px;"></span>
+            </div>
+            <div class="modal-body">
+                <p style="text-align: center;">¿Está seguro que desea eliminar la ubicación fija?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">No</button>
+                <button type="button" class="btn btn-danger btn-lg" (click)="deleteLocationLimit()">Si</button>
             </div>
         </div>
     </div>
+</div>
 
-    <div id="modalAdvertencia" class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-sm" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Advertencia</h4>
-                </div>
-                <div class="modal-body">
-                    <p>La cantidad ingresada supera a la máxima que se puede tener en la ubicación</p>
-                    <p class="center-component">¿Desea continuar?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                    <button (click)="stockTransfer(true)" type="button" class="btn btn-primary">Continuar</button>
-                </div>
-            </div>
-        </div>
-    </div>
+<button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span class="icon-chevron-up"></span></button>
 
+<div class="container content">
     <div class="row">
         <div class="col-xs-12 col-md-4 col-md-offset-4 margin-bottom-10">
             <div class="row">
@@ -172,7 +194,7 @@
                     </button>
                 </div>
                 <div class="col-xs-6 right-component pointer-cursor" *ngIf="admin">
-                    <span class="icon-settings configuration-button" (click)="listLocationLimits()"></span>
+                    <span class="icon-settings configuration-button" (click)="listLocationLimits()" title="Configurar"></span>
                 </div>
             </div>
         </div>
