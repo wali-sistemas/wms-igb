@@ -66,9 +66,15 @@ export class SalesOrdersComponent implements OnInit {
     this._salesOrdersService.listOpenOrders(this.showApprovedOnly, this.filterGroup).subscribe(
       response => {
         this.orders = response;
+        
+        console.log('*****************');
+        console.log(this.orders);
+        console.log('*****************');
+
+
+
         $('#modal_transfer_process').modal('hide');
         $('#filter').focus();
-        console.log('loaded orders: ', this.orders);
         //TODO: validar ordenes asignadas
         this.filterOrders(true);
       },
@@ -128,14 +134,15 @@ export class SalesOrdersComponent implements OnInit {
       'orders': Array.from(this.selectedOrders.entries())//.map(Number)
     };
 
-    console.log(assignment);
-
     this._salesOrdersService.assignOrders(assignment).subscribe(
       result => {
         $('#modal_users').modal('hide');
         this.listOpenOrders();
         this.selectedUser = '';
-      }, error => { console.error(error); this.redirectIfSessionInvalid(error); }
+      }, error => {
+        console.error(error);
+        this.redirectIfSessionInvalid(error);
+      }
     );
   }
 
@@ -144,7 +151,6 @@ export class SalesOrdersComponent implements OnInit {
     for (let i = 0; i < orders.length; i++) {
       this._salesOrdersService.deleteAssignOrders(orders[i][0]).subscribe(
         response => {
-          console.log(response);
           $('#modal_users').modal('hide');
           this.listOpenOrders();
           this.selectedUser = '';
@@ -193,7 +199,6 @@ export class SalesOrdersComponent implements OnInit {
     this._salesOrdersService.listAvailableStock(orderNumber).subscribe(
       result => {
         this.loadingAvailableStock = false;
-        console.log(result);
         for (let i = 0; i < result.content.length; i++) {
           if (result.content[i][6] < result.content[i][1]) {
             this.allStockAvailable = false;
