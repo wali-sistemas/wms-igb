@@ -252,16 +252,16 @@
             <div class="col-xs-12 col-md-10 col-md-offset-1">
                 <h4 class="text-center" style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">{{year}}</h4>
                 <!-- Tabla Desktop -->
-                <table class="table table-sm visible-lg visible-md">
+                <table class="table table-sm visible-lg visible-md" style="border-collapse: initial !important;">
                     <thead>
                         <tr>
-                            <th scope="col">Mes</th>
-                            <th scope="col">Sin Vencer</th>
-                            <th scope="col">0 a 20</th>
-                            <th scope="col">21 a 55</th>
-                            <th scope="col">56 a 120</th>
-                            <th scope="col">121 a 360</th>
-                            <th scope="col">Mayor de 360</th>
+                            <th scope="col" style="border-bottom: 0px;">Mes</th>
+                            <th scope="col" style="border-bottom: 0px;">Sin Vencer</th>
+                            <th scope="col" style="border-bottom: 0px;">0 a 20</th>
+                            <th scope="col" style="border-bottom: 0px;">21 a 55</th>
+                            <th scope="col" style="border-bottom: 0px;">56 a 120</th>
+                            <th scope="col" style="border-bottom: 0px;">121 a 360</th>
+                            <th scope="col" style="border-bottom: 0px;">Mayor de 360</th>
                         </tr>
                     </thead>
                     <tbody *ngFor="let recaudo of recaudos">
@@ -277,18 +277,18 @@
                     </tbody>
                 </table>
                 <!-- tabla mobile -->
-                <table class="table table-sm visible-sm visible-xs">
+                <table class="table table-sm visible-sm visible-xs" style="border-collapse: initial !important;">
                     <thead>
                         <tr>
                             <th scope="col">Mes</th>
                             <th>
                                 <select id="diasAtraso" class="form-control input-md" [(ngModel)]="selectedDiasAtraso">
-                                    <option value="a">Sin Vencer</option>
-                                    <option value="b">0 a 20</option>
-                                    <option value="c">21 a 55</option>
-                                    <option value="d">56 a 120</option>
-                                    <option value="e">121 a 360</option>
-                                    <option value="f">Mayor de 360</option>
+                                    <option value="a" style="border-bottom: 0px;">Sin Vencer</option>
+                                    <option value="b" style="border-bottom: 0px;">0 a 20</option>
+                                    <option value="c" style="border-bottom: 0px;">21 a 55</option>
+                                    <option value="d" style="border-bottom: 0px;">56 a 120</option>
+                                    <option value="e" style="border-bottom: 0px;">121 a 360</option>
+                                    <option value="f" style="border-bottom: 0px;">Mayor de 360</option>
                                 </select>
                             </th>
                         </tr>
@@ -312,7 +312,7 @@
             <div class="col-xs-12 col-md-10 col-md-offset-1">
                 <h4 class="text-center" style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">{{year}}</h4>
                 <!-- Tabla Desktop -->
-                <table class="table table-sm visible-lg visible-md visible-sm visible-xs">
+                <table class="table table-sm visible-lg visible-md visible-sm visible-xs" style="border-collapse: initial !important;">
                     <tbody *ngFor="let cobrar of byCollect">
                         <tr>
                             <td>{{cobrar[0]}}</td>
@@ -335,8 +335,8 @@
                     <thead>
                         <tr>
                             <th scope="col" style="border-bottom: 0px;">Estado</th>
-                            <th scope="col">Pedidos</th>
-                            <th scope="col">Total</th>
+                            <th scope="col" style="border-bottom: 0px;">Pedidos</th>
+                            <th scope="col" style="border-bottom: 0px;">Total</th>
                         </tr>
                     </thead>
                     <tbody *ngFor="let order of statusOrders">
