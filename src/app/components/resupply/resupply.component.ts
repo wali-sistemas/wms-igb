@@ -306,7 +306,7 @@ export class ResupplyComponent implements OnInit {
         this.message = '';
     }
 
-    public setScrolling() {
+    public getScrollTop() {
         document.body.style.overflowY = "scroll";
     }
 }
