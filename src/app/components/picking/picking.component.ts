@@ -174,14 +174,14 @@ export class PickingComponent implements OnInit {
                     this.nextOrderNumber = response.content[this.position].orderNumber;
                     this.nextBinType = response.content[this.position].binLocationType;
 
-                    //this.nextItemCode = response.content.itemCode.trim();
-                    //this.nextItemQuantity = response.content.pendingQuantity;
-                    //this.nextBinAbs = response.content.binAbs;
-                    //this.nextBinStock = response.content.availableQuantity;
-                    //this.nextBinLocationCode = response.content.binCode;
-                    //this.nextItemName = response.content.itemName;
-                    //this.nextOrderNumber = response.content.orderNumber;
-                    //this.nextBinType = response.content.binLocationType;
+                    //this.nextItemCode = response.content[this.position].itemCode.trim();
+                    //this.nextItemQuantity = response.content[this.position].pendingQuantity;
+                    //this.nextBinAbs = response.content[this.position].binAbs;
+                    //this.nextBinStock = response.content[this.position].availableQuantity;
+                    //this.nextBinLocationCode = response.content[this.position].binCode;
+                    //this.nextItemName = response.content[this.position].itemName;
+                    //this.nextOrderNumber = response.content[this.position].orderNumber;
+                    //this.nextBinType = response.content[this.position].binLocationType;
                     $('#modal_loading_next').modal('hide');
                     $('#binLoc').focus();
                 } else if (response.code === -1) {
