@@ -7,8 +7,11 @@ import { SalesMonthly } from '../../../models/sales-monthly';
 import { UserService } from '../../../services/user.service';
 import { ReportService } from '../../../services/report.service';
 
+import { ByCollect } from '../../../models/byCollect';
+
 import 'rxjs/Rx'
 import { ResupplyComponent } from '../../resupply/resupply.component';
+import { from } from 'rxjs/observable/from';
 
 declare var $: any;
 
@@ -55,7 +58,10 @@ export class ReportManagerComponent implements OnInit {
     public recaudos: Array<any>;
     /***Cartera por Recaudar***/
     public activeByCollection: boolean = false;
-    public byCollect: Array<any>;
+    public byCollect: Array<ByCollect>;
+    public totalByCollect: number;
+    public totalCarteraSana: number;
+    public porcentCarteraSana: number;
     /***Logistica Estado Pedidos***/
     public statusOrders: Array<any>;
     public activeStatusOrder: boolean = false;
@@ -68,7 +74,9 @@ export class ReportManagerComponent implements OnInit {
     public doughnutChartData: number[] = [0, 0, 0, 0];
     public doughnutChartLabels: string[] = ['Sin Asignar', 'En Picking', 'En Packing', 'En Shipping'];
 
-    constructor(private _userService: UserService, private _router: Router, private _reportService: ReportService, private _routerParam: ActivatedRoute) { }
+    constructor(private _userService: UserService, private _router: Router, private _reportService: ReportService, private _routerParam: ActivatedRoute) {
+        this.byCollect = new Array<ByCollect>();
+    }
 
     ngOnInit() {
         this._routerParam.queryParams.subscribe(params => {
@@ -264,18 +272,42 @@ export class ReportManagerComponent implements OnInit {
     }
 
     public getByCollect() {
-        this.activeCollection = false;
-        this.activeByCollection = true;
         $('#modal_transfer_process').modal({
             backdrop: 'static',
             keyboard: false,
             show: true
         });
 
+        this.activeCollection = false;
+        this.activeByCollection = true;
+        this.byCollect = new Array<ByCollect>();
+
         this._reportService.getSalesByCollect(this.queryParam.id, false).subscribe(
             response => {
                 if (response.code == 0) {
-                    this.byCollect = response.content;
+                    this.totalByCollect = 0;
+                    this.totalCarteraSana = 0;
+
+                    for (let i = 0; i < response.content.length; i++) {
+                        this.totalByCollect += response.content[i][1];
+                    }
+
+                    for (let i = 0; i < response.content.length; i++) {
+                        const byCollect = new ByCollect();
+                        byCollect.concept = response.content[i][0];
+                        byCollect.subtotal = response.content[i][1];
+                        byCollect.porcent = (byCollect.subtotal / this.totalByCollect) * 100;
+                        this.byCollect.push(byCollect);
+                    }
+
+                    /*TODO: calculando cartera sana preimeros 2 conceptos
+                    1. Sin vencer
+                    2. 0 a 20*/
+                    for (let i = 0; i < 2; i++) {
+                        this.totalCarteraSana += response.content[i][1];
+                    }
+                    this.porcentCarteraSana = (this.totalCarteraSana / this.totalByCollect) * 100;
+
                     $('#modal_transfer_process').modal('hide');
                     this.activeContentCartera = true;
                 } else {
@@ -305,8 +337,6 @@ export class ReportManagerComponent implements OnInit {
 
         this._reportService.getStatesOrder(this.queryParam.id, false).subscribe(
             response => {
-                console.log(response);
-                
                 if (response.code == 0) {
                     if (response.content.length == 0) {
                         this.statusOrders = new Array<any>();
