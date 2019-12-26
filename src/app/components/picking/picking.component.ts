@@ -48,7 +48,8 @@ export class PickingComponent implements OnInit {
     public availableCarts: Array<BinLocation>;
     public assignedOrders: Array<SalesOrder>;
     public pickingItems: Array<any>;
-    public position: number = 0;
+    public position: number = 1;
+    public countLineNum: number = 0;
 
     constructor(private _userService: UserService,
         private _salesOrderService: SalesOrdersService,
@@ -160,19 +161,12 @@ export class PickingComponent implements OnInit {
             keyboard: false,
             show: true
         });
-        this._pickingService.getNextPickingItem(this.identity.username, this.selectedOrder).subscribe(
+
+        this._pickingService.getNextPickingItem(this.identity.username, this.selectedOrder, this.position).subscribe(
             response => {
                 console.log("Lista de ítem para picking ", response);
                 if (response.code === 0) {
                     this.pickingItems = response.content;
-                    this.nextItemCode = response.content[this.position].itemCode.trim();
-                    this.nextItemQuantity = response.content[this.position].pendingQuantity;
-                    this.nextBinAbs = response.content[this.position].binAbs;
-                    this.nextBinStock = response.content[this.position].availableQuantity;
-                    this.nextBinLocationCode = response.content[this.position].binCode;
-                    this.nextItemName = response.content[this.position].itemName;
-                    this.nextOrderNumber = response.content[this.position].orderNumber;
-                    this.nextBinType = response.content[this.position].binLocationType;
 
                     //this.nextItemCode = response.content[this.position].itemCode.trim();
                     //this.nextItemQuantity = response.content[this.position].pendingQuantity;
@@ -182,6 +176,17 @@ export class PickingComponent implements OnInit {
                     //this.nextItemName = response.content[this.position].itemName;
                     //this.nextOrderNumber = response.content[this.position].orderNumber;
                     //this.nextBinType = response.content[this.position].binLocationType;
+
+                    this.nextItemCode = response.content.itemCode.trim();
+                    this.nextItemQuantity = response.content.pendingQuantity;
+                    this.nextBinAbs = response.content.binAbs;
+                    this.nextBinStock = response.content.availableQuantity;
+                    this.nextBinLocationCode = response.content.binCode;
+                    this.nextItemName = response.content.itemName;
+                    this.nextOrderNumber = response.content.orderNumber;
+                    this.nextBinType = response.content.binLocationType;
+                    this.countLineNum = response.content.lineNum;
+
                     $('#modal_loading_next').modal('hide');
                     $('#binLoc').focus();
                 } else if (response.code === -1) {
@@ -261,7 +266,7 @@ export class PickingComponent implements OnInit {
         $('#modal_confirm_quantity_diff').modal('hide');
         console.log('confirmando cantidad para trasladar item, ' + this.nextItemQuantity + ', ' + this.pickedItemQuantity);
         this.pickedItemQuantityValidated = true;
-        const itemTransfer = {
+        let itemTransfer = {
             binAbsFrom: this.nextBinAbs,
             binAbsTo: this.selectedCart,
             quantity: this.pickedItemQuantity,
@@ -282,6 +287,7 @@ export class PickingComponent implements OnInit {
             response => {
                 if (response.code === 0) {
                     //Clears bin location, item code and quantity fields; then loads cart inventory and next item
+                    itemTransfer = { binAbsFrom: null, binAbsTo: null, quantity: null, expectedQuantity: null, itemCode: null, orderNumber: null, username: null, warehouseCode: null }
                     this.resetForm();
                     $('#modal_transfer_process').modal('hide');
                 } else {
@@ -328,7 +334,7 @@ export class PickingComponent implements OnInit {
         document.getElementById("loc").style.display = "none";
 
         //reload next item
-        this.position = 0;
+        this.position = 1;
         if (this.selectedCart <= 0) {
             this.loadNextItem();
         }
@@ -427,16 +433,20 @@ export class PickingComponent implements OnInit {
     public getBackItem() {
         if (this.position > 0) {
             this.position--;
-            this.loadNextItem();
+        } else if (this.position <= 0) {
+            this.position = 1;
         }
+        console.log('Posición ' + this.position + ' de ' + this.countLineNum + ' para picking');
+        this.loadNextItem();
     }
 
     public getNextItem() {
-        if (this.position < this.pickingItems.length - 1) {
+        if (this.position <= this.countLineNum - 1) {
             this.position++;
         } else {
-            this.position = 0;
+            this.position = 1;
         }
+        console.log('Posición ' + this.position + ' de ' + this.countLineNum + ' para picking');
         this.loadNextItem();
     }
 
