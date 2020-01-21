@@ -162,7 +162,7 @@ export class PickingComponent implements OnInit {
             show: true
         });
 
-        this._pickingService.getNextPickingItem(this.identity.username, this.selectedOrder, this.position).subscribe(
+        this._pickingService.getNextPickingItem(this.identity.username, this.selectedOrder).subscribe(
             response => {
                 console.log("Lista de ítem para picking ", response);
                 if (response.code === 0) {
