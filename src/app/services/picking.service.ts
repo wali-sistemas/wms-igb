@@ -10,7 +10,7 @@ export class PickingService {
         this.url = GLOBAL.url;
     }
 
-    public getNextPickingItem(username, orderNumber) {
+    public getNextPickingItem(username, orderNumber, position) {
         let igbHeaders = new IGBHeaders().loadHeaders();
         let orderNumberFilter = '';
         let positionOrder = '';
