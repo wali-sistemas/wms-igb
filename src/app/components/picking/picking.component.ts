@@ -177,7 +177,7 @@ export class PickingComponent implements OnInit {
                     //this.nextOrderNumber = response.content[this.position].orderNumber;
                     //this.nextBinType = response.content[this.position].binLocationType;
 
-                    this.nextItemCode = response.content.itemCode.trim();
+                    this.nextItemCode = response.content.itemCode;
                     this.nextItemQuantity = response.content.pendingQuantity;
                     this.nextBinAbs = response.content.binAbs;
                     this.nextBinStock = response.content.availableQuantity;
