@@ -14,6 +14,7 @@ export class PickingService {
         let igbHeaders = new IGBHeaders().loadHeaders();
         let orderNumberFilter = '';
         let positionOrder = '';
+        
         if (orderNumber) {
             orderNumberFilter = '?orderNumber=' + orderNumber;
         }
