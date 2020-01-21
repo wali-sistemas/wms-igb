@@ -168,14 +168,14 @@ export class PickingComponent implements OnInit {
                 if (response.code === 0) {
                     this.pickingItems = response.content;
 
-                    /*this.nextItemCode = response.content[this.position].itemCode.trim();
-                    this.nextItemQuantity = response.content[this.position].pendingQuantity;
-                    this.nextBinAbs = response.content[this.position].binAbs;
-                    this.nextBinStock = response.content[this.position].availableQuantity;
-                    this.nextBinLocationCode = response.content[this.position].binCode;
-                    this.nextItemName = response.content[this.position].itemName;
-                    this.nextOrderNumber = response.content[this.position].orderNumber;
-                    this.nextBinType = response.content[this.position].binLocationType;*/
+                    //this.nextItemCode = response.content[this.position].itemCode.trim();
+                    //this.nextItemQuantity = response.content[this.position].pendingQuantity;
+                    //this.nextBinAbs = response.content[this.position].binAbs;
+                    //this.nextBinStock = response.content[this.position].availableQuantity;
+                    //this.nextBinLocationCode = response.content[this.position].binCode;
+                    //this.nextItemName = response.content[this.position].itemName;
+                    //this.nextOrderNumber = response.content[this.position].orderNumber;
+                    //this.nextBinType = response.content[this.position].binLocationType;
 
                     this.nextItemCode = response.content.itemCode.trim();
                     this.nextItemQuantity = response.content.pendingQuantity;
