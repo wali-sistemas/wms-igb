@@ -162,20 +162,20 @@ export class PickingComponent implements OnInit {
             show: true
         });
 
-        this._pickingService.getNextPickingItem(this.identity.username, this.selectedOrder, this.position).subscribe(
+        this._pickingService.getNextPickingItem(this.identity.username, this.selectedOrder).subscribe(
             response => {
                 console.log("Lista de ítem para picking ", response);
                 if (response.code === 0) {
                     this.pickingItems = response.content;
 
-                    //this.nextItemCode = response.content[this.position].itemCode.trim();
-                    //this.nextItemQuantity = response.content[this.position].pendingQuantity;
-                    //this.nextBinAbs = response.content[this.position].binAbs;
-                    //this.nextBinStock = response.content[this.position].availableQuantity;
-                    //this.nextBinLocationCode = response.content[this.position].binCode;
-                    //this.nextItemName = response.content[this.position].itemName;
-                    //this.nextOrderNumber = response.content[this.position].orderNumber;
-                    //this.nextBinType = response.content[this.position].binLocationType;
+                    /*this.nextItemCode = response.content[this.position].itemCode.trim();
+                    this.nextItemQuantity = response.content[this.position].pendingQuantity;
+                    this.nextBinAbs = response.content[this.position].binAbs;
+                    this.nextBinStock = response.content[this.position].availableQuantity;
+                    this.nextBinLocationCode = response.content[this.position].binCode;
+                    this.nextItemName = response.content[this.position].itemName;
+                    this.nextOrderNumber = response.content[this.position].orderNumber;
+                    this.nextBinType = response.content[this.position].binLocationType;*/
 
                     this.nextItemCode = response.content.itemCode.trim();
                     this.nextItemQuantity = response.content.pendingQuantity;
