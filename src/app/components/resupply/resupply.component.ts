@@ -160,8 +160,8 @@ export class ResupplyComponent implements OnInit {
         }
 
         let locationLimitDTO = {
-            "code": this.limitSelect[0].trim().toUpperCase(),
-            "name": this.limitSelect[1].trim().toUpperCase(),
+            "code": this.limitSelect[0],
+            "name": this.limitSelect[1],
             "ubicacion": this.limitSelect[2].trim().toUpperCase(),
             "item": this.limitSelect[3].trim().toUpperCase(),
             "cantMaxima": this.limitSelect[4],
