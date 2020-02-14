@@ -66,13 +66,6 @@ export class SalesOrdersComponent implements OnInit {
     this._salesOrdersService.listOpenOrders(this.showApprovedOnly, this.filterGroup).subscribe(
       response => {
         this.orders = response;
-        
-        console.log('*****************');
-        console.log(this.orders);
-        console.log('*****************');
-
-
-
         $('#modal_transfer_process').modal('hide');
         $('#filter').focus();
         //TODO: validar ordenes asignadas
