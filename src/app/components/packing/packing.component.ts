@@ -360,10 +360,10 @@ export class PackingComponent implements OnInit {
             response => {
                 if (response.code == 0) {
                     this.processDeliveryStatus = 'done';
-                    this.closePackingOrder(this.idPackingOrder, this.identity.username);
                     this.idPackingOrder = null;
                     this.customersListDisabled = true;
                     this.docEntryDelivery = response.content;
+                    this.closePackingOrder(this.idPackingOrder, this.identity.username);
                 } else {
                     this.processDeliveryStatus = 'error';
                     this.deliveryErrorMessage = response.content;
