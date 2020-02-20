@@ -18,8 +18,7 @@ export class PickingService {
         if (orderNumber) {
             orderNumberFilter = '?orderNumber=' + orderNumber;
             positionOrder = '&position=' + position;
-        }
-        if (position) {
+        } else {
             positionOrder = '?position=' + position;
         }
         return this._http.get(this.url + 'picking/v2/nextitem/' + username + orderNumberFilter + positionOrder, { headers: igbHeaders })
