@@ -365,6 +365,7 @@ export class PackingComponent implements OnInit {
                     this.idPackingOrder = null;
                     this.customersListDisabled = true;
                     this.docEntryDelivery = response.content;
+                    this.closePackingOrder(this.idPackingOrder, this.identity.username);
                 } else {
                     this.processDeliveryStatus = 'error';
                     this.deliveryErrorMessage = response.content;
