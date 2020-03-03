@@ -1,0 +1,74 @@
+<nav class="topnav visible-md visible-lg">
+    <a class="topnav-logo"><img src="/assets/images/logo-igb.png" /></a>
+</nav>
+<nav class="topnav visible-xs visible-sm">
+    <a class="topnav-logo"><img src="/assets/images/logo-igb.png" /></a>
+</nav>
+<div id="myNav" class="overlay visible-xs visible-sm">
+</div>
+
+<script src="assets/js/scroll.js"></script>
+
+<!--Modal procesadndo-->
+<div id="modal_transfer_process" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
+                        aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                        <span class="sr-only">Procesando transferencia</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span class="icon-chevron-up"></span></button>
+
+<div class="container content" style="width: 50%;">
+    <div class="row" *ngIf="errorMessage != null && errorMessage.length > 0">
+        <div class="col-xs-12">
+            <div class="alert alert-danger" role="alert">
+                <p>{{errorMessage}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="row" *ngIf="exitMessage != null && exitMessage.length > 0">
+        <div class="col-xs-12">
+            <div class="alert alert-success" role="alert">
+                <p>{{exitMessage}}</p>
+            </div>
+        </div>
+    </div>
+    <h3 class="text-center">Certificado de Retenciones</h3>
+    <hr>
+    <form id="form">
+        <div class="row">
+            <div class="col-xs-12 margin-bottom-10">
+                <input type="number" class="form-control input-lg" [(ngModel)]="document" autocomplete="off" name="document"
+                    [class.required-field]="!validDocument" autocorrect="off" autocapitalize="none" placeholder="Ingrese Nit">
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-xs-12 margin-bottom-10">
+                <select id="region" class="form-control input-lg" [(ngModel)]="selectedType" name="selectedType">
+                    <option style="display:none" disabled selected value="">Selecciona tipo</option>
+                    <option value="Retefuente Renta">Renta</option>
+                    <option value="Retefuente ICA">ICA</option>
+                </select>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-xs-12">
+                <button class="btn btn-danger btn-lg" type="button" style="width: 100%;">
+                    Generar
+                </button>
+            </div>
+        </div>
+        <br />
+    </form>
+</div>

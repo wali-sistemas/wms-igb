@@ -21,6 +21,7 @@ import { ClientIgbComponent } from './components/event-feria/client-igb/client-i
 import { ClientMtzComponent } from './components/event-feria/client-mtz/client-mtz.component';
 import { CheckOutComponent } from './components/packing/check-out/check-out.component';
 import { ShippingComponent } from './components/shipping/shipping.component';
+import { WithholdingTaxesComponent } from './components/withholding-taxes/withholding-taxes.component';
 import { from } from 'rxjs/observable/from';
 
 const appRoutes: Routes = [
@@ -43,7 +44,8 @@ const appRoutes: Routes = [
     { path: 'feria/igb', component: ClientIgbComponent },
     { path: 'feria/motozone', component: ClientMtzComponent },
     { path: 'check-out', component: CheckOutComponent },
-    { path: 'shipping', component: ShippingComponent }
+    { path: 'shipping', component: ShippingComponent },
+    { path: 'withholding', component: WithholdingTaxesComponent}
 ];
 
 export const appRoutingProviders: any[] = [];
