@@ -27,6 +27,7 @@ import { ClientIgbComponent } from './components/event-feria/client-igb/client-i
 import { ClientMtzComponent } from './components/event-feria/client-mtz/client-mtz.component';
 import { CheckOutComponent } from './components/packing/check-out/check-out.component';
 import { ShippingComponent } from './components/shipping/shipping.component';
+import { WithholdingTaxesComponent } from './components/withholding-taxes/withholding-taxes.component';
 
 import { routing, appRoutingProviders } from './app.routing';
 import { from } from 'rxjs/observable/from';
@@ -55,7 +56,8 @@ import { from } from 'rxjs/observable/from';
     ClientIgbComponent,
     ClientMtzComponent,
     CheckOutComponent,
-    ShippingComponent
+    ShippingComponent,
+    WithholdingTaxesComponent
   ],
   imports: [
     BrowserModule,
