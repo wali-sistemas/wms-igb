@@ -5,9 +5,11 @@ import { GLOBAL, IGBHeaders, CONTENT_TYPE_JSON } from './global';
 @Injectable()
 export class ReportService {
     public url: string;
+    public urlManager: string;
 
     constructor(private _http: Http) {
         this.url = GLOBAL.url;
+        this.urlManager = GLOBAL.urlManager;
     }
 
     public obtainReportsOrders(companyName: string, warehouseCode: string, testing: boolean) {
@@ -42,6 +44,11 @@ export class ReportService {
     public generateReport(printReportDTO) {
         let igbHeaders = new IGBHeaders().loadHeaders();
         return this._http.post(this.url + 'report/generate-report', printReportDTO, { headers: igbHeaders })
+            .map(res => res.json());
+    }
+
+    public generateReportManager(printReportDTO) {
+        return this._http.post(this.urlManager + 'report/generate-report', printReportDTO)
             .map(res => res.json());
     }
 

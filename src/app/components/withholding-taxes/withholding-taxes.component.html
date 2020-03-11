@@ -1,0 +1,62 @@
+<nav class="topnav visible-md visible-lg">
+    <a class="topnav-logo"><img src="/assets/images/{{logo}}" /></a>
+</nav>
+<nav class="topnav visible-xs visible-sm">
+    <a class="topnav-logo"><img src="/assets/images/{{logo}}" /></a>
+</nav>
+<div id="myNav" class="overlay visible-xs visible-sm">
+</div>
+
+<script src="assets/js/scroll.js"></script>
+
+<!--Modal procesadndo-->
+<div id="modal_transfer_process" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
+                        aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                        <span class="sr-only">Procesando transferencia</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--<button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span class="icon-chevron-up"></span></button>style="width: 50%;"-->
+
+<div class="container content">
+    <h3 class="text-center">Certificado de Retenciones</h3>
+    <hr>
+    <form id="form">
+        <div class="row">
+            <div class="col-xs-12 margin-bottom-10">
+                <input id="doc" type="number" class="form-control input-lg" [(ngModel)]="document" name="document"
+                    autocorrect="off" [class.required-field]="!validDocument" autocapitalize="none" placeholder="Ingrese Nit"
+                    required>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-xs-12 margin-bottom-10">
+                <select id="tipo" class="form-control input-lg" [(ngModel)]="selectedType" name="selectedType"
+                    [class.required-field]="!validType" required>
+                    <option style="display:none" disabled selected value="">Selecciona tipo</option>
+                    <option value="RENTA">RENTA</option>
+                    <option value="ICA">ICA</option>
+                </select>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-xs-12">
+                <button class="btn btn-danger btn-lg" type="button" style="width: 100%;" (click)="getUrlReport()">
+                    Generar
+                </button>
+            </div>
+        </div>
+        <br />
+    </form>
+</div>
