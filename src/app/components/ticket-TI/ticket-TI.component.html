@@ -1,0 +1,73 @@
+<igb-navbar></igb-navbar>
+
+<button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span class="icon-chevron-up"></span></button>
+
+<div class="container content">
+    <h3>Mis Tickets</h3>
+    <div class="row">
+        <div class="col-xs-12">
+            <form>
+                <div class="input-group">
+                    <span class="input-group-btn" *ngIf="selectedTickets && selectedTickets.size > 0">
+                        <button type="button" class="btn btn-default btn-lg" (click)="listAssignableEmployees()">
+                            <span class="badge">{{selectedTickets.size}}</span>
+                            <span class="icon-user"></span>
+                        </button>
+                    </span>
+                    <input type="text" class="form-control input-lg" id="filter" name="filter" placeholder="Escribe para filtrar"
+                        [(ngModel)]="filter" (keyup)="filterTickers(false)" autocomplete="off" />
+
+                    <span class="input-group-btn">
+                        <button type="button" [class.box]="filterGroup" class="btn btn-default btn-lg" (click)="filterGroupOrders()">
+                            <span class="icon-groups" title="Filtrar grupos"></span>
+                        </button>
+                    </span>
+                </div>
+            </form>
+        </div>
+    </div>
+    <br />
+    <!--<div class="row">
+        <div class="col-xs-12 col-md-6" *ngFor="let order of filteredOrders">
+            <div class="order" [class.warning]="order.status == 'warning'" [class.unauthorized]="order.confirmed === 'N' || order.address.length === 0 || order.transp.length === 0"
+                [class.selected]="selectedOrders.has(order.docNum)" (click)="selectOrder(order)">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="date"><b>{{order.docDate}}</b></div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="order-num"><b>Orden # {{order.docNum}}</b></div>
+                    </div>
+                    <div class="col-sm-4"><span *ngIf="order.status == 'warning'" class="glyphicon glyphicon-warning-sign warn"></span>
+                        <div class="assigned-employee" *ngIf="order.assignedPickingEmployee"><span class="icon-user"
+                                style="font-size: 18px;"></span>{{order.assignedPickingEmployee}}</div>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-sm-2 col-xs-3">
+                        <p><b>Refs </b><span class="badge">{{order.items}}</span></p>
+                        <hr>
+                        <p><b>Cliente</b><br>{{order.cardCode}}</p>
+                    </div>
+                    <div class="col-sm-10 col-xs-9">
+                        <p><b>Comentarios</b></p>
+                        <hr>
+                        <p>{{order.comments}}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <p>{{order.cardName}}</p>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <p><b>{{order.address}}</b></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>-->
+</div>

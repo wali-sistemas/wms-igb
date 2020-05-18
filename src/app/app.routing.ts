@@ -22,6 +22,7 @@ import { ClientMtzComponent } from './components/event-feria/client-mtz/client-m
 import { CheckOutComponent } from './components/packing/check-out/check-out.component';
 import { ShippingComponent } from './components/shipping/shipping.component';
 import { WithholdingTaxesComponent } from './components/withholding-taxes/withholding-taxes.component';
+import { TicketTIComponent } from './components/ticket-TI/ticket-TI.component';
 import { from } from 'rxjs/observable/from';
 
 const appRoutes: Routes = [
@@ -45,7 +46,8 @@ const appRoutes: Routes = [
     { path: 'feria/motozone', component: ClientMtzComponent },
     { path: 'check-out', component: CheckOutComponent },
     { path: 'shipping', component: ShippingComponent },
-    { path: 'withholding', component: WithholdingTaxesComponent}
+    { path: 'withholding', component: WithholdingTaxesComponent },
+    { path: 'ticket-TI', component: TicketTIComponent }
 ];
 
 export const appRoutingProviders: any[] = [];
