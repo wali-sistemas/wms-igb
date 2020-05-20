@@ -318,7 +318,7 @@ export class PackingComponent implements OnInit {
         });
         this.getUsedBoxesList();
         this.orderItemsList = new Array<any>();
-        this._packingService.listOrderItems(this.idPackingOrder, this.selectedOrder).subscribe(
+        this._packingService.listOrderItems(this.idPackingOrder).subscribe(
             response => {
                 if (response.code === 0) {
                     this.start();
@@ -637,7 +637,7 @@ export class PackingComponent implements OnInit {
             keyboard: false,
             show: true
         });
-        this._packingService.listOrderItems(this.idPackingOrder, this.selectedOrder).subscribe(
+        this._packingService.listOrderItems(this.idPackingOrder).subscribe(
             response => {
                 if (response.content.length > 0) {
                     for (let i = 0; i < response.content.length; i++) {
