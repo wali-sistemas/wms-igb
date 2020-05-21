@@ -9,7 +9,7 @@ export class ReportService {
 
     constructor(private _http: Http) {
         this.url = GLOBAL.url;
-        this.urlManager = GLOBAL.urlManager;
+        this.urlManager= GLOBAL.urlManager;
     }
 
     public obtainReportsOrders(companyName: string, warehouseCode: string, testing: boolean) {

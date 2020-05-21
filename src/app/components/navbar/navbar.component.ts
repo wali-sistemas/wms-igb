@@ -20,6 +20,7 @@ export class NavBarComponent implements OnInit {
   public packingModuleAccesible: boolean = false;
   public inventoryModuleAccesible: boolean = false;
   public shippingModuleAccesible: boolean = false;
+  public ticketTIModuleAccesible: boolean = false;
 
   constructor(private _userService: UserService, private _route: ActivatedRoute, private _router: Router) { }
 
@@ -50,6 +51,7 @@ export class NavBarComponent implements OnInit {
       this.packingModuleAccesible = userAccess.packingModuleAccesible;
       this.inventoryModuleAccesible = userAccess.inventoryModuleAccesible;
       this.shippingModuleAccesible = userAccess.shippingModuleAccesible;
+      this.ticketTIModuleAccesible = userAccess.ticketTIModuleAccesible;
       return;
     }
 
@@ -61,10 +63,25 @@ export class NavBarComponent implements OnInit {
       receptionModuleAccesible: false,
       packingModuleAccesible: false,
       inventoryModuleAccesible: false,
-      shippingModuleAccesible: false
+      shippingModuleAccesible: false,
+      ticketTIModuleAccesible: false
     };
 
     localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
+
+    //validar si el usuario puede acceder al modulo de ticketTI
+    this._userService.canAccess(this.identity.username, 'ticketTI').subscribe(
+      response => {
+        if (response.code == 0) {
+          this.ticketTIModuleAccesible = true;
+          userAccess = JSON.parse(localStorage.getItem('igb.user.access'));
+          userAccess.ticketTIModuleAccesible = true;
+          localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
+        } else {
+          this.ticketTIModuleAccesible = false;
+        }
+      }, error => { console.error(error); }
+    );
 
     //validar si el usuario puede acceder al modulo de ordenes
     this._userService.canAccess(this.identity.username, 'orders').subscribe(
