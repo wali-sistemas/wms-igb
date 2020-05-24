@@ -10,15 +10,18 @@ export class PickingService {
         this.url = GLOBAL.url;
     }
 
-    public getNextPickingItem(username, orderNumber) {
+    public getNextPickingItem(username, orderNumber, position) {
         let igbHeaders = new IGBHeaders().loadHeaders();
         let orderNumberFilter = '';
         let positionOrder = '';
-        
+
         if (orderNumber) {
             orderNumberFilter = '?orderNumber=' + orderNumber;
+            positionOrder = '&position=' + position;
+        } else {
+            positionOrder = '?position=' + position;
         }
-        return this._http.get(this.url + 'picking/v2/nextitem/' + username +'/' + orderNumberFilter, { headers: igbHeaders })
+        return this._http.get(this.url + 'picking/v2/nextitem/' + username + orderNumberFilter + positionOrder, { headers: igbHeaders })
             .map(res => res.json());
     }
 
