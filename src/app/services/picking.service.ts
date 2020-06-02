@@ -10,12 +10,15 @@ export class PickingService {
         this.url = GLOBAL.url;
     }
 
-    public getNextPickingItem(username, orderNumber) {
+    public getNextPickingItem(username, orderNumber, position) {
         let igbHeaders = new IGBHeaders().loadHeaders();
         let orderNumberFilter = '';
 
         if (orderNumber) {
             orderNumberFilter = '?orderNumber=' + orderNumber;
+            positionOrder = '&position=' + position;
+        } else {
+            positionOrder = '?position=' + position;
         }
 
         console.log(this.url + 'picking/v2/nextitem/' + username + orderNumberFilter);

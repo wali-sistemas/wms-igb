@@ -443,16 +443,20 @@ export class PickingComponent implements OnInit {
     public getBackItem() {
         if (this.position > 0) {
             this.position--;
-            this.loadNextItem();
+        } else if (this.position <= 0) {
+            this.position = 1;
         }
+        console.log("Posición " + this.position + " de " + this.countLineNum + " para picking");
+        this.loadNextItem();
     }
 
     public getNextItem() {
-        if (this.position < this.pickingItems.length - 1) {
+        if (this.position <= this.countLineNum - 1) {
             this.position++;
         } else {
-            this.position = 0;
+            this.position = 1;
         }
+        console.log("Posición " + this.position + " de " + this.countLineNum + " para picking");
         this.loadNextItem();
     }
 
