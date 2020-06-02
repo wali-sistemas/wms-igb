@@ -13,7 +13,6 @@ export class PickingService {
     public getNextPickingItem(username, orderNumber, position) {
         let igbHeaders = new IGBHeaders().loadHeaders();
         let orderNumberFilter = '';
-        let positionOrder = '';
 
         if (orderNumber) {
             orderNumberFilter = '?orderNumber=' + orderNumber;
@@ -21,7 +20,10 @@ export class PickingService {
         } else {
             positionOrder = '?position=' + position;
         }
-        return this._http.get(this.url + 'picking/v2/nextitem/' + username + orderNumberFilter + positionOrder, { headers: igbHeaders })
+
+        console.log(this.url + 'picking/v2/nextitem/' + username + orderNumberFilter);
+        
+        return this._http.get(this.url + 'picking/v2/nextitem/' + username + orderNumberFilter, { headers: igbHeaders })
             .map(res => res.json());
     }
 
