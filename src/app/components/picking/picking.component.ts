@@ -162,19 +162,12 @@ export class PickingComponent implements OnInit {
             show: true
         });
 
-        /*let ordenes = "";
-        if (this.selectedOrder == "") {
-            for (let i = 0; i < this.assignedOrders.length; i++) {
-                ordenes += this.assignedOrders[i].docNum + ",";
-            }
-            ordenes = ordenes.substring(0, ordenes.length - 1);
-        } else { ordenes = this.selectedOrder; }*/
-
         this._pickingService.getNextPickingItem(this.identity.username, this.selectedOrder == "" ? null : this.selectedOrder).subscribe(
             response => {
                 console.log("Lista de ítem para picking ", response);
                 if (response.code === 0) {
                     this.pickingItems = response.content;
+                    this.countLineNum = this.pickingItems.length;
 
                     this.nextItemCode = response.content[this.position].itemCode.trim();
                     this.nextItemQuantity = response.content[this.position].pendingQuantity;
@@ -184,16 +177,6 @@ export class PickingComponent implements OnInit {
                     this.nextItemName = response.content[this.position].itemName;
                     this.nextOrderNumber = response.content[this.position].orderNumber;
                     this.nextBinType = response.content[this.position].binLocationType;
-
-                    /*this.nextItemCode = response.content.itemCode.trim();
-                    this.nextItemQuantity = response.content.pendingQuantity;
-                    this.nextBinAbs = response.content.binAbs;
-                    this.nextBinStock = response.content.availableQuantity;
-                    this.nextBinLocationCode = response.content.binCode;
-                    this.nextItemName = response.content.itemName;
-                    this.nextOrderNumber = response.content.orderNumber;
-                    this.nextBinType = response.content.binLocationType;
-                    this.countLineNum = response.content.lineNum;*/
 
                     $('#modal_loading_next').modal('hide');
                     $('#binLoc').focus();
@@ -342,7 +325,7 @@ export class PickingComponent implements OnInit {
         document.getElementById("loc").style.display = "none";
 
         //reload next item
-        this.position = 1;
+        this.position = 0;
         if (this.selectedCart <= 0) {
             this.loadNextItem();
         }
@@ -451,10 +434,10 @@ export class PickingComponent implements OnInit {
     }
 
     public getNextItem() {
-        if (this.position <= this.countLineNum - 1) {
+        if (this.position < this.countLineNum - 1) {
             this.position++;
         } else {
-            this.position = 1;
+            this.position = 0;
         }
         console.log("Posición " + this.position + " de " + this.countLineNum + " para picking");
         this.loadNextItem();
