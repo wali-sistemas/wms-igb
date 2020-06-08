@@ -262,6 +262,7 @@
                             <th scope="col" style="border-bottom: 0px;">56 a 120</th>
                             <th scope="col" style="border-bottom: 0px;">121 a 360</th>
                             <th scope="col" style="border-bottom: 0px;">Mayor de 360</th>
+                            <th scope="col" style="border-bottom: 0px;">SubTotal</th>
                         </tr>
                     </thead>
                     <tbody *ngFor="let recaudo of recaudos">
@@ -273,8 +274,21 @@
                             <td>$ {{recaudo[5] | number}}</td>
                             <td>$ {{recaudo[6] | number}}</td>
                             <td>$ {{recaudo[7] | number}}</td>
+                            <td>$ {{recaudo[2] + recaudo[3] + recaudo[4] + recaudo[5] + recaudo[6] + recaudo[7] | number}}</td>
                         </tr>
                     </tbody>
+                    <tfoot style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">
+                        <tr>
+                            <th scope="col" style="border-bottom: 0px;">Totales</th>
+                            <td scope="col" style="border-bottom: 0px;">$ {{totalSinVencer | number}}</td>
+                            <td scope="col" style="border-bottom: 0px;">$ {{total0a20 | number}}</td>
+                            <td scope="col" style="border-bottom: 0px;">$ {{total21a55 | number}}</td>
+                            <td scope="col" style="border-bottom: 0px;">$ {{total56a120 | number}}</td>
+                            <td scope="col" style="border-bottom: 0px;">$ {{total121a360 | number}}</td>
+                            <td scope="col" style="border-bottom: 0px;">$ {{totalMayor360 | number}}</td>
+                            <td scope="col" style="border-bottom: 0px;">$ {{totalSinVencer + total0a20 + total21a55 + total56a120 + total121a360 + totalMayor360 | number}}</td>
+                        </tr>
+                    </tfoot>
                 </table>
                 <!-- tabla mobile -->
                 <table class="table table-sm visible-sm visible-xs" style="border-collapse: initial !important;">

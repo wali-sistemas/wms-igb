@@ -56,6 +56,12 @@ export class ReportManagerComponent implements OnInit {
     public selectedDiasAtraso: string = 'a';
     public activeCollection: boolean = false;
     public recaudos: Array<any>;
+    public totalSinVencer: number;
+    public total0a20: number;
+    public total21a55: number;
+    public total56a120: number;
+    public total121a360: number;
+    public totalMayor360: number;
     /***Cartera por Recaudar***/
     public activeByCollection: boolean = false;
     public byCollect: Array<ByCollect>;
@@ -243,6 +249,7 @@ export class ReportManagerComponent implements OnInit {
     }
 
     public getCollectMonthly() {
+        this.recaudos = new Array<any>();
         this.activeByCollection = false;
         this.activeCollection = true;
         $('#modal_transfer_process').modal({
@@ -255,6 +262,22 @@ export class ReportManagerComponent implements OnInit {
             response => {
                 if (response.code == 0) {
                     this.recaudos = response.content;
+                    this.totalSinVencer = 0;
+                    this.total0a20 = 0;
+                    this.total21a55 = 0;
+                    this.total56a120 = 0;
+                    this.total121a360 = 0;
+                    this.totalMayor360 = 0;
+
+                    for (let i = 0; i < this.recaudos.length; i++) {
+                        this.totalSinVencer += this.recaudos[i][2];
+                        this.total0a20 += this.recaudos[i][3];
+                        this.total21a55 += this.recaudos[i][4];
+                        this.total56a120 += this.recaudos[i][5];
+                        this.total121a360 += this.recaudos[i][6];
+                        this.totalMayor360 += this.recaudos[i][7];
+                    }
+
                     $('#modal_transfer_process').modal('hide');
                     this.activeContentCartera = true;
                 } else {
