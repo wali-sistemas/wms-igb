@@ -79,6 +79,12 @@ export class ReportManagerComponent implements OnInit {
     public doughnutChartType: string = 'doughnut';
     public doughnutChartData: number[] = [0, 0, 0, 0];
     public doughnutChartLabels: string[] = ['Sin Asignar', 'En Picking', 'En Packing', 'En Shipping'];
+    /***Ordenes del día***/
+    public ordersOfDay: Array<any>;
+    public activeOrderOfDay: boolean = false;
+    public barChartTypeOrderOfDay: string = 'doughnut';
+    public barChartDataOrderOfDay: number[] = [0, 0, 0, 0, 0];
+    public barChartLabelsOrderOfDay: string[] = ['Día -5','Día -4', 'Día -3', 'Ayer', 'Hoy'];
 
     constructor(private _userService: UserService, private _router: Router, private _reportService: ReportService, private _routerParam: ActivatedRoute) {
         this.byCollect = new Array<ByCollect>();
@@ -294,6 +300,28 @@ export class ReportManagerComponent implements OnInit {
         );
     }
 
+    public listOrdersOfDay() {
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+
+        this.ordersOfDay = new Array<any>();
+        this._reportService.listOrdersOfDay(this.queryParam.id, false).subscribe(
+            response => {
+                this.ordersOfDay = response;
+                this.barChartDataOrderOfDay = [this.ordersOfDay[0][1], this.ordersOfDay[1][1], this.ordersOfDay[2][1], this.ordersOfDay[3][1], this.ordersOfDay[4][1]];
+                $('#modal_transfer_process').modal('hide');
+                console.log(response);
+            }, error => {
+                console.error("Ocurrio un error listando las ordenes del día.", error);
+                $('#modal_transfer_process').modal('hide');
+                this.redirectIfSessionInvalid(error);
+            }
+        );
+    }
+
     public getByCollect() {
         $('#modal_transfer_process').modal({
             backdrop: 'static',
@@ -421,6 +449,7 @@ export class ReportManagerComponent implements OnInit {
         this.activeSaleMonth = false;
         this.activeMargeMonth = false;
         this.activeMargeAnnual = false;
+        this.activeOrderOfDay = false;
         if (this.activeSaleAnnual) {
             this.activeSaleAnnual = false;
         } else {
@@ -435,6 +464,7 @@ export class ReportManagerComponent implements OnInit {
         this.activeSaleAnnual = false;
         this.activeMargeAnnual = false;
         this.activeMargeMonth = false;
+        this.activeOrderOfDay = false;
         if (this.activeSaleMonth) {
             this.activeSaleMonth = false;
         } else {
@@ -449,6 +479,7 @@ export class ReportManagerComponent implements OnInit {
         this.activeSaleAnnual = false;
         this.activeSaleMonth = false;
         this.activeMargeMonth = false;
+        this.activeOrderOfDay = false;
         if (this.activeMargeAnnual) {
             this.activeMargeAnnual = false;
         } else {
@@ -463,6 +494,7 @@ export class ReportManagerComponent implements OnInit {
         this.activeSaleAnnual = false;
         this.activeSaleMonth = false;
         this.activeMargeAnnual = false;
+        this.activeOrderOfDay = false;
         if (this.activeMargeMonth) {
             this.activeMargeMonth = false;
         } else {
@@ -473,6 +505,20 @@ export class ReportManagerComponent implements OnInit {
         }
     }
 
+    public getActiveOrdersOfDay() {
+        this.activeSaleAnnual = false;
+        this.activeSaleMonth = false;
+        this.activeMargeAnnual = false;
+        this.activeMargeMonth = false;
+        if (this.activeOrderOfDay) {
+            this.activeOrderOfDay = false;
+        } else {
+            this.activeContentGerencia = true;
+            this.activeOrderOfDay = true;
+            this.listOrdersOfDay()
+        }
+    }
+
     public getActiveComercial() {
         this.activeContentCartera = false;
         this.activeContentLogist = false;
@@ -480,6 +526,7 @@ export class ReportManagerComponent implements OnInit {
         this.activeByCollection = false;
         this.activeStatusOrder = false;
         this.activeGraphCedi = false;
+        this.activeOrderOfDay = false;
     }
 
     public getActiveSaleCollect() {
@@ -491,6 +538,7 @@ export class ReportManagerComponent implements OnInit {
         this.activeMargeMonth = false;
         this.activeStatusOrder = false;
         this.activeGraphCedi = false;
+        this.activeOrderOfDay = false;
     }
 
     public getActiveLogistica() {
@@ -502,5 +550,6 @@ export class ReportManagerComponent implements OnInit {
         this.activeSaleMonth = false;
         this.activeMargeAnnual = false;
         this.activeMargeMonth = false;
+        this.activeOrderOfDay = false;
     }
 }

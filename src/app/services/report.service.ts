@@ -9,7 +9,7 @@ export class ReportService {
 
     constructor(private _http: Http) {
         this.url = GLOBAL.url;
-        this.urlManager= GLOBAL.urlManager;
+        this.urlManager = GLOBAL.urlManager;
     }
 
     public obtainReportsOrders(companyName: string, warehouseCode: string, testing: boolean) {
@@ -99,6 +99,16 @@ export class ReportService {
             'X-Pruebas': testing
         });
         return this._http.get(this.url + 'report/states-order', { headers: igbHeaders })
+            .map(res => res.json());
+    }
+
+    public listOrdersOfDay(companyName: string, testing: boolean) {
+        let igbHeaders = new Headers({
+            'Content-Type': 'application/json',
+            'X-Company-Name': companyName,
+            'X-Pruebas': testing
+        });
+        return this._http.get(this.url + 'report/orders-of-day', { headers: igbHeaders })
             .map(res => res.json());
     }
 }

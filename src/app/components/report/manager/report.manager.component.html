@@ -64,6 +64,9 @@
                                                 id="list-marg-mensual-list" data-toggle="list" role="tab" style="border-radius: 0px;"
                                                 (click)="getActiveMargeMonth()">Margen
                                                 Mensual</a>
+                                            <a class="list-group-item list-group-item-action" [ngClass]="{active: activeOrderOfDay}"
+                                                id="list-order-of-day-list" data-toggle="list" role="tab" style="border-radius: 0px;"
+                                                (click)="getActiveOrdersOfDay()">Ordenes del día</a>
                                         </div>
                                     </div>
                                 </div>
@@ -235,6 +238,92 @@
                         </td>
                         <td style="border: solid 1px; border-color: #828282; width: 50%;">
                             % {{venta.margeSale | number}}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <!--Ordenes del día-->
+        <div class="row" *ngIf="activeOrderOfDay">
+            <div class="col-xs-12">
+                <div class="margin-20">
+                    <div style="display: block">
+                        <canvas baseChart [data]="barChartDataOrderOfDay" [labels]="barChartLabelsOrderOfDay" [chartType]="barChartTypeOrderOfDay"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-8 col-md-offset-2">
+                <!-- Tabla Desktop -->
+                <table class="table table-sm visible-lg visible-md" style="border: solid 1px; width: 100%; border-color: hsl(0, 32%, 8%);">
+                    <tr>
+                        <td style="border: solid 1px; border-color: #333; width: 25%; background-color: #333; color: #fff;">
+                            <h4>Fecha</h4>
+                        </td>
+                        <td style="border: solid 1px; border-color: #333; width: 15%; background-color: #333; color: #fff;">
+                            <h4>Ordenes</h4>
+                        </td>
+                        <td style="border: solid 1px; border-color: #333; width: 15%; background-color: #333; color: #fff;">
+                            <h4>Abiertas</h4>
+                        </td>
+                        <td style="border: solid 1px; border-color: #333; width: 15%; background-color: #333; color: #fff;">
+                            <h4>Cerradas</h4>
+                        </td>
+                        <td style="border: solid 1px; border-color: #333; width: 30%; background-color: #333; color: #fff;">
+                            <h4>Total</h4>
+                        </td>
+                    </tr>
+                    <tr *ngFor="let orderOfDay of ordersOfDay">
+                        <td style="border: solid 1px; border-color: #828282; width: 25%;">
+                            {{orderOfDay[0]}}
+                        </td>
+                        <td style="border: solid 1px; border-color: #828282; width: 15%;">
+                           {{orderOfDay[1]}}
+                        </td>
+                        <td style="border: solid 1px; border-color: #828282; width: 15%;">
+                            {{orderOfDay[2]}}
+                         </td>
+                         <td style="border: solid 1px; border-color: #828282; width: 15%;">
+                            {{orderOfDay[3]}}
+                         </td>
+                        <td style="border: solid 1px; border-color: #828282; width: 30%;">
+                            $ {{orderOfDay[4] | number}}
+                        </td>
+                    </tr>
+                </table>
+                <!-- tabla mobile -->
+                <table class="table table-sm visible-sm visible-xs" style="border: solid 1px; width: 100%; border-color: hsl(0, 32%, 8%);">
+                    <tr>
+                        <td style="border: solid 1px; border-color: #333; width: 40%; background-color: #333; color: #fff;">
+                            <h4>Fecha</h4>
+                        </td>
+                        <td style="border: solid 1px; border-color: #333; width: 5%; background-color: #333; color: #fff;">
+                            <h4>Ord</h4>
+                        </td>
+                        <td style="border: solid 1px; border-color: #333; width: 5%; background-color: #333; color: #fff;">
+                            <h4>Abt</h4>
+                        </td>
+                        <td style="border: solid 1px; border-color: #333; width: 5%; background-color: #333; color: #fff;">
+                            <h4>Crr</h4>
+                        </td>
+                        <td style="border: solid 1px; border-color: #333; width: 45%; background-color: #333; color: #fff;">
+                            <h4>Total</h4>
+                        </td>
+                    </tr>
+                    <tr *ngFor="let orderOfDay of ordersOfDay">
+                        <td style="border: solid 1px; border-color: #828282; width: 40%;">
+                            {{orderOfDay[0]}}
+                        </td>
+                        <td style="border: solid 1px; border-color: #828282; width: 5%;">
+                           {{orderOfDay[1]}}
+                        </td>
+                        <td style="border: solid 1px; border-color: #828282; width: 5%;">
+                            {{orderOfDay[2]}}
+                         </td>
+                         <td style="border: solid 1px; border-color: #828282; width: 5%;">
+                            {{orderOfDay[3]}}
+                         </td>
+                        <td style="border: solid 1px; border-color: #828282; width: 45%;">
+                            $ {{orderOfDay[4] | number}}
                         </td>
                     </tr>
                 </table>
