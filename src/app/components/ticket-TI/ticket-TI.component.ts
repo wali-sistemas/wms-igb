@@ -113,7 +113,7 @@ export class TicketTIComponent implements OnInit {
         this.listNotesTicket();
     }
 
-    public createNoteTicket(idTicket: Number) {
+    public createNoteTicket(idTicket: number) {
         if (this.notes == null || this.notes.length <= 0) {
             this.validNotes = false;
             $('#notes').focus();
