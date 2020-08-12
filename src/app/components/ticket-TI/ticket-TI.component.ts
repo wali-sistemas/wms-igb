@@ -31,6 +31,7 @@ export class TicketTIComponent implements OnInit {
     public attached: String = '';
     public empAdd: String = '';
     public companyName: String = '';
+    public filter: string = '';
     public idTicket: Number;
     public selectedIdTypeTicket: number = null;
     public validAsunt: boolean = true;
@@ -40,6 +41,7 @@ export class TicketTIComponent implements OnInit {
     public validNewNotes: boolean = true;
     public validNotes: boolean = true;
     public tickets: Array<TicketTI>;
+    public filteredTicket: Array<TicketTI>;
     public ticketNotes: Array<TicketTINotes>;
     public ticketTypes: Array<any>;
 
@@ -74,6 +76,7 @@ export class TicketTIComponent implements OnInit {
                     this.msjTicket = response.content;
                 } else {
                     this.tickets = response;
+                    this.filteredTicket = this.tickets;
                 }
                 $('#modal_ticket_process').modal('hide');
             }, error => {
@@ -110,7 +113,7 @@ export class TicketTIComponent implements OnInit {
         this.listNotesTicket();
     }
 
-    public createNoteTicket(idTicket: number) {
+    public createNoteTicket(idTicket: Number) {
         if (this.notes == null || this.notes.length <= 0) {
             this.validNotes = false;
             $('#notes').focus();
@@ -294,6 +297,25 @@ export class TicketTIComponent implements OnInit {
     }
 
     public canceledTicket() {
+    }
+
+    public filterTicket() {
+        if (this.filter.length > 0) {
+            this.tickets = new Array<TicketTI>();
+            for (let i = 0; i < this.filteredTicket.length; i++) {
+                const ticket = this.filteredTicket[i];
+                if (ticket.empAdd.toLowerCase().includes(this.filter.toLowerCase()) ||
+                    ticket.company.toLowerCase().includes(this.filter.toLowerCase()) ||
+                    ticket.status.toLowerCase().includes(this.filter.toLowerCase()) ||
+                    //ticket.empSet.toLowerCase().includes(this.filter.toLowerCase()) ||
+                    ticket.priority.toLowerCase().includes(this.filter.toLowerCase()) ||
+                    ticket.idTicket.toString().includes(this.filter)) {
+                    this.tickets.push(ticket);
+                }
+            }
+        } else {
+            this.tickets = this.filteredTicket;
+        }
     }
 
     public getScrollTop() {

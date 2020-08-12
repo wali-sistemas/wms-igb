@@ -225,11 +225,11 @@
             <form>
                 <div class="input-group">
                     <input type="text" class="form-control input-lg" id="filter" name="filter"
-                        placeholder="Buscar ticket" [(ngModel)]="filter" (keyup)="filterTickers(false)"
+                        placeholder="Buscar ticket" [(ngModel)]="filter" (keyup)="filterTicket()"
                         autocomplete="off" />
                     <span class="input-group-btn">
-                        <button type="button" [class.box]="filterGroup" class="btn btn-default btn-lg"
-                            data-toggle="modal" data-target="#modal_new_ticket">
+                        <button type="button" class="box" class="btn btn-default btn-lg" data-toggle="modal"
+                            data-target="#modal_new_ticket">
                             <span class="icon-plus-square" title="Nuevo Ticket"></span>
                         </button>
                     </span>
