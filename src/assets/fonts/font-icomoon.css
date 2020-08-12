@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?s61f8n');
-  src:  url('fonts/icomoon.eot?s61f8n#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?s61f8n') format('truetype'),
-    url('fonts/icomoon.woff?s61f8n') format('woff'),
-    url('fonts/icomoon.svg?s61f8n#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?pnip5p');
+  src:  url('fonts/icomoon.eot?pnip5p#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?pnip5p') format('truetype'),
+    url('fonts/icomoon.woff?pnip5p') format('woff'),
+    url('fonts/icomoon.svg?pnip5p#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -13,7 +13,7 @@
 [class^="icon-"], [class*=" icon-"] {
   /* use !important to prevent issues with browser extensions that change fonts */
   font-family: 'icomoon' !important;
-  speak: none;
+  speak: never;
   font-style: normal;
   font-weight: normal;
   font-variant: normal;
@@ -25,41 +25,29 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-transport:before {
-  content: "\e96d";
+.icon-invoice:before {
+  content: "\e961";
 }
 .icon-inventory-boxes:before {
-  content: "\e96a";
-}
-.icon-inventory-random:before {
-  content: "\e96b";
-}
-.icon-search-stock:before {
-  content: "\e96c";
-}
-.icon-invoice:before {
-  content: "\e969";
-}
-.icon-moto:before {
-  content: "\e962";
-}
-.icon-industrial:before {
-  content: "\e964";
-}
-.icon-auto:before {
-  content: "\e965";
-}
-.icon-lubricante:before {
-  content: "\e95e";
-}
-.icon-llanta:before {
   content: "\e95f";
 }
-.icon-repuesto:before {
+.icon-transport:before {
   content: "\e960";
 }
+.icon-search-stock:before {
+  content: "\e95e";
+}
+.icon-lubricante:before {
+  content: "\e962";
+}
+.icon-llanta:before {
+  content: "\e963";
+}
+.icon-repuesto:before {
+  content: "\e964";
+}
 .icon-accesorios:before {
-  content: "\e961";
+  content: "\e965";
 }
 .icon-encuesta:before {
   content: "\e929";
@@ -307,9 +295,6 @@
 .icon-arrow-left:before {
   content: "\e94d";
 }
-.icon-check-out:before {
-  content: "\e968";
-}
 .icon-chevron-left:before {
   content: "\e95a";
 }
@@ -346,14 +331,8 @@
 .icon-log-out:before {
   content: "\e940";
 }
-.icon-minus:before {
-  content: "\e966";
-}
 .icon-package:before {
   content: "\e954";
-}
-.icon-plus:before {
-  content: "\e967";
 }
 .icon-plus-square:before {
   content: "\e942";
@@ -375,16 +354,4 @@
 }
 .icon-groups:before {
   content: "\e956";
-}
-.icon-chevron-down:before {
-  content: "\e96e";
-}
-.icon-packingList:before {
-  content: "\e9b8";
-}
-.icon-box:before {
-  content: "\eaae";
-}
-.icon-delivery:before {
-  content: "\e963";
 }

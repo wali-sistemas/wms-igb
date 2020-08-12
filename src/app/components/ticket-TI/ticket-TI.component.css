@@ -2,54 +2,58 @@
     margin-top: 60px;
   }
   
-  .order {
+  .ticket {
     min-height: 200px;
     border: 1px solid #ccc;
     margin-bottom: 10px;
     padding: 10px;
   }
   
-  .order p {
+  .ticket p {
     font-size: 12px;
     margin-bottom: 0;
   }
   
-  .order hr {
+  .ticket hr {
     margin: 5px 0px;
   }
   
-  .order-num {
+  .ticket-num {
     background-color: #ececec;
-    border-radius: 10px;
+    border-radius: 5px;
     color: #333;
     text-align: center;
   }
-  
-  .order:hover {
-    cursor: pointer;
-    box-shadow: 2px 2px 4px rgb(200, 200, 200);
+
+  .ticket-num:hover {
+    background-color: #333;
+    color: #fff;
+  }
+
+  .notes:hover {
+    color: #da0611;
   }
   
-  .order.unauthorized {
+  .ticket.unauthorized {
     border: 1px solid #ededed;
     color: #e0e0e0;
     cursor: not-allowed;
   }
   
-  .order.unauthorized .badge {
+  .ticket.unauthorized .badge {
     background-color: #e0e0e0;
   }
   
-  .order.selected {
+  .ticket.selected {
     border: 1px solid rgb(180, 0, 0);
     background-color: rgba(180, 0, 0, 0.2)
   }
   
-  .order .order-number::before {
+  .ticket .ticket-number::before {
     content: 'Orden #';
   }
   
-  .order .order-number {
+  .ticket .ticket-number {
     font-size: 18px;
     position: absolute;
     top: 5px;
@@ -57,41 +61,41 @@
     text-align: center;
   }
   
-  .order .order-items::before {
+  .ticket .ticket-items::before {
     font-weight: bold;
     font-size: 11px;
     content: 'Refs: ';
   }
   
-  .order .order-items {
+  .ticket .ticket-items {
     position: absolute;
     top: 35px;
     width: 80%;
     left: 20px;
   }
   
-  .order .order-docdate {
+  .ticket .ticket-docdate {
     position: absolute;
     top: 35px;
     right: 20px;
     font-size: 11px;
   }
   
-  .order .order-cardcode::before {
+  .ticket .ticket-cardcode::before {
     font-weight: bold;
     font-size: 11px;
     content: 'Documento: ';
     display: block;
   }
   
-  .order .order-cardcode {
+  .ticket .ticket-cardcode {
     border-top: 1px solid #ddd;
     position: absolute;
     top: 60px;
     left: 20px;
   }
   
-  .order .order-comments-label {
+  .ticket .ticket-comments-label {
     position: absolute;
     top: 40px;
     left: 120px;
@@ -99,7 +103,7 @@
     font-size: 11px;
   }
   
-  .order .order-comments {
+  .ticket .ticket-comments {
     border-top: 1px solid #ddd;
     position: absolute;
     top: 60px;
@@ -107,14 +111,14 @@
     width: 60%;
   }
   
-  .order .order-cardname::before {
+  .ticket .ticket-cardname::before {
     font-weight: bold;
     font-size: 11px;
     content: 'Nombre: ';
     display: block;
   }
   
-  .order .order-cardname {
+  .ticket .ticket-cardname {
     position: absolute;
     top: 100px;
     width: 80%;
@@ -133,18 +137,20 @@
     position: absolute
   }
   
-  .order.warning .assigned-employee, .order.warning .glyphicon-warning-sign{
+  /*.ticket.warning .assigned-employee, .ticket.warning .glyphicon-warning-sign{
     color: #f0ad4e;
-  }
+  }*/
   
-  .order.warning {
-    border: 1px solid #f0ad4e;
-    color: #e0e0e0;
+  .ticket.closed {
+    border: 1px solid #333;
+    /*color: #e0e0e0;*/
+    opacity: 0.2;
   }
-  
-  .order.warning:hover {
-    cursor: pointer;
-    box-shadow: 2px 2px 4px rgb(179, 129, 59);
+
+  .ticket.canceled {
+    border: 1px solid #333;
+    /*color: #e0e0e0;*/
+    opacity: 0.2;
   }
   
   .box {
@@ -152,6 +158,12 @@
     color: #fff;
     text-align: center;
     border-radius: 6px;
+  }
+
+  .emp-assigned {
+    position: absolute;
+    top: -4px;
+    right: 14px;
   }
   
   .scrollTop {
@@ -169,10 +181,61 @@
     padding: 15px;
     border-radius: 4px;
   }
+
+  .notes {
+    padding: 5px;
+    position: absolute;
+    right: 9px;
+    top: -30px;
+  }
   
   .scrollTop:hover {
     background-color: #333;
   }
+  
+  .avatar {
+    background-repeat: no-repeat;
+    background-position: 50%;
+    border-radius: 50%;
+    background-size: 100% auto;
+    width: 60px;
+}
+
+.ng-valid[required], .ng-valid.required {
+  border-color: #6D9197
+}
+
+.ng-touched.ng-invalid[required], .ng-untouched.ng-pristine.ng-invalid[required].required-field {
+  border-color: #da0611;
+}
+
+.status {
+  text-align: end;
+}
+
+label[for="customFileLang"] {
+  font-size: 14px;
+  display: inline-block;
+  cursor: pointer;
+  padding: 15px 40px !important;
+  text-align: center;
+  position: relative;
+  top: 26px;
+  z-index: 10;
+  width: 200px;
+  left: -10px;background-color: #333;
+  color: #fff;
+}
+
+.box-note {
+  padding: 6px;
+}
+
+.box-note-user {
+  background: #f7f5f5;
+  font-weight: bold;
+  padding: 15px;
+}
   
   @media only screen and (max-width: 769px) {
     .date {
