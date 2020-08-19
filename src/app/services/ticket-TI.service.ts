@@ -31,8 +31,8 @@ export class TicketTIService {
             .map(res => res.json());
     }
 
-    public addNewTicket(ticketDTO: TicketTI) {
-        return this._http.post(this.urlManager + 'ticket/add-new-ticket', ticketDTO)
+    public addNewTicket(ticketDTO: TicketTI, newNotes: String) {
+        return this._http.post(this.urlManager + 'ticket/add-new-ticket?newNote=' + newNotes, ticketDTO)
             .map(res => res.json());
     }
 

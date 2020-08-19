@@ -136,11 +136,10 @@ export class TicketTIComponent implements OnInit {
 
         this._ticketTIService.addNoteTicket(ticketNotesDTO).subscribe(
             response => {
-                if (response.code < 0) {
-                    this.notes = '';
-                } else {
+                if (response.code >= 0) {
                     $('#modal_ticket_process').modal('hide');
                 }
+                this.notes = '';
             }, error => {
                 console.error(error);
                 $('#modal_ticket_process').modal('hide');
@@ -163,6 +162,14 @@ export class TicketTIComponent implements OnInit {
             this.validNewNotes = false;
         }
 
+        $('#modal_new_ticket').modal('hide');
+
+        $('#modal_ticket_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+
         const ticketDTO: TicketTI = new TicketTI();
         ticketDTO.asunt = this.asunt;
         ticketDTO.idTypeTicket = this.selectedIdTypeTicket;
@@ -172,7 +179,7 @@ export class TicketTIComponent implements OnInit {
         ticketDTO.empAdd = this.identity.username;
         ticketDTO.company = this.identity.selectedCompany;
 
-        this._ticketTIService.addNewTicket(ticketDTO).subscribe(
+        this._ticketTIService.addNewTicket(ticketDTO, this.newNotes).subscribe(
             response => {
                 if (response.code == 0) {
                     this.idTicket = response.content;
@@ -186,19 +193,19 @@ export class TicketTIComponent implements OnInit {
                     this._ticketTIService.addNoteTicket(ticketNotesDTO).subscribe(
                         response => {
                             if (response.code == 0) {
-                                $('#modal_new_ticket').modal('hide');
-                                $('#modal_ticket_process').modal({
-                                    backdrop: 'static',
-                                    keyboard: false,
-                                    show: true
-                                });
+                                this.clearFrom();
                                 this.listTickets();
                             }
-                        }, error => { console.error(error); }
+                            $('#modal_ticket_process').modal('hide');
+                        }, error => {
+                            $('#modal_ticket_process').modal('hide');
+                            console.error(error);
+                        }
                     );
                 }
             },
             error => {
+                $('#modal_ticket_process').modal('hide');
                 console.error(error);
                 this.redirectIfSessionInvalid(error);
             }
@@ -234,13 +241,30 @@ export class TicketTIComponent implements OnInit {
         ticketDTO.department = this.selectedDepartament;
         ticketDTO.asunt = this.asunt;
 
+        $('#modal_assigned_ticket').modal('hide');
+
+        $('#modal_ticket_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+
         this._ticketTIService.assignedTicket(ticketDTO, this.identity.username).subscribe(
             response => {
                 if (response) {
-                    $('#modal_assigned_ticket').modal('hide');
                     this.listTickets();
+                    $('#modal_ticket_process').modal('hide');
+                } else {
+                    $('#modal_assigned_ticket').modal({
+                        backdrop: 'static',
+                        keyboard: false,
+                        show: true
+                    });
                 }
-            }, error => { console.error(error) }
+            }, error => {
+                $('#modal_ticket_process').modal('hide');
+                console.error(error)
+            }
         );
     }
 
@@ -316,6 +340,16 @@ export class TicketTIComponent implements OnInit {
         } else {
             this.tickets = this.filteredTicket;
         }
+    }
+
+    private clearFrom() {
+        this.asunt = '';
+        this.selectedIdTypeTicket = null;
+        this.selectedDepartament = '';
+        this.selectedPriority = '';
+        this.notes = '';
+        this.attached = '';
+        this.newNotes = '';
     }
 
     public getScrollTop() {
