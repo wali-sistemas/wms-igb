@@ -31,8 +31,9 @@
                 <div class="row">
                     <div class="col-xs-12">
                         <label for="priority">Asignar ticket a</label>
-                        <select id="priority" class="form-control input-lg" [(ngModel)]="selectedAssigned"
-                            name="selectedAssigned">
+                        <select id="priority" class="form-control input-lg"
+                            [class.required-field]="!validSelectedAssigned" [(ngModel)]="selectedAssigned"
+                            name="selectedAssigned" required>
                             <option value="" disabled>Seleccione uno</option>
                             <option value="jguisao">Jadilson Guisao</option>
                             <option value="rzapata">Ricardo Zapata</option>
@@ -225,8 +226,7 @@
             <form>
                 <div class="input-group">
                     <input type="text" class="form-control input-lg" id="filter" name="filter"
-                        placeholder="Buscar ticket" [(ngModel)]="filter" (keyup)="filterTicket()"
-                        autocomplete="off" />
+                        placeholder="Buscar ticket" [(ngModel)]="filter" (keyup)="filterTicket()" autocomplete="off" />
                     <span class="input-group-btn">
                         <button type="button" class="box" class="btn btn-default btn-lg" data-toggle="modal"
                             data-target="#modal_new_ticket">
