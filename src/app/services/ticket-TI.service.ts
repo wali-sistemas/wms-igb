@@ -41,8 +41,8 @@ export class TicketTIService {
             .map(res => res.json());
     }
 
-    public changeStatusTicket(ticketDTO: TicketTI) {
-        return this._http.post(this.urlManager + 'ticket/update-status-ticket', ticketDTO)
+    public changeStatusTicket(ticketDTO: TicketTI, note: String) {
+        return this._http.post(this.urlManager + 'ticket/update-status-ticket?note=' + note, ticketDTO)
             .map(res => res.json());
     }
 }

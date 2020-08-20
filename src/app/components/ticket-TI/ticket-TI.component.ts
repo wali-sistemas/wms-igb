@@ -40,6 +40,7 @@ export class TicketTIComponent implements OnInit {
     public validSelectPri: boolean = true;
     public validNewNotes: boolean = true;
     public validNotes: boolean = true;
+    public validSelectedAssigned: boolean = true;
     public tickets: Array<TicketTI>;
     public filteredTicket: Array<TicketTI>;
     public ticketNotes: Array<TicketTINotes>;
@@ -109,7 +110,7 @@ export class TicketTIComponent implements OnInit {
             keyboard: false,
             show: true
         });
-        this.idTicket = ticketDTO.idTicket;
+        this.idTicket = ticketDTO.idTicket;        
         this.listNotesTicket();
     }
 
@@ -232,6 +233,11 @@ export class TicketTIComponent implements OnInit {
     }
 
     public assignTicket(idTicket: Number, selectedPriority: String) {
+        if (this.selectedAssigned == null || this.selectedAssigned.length <= 0) {
+            this.validSelectedAssigned = false;
+            return;
+        }
+
         const ticketDTO: TicketTI = new TicketTI();
         ticketDTO.idTicket = idTicket;
         ticketDTO.priority = selectedPriority;
@@ -282,6 +288,12 @@ export class TicketTIComponent implements OnInit {
     }
 
     public closeTicket(idTicket: Number) {
+        if (this.notes == null || this.notes.length <= 0) {
+            this.validNotes = false;
+            $('#notes').focus();
+            return;
+        }
+
         $('#modal_ticket_notes').modal('hide');
 
         $('#modal_ticket_process').modal({
@@ -304,7 +316,7 @@ export class TicketTIComponent implements OnInit {
             }
         }
 
-        this._ticketTIService.changeStatusTicket(ticketDTO).subscribe(
+        this._ticketTIService.changeStatusTicket(ticketDTO, this.notes).subscribe(
             response => {
                 if (response.code == 0) {
                     this.listTickets();
