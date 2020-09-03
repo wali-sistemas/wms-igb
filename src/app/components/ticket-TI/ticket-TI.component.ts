@@ -24,6 +24,7 @@ export class TicketTIComponent implements OnInit {
     public msjTicket: String = '';
     public notes: String = '';
     public asunt: String = '';
+    public statusTicket: String = '';
     public selectedDepartament: String = '';
     public selectedPriority: String = '';
     public selectedAssigned: String = '';
@@ -110,7 +111,9 @@ export class TicketTIComponent implements OnInit {
             keyboard: false,
             show: true
         });
-        this.idTicket = ticketDTO.idTicket;        
+        this.idTicket = ticketDTO.idTicket;
+        this.statusTicket = ticketDTO.status;  
+           
         this.listNotesTicket();
     }
 
