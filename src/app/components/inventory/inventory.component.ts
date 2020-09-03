@@ -50,7 +50,6 @@ export class InventoryComponent implements OnInit {
   public validateInventoryOpen() {
     this._inventoryService.inventoryOpen(this._userService.getWarehouseCode()).subscribe(
       response => {
-        console.log(response);
         if (response !== -1) {
           this.idInventory = response.id;
           this.location = response.location;
@@ -58,7 +57,7 @@ export class InventoryComponent implements OnInit {
         $('#modal_process').modal('hide');
       }, error => {
         this.redirectIfSessionInvalid(error);
-        console.log(error);
+        console.error(error);
         $('#modal_process').modal('hide');
       }
     );
@@ -68,14 +67,11 @@ export class InventoryComponent implements OnInit {
   public inventoryRandom() {
     this._inventoryService.inventoryRandom(this._userService.getWarehouseCode()).subscribe(
       response => {
-        console.log(response);
         if (response && response.content.length > 0) {
           this.location = response.content;
           this.preparateInventory();
         }
-      }, error => {
-        console.log(error);
-      }
+      }, error => { console.error(error); }
     );
   }
 
@@ -95,11 +91,10 @@ export class InventoryComponent implements OnInit {
     $('#modal_process').modal('show');
     this._stockTransferService.cleanLocation(this._userService.getWarehouseCode(), this.location.trim()).subscribe(
       response => {
-        console.log(response);
         if (response.code === -1) {
           this.messageError = 'No fue posible iniciar el inventario solicitado.';
           console.error(response.content);
-          console.log('No fue posible iniciar el inventario solicitado.'); 
+          console.log('No fue posible iniciar el inventario solicitado.');
         } else {
           this.idInventory = response.content.id;
           $('#modalConfirmacion').modal('hide');
@@ -108,7 +103,7 @@ export class InventoryComponent implements OnInit {
         $('#modal_process').modal('hide');
       }, error => {
         this.messageError = 'No fue posible iniciar el inventario solicitado.';
-        console.log(error);
+        console.error(error);
         $('#modal_process').modal('hide');
       }
     );
@@ -141,10 +136,7 @@ export class InventoryComponent implements OnInit {
   public saveAddItem() {
     this._inventoryService.addItem(this.itemTmp).subscribe(
       response => {
-        console.log(response);
-      }, error => {
-
-      }
+      }, error => { console.error(error); }
     );
   }
 
@@ -159,13 +151,12 @@ export class InventoryComponent implements OnInit {
       console.log('Obteniendo historial');
       this._inventoryService.inventoryHistory(this._userService.getWarehouseCode(), this.idInventory).subscribe(
         response => {
-          console.log(response);
           if (response !== -1) {
             this.history = response;
           }
           $('#modal_process').modal('hide');
         }, error => {
-          console.log(error);
+          console.error(error);
           $('#modal_process').modal('hide');
         }
       );
@@ -177,7 +168,6 @@ export class InventoryComponent implements OnInit {
     $('#modal_process').modal('show');
     this._stockTransferService.finishInventory(this.idInventory).subscribe(
       response => {
-        console.log(response);
         this.differences = response;
         if (this.differences !== null && this.differences.length > 0) {
           $('#modalDiferencias').modal('show');
@@ -185,7 +175,7 @@ export class InventoryComponent implements OnInit {
         console.log(this.differences);
         $('#modal_process').modal('hide');
       }, error => {
-        console.log(error);
+        console.error(error);
         $('#modal_process').modal('hide');
       }
     );

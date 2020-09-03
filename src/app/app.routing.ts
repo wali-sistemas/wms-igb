@@ -23,6 +23,7 @@ import { CheckOutComponent } from './components/packing/check-out/check-out.comp
 import { ShippingComponent } from './components/shipping/shipping.component';
 import { WithholdingTaxesComponent } from './components/withholding-taxes/withholding-taxes.component';
 import { TicketTIComponent } from './components/ticket-TI/ticket-TI.component';
+import { SoulStockComponent } from './components/inventory/soul/soul-stock.component';
 import { from } from 'rxjs/observable/from';
 
 const appRoutes: Routes = [
@@ -47,7 +48,8 @@ const appRoutes: Routes = [
     { path: 'check-out', component: CheckOutComponent },
     { path: 'shipping', component: ShippingComponent },
     { path: 'withholding', component: WithholdingTaxesComponent },
-    { path: 'ticket-TI', component: TicketTIComponent }
+    { path: 'ticket-TI', component: TicketTIComponent },
+    { path: 'stock-soul', component: SoulStockComponent }
 ];
 
 export const appRoutingProviders: any[] = [];

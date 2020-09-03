@@ -1,33 +1,36 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { UserService } from '../../../services/user.service';
-import { StockItemService } from '../../../services/stock-item.service';
+import { SoulService } from '../../../services/soul.service';
 import { BinLocationService } from '../../../services/bin-locations.service';
 import { GLOBAL } from '../../../services/global';
+import { SoulStock } from '../../../models/soul-stock';
+import { from } from 'rxjs/observable/from';
 
 declare var $: any;
 
 @Component({
-    templateUrl: './stock-item.component.html',
-    styleUrls: ['./stock-item.component.css'],
-    providers: [UserService, StockItemService, BinLocationService]
+    templateUrl: './soul-stock.component.html',
+    styleUrls: ['./soul-stock.component.css'],
+    providers: [UserService, SoulService, BinLocationService]
 })
 
-export class StockItemComponent implements OnInit {
+export class SoulStockComponent implements OnInit {
     public identity;
     public token;
 
-    public fromBin: string = '';
+    /*public fromBin: string = '';
     public toBin: string = '';
     public fromBinId: number;
-    public toBinId: number;
+    public toBinId: number;*/
     public itemCode: string = '';
-    public items: Array<any>;
+    public items: Array<SoulStock>;
+    public filteredItem: Array<SoulStock>;
     public stockItemErrorMessage: string = null;
     public urlShared: String = GLOBAL.urlShared;
 
     constructor(private _userService: UserService,
-        private _stockItemService: StockItemService,
+        private _soulService: SoulService,
         private _binLocationService: BinLocationService,
         private _router: Router) {
         this._userService = _userService;
@@ -40,6 +43,7 @@ export class StockItemComponent implements OnInit {
         if (this.identity === null) {
             this._router.navigate(['/']);
         }
+        this.consultarStock();
     }
 
     private redirectIfSessionInvalid(error) {
@@ -56,10 +60,10 @@ export class StockItemComponent implements OnInit {
 
     public limpiarTodo() {
         this.stockItemErrorMessage = '';
-        this.toBin = '';
+        /*this.toBin = '';
         this.toBinId = null;
         this.fromBin = '';
-        this.fromBinId = null;
+        this.fromBinId = null;*/
         this.itemCode = '';
         this.items = new Array<any>();
         $('#item').focus();
@@ -72,25 +76,33 @@ export class StockItemComponent implements OnInit {
             keyboard: false,
             show: true
         });
-        if (this.itemCode.length > 1) {
-            this._stockItemService.stockFind(this.itemCode.trim(), JSON.parse(localStorage.getItem('igb.identity')).warehouseCode).subscribe(
-                response => {
-                    if (response.length >= 1) {
-                        $('#modal_transfer_process').modal('hide');
-                        this.items = response;
-                    } else {
-                        $('#modal_transfer_process').modal('hide');
-                        this.stockItemErrorMessage = 'No hay stock disponible. Almacén activo ['+ JSON.parse(localStorage.getItem('igb.identity')).warehouseCode + ']';
-                        this.items = new Array<any>();
-                    }
-                },
-                error => {
-                    console.error(error);
-                    $('#modal_transfer_process').modal('hide');
-                    this.stockItemErrorMessage = 'Lo sentimos. Se produjo un error interno';
-                    this.redirectIfSessionInvalid(error);
+
+        this._soulService.stockFind().subscribe(
+            response => {
+                $('#modal_transfer_process').modal('hide');
+                this.items = response;
+                this.filteredItem = this.items;
+            },
+            error => {
+                console.error(error);
+                $('#modal_transfer_process').modal('hide');
+                this.stockItemErrorMessage = 'Lo sentimos. Se produjo un error interno con Magnum.';
+                this.redirectIfSessionInvalid(error);
+            }
+        );
+    }
+
+    public filterItem() {
+        if (this.itemCode.length > 0) {
+            this.items = new Array<SoulStock>();
+            for (let i = 0; i < this.filteredItem.length; i++) {
+                const item = this.filteredItem[i];
+                if (item.sku.toLowerCase().includes(this.itemCode.toLowerCase())) {
+                    this.items.push(item);
                 }
-            );
+            }
+        } else {
+            this.items = this.filteredItem;
         }
     }
 

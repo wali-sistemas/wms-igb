@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?vys2ob');
-  src:  url('fonts/icomoon.eot?vys2ob#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?vys2ob') format('truetype'),
-    url('fonts/icomoon.woff?vys2ob') format('woff'),
-    url('fonts/icomoon.svg?vys2ob#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?bx5x9h');
+  src:  url('fonts/icomoon.eot?bx5x9h#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?bx5x9h') format('truetype'),
+    url('fonts/icomoon.woff?bx5x9h') format('woff'),
+    url('fonts/icomoon.svg?bx5x9h#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -94,9 +94,6 @@
 }
 .icon-search-stock:before {
   content: "\e95e";
-}
-.icon-soul:before {
-  content: "\e97d";
 }
 .icon-magnum2 .path1:before {
   content: "\e973";
