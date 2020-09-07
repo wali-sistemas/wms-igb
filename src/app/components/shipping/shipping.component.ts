@@ -33,6 +33,12 @@ export class ShippingComponent implements OnInit {
     public transportPayroll: string = '';
     public selectBox: number = 0;
     public fullShipping: boolean = false;
+    public validQtyPack: boolean = false;
+    public validPesoPack: boolean = false;
+    public validValorDeclPack: boolean = false;
+    public validAddressReceive: boolean = false;
+    public validCityReceive: boolean = false;
+    public validCommetPack: boolean = false;
     public invoicesShipping: Array<ShippingInvoice>;
     public selectedInvoices: Map<String, ShippingInvoice>;
     public transports: Array<any>;
