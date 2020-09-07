@@ -16,23 +16,26 @@
     </div>
 </div>
 <!--Modal confirmacion-->
-<div id="close_confirmation" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+<div id="close_confirmation" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false"
+    data-backdrop="static">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-body text-center">
                 <p><b>¿Estás seguro que deseas confirmar el shipping?</b></p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" (click)="clean()" style="float: left; font-size: 16px;">No,
+                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" (click)="clean()"
+                    style="float: left; font-size: 16px;">No,
                     cancelar</button>
-                <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal" (click)="addShipping()" style="font-size: 16px;">Sí,confirmar</button>
+                <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal" (click)="addShipping()"
+                    style="font-size: 16px;">Sí,confirmar</button>
             </div>
         </div>
     </div>
 </div>
 <!--Modal detail Container-->
-<div id="modal_detail_container" class="modal slide" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static"
-    style="z-index: 2000;">
+<div id="modal_detail_container" class="modal slide" tabindex="-1" role="dialog" data-keyboard="false"
+    data-backdrop="static" style="z-index: 2000;">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -83,7 +86,8 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-xs-12">
-                        <label for="totalBox" style="float: right;">Cajas {{listContainers.length}} de {{selectBox}}</label>
+                        <label for="totalBox" style="float: right;">Cajas {{listContainers.length}} de
+                            {{selectBox}}</label>
                     </div>
                 </div>
                 <div class="row">
@@ -120,8 +124,10 @@
                                                 </button>
                                             </div>
                                             <div class="col-xs-4 col-md-2" style="float: right;">
-                                                <button type="button" class="close" (click)="listDetailContainer(container)">
-                                                    <span class="icon-info" aria-hidden="true" style="font-size: 25px;"></span>
+                                                <button type="button" class="close"
+                                                    (click)="listDetailContainer(container)">
+                                                    <span class="icon-info" aria-hidden="true"
+                                                        style="font-size: 25px;"></span>
                                                 </button>
                                             </div>
                                         </div>
@@ -133,7 +139,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default btn-lg" data-dismiss="modal" (click)="clean()" style="float: left;">Cerrar</button>
+                <button type="button" class="btn btn-default btn-lg" data-dismiss="modal" (click)="clean()"
+                    style="float: left;">Cerrar</button>
                 <button type="button" class="btn btn-danger btn-lg" [disabled]="!fullShipping" data-dismiss="modal"
                     data-toggle="modal" data-target="#close_confirmation">Confirmar</button>
             </div>
@@ -159,8 +166,8 @@
                 </div>
                 <div class="row">
                     <div class="col-xs-12">
-                        <select id="transp" class="form-control input-lg" [(ngModel)]="transportPayroll" name="transportPayroll"
-                            style="margin-top: 5px;">
+                        <select id="transp" class="form-control input-lg" [(ngModel)]="transportPayroll"
+                            name="transportPayroll" style="margin-top: 5px;">
                             <option value="" disabled>Seleccione transportadora</option>
                             <option *ngFor="let transp of transPayroll" value="{{transp}}">{{transp}}</option>
                         </select>
@@ -168,14 +175,115 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default btn-lg" data-dismiss="modal" (click)="clean()" style="float: left;">Cerrar</button>
-                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" (click)="generatePayroll()">Generar</button>
+                <button type="button" class="btn btn-default btn-lg" data-dismiss="modal" (click)="clean()"
+                    style="float: left;">Cerrar</button>
+                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal"
+                    (click)="generatePayroll()">Generar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal crear guia-->
+<div id="modal_crear_guia" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Generar guia de transporte</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row" *ngFor="let fv of selectInvoicesPack">
+                    <div class="col-xs-4 text-center">
+                        <label for="docNum" style="font-size: 12px">{{fv.docNum}}</label>
+                    </div>
+                    <div class="col-xs-4 text-center">
+                        <label for="cardCode" style="font-size: 12px">{{fv.cardCode}}</label>
+                    </div>
+                    <div class="col-xs-4 text-center">
+                        <label for="transport" style="font-size: 12px">{{fv.transport}}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <select id="typePack" class="form-control input-lg" [(ngModel)]="selectedTypePack"
+                            name="selectedTypePack" required>
+                            <option value="" disabled>Seleccione empaque</option>
+                            <option>CAJAS</option>
+                            <option>LIOS</option>
+                            <option>UNIDAD</option>
+                        </select>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input type="text" id="qtyPack" class="form-control input-lg" [(ngModel)]="qtyPack"
+                            autocomplete="off" name="qtyPack" autocorrect="off" autocapitalize="none"
+                            placeholder="Volumen" [class.required-field]="!validQtyPack" required>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input type="number" id="pesoPack" class="form-control input-lg" [(ngModel)]="pesoPack"
+                            autocomplete="off" name="pesoPack" autocorrect="off" autocapitalize="none"
+                            placeholder="Peso" [class.required-field]="!validPesoPack" required>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input type="number" id="valorDeclPack" class="form-control input-lg"
+                            [(ngModel)]="valorDeclPack" autocomplete="off" name="valorDeclPack" autocorrect="off"
+                            autocapitalize="none" placeholder="Valor declarado"
+                            [class.required-field]="!validValorDeclPack" required>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input type="text" id="addressReceive" class="form-control input-lg"
+                            [(ngModel)]="addressReceive" autocomplete="off" name="addressReceive" autocorrect="off"
+                            autocapitalize="none" placeholder="Dirección" [class.required-field]="!validAddressReceive"
+                            required>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input type="text" id="cityReceive" class="form-control input-lg" [(ngModel)]="cityReceive"
+                            autocomplete="off" name="cityReceive" autocorrect="off" autocapitalize="none"
+                            placeholder="Ciudad-departamento" [class.required-field]="!validCityReceive" required>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-xs-12">
+                        <textarea id="commetPack" class="md-textarea form-control" name="commetPack"
+                            style="width: 100%;" rows="10" placeholder="Ingrese aquí una observación"
+                            [(ngModel)]="commetPack" autocomplete="off" [class.required-field]="!validCommetPack"
+                            required></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-danger btn-lg" (click)="generateGuia()">Generar</button>
             </div>
         </div>
     </div>
 </div>
 
-<button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span class="icon-chevron-up"></span></button>
+<button *ngIf="selectedInvoices.size > 0" type="button" class="tracking" id="btnTraking" (click)="getModalGuia()"
+    title="Crear Guia">
+    <span class="icon-tracking-tres"></span>
+</button>
+
+<button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span
+        class="icon-chevron-up"></span></button>
 
 <div class="container content">
     <div class="row">
@@ -191,13 +299,13 @@
     <div class="row">
         <div class="col-xs-12 col-md-6">
             <form (submit)="listInvoices()">
-                <input type="text" class="form-control input-lg" id="filter" name="filter" placeholder="Escanear factura"
-                    [(ngModel)]="filter" autocomplete="off" style="margin-top: 5px;" />
+                <input type="text" class="form-control input-lg" id="filter" name="filter"
+                    placeholder="Escanear factura" [(ngModel)]="filter" autocomplete="off" style="margin-top: 5px;" />
             </form>
         </div>
         <div class="col-xs-12 col-md-6">
-            <select id="transp" class="form-control input-lg" [(ngModel)]="selectedTransp" name="selectedTransp" style="margin-top: 5px;"
-                (change)="listInvoices()">
+            <select id="transp" class="form-control input-lg" [(ngModel)]="selectedTransp" name="selectedTransp"
+                style="margin-top: 5px;" (change)="listInvoices()">
                 <option value="" disabled>Seleccione transportadora</option>
                 <option *ngIf="invoicesShipping.length >= 0" value="*"><b>TODAS</b></option>
                 <option *ngFor="let transp of transports" value="{{transp}}">{{transp}}</option>
@@ -214,7 +322,9 @@
     </div>
     <div class="row">
         <div class="col-xs-12 col-md-6" *ngFor="let invoice of invoicesShipping">
-            <div class="invoice" (click)="openInvoice(invoice.docNum, invoice.box)">
+            <div class="invoice" [class.selected]="selectedInvoices.has(invoice.docNum)"
+                (click)="selectShippingInvoice(invoice)">
+                <!--(click)="openInvoice(invoice.docNum, invoice.box)"-->
                 <div class="row">
                     <div class="col-sm-4">
                         <div class="date" title="Fecha Factura"><b>{{invoice.docDate}}</b></div>

@@ -26,24 +26,43 @@ export class ShippingComponent implements OnInit {
     public warningMessage: string = '';
     public errorMessage: string = '';
     public selectedTransp: string = '';
-    public selectInvoice: string = '';
+    public selectInvoice: String = '';
     public filter: string = '';
     public idContainer: string = '';
     public docNumPayroll: string = '';
     public transportPayroll: string = '';
     public selectBox: number = 0;
     public fullShipping: boolean = false;
+    public validQtyPack: boolean = false;
+    public validPesoPack: boolean = false;
+    public validValorDeclPack: boolean = false;
+    public validAddressReceive: boolean = false;
+    public validCityReceive: boolean = false;
+    public validCommetPack: boolean = false;
     public invoicesShipping: Array<ShippingInvoice>;
+    public selectedInvoices: Map<String, ShippingInvoice>;
     public transports: Array<any>;
     public transPayroll: Array<any>;
     public detailContainer: Array<any>;
     public listContainers: Array<String>;
+    public selectInvoicesPack: Array<ShippingInvoice>;
+    //Datos para crear guia
+    public selectedTypePack: String = '';
+    public qtyPack: number;
+    public pesoPack: number = 25;
+    public valorDeclPack: number = 20000;
+    public addressReceive: String = '';
+    public cityReceive: String = '';
+    public commetPack: String = '';
+    public idReceive: String = '';
+    public nameReceive: String = '';
 
     constructor(private _userService: UserService, private _router: Router, private _shippingService: ShippingService, private _reportService: ReportService) {
         this.invoicesShipping = new Array<ShippingInvoice>();
         this.transports = new Array<any>();
         this.transPayroll = new Array<any>();
         this.listContainers = new Array<String>();
+        this.selectInvoicesPack = new Array<ShippingInvoice>();
     }
 
     ngOnInit() {
@@ -73,6 +92,7 @@ export class ShippingComponent implements OnInit {
         this.errorMessage = '';
         this.warningMessage = '';
         this.invoicesShipping = new Array<ShippingInvoice>();
+        this.selectedInvoices = new Map<String, any>();
 
         //TODO: serie de facturación electronica sobrepasa la cantidad de caracteres 
         let invoice = this.filter.trim();
@@ -107,6 +127,28 @@ export class ShippingComponent implements OnInit {
                 this.redirectIfSessionInvalid(error);
             }
         );
+    }
+
+    public selectShippingInvoice(invoice: ShippingInvoice) {
+        if (this.selectedInvoices.has(invoice.docNum)) {
+            this.selectedInvoices.delete(invoice.docNum);
+            this.selectInvoicesPack.splice(this.selectedInvoices.size, 1);
+        } else {
+            if (this.selectInvoicesPack.length <= 0) {
+                //Agreguelo a la creación de guia
+                this.selectedInvoices.set(invoice.docNum, invoice);
+                this.selectInvoicesPack.push(invoice);
+            } else {
+                //valide si son misma transportadora para agregar a la creación de guia
+                for (let i = 0; i < this.selectInvoicesPack.length; i++) {
+                    if (this.selectInvoicesPack[i].transport === invoice.transport) {
+                        this.selectedInvoices.set(invoice.docNum, invoice);
+                        this.selectInvoicesPack.push(invoice);
+                        return;
+                    }
+                }
+            }
+        }
     }
 
     public listTransport() {
@@ -246,7 +288,6 @@ export class ShippingComponent implements OnInit {
             }
             this._reportService.generateReport(printReportDTO).subscribe(
                 response => {
-                    console.log(response);
                     if (response.code == 0) {
                         let landingUrl = this.urlShared + this.identity.selectedCompany + "/" + printReportDTO.documento + "/payroll/" + printReportDTO.id + ".pdf";
                         window.open(landingUrl);
@@ -295,6 +336,80 @@ export class ShippingComponent implements OnInit {
 
     public setIdContainer() {
         this.idContainer = '';
+    }
+
+    public getModalGuia() {
+        for (let i = 0; i < this.selectInvoicesPack.length; i++) {
+            this.addressReceive = this.selectInvoicesPack[i].street;
+            this.cityReceive = this.selectInvoicesPack[i].city + "-" + this.selectInvoicesPack[i].depart + "-" + this.selectInvoicesPack[i].codCity + "000";
+            this.idReceive = this.selectInvoicesPack[i].cardCode;
+            this.nameReceive = this.selectInvoicesPack[i].cardName;
+            if (this.selectInvoicesPack.length == 1) {
+                this.selectInvoice = this.selectInvoicesPack[i].docNum;
+            }
+            break;
+        }
+        $('#modal_crear_guia').modal('show');
+    }
+
+    public generateGuia() {
+        if (this.selectInvoicesPack.length > 1) {
+            for (let i = 0; i < this.selectInvoicesPack.length; i++) {
+                this.selectInvoice += this.selectInvoicesPack[i].docNum + ',';
+            }
+        }
+        const apiSaferboDTO = {
+            //Datos del Remitente
+            "identificacionRemitente": "900011909",
+            "nombreRemitente": "IGB MOTORCYCLE PARTS S.A.S",
+            "telefonoRemitente": "4442025",
+            "direccionRemitente": "CALLE 98 SUR # 48-225 BOD 114",
+            "ciudadRemitente": "LA ESTRELLA-ANTIOQUIA-05380000",
+            //Datos del Destinatario
+            "codigoDestinatario": "",
+            "identificacionDestinatario": this.idReceive,
+            "nombreDestinatario": this.nameReceive,
+            "telefonoDestinatario": "0",
+            "direccionDestinatario": this.addressReceive,
+            "ciudadDestinatario": this.cityReceive,
+            //Datos guia
+            "largo": "0",
+            "peso": this.pesoPack,
+            "ancho": "0",
+            "alto": "0",
+            "volumen": this.qtyPack,
+            "valorDeclarado": this.valorDeclPack,
+            "observacion": this.commetPack + '-Total en ' + this.selectedTypePack + ': ' + this.qtyPack + ' Factura(s): ' + this.selectInvoice,
+            //Entorno pruebas
+            "codigoCliente": "999997",
+            //Estandar de SAFERBO
+            "tipoEnvio": "1",
+            "tipoLiquidacion": "1",
+            "tipoNegociacion": "1",
+            "tipoDato": "2",
+            "tipoAcceso": "1",
+            "tarifaXTrayecto": "2",
+            "pagoContraentrega": "0",
+            "dsUnidad": "0",
+            "dsKilos": "0",
+            "dsConsec": "0",
+            "valorRecaudar": "125000",
+            "arUnidades": "1-2",
+            "facturas": this.selectInvoice
+        }
+        //console.log(apiSaferboDTO);
+
+        console.log(this.selectInvoice);
+
+
+        /*this._shippingService.createGuiaTransport(apiSaferboDTO).subscribe(
+            response => {
+                console.log(response);
+            },
+            error => {
+                console.error(error);
+            }
+        );*/
     }
 
     public getScrollTop() {

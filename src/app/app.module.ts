@@ -29,6 +29,7 @@ import { CheckOutComponent } from './components/packing/check-out/check-out.comp
 import { ShippingComponent } from './components/shipping/shipping.component';
 import { WithholdingTaxesComponent } from './components/withholding-taxes/withholding-taxes.component';
 import { TicketTIComponent } from './components/ticket-TI/ticket-TI.component';
+import { SoulStockComponent } from './components/inventory/soul/soul-stock.component'; 
 
 import { routing, appRoutingProviders } from './app.routing';
 import { from } from 'rxjs/observable/from';
@@ -59,7 +60,8 @@ import { from } from 'rxjs/observable/from';
     CheckOutComponent,
     ShippingComponent,
     WithholdingTaxesComponent,
-    TicketTIComponent
+    TicketTIComponent,
+    SoulStockComponent
   ],
   imports: [
     BrowserModule,

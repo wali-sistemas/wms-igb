@@ -8,6 +8,7 @@ export class ShippingInvoice {
     public street: String;
     public depart: String;
     public city: String;
+    public codCity: String;
 
     constructor() { }
 }

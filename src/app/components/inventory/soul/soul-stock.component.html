@@ -20,7 +20,7 @@
         class="icon-chevron-up"></span></button>
 
 <div class="container content">
-    <h3>Consulta stock ítem</h3>
+    <h3>Consulta stock magnum</h3>
     <div class="row" *ngIf="stockItemErrorMessage">
         <div class="col-xs-12">
             <div class="alert alert-danger">
@@ -30,15 +30,12 @@
     </div>
     <br />
     <div class="row">
-        <div class="col-xs-10">
-            <form (submit)="consultarStock()">
-                <label for="itemCode">Referencia/Ubicación</label>
+        <div class="col-xs-12">
+            <form (submit)="filterItem()">
+                <label for="itemCode">Referencia</label>
                 <input type="text" class="form-control input-lg" autocomplete="off" id="item" name="itemCode"
-                    placeholder="escanea el ítem o la ubicación" [(ngModel)]="itemCode">
+                    placeholder="consulte por ítem" [(ngModel)]="itemCode">
             </form>
-        </div>
-        <div class="col-xs-2" style="top: 25px; right: 25px;">
-            <span class="refresh" (click)="limpiarTodo()"><span class="icon-refresh"></span></span>
         </div>
     </div>
     <br />
@@ -46,20 +43,22 @@
         <div class="col-xs-12 col-md-6" *ngFor="let item of items">
             <div class="box">
                 <div class="col-xs-6 col-md-3">
-                    <img class="photo" src="{{urlShared}}images/mtz/{{item[0]}}.jpg">
+                    <img class="photo" src="{{urlShared}}images/mtz/{{item.sku}}.jpg">
                 </div>
-                <div class="box-itemname">{{item[1]}}</div>
+                <div class="box-itemname">{{item.itemName}}</div>
                 <div class="col-xs-6 col-md-3">
                     <div class="box-stock">
-                        <span class="badge">{{item[2]}}</span>
-                        <label> - {{item[4]}}</label>
+                        <label>Disp: </label>
+                        <span class="badge">{{item.cantidadDisponible}}</span>
+                        <label>-Reser: </label>
+                        <span class="badge">{{item.cantidadReservada}}</span>
                     </div>
                     <div class="box-itemcode">
-                        {{item[0]}}
+                        {{item.sku}}
                     </div>
-                    <div class="box-wharehouse">{{item[3]}}</div>
-                    <!--<div class="box-price">{{item[5] | number}}</div>-->
-                    <div class="box-wharehousename">{{item[6]}}</div>
+                    <div class="box-wharehouse">{{item.whsCode}}</div>
+                    <!--<div class="box-price">{{item[5] | number}}</div>
+                    <div class="box-wharehousename">CALI</div>-->
                 </div>
             </div>
         </div>
