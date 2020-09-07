@@ -465,3 +465,9 @@
 .icon-groups:before {
   content: "\e956";
 }
+.icon-delivery:before {
+  content: "\e966";
+}
+.icon-packingList:before {
+  content: "\e9b8";
+}
