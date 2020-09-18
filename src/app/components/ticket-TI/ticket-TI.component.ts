@@ -190,6 +190,17 @@ export class TicketTIComponent implements OnInit {
             response => {
                 if (response.code == 0) {
                     this.idTicket = response.content;
+                    //agregando adjunto
+                    if (this.attached.length > 0) {
+                        this._ticketTIService.addFile(this.nameUpload, this.sizeUpload, this.idTicket, this.fileToUpload).subscribe(
+                            response => {
+                                if (!response) {
+                                    console.error("Lo sentimos. Se produjo un error interno.");
+                                }
+                            },
+                            error => { console.error(error); }
+                        );
+                    }
                     //Agregando comentario al ticket
                     const ticketNotesDTO: TicketTINotes = new TicketTINotes();
                     ticketNotesDTO.idTicket = this.idTicket;
@@ -216,15 +227,6 @@ export class TicketTIComponent implements OnInit {
                 console.error(error);
                 this.redirectIfSessionInvalid(error);
             }
-        );
-
-        this._ticketTIService.addFile(this.nameUpload, this.sizeUpload, this.idTicket, this.fileToUpload).subscribe(
-            response => {
-                if (!response) {
-                    console.error("Lo sentimos. Se produjo un error interno.");
-                }
-            },
-            error => { console.error(error); }
         );
     }
 
