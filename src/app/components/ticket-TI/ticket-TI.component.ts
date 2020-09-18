@@ -245,12 +245,6 @@ export class TicketTIComponent implements OnInit {
         this.sizeUpload = this.fileToUpload.size;
     }
 
-    public handleFileInput(event) {
-        this.fileToUpload = <File>event.target.files[0];
-        this.nameUpload = this.fileToUpload.name;
-        this.sizeUpload = this.fileToUpload.size;
-    }
-
     public selectTicket(ticketDTO: TicketTI = new TicketTI()) {
         //TODO: Se debe definir que usuarios pueden asignar y cambiar la prioridad.
         if (this.identity.username !== "jguisao" && this.identity.username !== "rzapata" && this.identity.username !== "pcolorado") {
