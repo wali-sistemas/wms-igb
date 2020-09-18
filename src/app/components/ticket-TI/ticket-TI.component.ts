@@ -228,15 +228,6 @@ export class TicketTIComponent implements OnInit {
                 this.redirectIfSessionInvalid(error);
             }
         );
-
-        this._ticketTIService.addFile(this.nameUpload, this.sizeUpload, this.idTicket, this.fileToUpload).subscribe(
-            response => {
-                if (!response) {
-                    console.error("Lo sentimos. Se produjo un error interno.");
-                }
-            },
-            error => { console.error(error); }
-        );
     }
 
     public handleFileInput(event) {
