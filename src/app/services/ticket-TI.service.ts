@@ -36,6 +36,11 @@ export class TicketTIService {
             .map(res => res.json());
     }
 
+    public addFile(name: string, size: number, idTicket: Number, file: File) {
+        return this._http.post(this.urlManager + 'ticket/add-file-ticket?name=' + name + '&size=' + size + '&idTicket=' + idTicket, file)
+            .map(res => res.json());
+    }
+
     public assignedTicket(ticketDTO: TicketTI, username: String) {
         return this._http.post(this.urlManager + 'ticket/assign-ticket?username=' + username, ticketDTO)
             .map(res => res.json());

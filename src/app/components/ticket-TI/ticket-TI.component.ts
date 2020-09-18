@@ -46,6 +46,9 @@ export class TicketTIComponent implements OnInit {
     public filteredTicket: Array<TicketTI>;
     public ticketNotes: Array<TicketTINotes>;
     public ticketTypes: Array<any>;
+    public fileToUpload: File;
+    public nameUpload: string;
+    public sizeUpload: number;
 
     constructor(private _ticketTIService: TicketTIService, private _userService: UserService, private _router: Router) {
         this.tickets = new Array<TicketTI>();
@@ -214,6 +217,21 @@ export class TicketTIComponent implements OnInit {
                 this.redirectIfSessionInvalid(error);
             }
         );
+
+        this._ticketTIService.addFile(this.nameUpload, this.sizeUpload, this.idTicket, this.fileToUpload).subscribe(
+            response => {
+                if (!response) {
+                    console.error("Lo sentimos. Se produjo un error interno.");
+                }
+            },
+            error => { console.error(error); }
+        );
+    }
+
+    public handleFileInput(event) {
+        this.fileToUpload = <File>event.target.files[0];
+        this.nameUpload = this.fileToUpload.name;
+        this.sizeUpload = this.fileToUpload.size;
     }
 
     public selectTicket(ticketDTO: TicketTI = new TicketTI()) {

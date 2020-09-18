@@ -150,7 +150,7 @@
                             <label class="input-group-addon" for="customFileLang">Adjunto <span
                                     class="icon-attachment"></span></label>
                             <input type="file" class="form-control input-lg" id="customFileLang" [(ngModel)]="attached"
-                                accept=".xls,.xlsx,.jpg,.jpeg,.png" lang="es" style="top: -25px;">
+                                accept=".xls,.xlsx,.jpg,.jpeg,.png,.pdf" lang="es" style="top: -25px;" (change)="handleFileInput($event)">
                         </div>
                     </div>
                 </div>
@@ -206,7 +206,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button *ngIf="statusTicket == 'ASIGNADO'"type="button" class="btn btn-secondary btn-lg"
+                <button *ngIf="statusTicket == 'ASIGNADO'" type="button" class="btn btn-secondary btn-lg"
                     style="background-color: #333; color: #fff;">Cancelar</button>
                 <button *ngIf="statusTicket == 'ASIGNADO'" type="button" class="btn btn-secondary btn-lg"
                     (click)="closeTicket(idTicket)">Cerrar</button>
