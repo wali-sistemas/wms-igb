@@ -328,7 +328,6 @@ export class ReportManagerComponent implements OnInit {
 
                 this.barChartDataOrderOfDay = [this.ordersOfDay[0][1], this.ordersOfDay[1][1], this.ordersOfDay[2][1], this.ordersOfDay[3][1], this.ordersOfDay[4][1]];
                 $('#modal_transfer_process').modal('hide');
-                console.log(response);
             }, error => {
                 console.error("Ocurrio un error listando las ordenes del día.", error);
                 $('#modal_transfer_process').modal('hide');
