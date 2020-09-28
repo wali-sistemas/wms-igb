@@ -101,6 +101,8 @@ export class ReportManagerComponent implements OnInit {
             this.logo = 'logo-mtz.png';
         } else if (this.queryParam.id == 'IGB') {
             this.logo = 'logo-igb.png';
+        } else if (this.queryParam.id == 'VELEZ') {
+            this.logo = 'logo-mr.png';
         } else {
             this._router.navigate(['/']);
             return;
@@ -114,12 +116,12 @@ export class ReportManagerComponent implements OnInit {
     private initializeAnnual() {
         /***Informe anual***/
         this.barChartDataComercYear = [{
-            data: [this.ventasAnuales[0].totalSale, this.ventasAnuales[1].totalSale, this.ventasAnuales[2].totalSale, this.ventasAnuales[3].totalSale, this.ventasAnuales[4].totalSale],
+            data: [this.ventasAnuales[0].totalSale, this.ventasAnuales[1].totalSale, this.ventasAnuales[2].totalSale, this.ventasAnuales[3].totalSale],
             label: 'Ventas Anuales'
         }];
         /***Informe margen anual***/
         this.barChartDataComercMargeAnnual = [{
-            data: [this.ventasAnuales[0].margeSale, this.ventasAnuales[1].margeSale, this.ventasAnuales[2].margeSale, this.ventasAnuales[3].margeSale, this.ventasAnuales[4].margeSale],
+            data: [this.ventasAnuales[0].margeSale, this.ventasAnuales[1].margeSale, this.ventasAnuales[2].margeSale, this.ventasAnuales[3].margeSale],
             label: 'Margen Anual'
         }];
     }
@@ -311,6 +313,19 @@ export class ReportManagerComponent implements OnInit {
         this._reportService.listOrdersOfDay(this.queryParam.id, false).subscribe(
             response => {
                 this.ordersOfDay = response;
+                console.log(this.ordersOfDay);
+                
+                console.log(this.ordersOfDay[0][1]);
+                console.log(this.ordersOfDay[1][1]);
+                console.log(this.ordersOfDay[2][1]);
+                console.log(this.ordersOfDay[3][1]);
+                console.log(this.ordersOfDay[4][1]);
+                
+                
+                
+                
+
+
                 this.barChartDataOrderOfDay = [this.ordersOfDay[0][1], this.ordersOfDay[1][1], this.ordersOfDay[2][1], this.ordersOfDay[3][1], this.ordersOfDay[4][1]];
                 $('#modal_transfer_process').modal('hide');
                 console.log(response);
@@ -456,7 +471,7 @@ export class ReportManagerComponent implements OnInit {
             this.activeContentGerencia = true;
             this.activeSaleAnnual = true;
             this.getSalesAnnual();
-            this.barChartLabelsComercYear = [(this.year - 4).toString(), (this.year - 3).toString(), (this.year - 2).toString(), (this.year - 1).toString(), this.year.toString()];
+            this.barChartLabelsComercYear = [(this.year - 3).toString(), (this.year - 2).toString(), (this.year - 1).toString(), this.year.toString()];
         }
     }
 
@@ -486,7 +501,7 @@ export class ReportManagerComponent implements OnInit {
             this.activeContentGerencia = true;
             this.activeMargeAnnual = true;
             this.getSalesAnnual();
-            this.barChartLabelsComercMargeAnnual = [(this.year - 4).toString(), (this.year - 3).toString(), (this.year - 2).toString(), (this.year - 1).toString(), this.year.toString()];
+            this.barChartLabelsComercMargeAnnual = [(this.year - 3).toString(), (this.year - 2).toString(), (this.year - 1).toString(), this.year.toString()];
         }
     }
 
@@ -551,5 +566,10 @@ export class ReportManagerComponent implements OnInit {
         this.activeMargeAnnual = false;
         this.activeMargeMonth = false;
         this.activeOrderOfDay = false;
+    }
+
+    public getScrollTop() {
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
     }
 }
