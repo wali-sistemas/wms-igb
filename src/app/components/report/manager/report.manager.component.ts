@@ -313,19 +313,6 @@ export class ReportManagerComponent implements OnInit {
         this._reportService.listOrdersOfDay(this.queryParam.id, false).subscribe(
             response => {
                 this.ordersOfDay = response;
-                console.log(this.ordersOfDay);
-                
-                console.log(this.ordersOfDay[0][1]);
-                console.log(this.ordersOfDay[1][1]);
-                console.log(this.ordersOfDay[2][1]);
-                console.log(this.ordersOfDay[3][1]);
-                console.log(this.ordersOfDay[4][1]);
-                
-                
-                
-                
-
-
                 this.barChartDataOrderOfDay = [this.ordersOfDay[0][1], this.ordersOfDay[1][1], this.ordersOfDay[2][1], this.ordersOfDay[3][1], this.ordersOfDay[4][1]];
                 $('#modal_transfer_process').modal('hide');
             }, error => {
