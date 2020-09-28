@@ -567,4 +567,9 @@ export class ReportManagerComponent implements OnInit {
         this.activeMargeMonth = false;
         this.activeOrderOfDay = false;
     }
+
+    public getScrollTop() {
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+    }
 }
