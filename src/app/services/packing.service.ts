@@ -82,7 +82,7 @@ export class PackingService {
     }
 
     public cancelPackingOrder(idPackingOrder: number) {
-        return this._http.get(this.url + 'packing/cancel-packing-order/' + idPackingOrder, { headers: new IGBHeaders().loadHeaders() })
+        return this._http.put(this.url + 'packing/cancel-packing-order/' + idPackingOrder, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
 
