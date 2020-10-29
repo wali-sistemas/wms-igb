@@ -4,7 +4,7 @@ import 'rxjs/add/operator/map';
 import { GLOBAL } from './global';
 
 @Injectable()
-export class Healthchek {
+export class HealthchekService {
   public urlManager: string;
 
   constructor(private _http: Http) {

@@ -5,12 +5,11 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-body">
-                <p>La cantidad que ingresaste ({{pickedItemQuantity}}) es diferente de la cantidad esperada
+                <p>La cantidad ingresada ({{pickedItemQuantity}}) es diferente de la cantidad solicitada por el cliente
                     ({{nextItemQuantity}}).
                     ¿Deseas continuar?</p>
-                <p *ngIf="pickedItemQuantity < nextItemQuantity">Si continúas, se enviará una notificación por
-                    inconsistencia en el inventario.</p>
-                <p *ngIf="pickedItemQuantity > nextItemQuantity">Si continúas, se ajustará automáticamente la cantidad
+                <p *ngIf="pickedItemQuantity < nextItemQuantity">Si continúas, se reportara como inconsistencia en el inventario.</p>
+                <p *ngIf="pickedItemQuantity > nextItemQuantity">Si continúas, se modificará la cantidad en 
                     en la orden de venta.</p>
             </div>
             <div class="modal-footer">

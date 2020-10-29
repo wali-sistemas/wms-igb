@@ -7,14 +7,14 @@ import { BinLocationService } from '../../services/bin-locations.service';
 import { PickingService } from '../../services/picking.service';
 import { BinLocation } from '../../models/bin-location';
 import { SalesOrder } from '../../models/sales-order';
-import { Healthchek } from '../../services/healthchek.service';
+import { HealthchekService } from '../../services/healthchek.service';
 
 declare var $: any;
 
 @Component({
     templateUrl: './picking.component.html',
     styleUrls: ['./picking.component.css'],
-    providers: [UserService, SalesOrdersService, BinLocationService, StockTransferService, PickingService, Healthchek]
+    providers: [UserService, SalesOrdersService, BinLocationService, StockTransferService, PickingService, HealthchekService]
 })
 export class PickingComponent implements OnInit {
     public identity;
@@ -58,7 +58,7 @@ export class PickingComponent implements OnInit {
         private _pickingService: PickingService,
         private _route: ActivatedRoute,
         private _router: Router,
-        private _healthchek: Healthchek) {
+        private _healthchekService: HealthchekService) {
         this.availableCarts = new Array<BinLocation>();
     }
 
@@ -459,7 +459,7 @@ export class PickingComponent implements OnInit {
             keyboard: false,
             show: true
         });
-        this._healthchek.resetSessionId().subscribe(
+        this._healthchekService.resetSessionId().subscribe(
             response => {
                 $('#modal_transfer_process').modal('hide');
                 $('#modal_error').modal('hide');

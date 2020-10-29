@@ -12,7 +12,7 @@ import { InvoiceService } from '../../services/invoice.service';
 import { PrintService } from '../../services/print.service';
 import { GenericService } from '../../services/generic';
 import { ReportService } from '../../services/report.service';
-import { Healthchek } from '../../services/healthchek.service';
+import { HealthchekService } from '../../services/healthchek.service';
 
 import 'rxjs/Rx'
 import { ResupplyComponent } from '../resupply/resupply.component';
@@ -22,7 +22,7 @@ declare var $: any;
 @Component({
     templateUrl: './packing.component.html',
     styleUrls: ['./packing.component.css'],
-    providers: [UserService, PackingService, InvoiceService, PrintService, GenericService, ReportService, Healthchek]
+    providers: [UserService, PackingService, InvoiceService, PrintService, GenericService, ReportService, HealthchekService]
 })
 export class PackingComponent implements OnInit {
 
@@ -75,7 +75,7 @@ export class PackingComponent implements OnInit {
     public selectedBoxItems: Map<string, number> = this.selectedBox.items;
     public identity;
 
-    constructor(private _userService: UserService, private _packingService: PackingService, private _invoiceService: InvoiceService, private _printService: PrintService, private _router: Router, private _generic: GenericService, private _reportService: ReportService, private _healthchek: Healthchek) {
+    constructor(private _userService: UserService, private _packingService: PackingService, private _invoiceService: InvoiceService, private _printService: PrintService, private _router: Router, private _generic: GenericService, private _reportService: ReportService, private _healthchekService: HealthchekService) {
         this.start();
     }
 
@@ -753,7 +753,7 @@ export class PackingComponent implements OnInit {
             keyboard: false,
             show: true
         });
-        this._healthchek.resetSessionId().subscribe(
+        this._healthchekService.resetSessionId().subscribe(
             response => {
                 $('#modal_transfer_process').modal('hide');
                 $('#modal_error').modal('hide');
