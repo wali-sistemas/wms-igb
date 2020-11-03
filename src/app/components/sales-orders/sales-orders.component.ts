@@ -1,19 +1,22 @@
 import { Component, OnInit } from '@angular/core';
+import { GLOBAL } from '../../services/global';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { SalesOrdersService } from '../../services/sales-orders.service';
 import { DeliveryService } from '../../services/delivery.service';
 import { SalesOrder, SalesOrderLine } from '../../models/sales-order';
 import { HealthchekService } from '../../services/healthchek.service';
+import { ReportService } from '../../services/report.service';
 
 declare var $: any;
 
 @Component({
   templateUrl: './sales-orders.component.html',
   styleUrls: ['./sales-orders.component.css'],
-  providers: [UserService, SalesOrdersService, DeliveryService, HealthchekService]
+  providers: [UserService, SalesOrdersService, DeliveryService, HealthchekService, ReportService]
 })
 export class SalesOrdersComponent implements OnInit {
+  public urlShared: string = GLOBAL.urlShared;
   public identity;
   public token;
   public orders: Array<SalesOrder>;
@@ -30,15 +33,18 @@ export class SalesOrdersComponent implements OnInit {
   public loadingAvailableStock: boolean = false;
   public selectedOrder: number;
   public processDeliveryStatus: string = 'none';
+  public processPrintLabelsStatus: string = 'none';
   public docEntryDelivery: number;
   public orderPickingExpress: String;
   public deliveryErrorMessage: string = '';
+  public orderNumber: string = '';
 
   constructor(private _userService: UserService,
     private _salesOrdersService: SalesOrdersService,
     private _deliveryService: DeliveryService,
     private _route: ActivatedRoute, private _router: Router,
-    private _healthchekService: HealthchekService) {
+    private _healthchekService: HealthchekService,
+    private _reportService: ReportService) {
     this.orders = new Array<SalesOrder>();
     this.filteredOrders = new Array<SalesOrder>();
     this.selectedOrders = new Map<String, String>();
@@ -226,6 +232,37 @@ export class SalesOrdersComponent implements OnInit {
     );
   }
 
+  public printerPick(isGroup) {
+    this.processPrintLabelsStatus = 'inprogress';
+
+    let printReportDTO = {
+      "id": isGroup ? 0 : this.docEntryDelivery,
+      "copias": 1,
+      "documento": isGroup ? "pickingExpressGroup" : "pickingExpress",
+      "companyName": this.identity.selectedCompany,
+      "origen": "S",
+      "filtro": isGroup ? this.orderNumber : null,
+      "imprimir": true
+    }
+
+    this._reportService.generateReport(printReportDTO).subscribe(
+      response => {
+        if (response.code == 0) {
+          this.processPrintLabelsStatus = 'done';
+        } else {
+          this.processPrintLabelsStatus = 'error';
+        }
+        $('#modal_transfer_process').modal('hide');
+      },
+      error => {
+        this.processPrintLabelsStatus = 'error';
+        console.error('Ocurrio un error al generar el doc de pickinExpress.', error);
+        this.redirectIfSessionInvalid(error);
+        $('#modal_transfer_process').modal('hide');
+      }
+    );
+  }
+
   public getModalPickingExpress() {
     $('#confirmation_picking').modal('hide');
     this.processDeliveryStatus = 'inprogress';
@@ -259,6 +296,8 @@ export class SalesOrdersComponent implements OnInit {
 
   public clearOrder() {
     this.filter = '';
+    this.processDeliveryStatus = 'none';
+    this.processPrintLabelsStatus = 'none';
     this.listOpenOrders();
   }
 

@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?ayyib6');
-  src:  url('fonts/icomoon.eot?ayyib6#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?ayyib6') format('truetype'),
-    url('fonts/icomoon.woff?ayyib6') format('woff'),
-    url('fonts/icomoon.svg?ayyib6#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?tapyta');
+  src:  url('fonts/icomoon.eot?tapyta#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?tapyta') format('truetype'),
+    url('fonts/icomoon.woff?tapyta') format('woff'),
+    url('fonts/icomoon.svg?tapyta#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -25,6 +25,9 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-shuffle:before {
+  content: "\e980";
+}
 .icon-magnum1 .path1:before {
   content: "\e969";
   color: rgb(104, 104, 104);
@@ -73,6 +76,9 @@
   content: "\e972";
   margin-left: -1.7138671875em;
   color: rgb(0, 0, 0);
+}
+.icon-shelving:before {
+  content: "\e97f";
 }
 .icon-express:before {
   content: "\e97e";
