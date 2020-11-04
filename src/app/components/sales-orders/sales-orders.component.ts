@@ -296,6 +296,7 @@ export class SalesOrdersComponent implements OnInit {
 
   public clearOrder() {
     this.filter = '';
+    this.orderNumber = '';
     this.processDeliveryStatus = 'none';
     this.processPrintLabelsStatus = 'none';
     this.listOpenOrders();
