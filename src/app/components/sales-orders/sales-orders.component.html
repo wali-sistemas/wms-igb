@@ -238,7 +238,7 @@
   </div>
 </div>
 
-<button *ngIf="selectedOrders.size == 1" type="button" class="express-picking" id="btnExpressPicking"
+<button *ngIf="selectedOrders.size == 1 && pickingExpressModuleAccesible" type="button" class="express-picking" id="btnExpressPicking"
   data-toggle="modal" data-target="#confirmation_picking" title="Picking Express">
   <span class="icon-express" style="font-size: 40px;"></span>
 </button>

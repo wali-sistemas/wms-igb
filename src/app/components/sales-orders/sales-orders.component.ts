@@ -31,6 +31,7 @@ export class SalesOrdersComponent implements OnInit {
   public selectedUser: string = '';
   public allStockAvailable: boolean = true;
   public loadingAvailableStock: boolean = false;
+  public pickingExpressModuleAccesible: boolean = false;
   public selectedOrder: number;
   public processDeliveryStatus: string = 'none';
   public processPrintLabelsStatus: string = 'none';
@@ -56,6 +57,7 @@ export class SalesOrdersComponent implements OnInit {
       this._router.navigate(['/']);
     }
     this.listOpenOrders();
+    this.pickingExpressModuleAccesible = JSON.parse(localStorage.getItem('igb.user.access')).pickingExpressModuleAccesible;
   }
 
   private redirectIfSessionInvalid(error) {

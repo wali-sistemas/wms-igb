@@ -21,6 +21,7 @@ export class NavBarComponent implements OnInit {
   public inventoryModuleAccesible: boolean = false;
   public shippingModuleAccesible: boolean = false;
   public ticketTIModuleAccesible: boolean = false;
+  public pickingExpressModuleAccesible: boolean = false;
 
   constructor(private _userService: UserService, private _route: ActivatedRoute, private _router: Router) { }
 
@@ -52,6 +53,7 @@ export class NavBarComponent implements OnInit {
       this.inventoryModuleAccesible = userAccess.inventoryModuleAccesible;
       this.shippingModuleAccesible = userAccess.shippingModuleAccesible;
       this.ticketTIModuleAccesible = userAccess.ticketTIModuleAccesible;
+      this.pickingExpressModuleAccesible = userAccess.pickingExpressModuleAccesible;
       return;
     }
 
@@ -64,7 +66,8 @@ export class NavBarComponent implements OnInit {
       packingModuleAccesible: false,
       inventoryModuleAccesible: false,
       shippingModuleAccesible: false,
-      ticketTIModuleAccesible: false
+      ticketTIModuleAccesible: false,
+      pickingExpressModuleAccesible: false
     };
 
     localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
@@ -191,6 +194,20 @@ export class NavBarComponent implements OnInit {
           localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
         } else {
           this.transferModuleAccesible = false;
+        }
+      }, error => { console.error(error); }
+    );
+
+    //validar si el usuario puede acceder a la opción de pickingExpress
+    this._userService.canAccess(this.identity.username, 'pickingExpress').subscribe(
+      response => {
+        if (response.code == 0) {
+          this.pickingExpressModuleAccesible = true;
+          userAccess = JSON.parse(localStorage.getItem('igb.user.access'));
+          userAccess.pickingExpressModuleAccesible = true;
+          localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
+        } else {
+          this.pickingExpressModuleAccesible = false;
         }
       }, error => { console.error(error); }
     );
