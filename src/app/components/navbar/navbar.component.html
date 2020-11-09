@@ -2,7 +2,6 @@
   <a [routerLink]="['/home']" class="topnav-logo"><img src="/assets/images/{{logo}}" /></a>
   <a *ngIf="ticketTIModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/ticket-TI']">Ticket</a>
   <a *ngIf="receptionModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/purchase-orders']">Recepción</a>
-  <a *ngIf="resupplyModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/resupply']">Reabastecimiento</a>
   <a *ngIf="inventoryModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/inventory']">Inventario</a>
   <a *ngIf="transferModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/transfer']">Traslados</a>
   <a *ngIf="ordersModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/sales-orders']">Órdenes</a>
@@ -19,9 +18,7 @@
 <div id="myNav" class="overlay visible-xs visible-sm">
   <!-- Overlay content -->
   <div class="overlay-content">
-    <!--<a routerLinkActive="active" href="#">Sistema</a>-->
     <a *ngIf="receptionModuleAccesible" routerLinkActive="active" [routerLink]="['/purchase-orders']" href="#">Recepción</a>
-    <a *ngIf="resupplyModuleAccesible" routerLinkActive="active" [routerLink]="['/resupply']" href="#">Reabastecimiento</a>
     <a *ngIf="inventoryModuleAccesible" routerLinkActive="active" [routerLink]="['/inventory']" href="#">Inventario</a>
     <a *ngIf="transferModuleAccesible" routerLinkActive="active" [routerLink]="['/transfer']" href="#">Traslados</a>
     <a *ngIf="ordersModuleAccesible" routerLinkActive="active" [routerLink]="['/sales-orders']" href="#">Asignar órdenes</a>

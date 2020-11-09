@@ -1,17 +1,22 @@
 import { Component, OnInit } from '@angular/core';
+import { GLOBAL } from '../../services/global';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { SalesOrdersService } from '../../services/sales-orders.service';
+import { DeliveryService } from '../../services/delivery.service';
 import { SalesOrder, SalesOrderLine } from '../../models/sales-order';
+import { HealthchekService } from '../../services/healthchek.service';
+import { ReportService } from '../../services/report.service';
 
 declare var $: any;
 
 @Component({
   templateUrl: './sales-orders.component.html',
   styleUrls: ['./sales-orders.component.css'],
-  providers: [UserService, SalesOrdersService]
+  providers: [UserService, SalesOrdersService, DeliveryService, HealthchekService, ReportService]
 })
 export class SalesOrdersComponent implements OnInit {
+  public urlShared: string = GLOBAL.urlShared;
   public identity;
   public token;
   public orders: Array<SalesOrder>;
@@ -26,11 +31,21 @@ export class SalesOrdersComponent implements OnInit {
   public selectedUser: string = '';
   public allStockAvailable: boolean = true;
   public loadingAvailableStock: boolean = false;
+  public pickingExpressModuleAccesible: boolean = false;
   public selectedOrder: number;
+  public processDeliveryStatus: string = 'none';
+  public processPrintLabelsStatus: string = 'none';
+  public docEntryDelivery: number;
+  public orderPickingExpress: String;
+  public deliveryErrorMessage: string = '';
+  public orderNumber: string = '';
 
   constructor(private _userService: UserService,
     private _salesOrdersService: SalesOrdersService,
-    private _route: ActivatedRoute, private _router: Router) {
+    private _deliveryService: DeliveryService,
+    private _route: ActivatedRoute, private _router: Router,
+    private _healthchekService: HealthchekService,
+    private _reportService: ReportService) {
     this.orders = new Array<SalesOrder>();
     this.filteredOrders = new Array<SalesOrder>();
     this.selectedOrders = new Map<String, String>();
@@ -42,6 +57,7 @@ export class SalesOrdersComponent implements OnInit {
       this._router.navigate(['/']);
     }
     this.listOpenOrders();
+    this.pickingExpressModuleAccesible = JSON.parse(localStorage.getItem('igb.user.access')).pickingExpressModuleAccesible;
   }
 
   private redirectIfSessionInvalid(error) {
@@ -199,7 +215,6 @@ export class SalesOrdersComponent implements OnInit {
           }
         }
         this.availableStock = result.content;
-
       },
       error => {
         this.loadingAvailableStock = false;
@@ -215,8 +230,97 @@ export class SalesOrdersComponent implements OnInit {
         this.listOpenOrders();
         this.selectedOrder = null;
       },
+      error => { console.error(error); }
+    );
+  }
+
+  public printerPick(isGroup) {
+    this.processPrintLabelsStatus = 'inprogress';
+
+    let printReportDTO = {
+      "id": isGroup ? 0 : this.docEntryDelivery,
+      "copias": 1,
+      "documento": isGroup ? "pickingExpressGroup" : "pickingExpress",
+      "companyName": this.identity.selectedCompany,
+      "origen": "S",
+      "filtro": isGroup ? this.orderNumber : null,
+      "imprimir": true
+    }
+
+    this._reportService.generateReport(printReportDTO).subscribe(
+      response => {
+        if (response.code == 0) {
+          this.processPrintLabelsStatus = 'done';
+        } else {
+          this.processPrintLabelsStatus = 'error';
+        }
+        $('#modal_transfer_process').modal('hide');
+      },
+      error => {
+        this.processPrintLabelsStatus = 'error';
+        console.error('Ocurrio un error al generar el doc de pickinExpress.', error);
+        this.redirectIfSessionInvalid(error);
+        $('#modal_transfer_process').modal('hide');
+      }
+    );
+  }
+
+  public getModalPickingExpress() {
+    $('#confirmation_picking').modal('hide');
+    this.processDeliveryStatus = 'inprogress';
+    $('#process_picking_express').modal({
+      backdrop: 'static',
+      keyboard: false,
+      show: true
+    });
+
+    for (let i = 0; i < Array.from(this.selectedOrders.entries()).length; i++) {
+      this.orderPickingExpress = Array.from(this.selectedOrders.entries())[i][0];
+      break;
+    }
+
+    this._deliveryService.createPickingExpress(this.orderPickingExpress).subscribe(
+      response => {
+        if (response.code == 0) {
+          this.docEntryDelivery = response.content;
+          this.processDeliveryStatus = 'done';
+        } else {
+          this.processDeliveryStatus = 'error';
+          this.deliveryErrorMessage = response.content;
+        }
+      },
       error => {
         console.error(error);
+        this.redirectIfSessionInvalid(error);
+      }
+    );
+  }
+
+  public clearOrder() {
+    this.filter = '';
+    this.orderNumber = '';
+    this.processDeliveryStatus = 'none';
+    this.processPrintLabelsStatus = 'none';
+    this.listOpenOrders();
+  }
+
+  public resetSesionId() {
+    $('#process_status').modal('hide');
+    this.deliveryErrorMessage = "";
+    $('#modal_transfer_process').modal({
+      backdrop: 'static',
+      keyboard: false,
+      show: true
+    });
+    this._healthchekService.resetSessionId().subscribe(
+      response => {
+        $('#modal_transfer_process').modal('hide');
+        this.getModalPickingExpress();
+      },
+      error => {
+        $('#modal_transfer_process').modal('hide');
+        console.error("Ocurrio un error al reiniciar los sesion Id", error);
+        this.deliveryErrorMessage = "Ocurrio un error al reiniciar los sesion Id";
       }
     );
   }
