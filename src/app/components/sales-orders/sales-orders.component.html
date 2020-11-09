@@ -1,29 +1,5 @@
 <igb-navbar></igb-navbar>
 
-<!--Modal imprimir-->
-<div id="printer_selection" class="modal slide" tabindex="-1" role="dialog" data-backdrop="static">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-xs-12">
-            <label for="printer">Se imprimirá en</label>
-            <select id="printer" class="form-control input-lg" [(ngModel)]="selectedPrinter" name="selectedPrinter">
-              <option style="display:none" disabled value="">Selecciona una impresora</option>
-              <option *ngFor="let printer of printersList" value="{{printer.printServiceName}}">
-                {{printer.printerName}}</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary btn-lg" (click)="createDelivery()">Continuar</button>
-        <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal"
-          (click)="cleanItemTable()">Cancelar</button>
-      </div>
-    </div>
-  </div>
-</div>
 <!--Modal procesando-->
 <div id="modal_transfer_process" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
@@ -206,10 +182,8 @@
       <div class="modal-body">
         <div class="row">
           <div class="col-xs-12">
-            <form (submit)="reprintOrder()">
               <input id="orderNumber" type="text" class="form-control input-lg" name="box" [(ngModel)]="orderNumber"
                 autocomplete="off" placeholder="Ingrese # ordenes">
-            </form>
           </div>
         </div>
         <br />
