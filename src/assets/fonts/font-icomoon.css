@@ -77,12 +77,14 @@
   margin-left: -1.7138671875em;
   color: rgb(0, 0, 0);
 }
+
 .icon-packing-list:before {
   content: "\e981";
 }
 .icon-delivery-list:before {
   content: "\e982";
 }
+
 .icon-shelving:before {
   content: "\e97f";
 }
