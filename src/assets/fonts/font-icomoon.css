@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?tapyta');
-  src:  url('fonts/icomoon.eot?tapyta#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?tapyta') format('truetype'),
-    url('fonts/icomoon.woff?tapyta') format('woff'),
-    url('fonts/icomoon.svg?tapyta#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?n8m4az');
+  src:  url('fonts/icomoon.eot?n8m4az#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?n8m4az') format('truetype'),
+    url('fonts/icomoon.woff?n8m4az') format('woff'),
+    url('fonts/icomoon.svg?n8m4az#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -76,6 +76,12 @@
   content: "\e972";
   margin-left: -1.7138671875em;
   color: rgb(0, 0, 0);
+}
+.icon-packing-list:before {
+  content: "\e981";
+}
+.icon-delivery-list:before {
+  content: "\e982";
 }
 .icon-shelving:before {
   content: "\e97f";
