@@ -22,7 +22,6 @@
     <a class="topnav-logo"><img src="/assets/images/{{logo}}" /></a>
     <h4 class="title">DASHBOARD</h4>
 </nav>
-<script src="assets/js/chart.min.js"></script>
 <br />
 
 <button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span class="icon-chevron-up"></span></button>
@@ -42,7 +41,8 @@
                                     (click)="getActiveSaleCollect()">Cartera</a></li>
                             <li role="presentation"><a href="#logistica" aria-controls="logistica" role="tab"
                                     data-toggle="tab" (click)="getActiveLogistica()">Logística</a></li>
-                            <!-- <li role="presentation"><a href="#finanzas" aria-controls="finanzas" role="tab" data-toggle="tab">Finanzas</a></li> -->
+                            <li role="presentation"><a href="#comex" aria-controls="comex" role="tab" data-toggle="tab"
+                                (click)="getActiveComex()">Comex</a></li>
                         </ul>
                         <!-- Tab panel -->
                         <div class="tab-content">
@@ -73,17 +73,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- <div role="tabpanel" class="tab-pane" id="finanzas">
-                                <div class="row">
-                                    <div class="col-xs-10 col-xs-offset-1">
-                                        <div class="jumbotron">
-                                            <div class="container">
-                                                <p>Lo sentimos. Esta en desarrollo.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> -->
                             <div role="tabpanel" class="tab-pane" id="cartera">
                                 <div class="row">
                                     <div class="col-xs-12">
@@ -108,6 +97,26 @@
                                             <a class="list-group-item list-group-item-action" [ngClass]="{active: activeGraphCedi}"
                                                 id="list-cedi-list" data-toggle="list" role="tab" style="border-radius: 0px;"
                                                 (click)="getOrdersCedi()">Bodega General</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div role="tabpanel" class="tab-pane" id="comex">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <div class="list-group text-center" id="list-tab" role="tablist">
+                                            <a class="list-group-item list-group-item-action" [ngClass]="{active: activeCostoCompra}"
+                                                id="list-recaudo-list" data-toggle="list" role="tab" style="border-radius: 0px;"
+                                                (click)="getActiveComexCostoCompra()">Costo de Compra</a>
+                                            <a class="list-group-item list-group-item-action" [ngClass]="{active: activeFactorCompra}"
+                                                id="list-cedi-list" data-toggle="list" role="tab" style="border-radius: 0px;"
+                                                (click)="getFactorCompra()">Factor de Compra</a>
+                                            <a class="list-group-item list-group-item-action" [ngClass]="{active: activeCostoImport}"
+                                                id="list-cedi-list" data-toggle="list" role="tab" style="border-radius: 0px;"
+                                                (click)="getCostoImport()">Costo de Importación</a>
+                                            <a class="list-group-item list-group-item-action" [ngClass]="{active: activeTimeImport}"
+                                                id="list-cedi-list" data-toggle="list" role="tab" style="border-radius: 0px;"
+                                                (click)="getTimeImport()">Trazabilidad</a>
                                         </div>
                                     </div>
                                 </div>
@@ -450,7 +459,7 @@
     </div>
 </div>
 <!-- Logistica -->
-<div class="cartera" *ngIf="activeContentLogist">
+<div class="logistica" *ngIf="activeContentLogist">
     <div class="container">
         <!--Estado Pedidos-->
         <div class="row" *ngIf="activeStatusOrder">
@@ -507,6 +516,96 @@
             </div>
         </div>
     </div>
+</div>
+<!--Gráficas COMEX-->
+<div class="container content" *ngIf="activeContentComex">
+    <!--costo compra-->
+    <div class="row" *ngIf="activeCostoCompra">
+        <div class="col-xs-12">
+            <h2 class="text-center">Comparativo costos logísticos</h2>
+        </div>
+        <div class="col-xs-12">
+            <div class="margin-20">
+                <div style="display: block">
+                    <canvas id="costoCompra" baseChart [datasets]="barChartDataCostoCompra" [labels]="barChartLabelsCostoCompra"
+                        [legend]="barChartLegend" [chartType]="barChartTypeCostoCompra">
+                    </canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-md-8 col-md-offset-2">
+            <!-- Tabla Desktop -->
+            <table class="table table-sm visible-lg visible-md" style="border: solid 1px; width: 100%; border-color: hsl(0, 32%, 8%);">
+                <tr>
+                    <td style="border: solid 1px; border-color: #333; width: 5%; background-color: #333; color: #fff;">
+                        <h4>Año</h4>
+                    </td>
+                    <td style="border: solid 1px; border-color: #333; width: 15%; background-color: #333; color: #fff;">
+                        <h4>Mes</h4>
+                    </td>
+                    <td style="border: solid 1px; border-color: #333; width: 30%; background-color: #333; color: #fff;">
+                        <h4>Costo Compra</h4>
+                    </td>
+                    <td style="border: solid 1px; border-color: #333; width: 30%; background-color: #333; color: #fff;">
+                        <h4>Costo Logístico</h4>
+                    </td>
+                    <td style="border: solid 1px; border-color: #333; width: 20%; background-color: #333; color: #fff;">
+                        <h4>% Porc</h4>
+                    </td>
+                </tr>
+                <tr *ngFor="let ccompra of costosCompras">
+                    <td style="border: solid 1px; border-color: #828282; width: 5%;">
+                        {{ccompra.costYear}}
+                    </td>
+                    <td style="border: solid 1px; border-color: #828282; width: 15%;">
+                       {{ccompra.costMonth}}
+                    </td>
+                    <td style="border: solid 1px; border-color: #828282; width: 30%;">
+                        $ {{ccompra.costCompra | number}}
+                     </td>
+                     <td style="border: solid 1px; border-color: #828282; width: 30%;">
+                        $ {{ccompra.costLogistic | number}}
+                     </td>
+                    <td style="border: solid 1px; border-color: #828282; width: 20%;">
+                        % {{ccompra.porcentaje | number}}
+                    </td>
+                </tr>
+            </table>
+            <!-- tabla mobile -->
+            <table class="table table-sm visible-sm visible-xs" style="border: solid 1px; width: 100%; border-color: hsl(0, 32%, 8%);">
+                <tr>
+                    <td style="border: solid 1px; border-color: #333; width: 10%; background-color: #333; color: #fff;">
+                        <h5>AA/MM</h5>
+                    </td>
+                    <td style="border: solid 1px; border-color: #333; width: 40%; background-color: #333; color: #fff;">
+                        <h5>CTcomp</h5>
+                    </td>
+                    <td style="border: solid 1px; border-color: #333; width: 40%; background-color: #333; color: #fff;">
+                        <h5>CTlog</h5>
+                    </td>
+                    <td style="border: solid 1px; border-color: #333; width: 10%; background-color: #333; color: #fff;">
+                        <h5>%</h5>
+                    </td>
+                </tr>
+                <tr *ngFor="let ccompra of costosCompras">
+                    <td style="border: solid 1px; border-color: #828282; width: 10%;">
+                        <b>{{ccompra.costYear}}</b> <br/>
+                        {{ccompra.costMonth}}
+                    </td>
+                    <td style="border: solid 1px; border-color: #828282; width: 40%; vertical-align:middle;">
+                        {{ccompra.costCompra | number}}
+                     </td>
+                     <td style="border: solid 1px; border-color: #828282; width: 40%; vertical-align:middle;">
+                        {{ccompra.costLogistic | number}}
+                     </td>
+                    <td style="border: solid 1px; border-color: #828282; width: 10%; vertical-align:middle;">
+                        {{ccompra.porcentaje | number}}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <hr>
 </div>
 <!-- Finanzas -->
 <!-- <div class="finanzas">

@@ -111,4 +111,14 @@ export class ReportService {
         return this._http.get(this.url + 'report/orders-of-day', { headers: igbHeaders })
             .map(res => res.json());
     }
+
+    public getPurchaseCost(companyName: string, testing: boolean) {
+        let igbHeaders = new Headers({
+            'Content-Type': 'application/json',
+            'X-Company-Name': companyName,
+            'X-Pruebas': testing
+        });
+        return this._http.get(this.url + 'report/comex-purchase-costo', { headers: igbHeaders })
+            .map(res => res.json());
+    }
 }

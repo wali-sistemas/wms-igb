@@ -3,11 +3,11 @@ import { Router, ActivatedRoute, Params } from '@angular/router';
 
 import { SalesAnnual } from '../../../models/sales-annual';
 import { SalesMonthly } from '../../../models/sales-monthly';
+import { ByCollect } from '../../../models/byCollect';
+import { PurchaseCost } from '../../../models/purchase-cost';
 
 import { UserService } from '../../../services/user.service';
 import { ReportService } from '../../../services/report.service';
-
-import { ByCollect } from '../../../models/byCollect';
 
 import 'rxjs/Rx'
 import { ResupplyComponent } from '../../resupply/resupply.component';
@@ -28,6 +28,7 @@ export class ReportManagerComponent implements OnInit {
     public activeContentGerencia: boolean = false;
     public activeContentCartera: boolean = false;
     public activeContentLogist: boolean = false;
+    public activeContentComex: boolean = false;
     /***Anual***/
     public activeSaleAnnual: boolean = false;
     public activeMargeAnnual: boolean = false;
@@ -84,7 +85,32 @@ export class ReportManagerComponent implements OnInit {
     public activeOrderOfDay: boolean = false;
     public barChartTypeOrderOfDay: string = 'doughnut';
     public barChartDataOrderOfDay: number[] = [0, 0, 0, 0, 0];
-    public barChartLabelsOrderOfDay: string[] = ['Día -5','Día -4', 'Día -3', 'Ayer', 'Hoy'];
+    public barChartLabelsOrderOfDay: string[] = ['Día -5', 'Día -4', 'Día -3', 'Ayer', 'Hoy'];
+    /***COMEX Costo compra***/
+    public activeCostoCompra: boolean = false;
+    public barChartTypeCostoCompra: string = 'bar';
+    public barChartLegend = true;
+    public barChartLabelsCostoCompra: string[];
+    public barChartDataCostoCompra: any[] = [{ data: [], label: '' }, { data: [], label: '' }, { data: [], label: '' }];
+    public costosCompras: Array<PurchaseCost>;
+    /***COMEX Factor compra***/
+    public factoresCompras: Array<any>;
+    public activeFactorCompra: boolean = false;
+    public barChartTypeFactorCompra: string = 'bar';
+    public barChartLabelsFactorCompra: string[];
+    public barChartDataFactoCompra: any[] = [{ data: [], label: '' }];
+    /***COMEX Costo importacion***/
+    public costosImports: Array<any>;
+    public activeCostoImport: boolean = false;
+    public barChartTypeCostoImport: string = 'line';
+    public barChartLabelsCostoImport: string[];
+    public barChartDataCostoImport: any[] = [{ data: [], label: '' }];
+    /***COMEX Trazabilidad importacion***/
+    public timesImports: Array<any>;
+    public activeTimeImport: boolean = false;
+    public barChartTypeTimeImport: string = 'line';
+    public barChartLabelsTimeImport: string[];
+    public barChartDataTimeImport: any[] = [{ data: [], label: '' }];
 
     constructor(private _userService: UserService, private _router: Router, private _reportService: ReportService, private _routerParam: ActivatedRoute) {
         this.byCollect = new Array<ByCollect>();
@@ -111,6 +137,15 @@ export class ReportManagerComponent implements OnInit {
         let date = new Date();
         this.year = date.getFullYear();
         this.setMonthName(date.getMonth());
+    }
+
+    private initializeComex() {
+        /***Informe costo compra COMEX***/
+        this.barChartDataCostoCompra = [
+            { data: [this.costosCompras[0].costLogistic, this.costosCompras[1].costLogistic, this.costosCompras[2].costLogistic, this.costosCompras[3].costLogistic, this.costosCompras[4].costLogistic, this.costosCompras[5].costLogistic, this.costosCompras[6].costLogistic, this.costosCompras[7].costLogistic, this.costosCompras[8].costLogistic, this.costosCompras[9].costLogistic, this.costosCompras[10].costLogistic, this.costosCompras[11].costLogistic], label: '2018' },
+            { data: [this.costosCompras[12].costLogistic, this.costosCompras[13].costLogistic, this.costosCompras[14].costLogistic, this.costosCompras[15].costLogistic, this.costosCompras[16].costLogistic, this.costosCompras[17].costLogistic, this.costosCompras[18].costLogistic, this.costosCompras[19].costLogistic, this.costosCompras[20].costLogistic, this.costosCompras[21].costLogistic, this.costosCompras[22].costLogistic, this.costosCompras[23].costLogistic], label: '2019' },
+            { data: [this.costosCompras[24].costLogistic, this.costosCompras[25].costLogistic, this.costosCompras[26].costLogistic, this.costosCompras[27].costLogistic, this.costosCompras[28].costLogistic, this.costosCompras[29].costLogistic, this.costosCompras[30].costLogistic, this.costosCompras[31].costLogistic, this.costosCompras[32].costLogistic, this.costosCompras[33].costLogistic, this.costosCompras[34].costLogistic, this.costosCompras[35].costLogistic], label: '2020' }
+        ];
     }
 
     private initializeAnnual() {
@@ -149,6 +184,11 @@ export class ReportManagerComponent implements OnInit {
         this.barChartLabelsComercMonth = [];
         this.barChartDataComercMonth = [{ data: [], label: '' }];
         this.ventasMensuales = new Array<SalesMonthly>();
+    }
+
+    private cleanCostoCompra() {
+        this.barChartDataCostoCompra = [{ data: [], label: '' }, { data: [], label: '' }, { data: [], label: '' }];
+        this.costosCompras = new Array<PurchaseCost>();
     }
 
     private redirectIfSessionInvalid(error) {
@@ -312,9 +352,7 @@ export class ReportManagerComponent implements OnInit {
         this.ordersOfDay = new Array<any>();
         this._reportService.listOrdersOfDay(this.queryParam.id, false).subscribe(
             response => {
-                console.log(response);
                 this.ordersOfDay = response;
-                console.log(this.ordersOfDay);
                 this.barChartDataOrderOfDay = [this.ordersOfDay[0][1], this.ordersOfDay[1][1], this.ordersOfDay[2][1], this.ordersOfDay[3][1], this.ordersOfDay[4][1]];
                 $('#modal_transfer_process').modal('hide');
             }, error => {
@@ -354,7 +392,7 @@ export class ReportManagerComponent implements OnInit {
                         this.byCollect.push(byCollect);
                     }
 
-                    /*TODO: calculando cartera sana preimeros 2 conceptos
+                    /*TODO: calculando cartera sana primeros 2 conceptos
                     1. Sin vencer
                     2. 0 a 20*/
                     for (let i = 0; i < 2; i++) {
@@ -377,7 +415,6 @@ export class ReportManagerComponent implements OnInit {
             }
         );
     }
-
 
     public getStatusOrder() {
         this.activeGraphCedi = false;
@@ -446,6 +483,64 @@ export class ReportManagerComponent implements OnInit {
                 this.redirectIfSessionInvalid(error);
             }
         );
+    }
+
+    public getCostoCompra() {
+        this.cleanCostoCompra();
+        this.costosCompras = new Array<PurchaseCost>();
+        $('#modal_transfer_process').modal({
+             backdrop: 'static',
+             keyboard: false,
+             show: true
+         });
+
+        this._reportService.getPurchaseCost(this.queryParam.id, false).subscribe(
+            response => {
+                if (response.code == 0) {
+                    this.costosCompras = response.content;
+                    $('#modal_transfer_process').modal('hide');   
+                } else {
+                    console.error("No encontro datos para mostar.");
+                    $('#modal_transfer_process').modal('hide');
+                }
+            },
+            error => {
+                console.error(error);
+                $('#modal_transfer_process').modal('hide');
+                this.redirectIfSessionInvalid(error);
+            }
+        );
+    }
+
+    public getFactorCompra() {
+        this.activeCostoCompra = false;
+        this.activeFactorCompra = true;
+        this.activeCostoImport = false;
+        this.activeTimeImport = false;
+    }
+
+    public getCostoImport() {
+        this.activeCostoCompra = false;
+        this.activeFactorCompra = false;
+        this.activeCostoImport = true;
+        this.activeTimeImport = false;
+    }
+
+    public getTimeImport() {
+        this.activeCostoCompra = false;
+        this.activeFactorCompra = false;
+        this.activeCostoImport = false;
+        this.activeTimeImport = true;
+    }
+
+    public getActiveComexCostoCompra() {
+        this.activeContentComex = true;
+        this.activeCostoCompra = true;
+        this.activeFactorCompra = false;
+        this.activeCostoImport = false;
+        this.activeTimeImport = false;
+        this.barChartLabelsCostoCompra = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+        this.initializeComex();
     }
 
     public getActiveSaleAnnual() {
@@ -525,6 +620,7 @@ export class ReportManagerComponent implements OnInit {
     public getActiveComercial() {
         this.activeContentCartera = false;
         this.activeContentLogist = false;
+        this.activeContentComex = false;
         this.activeCollection = false;
         this.activeByCollection = false;
         this.activeStatusOrder = false;
@@ -535,6 +631,7 @@ export class ReportManagerComponent implements OnInit {
     public getActiveSaleCollect() {
         this.activeContentGerencia = false;
         this.activeContentLogist = false;
+        this.activeContentComex = false;
         this.activeSaleAnnual = false;
         this.activeSaleMonth = false;
         this.activeMargeAnnual = false;
@@ -547,6 +644,7 @@ export class ReportManagerComponent implements OnInit {
     public getActiveLogistica() {
         this.activeContentCartera = false;
         this.activeContentGerencia = false;
+        this.activeContentComex = false;
         this.activeCollection = false;
         this.activeByCollection = false;
         this.activeSaleAnnual = false;
@@ -554,6 +652,24 @@ export class ReportManagerComponent implements OnInit {
         this.activeMargeAnnual = false;
         this.activeMargeMonth = false;
         this.activeOrderOfDay = false;
+    }
+
+    public getActiveComex() {
+        this.activeContentCartera = false;
+        this.activeContentGerencia = false;
+        this.activeContentLogist = false;
+        this.activeCollection = false;
+        this.activeByCollection = false;
+        this.activeSaleAnnual = false;
+        this.activeSaleMonth = false;
+        this.activeMargeAnnual = false;
+        this.activeMargeMonth = false;
+        this.activeOrderOfDay = false;
+        this.activeCostoCompra = false;
+        this.activeFactorCompra = false;
+        this.activeCostoImport = false;
+        this.activeTimeImport = false;
+        this.getCostoCompra();
     }
 
     public getScrollTop() {
