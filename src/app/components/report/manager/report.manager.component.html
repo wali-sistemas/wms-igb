@@ -113,7 +113,7 @@
                                                 (click)="getFactorCompra()">Factor de Compra</a>
                                             <a class="list-group-item list-group-item-action" [ngClass]="{active: activeCostoImport}"
                                                 id="list-cedi-list" data-toggle="list" role="tab" style="border-radius: 0px;"
-                                                (click)="getCostoImport()">Costo de Importación</a>
+                                                (click)="getActiveComexCostoImport()">Costo de Importación</a>
                                             <a class="list-group-item list-group-item-action" [ngClass]="{active: activeTimeImport}"
                                                 id="list-cedi-list" data-toggle="list" role="tab" style="border-radius: 0px;"
                                                 (click)="getTimeImport()">Trazabilidad</a>
@@ -605,6 +605,107 @@
             </table>
         </div>
     </div>
+    <!--factor compra-->
+    <div class="row" *ngIf="activeFactorCompra">
+        <div class="col-xs-12">
+            <h2 class="text-center">Factor compra por mes</h2>
+        </div>
+        <div class="col-xs-12">
+            <div class="margin-20">
+                <div style="display: block">
+                    <canvas id="factorCompra" baseChart [datasets]="barChartDataFactorCompra" [labels]="barChartLabelsFactorCompra"
+                        [legend]="barChartLegend" [chartType]="barChartTypeFactorCompra">
+                    </canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+        <!--costo anual importacion-->
+        <div class="row" *ngIf="activeCostoImport">
+            <div class="col-xs-12">
+                <h2 class="text-center">Costo de importación</h2>
+            </div>
+            <div class="col-xs-12">
+                <div class="margin-20">
+                    <div style="display: block">
+                        <canvas id="costoCompra" baseChart [datasets]="barChartDataCostoImport" [labels]="barChartLabelsCostoImport"
+                            [legend]="barChartLegend" [chartType]="barChartTypeCostoImport">
+                        </canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-8 col-md-offset-2">
+                <!-- Tabla Desktop -->
+                <table class="table table-sm visible-lg visible-md" style="border: solid 1px; width: 100%; border-color: hsl(0, 32%, 8%);">
+                    <tr>
+                        <td style="border: solid 1px; border-color: #333; width: 5%; background-color: #333; color: #fff;">
+                            <h4>Mes</h4>
+                        </td>
+                        <td style="border: solid 1px; border-color: #333; width: 15%; background-color: #333; color: #fff;">
+                            <h4>2018</h4>
+                        </td>
+                        <td style="border: solid 1px; border-color: #333; width: 30%; background-color: #333; color: #fff;">
+                            <h4>2019</h4>
+                        </td>
+                        <td style="border: solid 1px; border-color: #333; width: 30%; background-color: #333; color: #fff;">
+                            <h4>2020</h4>
+                        </td>
+                        <td style="border: solid 1px; border-color: #333; width: 20%; background-color: #333; color: #fff;">
+                            <h4>2021</h4>
+                        </td>
+                    </tr>
+                    <tr *ngFor="let cimport of costosImports;let i=index;">
+                        <td style="border: solid 1px; border-color: #828282; width: 5%;">
+                            {{cimport[0]}}
+                        </td>
+                        <td style="border: solid 1px; border-color: #828282; width: 15%;">
+                            $ {{cimport[1] | number}}
+                        </td>
+                        <td style="border: solid 1px; border-color: #828282; width: 30%;">
+                            $ {{cimport[2] | number}}
+                         </td>
+                         <td style="border: solid 1px; border-color: #828282; width: 30%;">
+                            $ {{cimport[3] | number}}
+                         </td>
+                        <td style="border: solid 1px; border-color: #828282; width: 20%;">
+                            $ {{cimport[4] | number}}
+                        </td>
+                    </tr>
+                </table>
+                <!-- tabla mobile -->
+                <table class="table table-sm visible-sm visible-xs" style="border: solid 1px; width: 100%; border-color: hsl(0, 32%, 8%);">
+                    <tr>
+                        <td style="border: solid 1px; border-color: #333; width: 10%; background-color: #333; color: #fff;">
+                            <h5>AA/MM</h5>
+                        </td>
+                        <td style="border: solid 1px; border-color: #333; width: 40%; background-color: #333; color: #fff;">
+                            <h5>CTcomp</h5>
+                        </td>
+                        <td style="border: solid 1px; border-color: #333; width: 40%; background-color: #333; color: #fff;">
+                            <h5>CTlog</h5>
+                        </td>
+                        <td style="border: solid 1px; border-color: #333; width: 10%; background-color: #333; color: #fff;">
+                            <h5>%</h5>
+                        </td>
+                    </tr>
+                    <tr *ngFor="let ccompra of costosCompras">
+                        <td style="border: solid 1px; border-color: #828282; width: 10%;">
+                            <b>{{ccompra.costYear}}</b> <br/>
+                            {{ccompra.costMonth}}
+                        </td>
+                        <td style="border: solid 1px; border-color: #828282; width: 40%; vertical-align:middle;">
+                            {{ccompra.costCompra | number}}
+                         </td>
+                         <td style="border: solid 1px; border-color: #828282; width: 40%; vertical-align:middle;">
+                            {{ccompra.costLogistic | number}}
+                         </td>
+                        <td style="border: solid 1px; border-color: #828282; width: 10%; vertical-align:middle;">
+                            {{ccompra.porcentaje | number}}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
     <hr>
 </div>
 <!-- Finanzas -->
