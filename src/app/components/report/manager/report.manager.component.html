@@ -24,7 +24,8 @@
 </nav>
 <br />
 
-<button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span class="icon-chevron-up"></span></button>
+<button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span
+        class="icon-chevron-up"></span></button>
 
 <!--Gerencia-->
 <div class="gerencia">
@@ -35,14 +36,14 @@
                     <div>
                         <!-- Nav tabs -->
                         <ul class="nav nav-tabs" role="tablist">
-                            <li role="presentation" class="active"><a href="#comercial" aria-controls="comercial" role="tab"
-                                    data-toggle="tab" (click)="getActiveComercial()">Comercial</a></li>
-                            <li role="presentation"><a href="#cartera" aria-controls="cartera" role="tab" data-toggle="tab"
-                                    (click)="getActiveSaleCollect()">Cartera</a></li>
+                            <li role="presentation" class="active"><a href="#comercial" aria-controls="comercial"
+                                    role="tab" data-toggle="tab" (click)="getActiveComercial()">Comercial</a></li>
+                            <li role="presentation"><a href="#cartera" aria-controls="cartera" role="tab"
+                                    data-toggle="tab" (click)="getActiveSaleCollect()">Cartera</a></li>
                             <li role="presentation"><a href="#logistica" aria-controls="logistica" role="tab"
                                     data-toggle="tab" (click)="getActiveLogistica()">Logística</a></li>
                             <li role="presentation"><a href="#comex" aria-controls="comex" role="tab" data-toggle="tab"
-                                (click)="getActiveComex()">Comex</a></li>
+                                    (click)="getActiveComex()">Comex</a></li>
                         </ul>
                         <!-- Tab panel -->
                         <div class="tab-content">
@@ -50,24 +51,29 @@
                                 <div class="row">
                                     <div class="col-xs-12">
                                         <div class="list-group text-center" id="list-tab" role="tablist">
-                                            <a class="list-group-item list-group-item-action" [ngClass]="{active: activeSaleAnnual}"
-                                                id="list-anual-list" data-toggle="list" role="tab" style="border-radius: 0px;"
+                                            <a class="list-group-item list-group-item-action"
+                                                [ngClass]="{active: activeSaleAnnual}" id="list-anual-list"
+                                                data-toggle="list" role="tab" style="border-radius: 0px;"
                                                 (click)="getActiveSaleAnnual()">Ventas
                                                 Anuales</a>
-                                            <a class="list-group-item list-group-item-action" [ngClass]="{active: activeSaleMonth}"
-                                                id="list-mensual-list" data-toggle="list" role="tab" style="border-radius: 0px;"
+                                            <a class="list-group-item list-group-item-action"
+                                                [ngClass]="{active: activeSaleMonth}" id="list-mensual-list"
+                                                data-toggle="list" role="tab" style="border-radius: 0px;"
                                                 (click)="getActiveSaleMonth()">Ventas
                                                 Mensuales</a>
-                                            <a class="list-group-item list-group-item-action" [ngClass]="{active: activeMargeAnnual}"
-                                                id="list-marg-Anual-list" data-toggle="list" role="tab" style="border-radius: 0px;"
+                                            <a class="list-group-item list-group-item-action"
+                                                [ngClass]="{active: activeMargeAnnual}" id="list-marg-Anual-list"
+                                                data-toggle="list" role="tab" style="border-radius: 0px;"
                                                 (click)="getActiveMargeAnnual()">Margen
                                                 Anual</a>
-                                            <a class="list-group-item list-group-item-action" [ngClass]="{active: activeMargeMonth}"
-                                                id="list-marg-mensual-list" data-toggle="list" role="tab" style="border-radius: 0px;"
+                                            <a class="list-group-item list-group-item-action"
+                                                [ngClass]="{active: activeMargeMonth}" id="list-marg-mensual-list"
+                                                data-toggle="list" role="tab" style="border-radius: 0px;"
                                                 (click)="getActiveMargeMonth()">Margen
                                                 Mensual</a>
-                                            <a class="list-group-item list-group-item-action" [ngClass]="{active: activeOrderOfDay}"
-                                                id="list-order-of-day-list" data-toggle="list" role="tab" style="border-radius: 0px;"
+                                            <a class="list-group-item list-group-item-action"
+                                                [ngClass]="{active: activeOrderOfDay}" id="list-order-of-day-list"
+                                                data-toggle="list" role="tab" style="border-radius: 0px;"
                                                 (click)="getActiveOrdersOfDay()">Ordenes del día</a>
                                         </div>
                                     </div>
@@ -77,11 +83,13 @@
                                 <div class="row">
                                     <div class="col-xs-12">
                                         <div class="list-group text-center" id="list-tab" role="tablist">
-                                            <a class="list-group-item list-group-item-action" [ngClass]="{active: activeCollection}"
-                                                id="list-recaudo-list" data-toggle="list" role="tab" style="border-radius: 0px;"
+                                            <a class="list-group-item list-group-item-action"
+                                                [ngClass]="{active: activeCollection}" id="list-recaudo-list"
+                                                data-toggle="list" role="tab" style="border-radius: 0px;"
                                                 (click)="getCollectMonthly()">Recaudado</a>
-                                            <a class="list-group-item list-group-item-action" [ngClass]="{active: activeByCollection}"
-                                                id="list-sin-recaudar-list" data-toggle="list" role="tab" style="border-radius: 0px;"
+                                            <a class="list-group-item list-group-item-action"
+                                                [ngClass]="{active: activeByCollection}" id="list-sin-recaudar-list"
+                                                data-toggle="list" role="tab" style="border-radius: 0px;"
                                                 (click)="getByCollect()">Por cobrar</a>
                                         </div>
                                     </div>
@@ -91,11 +99,13 @@
                                 <div class="row">
                                     <div class="col-xs-12">
                                         <div class="list-group text-center" id="list-tab" role="tablist">
-                                            <a class="list-group-item list-group-item-action" [ngClass]="{active: activeStatusOrder}"
-                                                id="list-recaudo-list" data-toggle="list" role="tab" style="border-radius: 0px;"
+                                            <a class="list-group-item list-group-item-action"
+                                                [ngClass]="{active: activeStatusOrder}" id="list-recaudo-list"
+                                                data-toggle="list" role="tab" style="border-radius: 0px;"
                                                 (click)="getStatusOrder()">Estado Pedidos</a>
-                                            <a class="list-group-item list-group-item-action" [ngClass]="{active: activeGraphCedi}"
-                                                id="list-cedi-list" data-toggle="list" role="tab" style="border-radius: 0px;"
+                                            <a class="list-group-item list-group-item-action"
+                                                [ngClass]="{active: activeGraphCedi}" id="list-cedi-list"
+                                                data-toggle="list" role="tab" style="border-radius: 0px;"
                                                 (click)="getOrdersCedi()">Bodega General</a>
                                         </div>
                                     </div>
@@ -105,17 +115,21 @@
                                 <div class="row">
                                     <div class="col-xs-12">
                                         <div class="list-group text-center" id="list-tab" role="tablist">
-                                            <a class="list-group-item list-group-item-action" [ngClass]="{active: activeCostoCompra}"
-                                                id="list-recaudo-list" data-toggle="list" role="tab" style="border-radius: 0px;"
+                                            <a class="list-group-item list-group-item-action"
+                                                [ngClass]="{active: activeCostoCompra}" id="list-recaudo-list"
+                                                data-toggle="list" role="tab" style="border-radius: 0px;"
                                                 (click)="getActiveComexCostoCompra()">Costo de Compra</a>
-                                            <a class="list-group-item list-group-item-action" [ngClass]="{active: activeFactorCompra}"
-                                                id="list-cedi-list" data-toggle="list" role="tab" style="border-radius: 0px;"
-                                                (click)="getFactorCompra()">Factor de Compra</a>
-                                            <a class="list-group-item list-group-item-action" [ngClass]="{active: activeCostoImport}"
-                                                id="list-cedi-list" data-toggle="list" role="tab" style="border-radius: 0px;"
+                                            <a class="list-group-item list-group-item-action"
+                                                [ngClass]="{active: activeFactorCompra}" id="list-cedi-list"
+                                                data-toggle="list" role="tab" style="border-radius: 0px;"
+                                                (click)="getActiveFactorCompra()">Factor de Compra</a>
+                                            <a class="list-group-item list-group-item-action"
+                                                [ngClass]="{active: activeCostoImport}" id="list-cedi-list"
+                                                data-toggle="list" role="tab" style="border-radius: 0px;"
                                                 (click)="getActiveComexCostoImport()">Costo de Importación</a>
-                                            <a class="list-group-item list-group-item-action" [ngClass]="{active: activeTimeImport}"
-                                                id="list-cedi-list" data-toggle="list" role="tab" style="border-radius: 0px;"
+                                            <a class="list-group-item list-group-item-action"
+                                                [ngClass]="{active: activeTimeImport}" id="list-cedi-list"
+                                                data-toggle="list" role="tab" style="border-radius: 0px;"
                                                 (click)="getTimeImport()">Trazabilidad</a>
                                         </div>
                                     </div>
@@ -134,18 +148,21 @@
             <div class="col-xs-12">
                 <div class="margin-20">
                     <div style="display: block">
-                        <canvas id="ventasAnuales" baseChart [datasets]="barChartDataComercYear" [labels]="barChartLabelsComercYear"
-                            [legend]="'false'" [chartType]="barChartTypeComercYear" [colors]="'#1be4bf'"></canvas>
+                        <canvas id="ventasAnuales" baseChart [datasets]="barChartDataComercYear"
+                            [labels]="barChartLabelsComercYear" [legend]="'false'" [chartType]="barChartTypeComercYear"
+                            [colors]="'#1be4bf'"></canvas>
                     </div>
                 </div>
             </div>
             <div class="col-xs-12 col-md-8 col-md-offset-2">
                 <table style="border: solid 1px; width: 100%; border-color: #828282;">
                     <tr>
-                        <td style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
+                        <td
+                            style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
                             <h4>Año</h4>
                         </td>
-                        <td style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
+                        <td
+                            style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
                             <h4>Ventas</h4>
                         </td>
                     </tr>
@@ -165,8 +182,9 @@
             <div class="col-xs-12">
                 <div class="margin-20">
                     <div style="display: block">
-                        <canvas id="ventasMensuales" baseChart [datasets]="barChartDataComercMonth" [labels]="barChartLabelsComercMonth"
-                            [legend]="'false'" [chartType]="barChartTypeComercMonth" [colors]="'#1be4bf'"></canvas>
+                        <canvas id="ventasMensuales" baseChart [datasets]="barChartDataComercMonth"
+                            [labels]="barChartLabelsComercMonth" [legend]="'false'"
+                            [chartType]="barChartTypeComercMonth" [colors]="'#1be4bf'"></canvas>
                     </div>
                 </div>
             </div>
@@ -174,10 +192,12 @@
                 <h4 class="text-center">Año: {{year}}</h4>
                 <table style="border: solid 1px; width: 100%; border-color: #828282;">
                     <tr>
-                        <td style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
+                        <td
+                            style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
                             <h4>Mes</h4>
                         </td>
-                        <td style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
+                        <td
+                            style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
                             <h4>Ventas</h4>
                         </td>
                     </tr>
@@ -197,18 +217,21 @@
             <div class="col-xs-12">
                 <div class="margin-20">
                     <div style="display: block">
-                        <canvas baseChart [datasets]="barChartDataComercMargeAnnual" [labels]="barChartLabelsComercMargeAnnual"
-                            [chartType]="barChartTypeComercMargeAnnual" [colors]="'#1be4bf'"></canvas>
+                        <canvas baseChart [datasets]="barChartDataComercMargeAnnual"
+                            [labels]="barChartLabelsComercMargeAnnual" [chartType]="barChartTypeComercMargeAnnual"
+                            [colors]="'#1be4bf'"></canvas>
                     </div>
                 </div>
             </div>
             <div class="col-xs-12 col-md-8 col-md-offset-2">
                 <table style="border: solid 1px; width: 100%; border-color: #828282;">
                     <tr>
-                        <td style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
+                        <td
+                            style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
                             <h4>Año</h4>
                         </td>
-                        <td style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
+                        <td
+                            style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
                             <h4>Margen</h4>
                         </td>
                     </tr>
@@ -228,18 +251,21 @@
             <div class="col-xs-12">
                 <div class="margin-20">
                     <div style="display: block">
-                        <canvas baseChart [datasets]="barChartDataComercMargeMonth" [labels]="barChartLabelsComercMargeMonth"
-                            [chartType]="barChartTypeComercMargeMonth" [colors]="'#1be4bf'"></canvas>
+                        <canvas baseChart [datasets]="barChartDataComercMargeMonth"
+                            [labels]="barChartLabelsComercMargeMonth" [chartType]="barChartTypeComercMargeMonth"
+                            [colors]="'#1be4bf'"></canvas>
                     </div>
                 </div>
             </div>
             <div class="col-xs-12 col-md-8 col-md-offset-2">
                 <table style="border: solid 1px; width: 100%; border-color: hsl(0, 32%, 8%);">
                     <tr>
-                        <td style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
+                        <td
+                            style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
                             <h4>Mes</h4>
                         </td>
-                        <td style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
+                        <td
+                            style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
                             <h4>Margen</h4>
                         </td>
                     </tr>
@@ -259,27 +285,34 @@
             <div class="col-xs-12">
                 <div class="margin-20">
                     <div style="display: block">
-                        <canvas baseChart [data]="barChartDataOrderOfDay" [labels]="barChartLabelsOrderOfDay" [chartType]="barChartTypeOrderOfDay"></canvas>
+                        <canvas baseChart [data]="barChartDataOrderOfDay" [labels]="barChartLabelsOrderOfDay"
+                            [chartType]="barChartTypeOrderOfDay"></canvas>
                     </div>
                 </div>
             </div>
             <div class="col-xs-12 col-md-8 col-md-offset-2">
                 <!-- Tabla Desktop -->
-                <table class="table table-sm visible-lg visible-md" style="border: solid 1px; width: 100%; border-color: hsl(0, 32%, 8%);">
+                <table class="table table-sm visible-lg visible-md"
+                    style="border: solid 1px; width: 100%; border-color: hsl(0, 32%, 8%);">
                     <tr>
-                        <td style="border: solid 1px; border-color: #333; width: 25%; background-color: #333; color: #fff;">
+                        <td
+                            style="border: solid 1px; border-color: #333; width: 25%; background-color: #333; color: #fff;">
                             <h4>Fecha</h4>
                         </td>
-                        <td style="border: solid 1px; border-color: #333; width: 15%; background-color: #333; color: #fff;">
+                        <td
+                            style="border: solid 1px; border-color: #333; width: 15%; background-color: #333; color: #fff;">
                             <h4>Ordenes</h4>
                         </td>
-                        <td style="border: solid 1px; border-color: #333; width: 15%; background-color: #333; color: #fff;">
+                        <td
+                            style="border: solid 1px; border-color: #333; width: 15%; background-color: #333; color: #fff;">
                             <h4>Abiertas</h4>
                         </td>
-                        <td style="border: solid 1px; border-color: #333; width: 15%; background-color: #333; color: #fff;">
+                        <td
+                            style="border: solid 1px; border-color: #333; width: 15%; background-color: #333; color: #fff;">
                             <h4>Cerradas</h4>
                         </td>
-                        <td style="border: solid 1px; border-color: #333; width: 30%; background-color: #333; color: #fff;">
+                        <td
+                            style="border: solid 1px; border-color: #333; width: 30%; background-color: #333; color: #fff;">
                             <h4>Total</h4>
                         </td>
                     </tr>
@@ -288,35 +321,41 @@
                             {{orderOfDay[0]}}
                         </td>
                         <td style="border: solid 1px; border-color: #828282; width: 15%;">
-                           {{orderOfDay[1]}}
+                            {{orderOfDay[1]}}
                         </td>
                         <td style="border: solid 1px; border-color: #828282; width: 15%;">
                             {{orderOfDay[2]}}
-                         </td>
-                         <td style="border: solid 1px; border-color: #828282; width: 15%;">
+                        </td>
+                        <td style="border: solid 1px; border-color: #828282; width: 15%;">
                             {{orderOfDay[3]}}
-                         </td>
+                        </td>
                         <td style="border: solid 1px; border-color: #828282; width: 30%;">
                             $ {{orderOfDay[4] | number}}
                         </td>
                     </tr>
                 </table>
                 <!-- tabla mobile -->
-                <table class="table table-sm visible-sm visible-xs" style="border: solid 1px; width: 100%; border-color: hsl(0, 32%, 8%);">
+                <table class="table table-sm visible-sm visible-xs"
+                    style="border: solid 1px; width: 100%; border-color: hsl(0, 32%, 8%);">
                     <tr>
-                        <td style="border: solid 1px; border-color: #333; width: 40%; background-color: #333; color: #fff;">
+                        <td
+                            style="border: solid 1px; border-color: #333; width: 40%; background-color: #333; color: #fff;">
                             <h4>Fecha</h4>
                         </td>
-                        <td style="border: solid 1px; border-color: #333; width: 5%; background-color: #333; color: #fff;">
+                        <td
+                            style="border: solid 1px; border-color: #333; width: 5%; background-color: #333; color: #fff;">
                             <h4>Ord</h4>
                         </td>
-                        <td style="border: solid 1px; border-color: #333; width: 5%; background-color: #333; color: #fff;">
+                        <td
+                            style="border: solid 1px; border-color: #333; width: 5%; background-color: #333; color: #fff;">
                             <h4>Abt</h4>
                         </td>
-                        <td style="border: solid 1px; border-color: #333; width: 5%; background-color: #333; color: #fff;">
+                        <td
+                            style="border: solid 1px; border-color: #333; width: 5%; background-color: #333; color: #fff;">
                             <h4>Crr</h4>
                         </td>
-                        <td style="border: solid 1px; border-color: #333; width: 45%; background-color: #333; color: #fff;">
+                        <td
+                            style="border: solid 1px; border-color: #333; width: 45%; background-color: #333; color: #fff;">
                             <h4>Total</h4>
                         </td>
                     </tr>
@@ -325,14 +364,14 @@
                             {{orderOfDay[0]}}
                         </td>
                         <td style="border: solid 1px; border-color: #828282; width: 5%;">
-                           {{orderOfDay[1]}}
+                            {{orderOfDay[1]}}
                         </td>
                         <td style="border: solid 1px; border-color: #828282; width: 5%;">
                             {{orderOfDay[2]}}
-                         </td>
-                         <td style="border: solid 1px; border-color: #828282; width: 5%;">
+                        </td>
+                        <td style="border: solid 1px; border-color: #828282; width: 5%;">
                             {{orderOfDay[3]}}
-                         </td>
+                        </td>
                         <td style="border: solid 1px; border-color: #828282; width: 45%;">
                             $ {{orderOfDay[4] | number}}
                         </td>
@@ -350,7 +389,9 @@
         <!--recaudado-->
         <div class="row" *ngIf="activeCollection">
             <div class="col-xs-12 col-md-10 col-md-offset-1">
-                <h4 class="text-center" style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">{{year}}</h4>
+                <h4 class="text-center"
+                    style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">
+                    {{year}}</h4>
                 <!-- Tabla Desktop -->
                 <table class="table table-sm visible-lg visible-md" style="border-collapse: initial !important;">
                     <thead>
@@ -374,10 +415,13 @@
                             <td>$ {{recaudo[5] | number}}</td>
                             <td>$ {{recaudo[6] | number}}</td>
                             <td>$ {{recaudo[7] | number}}</td>
-                            <td>$ {{recaudo[2] + recaudo[3] + recaudo[4] + recaudo[5] + recaudo[6] + recaudo[7] | number}}</td>
+                            <td>$
+                                {{recaudo[2] + recaudo[3] + recaudo[4] + recaudo[5] + recaudo[6] + recaudo[7] | number}}
+                            </td>
                         </tr>
                     </tbody>
-                    <tfoot style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">
+                    <tfoot
+                        style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">
                         <tr>
                             <th scope="col" style="border-bottom: 0px;">Totales</th>
                             <td scope="col" style="border-bottom: 0px;">$ {{totalSinVencer | number}}</td>
@@ -386,7 +430,9 @@
                             <td scope="col" style="border-bottom: 0px;">$ {{total56a120 | number}}</td>
                             <td scope="col" style="border-bottom: 0px;">$ {{total121a360 | number}}</td>
                             <td scope="col" style="border-bottom: 0px;">$ {{totalMayor360 | number}}</td>
-                            <td scope="col" style="border-bottom: 0px;">$ {{totalSinVencer + total0a20 + total21a55 + total56a120 + total121a360 + totalMayor360 | number}}</td>
+                            <td scope="col" style="border-bottom: 0px;">$
+                                {{totalSinVencer + total0a20 + total21a55 + total56a120 + total121a360 + totalMayor360 | number}}
+                            </td>
                         </tr>
                     </tfoot>
                 </table>
@@ -424,9 +470,12 @@
         <!--Por cobrar-->
         <div class="row" *ngIf="activeByCollection">
             <div class="col-xs-12 col-md-10 col-md-offset-1">
-                <h4 class="text-center" style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">{{year}}</h4>
+                <h4 class="text-center"
+                    style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">
+                    {{year}}</h4>
                 <!-- Tabla Desktop -->
-                <table class="table table-sm visible-lg visible-md visible-sm visible-xs" style="border-collapse: initial !important;">
+                <table class="table table-sm visible-lg visible-md visible-sm visible-xs"
+                    style="border-collapse: initial !important;">
                     <tbody *ngFor="let cobrar of byCollect">
                         <tr>
                             <td>{{cobrar.concept}}</td>
@@ -437,20 +486,24 @@
                 </table>
                 <div class="row">
                     <div class="col-xs-12">
-                        <h4 class="text-center" style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">Total</h4>
+                        <h4 class="text-center"
+                            style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">
+                            Total</h4>
                         <h4 class="text-center">{{totalByCollect | number}}</h4>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-xs-12">
-                        <h4 class="text-center" style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">Cartera
+                        <h4 class="text-center"
+                            style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">
+                            Cartera
                             Sana</h4>
-                            <div class="col-xs-6">
-                                <h4 class="text-center">{{totalCarteraSana | number}}</h4>
-                            </div>
-                            <div class="col-xs-6">
-                                <h4 class="text-center">{{porcentCarteraSana | number}} %</h4>
-                            </div>
+                        <div class="col-xs-6">
+                            <h4 class="text-center">{{totalCarteraSana | number}}</h4>
+                        </div>
+                        <div class="col-xs-6">
+                            <h4 class="text-center">{{porcentCarteraSana | number}} %</h4>
+                        </div>
                         <hr />
                     </div>
                 </div>
@@ -464,7 +517,9 @@
         <!--Estado Pedidos-->
         <div class="row" *ngIf="activeStatusOrder">
             <div class="col-xs-12 col-md-10 col-md-offset-1">
-                <h4 class="text-center" style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">{{monthName}}</h4>
+                <h4 class="text-center"
+                    style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">
+                    {{monthName}}</h4>
                 <table class="table table-sm" style="border-collapse: initial !important;">
                     <thead>
                         <tr>
@@ -483,7 +538,9 @@
                 </table>
                 <div class="row">
                     <div class="col-xs-12">
-                        <h4 class="text-center" style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">Total
+                        <h4 class="text-center"
+                            style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">
+                            Total
                             Pendiente</h4>
                         <h4 class="text-center">{{totalPend | number}}</h4>
                         <hr />
@@ -491,13 +548,17 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-6">
-                        <h4 class="text-center" style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">Total
+                        <h4 class="text-center"
+                            style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">
+                            Total
                             Pedido</h4>
                         <h4 class="text-center">{{totalOrder | number}}</h4>
                         <hr />
                     </div>
                     <div class="col-sm-6">
-                        <h4 class="text-center" style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">Total
+                        <h4 class="text-center"
+                            style="padding: 10px ;border: solid 1px; border-color: #333; background-color: #333; color: #fff;">
+                            Total
                             Facturado</h4>
                         <h4 class="text-center">{{totalInvoice | number}}</h4>
                         <hr />
@@ -510,7 +571,8 @@
             <div class="col-xs-12">
                 <div class="margin-20">
                     <div style="display: block">
-                        <canvas baseChart [data]="doughnutChartData" [labels]="doughnutChartLabels" [chartType]="doughnutChartType"></canvas>
+                        <canvas baseChart [data]="doughnutChartData" [labels]="doughnutChartLabels"
+                            [chartType]="doughnutChartType"></canvas>
                     </div>
                 </div>
             </div>
@@ -527,15 +589,17 @@
         <div class="col-xs-12">
             <div class="margin-20">
                 <div style="display: block">
-                    <canvas id="costoCompra" baseChart [datasets]="barChartDataCostoCompra" [labels]="barChartLabelsCostoCompra"
-                        [legend]="barChartLegend" [chartType]="barChartTypeCostoCompra">
+                    <canvas id="costoCompra" baseChart [datasets]="barChartDataCostoCompra"
+                        [labels]="barChartLabelsCostoCompra" [legend]="barChartLegend"
+                        [chartType]="barChartTypeCostoCompra">
                     </canvas>
                 </div>
             </div>
         </div>
         <div class="col-xs-12 col-md-8 col-md-offset-2">
             <!-- Tabla Desktop -->
-            <table class="table table-sm visible-lg visible-md" style="border: solid 1px; width: 100%; border-color: hsl(0, 32%, 8%);">
+            <table class="table table-sm visible-lg visible-md"
+                style="border: solid 1px; width: 100%; border-color: hsl(0, 32%, 8%);">
                 <tr>
                     <td style="border: solid 1px; border-color: #333; width: 5%; background-color: #333; color: #fff;">
                         <h4>Año</h4>
@@ -558,21 +622,22 @@
                         {{ccompra.costYear}}
                     </td>
                     <td style="border: solid 1px; border-color: #828282; width: 15%;">
-                       {{ccompra.costMonth}}
+                        {{ccompra.costMonth}}
                     </td>
                     <td style="border: solid 1px; border-color: #828282; width: 30%;">
                         $ {{ccompra.costCompra | number}}
-                     </td>
-                     <td style="border: solid 1px; border-color: #828282; width: 30%;">
+                    </td>
+                    <td style="border: solid 1px; border-color: #828282; width: 30%;">
                         $ {{ccompra.costLogistic | number}}
-                     </td>
+                    </td>
                     <td style="border: solid 1px; border-color: #828282; width: 20%;">
                         % {{ccompra.porcentaje | number}}
                     </td>
                 </tr>
             </table>
             <!-- tabla mobile -->
-            <table class="table table-sm visible-sm visible-xs" style="border: solid 1px; width: 100%; border-color: hsl(0, 32%, 8%);">
+            <table class="table table-sm visible-sm visible-xs"
+                style="border: solid 1px; width: 100%; border-color: hsl(0, 32%, 8%);">
                 <tr>
                     <td style="border: solid 1px; border-color: #333; width: 10%; background-color: #333; color: #fff;">
                         <h5>AA/MM</h5>
@@ -589,15 +654,15 @@
                 </tr>
                 <tr *ngFor="let ccompra of costosCompras">
                     <td style="border: solid 1px; border-color: #828282; width: 10%;">
-                        <b>{{ccompra.costYear}}</b> <br/>
+                        <b>{{ccompra.costYear}}</b> <br />
                         {{ccompra.costMonth}}
                     </td>
                     <td style="border: solid 1px; border-color: #828282; width: 40%; vertical-align:middle;">
                         {{ccompra.costCompra | number}}
-                     </td>
-                     <td style="border: solid 1px; border-color: #828282; width: 40%; vertical-align:middle;">
+                    </td>
+                    <td style="border: solid 1px; border-color: #828282; width: 40%; vertical-align:middle;">
                         {{ccompra.costLogistic | number}}
-                     </td>
+                    </td>
                     <td style="border: solid 1px; border-color: #828282; width: 10%; vertical-align:middle;">
                         {{ccompra.porcentaje | number}}
                     </td>
@@ -613,99 +678,103 @@
         <div class="col-xs-12">
             <div class="margin-20">
                 <div style="display: block">
-                    <canvas id="factorCompra" baseChart [datasets]="barChartDataFactorCompra" [labels]="barChartLabelsFactorCompra"
-                        [legend]="barChartLegend" [chartType]="barChartTypeFactorCompra">
+                    <canvas id="factorCompra" baseChart [datasets]="barChartDataFactorCompra"
+                        [labels]="barChartLabelsFactorCompra" [legend]="barChartLegend"
+                        [chartType]="barChartTypeFactorCompra" [colors]="'#1be4bf'">
                     </canvas>
                 </div>
             </div>
         </div>
     </div>
-        <!--costo anual importacion-->
-        <div class="row" *ngIf="activeCostoImport">
-            <div class="col-xs-12">
-                <h2 class="text-center">Costo de importación</h2>
-            </div>
-            <div class="col-xs-12">
-                <div class="margin-20">
-                    <div style="display: block">
-                        <canvas id="costoCompra" baseChart [datasets]="barChartDataCostoImport" [labels]="barChartLabelsCostoImport"
-                            [legend]="barChartLegend" [chartType]="barChartTypeCostoImport">
-                        </canvas>
-                    </div>
+    <!--costo anual importacion-->
+    <div class="row" *ngIf="activeCostoImport">
+        <div class="col-xs-12">
+            <h2 class="text-center">Costo de importación</h2>
+        </div>
+        <div class="col-xs-12">
+            <div class="margin-20">
+                <div style="display: block">
+                    <canvas id="costoCompra" baseChart [datasets]="barChartDataCostoImport"
+                        [labels]="barChartLabelsCostoImport" [legend]="barChartLegend"
+                        [chartType]="barChartTypeCostoImport">
+                    </canvas>
                 </div>
             </div>
-            <div class="col-xs-12 col-md-8 col-md-offset-2">
-                <!-- Tabla Desktop -->
-                <table class="table table-sm visible-lg visible-md" style="border: solid 1px; width: 100%; border-color: hsl(0, 32%, 8%);">
-                    <tr>
-                        <td style="border: solid 1px; border-color: #333; width: 5%; background-color: #333; color: #fff;">
-                            <h4>Mes</h4>
-                        </td>
-                        <td style="border: solid 1px; border-color: #333; width: 15%; background-color: #333; color: #fff;">
-                            <h4>2018</h4>
-                        </td>
-                        <td style="border: solid 1px; border-color: #333; width: 30%; background-color: #333; color: #fff;">
-                            <h4>2019</h4>
-                        </td>
-                        <td style="border: solid 1px; border-color: #333; width: 30%; background-color: #333; color: #fff;">
-                            <h4>2020</h4>
-                        </td>
-                        <td style="border: solid 1px; border-color: #333; width: 20%; background-color: #333; color: #fff;">
-                            <h4>2021</h4>
-                        </td>
-                    </tr>
-                    <tr *ngFor="let cimport of costosImports;let i=index;">
-                        <td style="border: solid 1px; border-color: #828282; width: 5%;">
-                            {{cimport[0]}}
-                        </td>
-                        <td style="border: solid 1px; border-color: #828282; width: 15%;">
-                            $ {{cimport[1] | number}}
-                        </td>
-                        <td style="border: solid 1px; border-color: #828282; width: 30%;">
-                            $ {{cimport[2] | number}}
-                         </td>
-                         <td style="border: solid 1px; border-color: #828282; width: 30%;">
-                            $ {{cimport[3] | number}}
-                         </td>
-                        <td style="border: solid 1px; border-color: #828282; width: 20%;">
-                            $ {{cimport[4] | number}}
-                        </td>
-                    </tr>
-                </table>
-                <!-- tabla mobile -->
-                <table class="table table-sm visible-sm visible-xs" style="border: solid 1px; width: 100%; border-color: hsl(0, 32%, 8%);">
-                    <tr>
-                        <td style="border: solid 1px; border-color: #333; width: 10%; background-color: #333; color: #fff;">
-                            <h5>AA/MM</h5>
-                        </td>
-                        <td style="border: solid 1px; border-color: #333; width: 40%; background-color: #333; color: #fff;">
-                            <h5>CTcomp</h5>
-                        </td>
-                        <td style="border: solid 1px; border-color: #333; width: 40%; background-color: #333; color: #fff;">
-                            <h5>CTlog</h5>
-                        </td>
-                        <td style="border: solid 1px; border-color: #333; width: 10%; background-color: #333; color: #fff;">
-                            <h5>%</h5>
-                        </td>
-                    </tr>
-                    <tr *ngFor="let ccompra of costosCompras">
-                        <td style="border: solid 1px; border-color: #828282; width: 10%;">
-                            <b>{{ccompra.costYear}}</b> <br/>
-                            {{ccompra.costMonth}}
-                        </td>
-                        <td style="border: solid 1px; border-color: #828282; width: 40%; vertical-align:middle;">
-                            {{ccompra.costCompra | number}}
-                         </td>
-                         <td style="border: solid 1px; border-color: #828282; width: 40%; vertical-align:middle;">
-                            {{ccompra.costLogistic | number}}
-                         </td>
-                        <td style="border: solid 1px; border-color: #828282; width: 10%; vertical-align:middle;">
-                            {{ccompra.porcentaje | number}}
-                        </td>
-                    </tr>
-                </table>
-            </div>
         </div>
+        <div class="col-xs-12 col-md-8 col-md-offset-2">
+            <!-- Tabla Desktop -->
+            <table class="table table-sm visible-lg visible-md"
+                style="border: solid 1px; width: 100%; border-color: hsl(0, 32%, 8%);">
+                <tr>
+                    <td style="border: solid 1px; border-color: #333; width: 5%; background-color: #333; color: #fff;">
+                        <h4>Mes</h4>
+                    </td>
+                    <td style="border: solid 1px; border-color: #333; width: 15%; background-color: #333; color: #fff;">
+                        <h4>2018</h4>
+                    </td>
+                    <td style="border: solid 1px; border-color: #333; width: 30%; background-color: #333; color: #fff;">
+                        <h4>2019</h4>
+                    </td>
+                    <td style="border: solid 1px; border-color: #333; width: 30%; background-color: #333; color: #fff;">
+                        <h4>2020</h4>
+                    </td>
+                    <td style="border: solid 1px; border-color: #333; width: 20%; background-color: #333; color: #fff;">
+                        <h4>2021</h4>
+                    </td>
+                </tr>
+                <tr *ngFor="let cimport of costosImports;let i=index;">
+                    <td style="border: solid 1px; border-color: #828282; width: 5%;">
+                        {{cimport[0]}}
+                    </td>
+                    <td style="border: solid 1px; border-color: #828282; width: 15%;">
+                        $ {{cimport[1] | number}}
+                    </td>
+                    <td style="border: solid 1px; border-color: #828282; width: 30%;">
+                        $ {{cimport[2] | number}}
+                    </td>
+                    <td style="border: solid 1px; border-color: #828282; width: 30%;">
+                        $ {{cimport[3] | number}}
+                    </td>
+                    <td style="border: solid 1px; border-color: #828282; width: 20%;">
+                        $ {{cimport[4] | number}}
+                    </td>
+                </tr>
+            </table>
+            <!-- tabla mobile -->
+            <table class="table table-sm visible-sm visible-xs"
+                style="border: solid 1px; width: 100%; border-color: hsl(0, 32%, 8%);">
+                <tr>
+                    <td style="border: solid 1px; border-color: #333; width: 10%; background-color: #333; color: #fff;">
+                        <h5>AA/MM</h5>
+                    </td>
+                    <td style="border: solid 1px; border-color: #333; width: 40%; background-color: #333; color: #fff;">
+                        <h5>CTcomp</h5>
+                    </td>
+                    <td style="border: solid 1px; border-color: #333; width: 40%; background-color: #333; color: #fff;">
+                        <h5>CTlog</h5>
+                    </td>
+                    <td style="border: solid 1px; border-color: #333; width: 10%; background-color: #333; color: #fff;">
+                        <h5>%</h5>
+                    </td>
+                </tr>
+                <tr *ngFor="let ccompra of costosCompras">
+                    <td style="border: solid 1px; border-color: #828282; width: 10%;">
+                        <b>{{ccompra.costYear}}</b> <br />
+                        {{ccompra.costMonth}}
+                    </td>
+                    <td style="border: solid 1px; border-color: #828282; width: 40%; vertical-align:middle;">
+                        {{ccompra.costCompra | number}}
+                    </td>
+                    <td style="border: solid 1px; border-color: #828282; width: 40%; vertical-align:middle;">
+                        {{ccompra.costLogistic | number}}
+                    </td>
+                    <td style="border: solid 1px; border-color: #828282; width: 10%; vertical-align:middle;">
+                        {{ccompra.porcentaje | number}}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
     <hr>
 </div>
 <!-- Finanzas -->

@@ -118,7 +118,7 @@ export class ReportService {
             'X-Company-Name': companyName,
             'X-Pruebas': testing
         });
-        return this._http.get(this.url + 'report/comex-purchase-costo', { headers: igbHeaders })
+        return this._http.get(this.url + 'report/comex/purchase-costo', { headers: igbHeaders })
             .map(res => res.json());
     }
 
@@ -128,7 +128,17 @@ export class ReportService {
             'X-Company-Name': companyName,
             'X-Pruebas': testing
         });
-        return this._http.get(this.url + 'report/comex-import-costo', { headers: igbHeaders })
+        return this._http.get(this.url + 'report/comex/import-costo', { headers: igbHeaders })
+            .map(res => res.json());
+    }
+
+    public getPurchaseFactor(year: string, month: string, companyName: string, testing: boolean) {
+        let igbHeaders = new Headers({
+            'Content-Type': 'application/json',
+            'X-Company-Name': companyName,
+            'X-Pruebas': testing
+        });
+        return this._http.get(this.url + 'report/comex/purchase-factor?year=' + year + '&month=' + month, { headers: igbHeaders })
             .map(res => res.json());
     }
 }

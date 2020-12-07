@@ -97,7 +97,7 @@ export class ReportManagerComponent implements OnInit {
     public factoresCompras: Array<any>;
     public activeFactorCompra: boolean = false;
     public barChartTypeFactorCompra: string = 'bar';
-    public barChartLabelsFactorCompra: string[] = ['Flete Maritimo', 'Gasto Portuarios', 'Aranceles', 'Tramites Aduaneros', 'Flete Nacional', 'Seguro'];
+    public barChartLabelsFactorCompra: string[];
     public barChartDataFactorCompra: any[] = [{ data: [], label: '' }];
     /***COMEX Costo importacion***/
     public costosImports: Array<any>;
@@ -140,21 +140,29 @@ export class ReportManagerComponent implements OnInit {
     }
 
     private initializeComex() {
+        /***Informe costo compra COMEX***/
         if (this.activeCostoCompra) {
-            /***Informe costo compra COMEX***/
             this.barChartDataCostoCompra = [
                 { data: [this.costosCompras[0].costLogistic, this.costosCompras[1].costLogistic, this.costosCompras[2].costLogistic, this.costosCompras[3].costLogistic, this.costosCompras[4].costLogistic, this.costosCompras[5].costLogistic, this.costosCompras[6].costLogistic, this.costosCompras[7].costLogistic, this.costosCompras[8].costLogistic, this.costosCompras[9].costLogistic, this.costosCompras[10].costLogistic, this.costosCompras[11].costLogistic], label: '2018' },
                 { data: [this.costosCompras[12].costLogistic, this.costosCompras[13].costLogistic, this.costosCompras[14].costLogistic, this.costosCompras[15].costLogistic, this.costosCompras[16].costLogistic, this.costosCompras[17].costLogistic, this.costosCompras[18].costLogistic, this.costosCompras[19].costLogistic, this.costosCompras[20].costLogistic, this.costosCompras[21].costLogistic, this.costosCompras[22].costLogistic, this.costosCompras[23].costLogistic], label: '2019' },
                 { data: [this.costosCompras[24].costLogistic, this.costosCompras[25].costLogistic, this.costosCompras[26].costLogistic, this.costosCompras[27].costLogistic, this.costosCompras[28].costLogistic, this.costosCompras[29].costLogistic, this.costosCompras[30].costLogistic, this.costosCompras[31].costLogistic, this.costosCompras[32].costLogistic, this.costosCompras[33].costLogistic, this.costosCompras[34].costLogistic, this.costosCompras[35].costLogistic], label: '2020' }
             ];
         }
+        /***Informe costo import COMEX***/
         if (this.activeCostoImport) {
-            /***Informe costo import COMEX***/
             this.barChartDataCostoImport = [
                 { data: [this.costosImports[0][1], this.costosImports[1][1], this.costosImports[2][1], this.costosImports[3][1], this.costosImports[4][1], this.costosImports[5][1], this.costosImports[6][1], this.costosImports[7][1], this.costosImports[8][1], this.costosImports[9][1], this.costosImports[10][1], this.costosImports[11][1]], label: '2018' },
                 { data: [this.costosImports[0][2], this.costosImports[1][2], this.costosImports[2][2], this.costosImports[3][2], this.costosImports[4][2], this.costosImports[5][2], this.costosImports[6][2], this.costosImports[7][2], this.costosImports[8][2], this.costosImports[9][2], this.costosImports[10][2], this.costosImports[11][2]], label: '2019' },
                 { data: [this.costosImports[0][3], this.costosImports[1][3], this.costosImports[2][3], this.costosImports[3][3], this.costosImports[4][3], this.costosImports[5][3], this.costosImports[6][3], this.costosImports[7][3], this.costosImports[8][3], this.costosImports[9][3], this.costosImports[10][3], this.costosImports[11][3]], label: '2020' },
                 { data: [this.costosImports[0][4], this.costosImports[1][4], this.costosImports[2][4], this.costosImports[3][4], this.costosImports[4][4], this.costosImports[5][4], this.costosImports[6][4], this.costosImports[7][4], this.costosImports[8][4], this.costosImports[9][4], this.costosImports[10][4], this.costosImports[11][4]], label: '2021' }
+            ];
+        }
+        /***Informe factor compra COMEX***/
+        if (this.activeFactorCompra) {
+            //this.barChartLabelsFactorCompra = [this.factoresCompras[0][2], this.factoresCompras[1][2], this.factoresCompras[2][2], this.factoresCompras[3][2], this.factoresCompras[4][2], this.factoresCompras[5][2], this.factoresCompras[6][2]];
+            this.barChartLabelsFactorCompra = ['EXTERNO LLANTAS', 'ARANCELES', 'MARÍTIMO', 'NACIONAL', 'PORTUARIOS', 'SEGURO', 'ADUANEROS'];
+            this.barChartDataFactorCompra = [
+                { data: [this.factoresCompras[0][5], this.factoresCompras[1][5], this.factoresCompras[2][5], this.factoresCompras[3][5], this.factoresCompras[4][5], this.factoresCompras[5][5], this.factoresCompras[6][5]], label: this.factoresCompras[0][0] },
             ];
         }
     }
@@ -531,6 +539,32 @@ export class ReportManagerComponent implements OnInit {
         );
     }
 
+    public getFactorCompra() {
+        this.factoresCompras = new Array<any>();
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+
+        this._reportService.getPurchaseFactor('2020', '08', this.queryParam.id, false).subscribe(
+            response => {
+                if (response.code == 0) {
+                    this.factoresCompras = response.content;
+                    $('#modal_transfer_process').modal('hide');
+                } else {
+                    console.error("No encontro datos para mostar.");
+                    $('#modal_transfer_process').modal('hide');
+                }
+            },
+            error => {
+                console.error(error);
+                $('#modal_transfer_process').modal('hide');
+                this.redirectIfSessionInvalid(error);
+            }
+        );
+    }
+
     public getImportCompra() {
         this.costosImports = new Array<any>();
         $('#modal_transfer_process').modal({
@@ -557,19 +591,21 @@ export class ReportManagerComponent implements OnInit {
         );
     }
 
-    public getFactorCompra() {
+    public getActiveFactorCompra() {
+        this.activeContentComex = true;
         this.activeCostoCompra = false;
         this.activeFactorCompra = true;
         this.activeCostoImport = false;
         this.activeTimeImport = false;
+        this.initializeComex();
     }
 
-    public getCostoImport() {
+    /*public getCostoImport() {
         this.activeCostoCompra = false;
         this.activeFactorCompra = false;
         this.activeCostoImport = true;
         this.activeTimeImport = false;
-    }
+    }*/
 
     public getTimeImport() {
         this.activeCostoCompra = false;
@@ -726,6 +762,7 @@ export class ReportManagerComponent implements OnInit {
         this.activeTimeImport = false;
         this.getCostoCompra();
         this.getImportCompra();
+        this.getFactorCompra();
     }
 
     public getScrollTop() {
