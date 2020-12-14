@@ -673,8 +673,38 @@
     <!--factor compra-->
     <div class="row" *ngIf="activeFactorCompra">
         <div class="col-xs-12">
-            <h2 class="text-center">Factor compra por mes</h2>
+            <h2 class="text-center">Factor de compra por mes</h2>
         </div>
+        <div class="col-xs-3"></div>
+        <div class="col-xs-3">
+            <select id="year" class="form-control input-lg" [(ngModel)]="selectedYear" name="selectedYear"
+                (change)="getFactorCompra()">
+                <option value="0" disabled>Seleccione uno</option>
+                <option>2018</option>
+                <option>2019</option>
+                <option>2020</option>
+                <option>2021</option>
+            </select>
+        </div>
+        <div class="col-xs-3">
+            <select id="month" class="form-control input-lg" [(ngModel)]="selectedMonth" name="selectedMonth"
+                (change)="getFactorCompra()">
+                <option value="" disabled>Seleccione uno</option>
+                <option>Enero</option>
+                <option>Febrero</option>
+                <option>Marzo</option>
+                <option>Abril</option>
+                <option>Mayo</option>
+                <option>Junio</option>
+                <option>Julio</option>
+                <option>Agosto</option>
+                <option>Septiembre</option>
+                <option>Octubre</option>
+                <option>Noviembre</option>
+                <option>Diciembre</option>
+            </select>
+        </div>
+        <div class="col-xs-3"></div>
         <div class="col-xs-12">
             <div class="margin-20">
                 <div style="display: block">
@@ -684,6 +714,40 @@
                     </canvas>
                 </div>
             </div>
+        </div>
+        <div class="col-xs-12 col-md-8 col-md-offset-2">
+            <!-- Tabla Desktop -->
+            <table class="table table-sm visible-lg visible-md"
+                style="border: solid 1px; width: 100%; border-color: hsl(0, 32%, 8%);">
+                <tr>
+                    <td style="border: solid 1px; border-color: #333; width: 25%; background-color: #333; color: #fff;">
+                        <h4>Servicio</h4>
+                    </td>
+                    <td style="border: solid 1px; border-color: #333; width: 30%; background-color: #333; color: #fff;">
+                        <h4>Costo Estimado</h4>
+                    </td>
+                    <td style="border: solid 1px; border-color: #333; width: 30%; background-color: #333; color: #fff;">
+                        <h4>Costo Real</h4>
+                    </td>
+                    <td style="border: solid 1px; border-color: #333; width: 15%; background-color: #333; color: #fff;">
+                        <h4>Factor</h4>
+                    </td>
+                </tr>
+                <tr *ngFor="let factor of factoresCompras;">
+                    <td style="border: solid 1px; border-color: #828282; width: 25%; font-size: 11px;">
+                        {{factor[2]}}
+                    </td>
+                    <td style="border: solid 1px; border-color: #828282; width: 30%;">
+                        $ {{factor[3] | number}}
+                    </td>
+                    <td style="border: solid 1px; border-color: #828282; width: 30%;">
+                        $ {{factor[4] | number}}
+                    </td>
+                    <td style="border: solid 1px; border-color: #828282; width: 15%;">
+                        % {{factor[5] | number}}
+                    </td>
+                </tr>
+            </table>
         </div>
     </div>
     <!--costo anual importacion-->

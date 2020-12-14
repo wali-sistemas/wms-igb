@@ -99,6 +99,8 @@ export class ReportManagerComponent implements OnInit {
     public barChartTypeFactorCompra: string = 'bar';
     public barChartLabelsFactorCompra: string[];
     public barChartDataFactorCompra: any[] = [{ data: [], label: '' }];
+    public selectedMonth: string = '';
+    public selectedYear: number;
     /***COMEX Costo importacion***/
     public costosImports: Array<any>;
     public activeCostoImport: boolean = false;
@@ -137,6 +139,8 @@ export class ReportManagerComponent implements OnInit {
         let date = new Date();
         this.year = date.getFullYear();
         this.setMonthName(date.getMonth());
+        this.selectedMonth = this.monthName;
+        this.selectedYear = this.year;
     }
 
     private initializeComex() {
@@ -547,11 +551,12 @@ export class ReportManagerComponent implements OnInit {
             show: true
         });
 
-        this._reportService.getPurchaseFactor('2020', '08', this.queryParam.id, false).subscribe(
+        this._reportService.getPurchaseFactor(this.selectedYear, this.selectedMonth, this.queryParam.id, false).subscribe(
             response => {
                 if (response.code == 0) {
                     this.factoresCompras = response.content;
                     $('#modal_transfer_process').modal('hide');
+                    this.getActiveFactorCompra();
                 } else {
                     console.error("No encontro datos para mostar.");
                     $('#modal_transfer_process').modal('hide');
@@ -599,13 +604,6 @@ export class ReportManagerComponent implements OnInit {
         this.activeTimeImport = false;
         this.initializeComex();
     }
-
-    /*public getCostoImport() {
-        this.activeCostoCompra = false;
-        this.activeFactorCompra = false;
-        this.activeCostoImport = true;
-        this.activeTimeImport = false;
-    }*/
 
     public getTimeImport() {
         this.activeCostoCompra = false;

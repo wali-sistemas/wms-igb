@@ -132,7 +132,7 @@ export class ReportService {
             .map(res => res.json());
     }
 
-    public getPurchaseFactor(year: string, month: string, companyName: string, testing: boolean) {
+    public getPurchaseFactor(year: number, month: string, companyName: string, testing: boolean) {
         let igbHeaders = new Headers({
             'Content-Type': 'application/json',
             'X-Company-Name': companyName,
