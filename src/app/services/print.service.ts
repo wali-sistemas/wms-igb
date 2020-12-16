@@ -37,7 +37,13 @@ export class PrintService {
 
     public reprintOrder(RePrintDTO) {
         let igbHeaders = new IGBHeaders().loadHeaders();
-        return this._http.post(this.url + 'print/Order/re-print', RePrintDTO, { headers: igbHeaders })
+        return this._http.post(this.url + 'print/order/re-print', RePrintDTO, { headers: igbHeaders })
+            .map(res => res.json());
+    }
+
+    public printItem(ZebraPrintItemDTO) {
+        let igbHeaders = new IGBHeaders().loadHeaders();
+        return this._http.post(this.url + 'print/item', ZebraPrintItemDTO, { headers: igbHeaders })
             .map(res => res.json());
     }
 }
