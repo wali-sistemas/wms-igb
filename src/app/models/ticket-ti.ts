@@ -12,6 +12,8 @@ export class TicketTI {
     public company: String;
     public status: String;
     public notes: Array<TicketTINotes>;
+    public type: String;
+    public dateEnd: Date;
     constructor() { }
 }
 

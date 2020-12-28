@@ -39,6 +39,7 @@
                             <option value="rzapata">Ricardo Zapata</option>
                             <option value="rmoncada">Rodian Moncada</option>
                             <option value="pcolorado">Paola Colorado</option>
+                            <option value="sistemas">Grupo TI</option>
                         </select>
                     </div>
                 </div>
@@ -108,6 +109,7 @@
                             <option>BODEGA</option>
                             <option>CONTABILIDAD</option>
                             <option>CARTERA</option>
+                            <option>COMERCIAL</option>
                             <option>COMPRAS</option>
                             <option>FACTURACION</option>
                             <option>GERENCIA</option>
@@ -150,7 +152,8 @@
                             <label class="input-group-addon" for="customFileLang">Adjunto <span
                                     class="icon-attachment"></span></label>
                             <input type="file" class="form-control input-lg" id="customFileLang" [(ngModel)]="attached"
-                                accept=".xls,.xlsx,.jpg,.jpeg,.png,.pdf" lang="es" style="top: -25px;" (change)="handleFileInput($event)">
+                                accept=".xls,.xlsx,.jpg,.jpeg,.png,.pdf" lang="es" style="top: -25px;"
+                                (change)="handleFileInput($event)">
                         </div>
                     </div>
                 </div>
@@ -159,6 +162,90 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">Cerrar</button>
                 <button type="button" class="btn btn-danger btn-lg" (click)="createNewTicket()">Crear</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal crear proyecto-->
+<div id="modal_new_proyect" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalCenterTitle" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Crear Proyecto</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <label for="typeTicket">Proyecto*</label>
+                        <input type="text" id="txtAsunt" class="form-control input-lg" [(ngModel)]="asunt"
+                            autocomplete="off" name="asunt" autocorrect="off" autocapitalize="none"
+                            placeholder="Ingrese nombre del proyecto" [class.required-field]="!validAsunt" required>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-xs-12">
+                        <label for="departament">Dirigido a*</label>
+                        <select id="departament" class="form-control input-lg" [(ngModel)]="selectedDepartament"
+                            name="selectedDepartament" [class.required-field]="!validSelectDep" required>
+                            <option value="" disabled>Seleccione uno</option>
+                            <option>BODEGA</option>
+                            <option>CONTABILIDAD</option>
+                            <option>CARTERA</option>
+                            <option>COMERCIAL</option>
+                            <option>COMPRAS</option>
+                            <option>FACTURACION</option>
+                            <option>GERENCIA</option>
+                            <option>LOGISTICA</option>
+                            <option>MERCADEO</option>
+                            <option>MOTOREPUESTOS</option>
+                            <option>TESORERIA</option>
+                            <option>TELEMERCADEO</option>
+                            <option>TALENTO HUMANO</option>
+                            <option>RECEPCION</option>
+                            <option>SISTEMAS</option>
+                        </select>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-xs-12">
+                        <label for="priority">Prioridad*</label>
+                        <select id="priority" class="form-control input-lg" [(ngModel)]="selectedPriority"
+                            name="selectedPriority" [class.required-field]="!validSelectPri" required>
+                            <option value="" disabled>Seleccione uno</option>
+                            <option>ALTA</option>
+                            <option>MEDIA</option>
+                            <option>BAJA</option>
+                        </select>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-xs-12">
+                        <label for="dateEnd">Fecha Entrega*</label>
+                        <input type="date" id="start" class="form-control input-lg" [(ngModel)]="dateEnd" name="dateEnd"
+                            min="2021-01-01" max="2022-12-31" required>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-xs-12">
+                        <textarea id="newNotes" class="md-textarea form-control" name="newNotes" style="width: 100%;"
+                            rows="10" placeholder="Ingrese aquí un comentario" [(ngModel)]="newNotes" autocomplete="off"
+                            [class.required-field]="!validNewNotes" required></textarea>
+                    </div>
+                </div>
+                <br />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-danger btn-lg" (click)="createNewProyect()">Crear</button>
             </div>
         </div>
     </div>
@@ -230,7 +317,13 @@
                         placeholder="Buscar ticket" [(ngModel)]="filter" (keyup)="filterTicket()" autocomplete="off" />
                     <span class="input-group-btn">
                         <button type="button" class="box" class="btn btn-default btn-lg" data-toggle="modal"
-                            data-target="#modal_new_ticket">
+                            data-target="#modal_new_proyect" (click)="clearFrom()" style="height: 46px;width: 50px;"
+                            [class.authorize]="authorizeAddProyect == false">
+                            <span class="icon-dos-cuatro" title="Nuevo Proyecto"
+                                style="font-size: 40px;position: absolute;left: 5px;top: 1px;"></span>
+                        </button>
+                        <button type="button" class="box" class="btn btn-default btn-lg" data-toggle="modal"
+                            data-target="#modal_new_ticket" (click)="clearFrom()">
                             <span class="icon-plus-square" title="Nuevo Ticket"></span>
                         </button>
                     </span>
@@ -255,7 +348,8 @@
                         <div class="date"><b>{{ticket.dateTicket}}</b></div>
                     </div>
                     <div class="col-sm-4">
-                        <div class="ticket-num" (click)="selectTicket(ticket)"><b>Ticket # {{ticket.idTicket}}</b></div>
+                        <div class="ticket-num" (click)="selectTicket(ticket)"><b>{{ticket.type}} #
+                                {{ticket.idTicket}}</b></div>
                     </div>
                     <div class="col-sm-4">
                         <div class="emp-assigned" *ngIf="ticket.empSet">
@@ -295,7 +389,9 @@
                 <br>
                 <div class="row">
                     <div class="col-xs-6">
-                        <p><b>{{ticket.typeTicket}}</b></p>
+                        <div class="date">
+                            <b>{{ticket.typeTicket == 'OTRO' ? ticket.dateEnd : ticket.typeTicket}}</b>
+                        </div>
                     </div>
                     <div class="col-xs-6">
                         <div class="status">
@@ -306,3 +402,4 @@
             </div>
         </div>
     </div>
+</div>

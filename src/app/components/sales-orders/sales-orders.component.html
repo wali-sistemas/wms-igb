@@ -264,7 +264,7 @@
   <br />
   <div class="row">
     <div class="col-xs-12 col-md-6" *ngFor="let order of filteredOrders">
-      <div class="order" [class.warning]="order.status == 'warning'"
+      <div class="order" [class.warning]="order.status == 'warning'" [class.identity]="order.cardCode == 'C900998242'"
         [class.unauthorized]="order.confirmed === 'N' || order.address.length === 0 || order.transp.length === 0"
         [class.selected]="selectedOrders.has(order.docNum)" (click)="selectOrder(order)">
         <div class="row">
