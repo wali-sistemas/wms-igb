@@ -49,6 +49,8 @@ export class TicketTIComponent implements OnInit {
     public fileToUpload: File;
     public nameUpload: string;
     public sizeUpload: number;
+    public dateEnd: Date;
+    public authorizeAddProyect: boolean;
 
     constructor(private _ticketTIService: TicketTIService, private _userService: UserService, private _router: Router) {
         this.tickets = new Array<TicketTI>();
@@ -60,6 +62,13 @@ export class TicketTIComponent implements OnInit {
         this.identity = this._userService.getItentity();
         if (this.identity === null) {
             this._router.navigate(['/']);
+        }
+        //TODO: Se debe definir que usuarios pueden asignar y cambiar la prioridad.
+        if (this.identity.username !== "rmoncada" && this.identity.username !== "jguisao" && this.identity.username !== "rzapata" && this.identity.username !== "pcolorado") {
+            this.authorizeAddProyect = false;
+        } else {
+            //Autorizados para crear proyectos y tickets.
+            this.authorizeAddProyect = true;
         }
         this.listTickets();
         this.listTypeTickets();
@@ -156,26 +165,29 @@ export class TicketTIComponent implements OnInit {
     }
 
     public createNewTicket() {
-        if (this.asunt == null || this.asunt.length <= 0) {
-            this.validAsunt = false;
-            $('#txtAsunt').focus();
-        } else if (this.selectedIdTypeTicket == null) {
-            this.validTypeTicket = false;
-        } else if (this.selectedDepartament == null || this.selectedDepartament.length <= 0) {
-            this.validSelectDep = false;
-        } else if (this.selectedPriority == null || this.selectedPriority.length <= 0) {
-            this.validSelectPri = false;
-        } else if (this.newNotes == null || this.newNotes.length <= 0) {
-            this.validNewNotes = false;
-        }
-
-        $('#modal_new_ticket').modal('hide');
-
         $('#modal_ticket_process').modal({
             backdrop: 'static',
             keyboard: false,
             show: true
         });
+
+        if (this.asunt == null || this.asunt.length <= 0) {
+            $('#modal_ticket_process').modal('hide');
+            this.validAsunt = false;
+            $('#txtAsunt').focus();
+        } else if (this.selectedIdTypeTicket == null) {
+            $('#modal_ticket_process').modal('hide');
+            this.validTypeTicket = false;
+        } else if (this.selectedDepartament == null || this.selectedDepartament.length <= 0) {
+            $('#modal_ticket_process').modal('hide');
+            this.validSelectDep = false;
+        } else if (this.selectedPriority == null || this.selectedPriority.length <= 0) {
+            $('#modal_ticket_process').modal('hide');
+            this.validSelectPri = false;
+        } else if (this.newNotes == null || this.newNotes.length <= 0) {
+            $('#modal_ticket_process').modal('hide');
+            this.validNewNotes = false;
+        }
 
         const ticketDTO: TicketTI = new TicketTI();
         ticketDTO.asunt = this.asunt;
@@ -185,6 +197,7 @@ export class TicketTIComponent implements OnInit {
         ticketDTO.urlAttached = this.attached;
         ticketDTO.empAdd = this.identity.username;
         ticketDTO.company = this.identity.selectedCompany;
+        ticketDTO.type = 'TICKET';
 
         this._ticketTIService.addNewTicket(ticketDTO, this.newNotes).subscribe(
             response => {
@@ -230,6 +243,72 @@ export class TicketTIComponent implements OnInit {
         );
     }
 
+    public createNewProyect() {
+        $('#modal_ticket_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+
+        if (this.asunt == null || this.asunt.length <= 0) {
+            $('#modal_ticket_process').modal('hide');
+            this.validAsunt = false;
+            $('#txtAsunt').focus();
+        } else if (this.selectedDepartament == null || this.selectedDepartament.length <= 0) {
+            $('#modal_ticket_process').modal('hide');
+            this.validSelectDep = false;
+        } else if (this.selectedPriority == null || this.selectedPriority.length <= 0) {
+            $('#modal_ticket_process').modal('hide');
+            this.validSelectPri = false;
+        } else if (this.newNotes == null || this.newNotes.length <= 0) {
+            $('#modal_ticket_process').modal('hide');
+            this.validNewNotes = false;
+        }
+
+        const ticketDTO: TicketTI = new TicketTI();
+        ticketDTO.asunt = this.asunt;
+        ticketDTO.idTypeTicket = 10;
+        ticketDTO.department = this.selectedDepartament;
+        ticketDTO.priority = this.selectedPriority;
+        ticketDTO.urlAttached = this.attached;
+        ticketDTO.empAdd = this.identity.username;
+        ticketDTO.company = this.identity.selectedCompany;
+        ticketDTO.type = 'PROYECTO';
+        ticketDTO.dateEnd = this.dateEnd;
+
+        this._ticketTIService.addNewTicket(ticketDTO, this.newNotes).subscribe(
+            response => {
+                if (response.code == 0) {
+                    this.idTicket = response.content;
+                    //Agregando comentario al proyecto
+                    const ticketNotesDTO: TicketTINotes = new TicketTINotes();
+                    ticketNotesDTO.idTicket = this.idTicket;
+                    ticketNotesDTO.dateNote = null;
+                    ticketNotesDTO.empNote = this.identity.username;
+                    ticketNotesDTO.note = this.newNotes;
+
+                    this._ticketTIService.addNoteTicket(ticketNotesDTO).subscribe(
+                        response => {
+                            if (response.code == 0) {
+                                this.clearFrom();
+                                this.listTickets();
+                            }
+                            $('#modal_ticket_process').modal('hide');
+                        }, error => {
+                            $('#modal_ticket_process').modal('hide');
+                            console.error(error);
+                        }
+                    );
+                }
+            },
+            error => {
+                $('#modal_ticket_process').modal('hide');
+                console.error(error);
+                this.redirectIfSessionInvalid(error);
+            }
+        );
+    }
+
     public handleFileInput(event) {
         this.fileToUpload = <File>event.target.files[0];
         this.nameUpload = this.fileToUpload.name;
@@ -237,8 +316,7 @@ export class TicketTIComponent implements OnInit {
     }
 
     public selectTicket(ticketDTO: TicketTI = new TicketTI()) {
-        //TODO: Se debe definir que usuarios pueden asignar y cambiar la prioridad.
-        if (this.identity.username !== "jguisao" && this.identity.username !== "rzapata" && this.identity.username !== "pcolorado") {
+        if (!this.authorizeAddProyect) {
             return;
         }
         $('#modal_assigned_ticket').modal({
@@ -366,7 +444,7 @@ export class TicketTIComponent implements OnInit {
                 if (ticket.empAdd.toLowerCase().includes(this.filter.toLowerCase()) ||
                     ticket.company.toLowerCase().includes(this.filter.toLowerCase()) ||
                     ticket.status.toLowerCase().includes(this.filter.toLowerCase()) ||
-                    //ticket.empSet.toLowerCase().includes(this.filter.toLowerCase()) ||
+                    ticket.type.toLowerCase().includes(this.filter.toLowerCase()) ||
                     ticket.priority.toLowerCase().includes(this.filter.toLowerCase()) ||
                     ticket.idTicket.toString().includes(this.filter)) {
                     this.tickets.push(ticket);
@@ -377,7 +455,7 @@ export class TicketTIComponent implements OnInit {
         }
     }
 
-    private clearFrom() {
+    public clearFrom() {
         this.asunt = '';
         this.selectedIdTypeTicket = null;
         this.selectedDepartament = '';
@@ -385,6 +463,13 @@ export class TicketTIComponent implements OnInit {
         this.notes = '';
         this.attached = '';
         this.newNotes = '';
+        this.validAsunt = true;
+        this.validNewNotes = true;
+        this.validNotes = true;
+        this.validSelectDep = true;
+        this.validSelectPri = true;
+        this.validSelectedAssigned = true;
+        this.validTypeTicket = true;
     }
 
     public getScrollTop() {

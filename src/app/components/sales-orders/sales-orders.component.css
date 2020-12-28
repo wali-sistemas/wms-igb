@@ -133,6 +133,11 @@
   position: absolute
 }
 
+.order.identity {
+  background-color: #f6e1ff;
+  border-color: #c3c;
+}
+
 .order.warning .assigned-employee, .order.warning .glyphicon-warning-sign{
   color: #f0ad4e;
 }

@@ -231,6 +231,10 @@ label[for="customFileLang"] {
   padding: 6px;
 }
 
+.authorize {
+  display: none;
+}
+
 .box-note-user {
   background: #f7f5f5;
   font-weight: bold;
