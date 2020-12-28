@@ -455,7 +455,7 @@ export class TicketTIComponent implements OnInit {
         }
     }
 
-    private clearFrom() {
+    public clearFrom() {
         this.asunt = '';
         this.selectedIdTypeTicket = null;
         this.selectedDepartament = '';
