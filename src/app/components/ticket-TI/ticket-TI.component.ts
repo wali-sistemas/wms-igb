@@ -165,6 +165,7 @@ export class TicketTIComponent implements OnInit {
     }
 
     public createNewTicket() {
+        $('#modal_new_ticket').modal('hide');
         $('#modal_ticket_process').modal({
             backdrop: 'static',
             keyboard: false,
@@ -175,18 +176,23 @@ export class TicketTIComponent implements OnInit {
             $('#modal_ticket_process').modal('hide');
             this.validAsunt = false;
             $('#txtAsunt').focus();
+            $('#modal_new_ticket').modal('show');
         } else if (this.selectedIdTypeTicket == null) {
             $('#modal_ticket_process').modal('hide');
             this.validTypeTicket = false;
+            $('#modal_new_ticket').modal('show');
         } else if (this.selectedDepartament == null || this.selectedDepartament.length <= 0) {
             $('#modal_ticket_process').modal('hide');
             this.validSelectDep = false;
+            $('#modal_new_ticket').modal('show');
         } else if (this.selectedPriority == null || this.selectedPriority.length <= 0) {
             $('#modal_ticket_process').modal('hide');
             this.validSelectPri = false;
+            $('#modal_new_ticket').modal('show');
         } else if (this.newNotes == null || this.newNotes.length <= 0) {
             $('#modal_ticket_process').modal('hide');
             this.validNewNotes = false;
+            $('#modal_new_ticket').modal('show');
         }
 
         const ticketDTO: TicketTI = new TicketTI();
@@ -209,9 +215,13 @@ export class TicketTIComponent implements OnInit {
                             response => {
                                 if (!response) {
                                     console.error("Lo sentimos. Se produjo un error interno.");
+                                    $('#modal_ticket_process').modal('hide');
                                 }
                             },
-                            error => { console.error(error); }
+                            error => {
+                                $('#modal_ticket_process').modal('hide');
+                                console.error(error);
+                            }
                         );
                     }
                     //Agregando comentario al ticket
@@ -244,6 +254,7 @@ export class TicketTIComponent implements OnInit {
     }
 
     public createNewProyect() {
+        $('#modal_new_proyect').modal('hide');
         $('#modal_ticket_process').modal({
             backdrop: 'static',
             keyboard: false,
@@ -254,15 +265,19 @@ export class TicketTIComponent implements OnInit {
             $('#modal_ticket_process').modal('hide');
             this.validAsunt = false;
             $('#txtAsunt').focus();
+            $('#modal_new_proyect').modal('show');
         } else if (this.selectedDepartament == null || this.selectedDepartament.length <= 0) {
             $('#modal_ticket_process').modal('hide');
             this.validSelectDep = false;
+            $('#modal_new_proyect').modal('show');
         } else if (this.selectedPriority == null || this.selectedPriority.length <= 0) {
             $('#modal_ticket_process').modal('hide');
             this.validSelectPri = false;
+            $('#modal_new_proyect').modal('show');
         } else if (this.newNotes == null || this.newNotes.length <= 0) {
             $('#modal_ticket_process').modal('hide');
             this.validNewNotes = false;
+            $('#modal_new_proyect').modal('show');
         }
 
         const ticketDTO: TicketTI = new TicketTI();
