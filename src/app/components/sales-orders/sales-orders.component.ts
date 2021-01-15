@@ -38,6 +38,7 @@ export class SalesOrdersComponent implements OnInit {
   public docEntryDelivery: number;
   public orderPickingExpress: String;
   public deliveryErrorMessage: string = '';
+  public multiPickingErrorMessage: string = '';
   public orderNumber: string = '';
 
   constructor(private _userService: UserService,
@@ -235,6 +236,7 @@ export class SalesOrdersComponent implements OnInit {
   }
 
   public printerPick(isGroup) {
+    this.multiPickingErrorMessage = '';
     this.processPrintLabelsStatus = 'inprogress';
 
     let printReportDTO = {
@@ -251,6 +253,9 @@ export class SalesOrdersComponent implements OnInit {
       response => {
         if (response.code == 0) {
           this.processPrintLabelsStatus = 'done';
+        } else if (response.code == -2) {
+          this.multiPickingErrorMessage = response.content;
+          this.processPrintLabelsStatus = 'error';
         } else {
           this.processPrintLabelsStatus = 'error';
         }

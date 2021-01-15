@@ -182,8 +182,8 @@
       <div class="modal-body">
         <div class="row">
           <div class="col-xs-12">
-              <input id="orderNumber" type="text" class="form-control input-lg" name="box" [(ngModel)]="orderNumber"
-                autocomplete="off" placeholder="Ingrese # ordenes">
+            <input id="orderNumber" type="text" class="form-control input-lg" name="box" [(ngModel)]="orderNumber"
+              autocomplete="off" placeholder="Ingrese # ordenes">
           </div>
         </div>
         <br />
@@ -207,13 +207,20 @@
             </div>
           </div>
         </div>
+        <div class="row" *ngIf="multiPickingErrorMessage != null && multiPickingErrorMessage.length > 0">
+          <div class="col-xs-12 text-center">
+            <div class="alert alert-danger" role="alert">
+              <p>{{multiPickingErrorMessage}}</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<button *ngIf="selectedOrders.size == 1 && pickingExpressModuleAccesible" type="button" class="express-picking" id="btnExpressPicking"
-  data-toggle="modal" data-target="#confirmation_picking" title="Picking Express">
+<button *ngIf="selectedOrders.size == 1 && pickingExpressModuleAccesible" type="button" class="express-picking"
+  id="btnExpressPicking" data-toggle="modal" data-target="#confirmation_picking" title="Picking Express">
   <span class="icon-express" style="font-size: 40px;"></span>
 </button>
 
