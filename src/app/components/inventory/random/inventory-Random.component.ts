@@ -58,12 +58,11 @@ export class InventoryRandomComponent implements OnInit {
         $('#modal_process').modal('hide');
       }, error => {
         this.redirectIfSessionInvalid(error);
-        console.log(error);
+        console.error(error);
         $('#modal_process').modal('hide');
       }
     );
   }
-
 
   public inventoryRandom() {
     this._inventoryService.inventoryRandom(this._userService.getWarehouseCode()).subscribe(
@@ -73,9 +72,7 @@ export class InventoryRandomComponent implements OnInit {
           this.location = response.content;
           this.preparateInventory();
         }
-      }, error => {
-        console.log(error);
-      }
+      }, error => { console.error(error); }
     );
   }
 
@@ -99,7 +96,7 @@ export class InventoryRandomComponent implements OnInit {
         if (response.code === -1) {
           this.messageError = 'No fue posible iniciar el inventario solicitado.';
           console.error(response.content);
-          console.log('No fue posible iniciar el inventario solicitado.'); 
+          console.log('No fue posible iniciar el inventario solicitado.');
         } else {
           this.idInventory = response.content.id;
           $('#modalConfirmacion').modal('hide');
@@ -108,7 +105,7 @@ export class InventoryRandomComponent implements OnInit {
         $('#modal_process').modal('hide');
       }, error => {
         this.messageError = 'No fue posible iniciar el inventario solicitado.';
-        console.log(error);
+        console.error(error);
         $('#modal_process').modal('hide');
       }
     );
@@ -142,9 +139,7 @@ export class InventoryRandomComponent implements OnInit {
     this._inventoryService.addItem(this.itemTmp).subscribe(
       response => {
         console.log(response);
-      }, error => {
-
-      }
+      }, error => { console.error(error) }
     );
   }
 
@@ -165,7 +160,7 @@ export class InventoryRandomComponent implements OnInit {
           }
           $('#modal_process').modal('hide');
         }, error => {
-          console.log(error);
+          console.error(error);
           $('#modal_process').modal('hide');
         }
       );
@@ -184,8 +179,9 @@ export class InventoryRandomComponent implements OnInit {
         }
         console.log(this.differences);
         $('#modal_process').modal('hide');
+        this.cleanData();
       }, error => {
-        console.log(error);
+        console.error(error);
         $('#modal_process').modal('hide');
       }
     );
