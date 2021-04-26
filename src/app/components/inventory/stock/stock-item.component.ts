@@ -73,7 +73,7 @@ export class StockItemComponent implements OnInit {
             show: true
         });
         if (this.itemCode.length > 1) {
-            this._stockItemService.stockFind(this.itemCode.trim(), JSON.parse(localStorage.getItem('igb.identity')).warehouseCode).subscribe(
+            this._stockItemService.stockFind(this.itemCode.trim().toUpperCase(), JSON.parse(localStorage.getItem('igb.identity')).warehouseCode).subscribe(
                 response => {
                     if (response.length >= 1) {
                         $('#modal_transfer_process').modal('hide');

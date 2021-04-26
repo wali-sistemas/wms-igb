@@ -60,7 +60,7 @@ export class StockTransferLocationComponent implements OnInit {
     public validarUbicacion(binCode, type) {
         this.stockTransferErrorMessage = '';
         this.stockTransferExitMessage = '';
-        this._binLocationService.getBinAbs(binCode).subscribe(
+        this._binLocationService.getBinAbs(binCode.toUpperCase()).subscribe(
             response => {
                 if (type === 'to') {
                     if (response.content) {
@@ -97,10 +97,10 @@ export class StockTransferLocationComponent implements OnInit {
 
     public agregarReferenciaConfirmada() {
         const newItem = {
-            itemCode: this.itemCode,
+            itemCode: this.itemCode.toUpperCase(),
             quantity: this.quantity,
-            toBin: this.toBin,
-            fromBin: this.fromBin
+            toBin: this.toBin.toUpperCase(),
+            fromBin: this.fromBin.toUpperCase()
         };
         this.items.unshift(newItem);
         this.limpiarLinea();
@@ -122,7 +122,7 @@ export class StockTransferLocationComponent implements OnInit {
             this.stockTransferErrorMessage = 'Debe ingresar todos los campos obligatorios.';
         }
 
-        this._stockItemService.checkOutStockItem(this.itemCode, this.fromBin).subscribe(
+        this._stockItemService.checkOutStockItem(this.itemCode.toUpperCase(), this.fromBin.toUpperCase()).subscribe(
             response => {
                 if (response[2] >= this.quantity) {
                     for (let i = 0; i < this.items.length; i++) {
@@ -149,11 +149,11 @@ export class StockTransferLocationComponent implements OnInit {
                         if (this.identity.selectedCompany === 'VARROC') {
                             this.addItem();
                         } else {
-                            this._binLocationService.getLocationAttribute(this.toBin).subscribe(
+                            this._binLocationService.getLocationAttribute(this.toBin.toUpperCase()).subscribe(
                                 response => {
                                     if (response.code == 0) {
                                         if (response.content[3] === 'PICKING') {
-                                            this._binLocationService.getLocationFixed(this.itemCode).subscribe(
+                                            this._binLocationService.getLocationFixed(this.itemCode.toUpperCase()).subscribe(
                                                 response => {
                                                     if (response.content !== this.toBin) {
                                                         $('#modal_transfer_process').modal('hide');
@@ -205,10 +205,10 @@ export class StockTransferLocationComponent implements OnInit {
 
     private addItem() {
         const newItem = {
-            itemCode: this.itemCode,
+            itemCode: this.itemCode.toUpperCase(),
             quantity: this.quantity,
-            toBin: this.toBin,
-            fromBin: this.fromBin
+            toBin: this.toBin.toUpperCase(),
+            fromBin: this.fromBin.toUpperCase()
         };
         this.items.unshift(newItem);
         this.limpiarLinea();
@@ -252,8 +252,8 @@ export class StockTransferLocationComponent implements OnInit {
         this.stockTransferExitMessage = null;
         const stockTransfer = {
             username: this.identity.username,
-            binCodeFrom: this.fromBin,
-            binCodeTo: this.toBin,
+            binCodeFrom: this.fromBin.toUpperCase(),
+            binCodeTo: this.toBin.toUpperCase(),
             binAbsFrom: this.fromBinId,
             binAbsTo: this.toBinId,
             warehouseCode: this.identity.warehouseCode,
