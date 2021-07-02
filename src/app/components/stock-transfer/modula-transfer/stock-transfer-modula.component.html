@@ -1,0 +1,112 @@
+<igb-navbar></igb-navbar>
+
+<!--Modal procesando-->
+<div id="modal_transfer_process" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
+                        aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                        <span class="sr-only">Procesando transferencia</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container content">
+    <h3>Reabastecer Modula</h3>
+    <div class="row" *ngIf="stockTransferErrorMessage">
+        <div class="col-xs-12">
+            <div class="alert alert-danger">
+                {{stockTransferErrorMessage}}
+            </div>
+        </div>
+    </div>
+    <div class="row" *ngIf="stockTransferExitMessage">
+        <div class="col-xs-12">
+            <div class="alert alert-success">
+                {{stockTransferExitMessage}}
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-xs-12">
+            <form (submit)="validarReferencia()">
+                <label for="itemCode">Referencia*</label>
+                <input type="text" class="form-control input-lg" autocomplete="off" id="itemCode" name="itemCode"
+                    placeholder="escanea la referencia" [(ngModel)]="itemCode" (blur)="validarReferencia()">
+            </form>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-xs-12">
+            <form (submit)="validarUbicacion(fromBin, 'from')">
+                <label for="fromBin">Ubicación Origen*</label>
+                <input type="text" class="form-control input-lg" autocomplete="off" id="fromBin" name="fromBin"
+                    placeholder="escanea la ubicación de origen" [(ngModel)]="fromBin"
+                    (blur)="validarUbicacion(fromBin, 'from')" [disabled]="items.length > 0">
+            </form>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-xs-12">
+            <form (submit)="agregarReferencia()">
+                <label for="quantity">Cantidad*</label>
+                <div class="input-group">
+                    <input type="number" class="form-control input-lg" autocomplete="off" id="quantity" name="quantity"
+                        [(ngModel)]="quantity">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default btn-lg" type="button" (click)="agregarReferencia()">
+                            <span class="glyphicon glyphicon-forward"></span>
+                        </button>
+                    </span>
+                </div>
+            </form>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-xs-12 col-md-6" *ngFor="let item of items">
+            <div class="box">
+                <div class="col-xs-6 col-md-3">
+                    <img class="photo" src="{{urlShared}}images/mtz/{{item.itemCode}}.jpg"
+                        onerror="this.src='assets/images/logo-wms.png'" />
+                </div>
+                <div class="col-xs-6 col-md-3">
+                    <div class="box-stock">
+                        <label>De</label><br/>
+                        <label>{{fromBin}}</label>
+                    </div>
+                    <div class="box-itemcode">
+                        <label for="itemCode">{{item.itemCode}}</label>
+                        <span class="badge">{{item.quantity}}</span>
+                    </div>
+                    <div class="box-wharehouse">
+                        <label>Para</label><br/>
+                        <label>30MODULA</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-xs-6">
+            <button class="btn btn-lg" type="button" (click)="limpiarTodo()">
+                Limpiar
+            </button>
+        </div>
+        <div class="col-xs-6">
+            <button class="btn btn-danger btn-lg" type="button" (click)="crearTraslado()" [disabled]="items.length == 0"
+                style="float: right;">
+                Finalizar
+            </button>
+        </div>
+    </div>
+</div>

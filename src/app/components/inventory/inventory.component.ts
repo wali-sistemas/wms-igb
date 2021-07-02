@@ -12,7 +12,7 @@ declare var $: any;
   providers: [StockTransferService, InventoryService, UserService]
 })
 export class InventoryComponent implements OnInit {
-
+  public identity;
   public idInventory: number;
   public quantity: number;
   public messageError: string;
@@ -24,6 +24,7 @@ export class InventoryComponent implements OnInit {
   public itemVisible: any;
   public differences: Array<any>;
   public history: Array<any>;
+  public selectedCompany: String;
 
   constructor(private _stockTransferService: StockTransferService,
     private _inventoryService: InventoryService,
@@ -40,6 +41,12 @@ export class InventoryComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.identity = this._userService.getItentity();
+    if (this.identity === null) {
+      this._router.navigate(['/']);
+    }
+    this.selectedCompany = this.identity.selectedCompany;
+
     $('#txt_location').focus();
     this.messageProgress = 'Validando si hay inventarios pendientes.';
     $('#modal_process').modal('show');
@@ -62,7 +69,6 @@ export class InventoryComponent implements OnInit {
       }
     );
   }
-
 
   public inventoryRandom() {
     this._inventoryService.inventoryRandom(this._userService.getWarehouseCode()).subscribe(

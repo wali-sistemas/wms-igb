@@ -124,8 +124,8 @@ export class TicketTIComponent implements OnInit {
             show: true
         });
         this.idTicket = ticketDTO.idTicket;
-        this.statusTicket = ticketDTO.status;  
-           
+        this.statusTicket = ticketDTO.status;
+
         this.listNotesTicket();
     }
 
