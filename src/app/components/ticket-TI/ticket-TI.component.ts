@@ -5,17 +5,19 @@ import { GLOBAL } from '../../services/global';
 import { UserService } from '../../services/user.service';
 import { TicketTIService } from '../../services/ticket-TI.service';
 import { TicketTI, TicketTINotes } from '../../models/ticket-ti';
+import { BinLocationService } from '../../services/bin-locations.service';
 
 import 'rxjs/Rx'
 import { ResupplyComponent } from '../resupply/resupply.component';
 import { from } from 'rxjs/observable/from';
+import { error } from 'selenium-webdriver';
 
 declare var $: any;
 
 @Component({
     templateUrl: './ticket-TI.component.html',
     styleUrls: ['./ticket-TI.component.css'],
-    providers: [UserService, TicketTIService]
+    providers: [UserService, TicketTIService, BinLocationService]
 })
 export class TicketTIComponent implements OnInit {
     public identity;
@@ -52,13 +54,16 @@ export class TicketTIComponent implements OnInit {
     public dateEnd: Date;
     public authorizeAddProyect: boolean;
 
-    constructor(private _ticketTIService: TicketTIService, private _userService: UserService, private _router: Router) {
+    constructor(private _ticketTIService: TicketTIService, private _userService: UserService, private _router: Router, private _binLocationService: BinLocationService) {
         this.tickets = new Array<TicketTI>();
         this.ticketNotes = new Array<TicketTINotes>();
         this.ticketTypes = new Array<any>();
     }
 
     ngOnInit() {
+        //TODO: Se valida sesion inactiva invocando este servicio
+        this.validateInactiveSession();
+
         this.identity = this._userService.getItentity();
         if (this.identity === null) {
             this._router.navigate(['/']);
@@ -81,6 +86,18 @@ export class TicketTIComponent implements OnInit {
             localStorage.removeItem('igb.selectedCompany');
             this._router.navigate(['/']);
         }
+    }
+
+    private validateInactiveSession() {
+        this._binLocationService.getBinAbs("01INVENTARIO").subscribe(
+            response => {
+                console.log(response);
+            },
+            error => {
+                console.error(error);
+                this.redirectIfSessionInvalid(error);
+            }
+        );
     }
 
     private listTickets() {

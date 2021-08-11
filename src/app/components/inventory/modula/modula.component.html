@@ -14,26 +14,59 @@
         </div>
     </div>
 </div>
+<!--Modal confirmar inventario modula-->
+<div id="modal_inventory" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p class="text-center">
+                    <b>Enviar petición a Modula de tipo inventario</b>
+                    <br />Se enviara solicitud al wms para realizar inventario del ítem, a la espera del operario encargado.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" style="float: left;">Cancelar</button>
+                <button type="button" class="btn btn-primary btn-lg" (click)="inventoryItem()">Enviar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span
         class="icon-chevron-up"></span></button>
 
 <div class="container content">
     <h3>Stock SAP vs MODULA</h3>
-    <hr/>
-    <div class="row" *ngIf="errorMessage">
+    <hr />
+    <div class="row" *ngIf="errorDanger">
         <div class="col-xs-12">
             <div class="alert alert-danger">
                 {{errorMessage}}
             </div>
         </div>
     </div>
+    <div class="row" *ngIf="errorWarning">
+        <div class="col-xs-12">
+            <div class="alert alert-warning">
+                {{errorWarning}}
+            </div>
+        </div>
+    </div>
+    <div class="row" *ngIf="errorSuccess">
+        <div class="col-xs-12">
+            <div class="alert alert-success">
+                {{errorSuccess}}
+            </div>
+        </div>
+    </div>
     <br />
     <div class="row">
-        <div class="col-xs-12 col-md-6" *ngFor="let item of itemsDifferences">
-            <div class="box">
+        <div class="col-xs-12 col-md-6" *ngFor="let item of itemsDifferences; let i=index"
+            [class.box-display-item]="item.qtySAP == item.qtyMDL">
+            <div class="box" (click)="selectItem(item.itemCode, item.qtySAP)">
                 <div class="col-xs-6 col-md-3">
-                    <img class="photo" src="{{urlShared}}images/mtz/{{item.itemCode}}.jpg" onerror="this.src='assets/images/logo-wms.png'"/>
+                    <img class="photo" src="{{urlShared}}images/mtz/{{item.itemCode}}.jpg"
+                        onerror="this.src='assets/images/logo-wms.png'" />
                 </div>
                 <div class="box-itemname">{{item.itemName}}</div>
                 <div class="col-xs-6 col-md-3">
@@ -45,7 +78,7 @@
                         {{item.itemCode}}
                     </div>
                     <div class="box-wharehouse">
-                        <hr/>
+                        <hr />
                         <span class="badge">{{item.qtyMDL}}</span>
                         <label> - {{item.whsName}}</label>
                     </div>

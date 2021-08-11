@@ -51,9 +51,15 @@ export class SalesOrdersService {
       .map(res => res.json());
   }
 
-  public deleteAssignOrders(orderNumber){
+  public deleteAssignOrders(orderNumber) {
     let igbHeaders = new IGBHeaders().loadHeaders();
     return this._http.delete(this.url + 'salesorder/reset-assigned/' + orderNumber, { headers: igbHeaders })
-    .map(res => res.json());
+      .map(res => res.json());
+  }
+
+  public validateOrderAuthorized(orderNumber) {
+    let igbHeaders = new IGBHeaders().loadHeaders();
+    return this._http.get(this.url + 'salesorder/validate-order/' + orderNumber, { headers: igbHeaders })
+      .map(res => res.json());
   }
 }

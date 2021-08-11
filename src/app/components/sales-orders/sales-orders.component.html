@@ -96,7 +96,8 @@
       <div class="modal-body text-center">
         <p>
           <b>¿Estás seguro que deseas crear picking express?</b><br />Al hacerlo, se crearán la entrega y se cerrara el
-          packing para los ítems empacados.</p>
+          packing para los ítems.
+        </p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" (click)="clearOrder()"
@@ -240,6 +241,13 @@
       <h3>Órdenes de venta pendientes</h3>
     </div>
   </div>
+  <div class="row" *ngIf="pickExpressErrorMessage">
+    <div class="col-xs-12">
+      <div class="alert alert-danger">
+        {{pickExpressErrorMessage}}
+      </div>
+    </div>
+  </div>
   <div class="row">
     <div class="col-xs-12">
       <form>
@@ -275,13 +283,16 @@
         [class.unauthorized]="order.confirmed === 'N' || order.address.length === 0 || order.transp.length === 0"
         [class.selected]="selectedOrders.has(order.docNum)" (click)="selectOrder(order)">
         <div class="row">
-          <div class="col-sm-4">
+          <div class="col-sm-3">
             <div class="date"><b>{{order.docDate}}</b></div>
           </div>
-          <div class="col-sm-4">
-            <div class="order-num"><b>Orden # {{order.docNum}}</b></div>
+          <div class="col-sm-3" *ngIf="order.docNumMDL != null">
+            <div class="order-num" style="background-color: #F2A033;"><b>MDL {{order.docNumMDL}}</b></div>
           </div>
-          <div class="col-sm-4"><span *ngIf="order.status == 'warning'"
+          <div class="col-sm-3" style="min-height: 24px;">
+            <div class="order-num"><b>SAP {{order.docNum}}</b></div>
+          </div>
+          <div class="col-sm-3"><span *ngIf="order.status == 'warning'"
               class="glyphicon glyphicon-warning-sign warn"></span>
             <div class="assigned-employee" *ngIf="order.assignedPickingEmployee"><span class="icon-user"
                 style="font-size: 18px;"></span>{{order.assignedPickingEmployee}}</div>

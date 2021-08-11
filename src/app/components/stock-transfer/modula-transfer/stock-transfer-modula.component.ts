@@ -6,6 +6,7 @@ import { StockTransferService } from '../../../services/stock-transfer.service';
 import { BinLocationService } from '../../../services/bin-locations.service';
 import { GenericService } from '../../../services/generic';
 import { StockItemService } from '../../../services/stock-item.service';
+import { ModulaService } from '../../../services/modula.service';
 import { ThrowStmt } from '@angular/compiler';
 
 declare var $: any;
@@ -13,7 +14,7 @@ declare var $: any;
 @Component({
     templateUrl: './stock-transfer-modula.component.html',
     styleUrls: ['./stock-transfer-modula.component.css'],
-    providers: [UserService, StockTransferService, BinLocationService, GenericService, StockItemService]
+    providers: [UserService, StockTransferService, BinLocationService, GenericService, StockItemService, ModulaService]
 })
 
 export class StockTransferModulaComponent implements OnInit {
@@ -40,7 +41,8 @@ export class StockTransferModulaComponent implements OnInit {
         private _stockTransferService: StockTransferService,
         private _binLocationService: BinLocationService,
         private _router: Router, private _genericService: GenericService,
-        private _stockItemService: StockItemService) {
+        private _stockItemService: StockItemService,
+        private _modulaService: ModulaService) {
         this._userService = _userService;
         this.items = new Array<any>();
         this.warehousesFrom = new Array<any>();
@@ -48,11 +50,7 @@ export class StockTransferModulaComponent implements OnInit {
     }
 
     ngOnInit() {
-        //TODO: validar vigencia del token/identity
-        console.log('*************');
-        console.log(this.identity);
-        console.log('*************');
-        
+        //TODO: validar vigencia del token/identity 
         this.identity = this._userService.getItentity();
         if (this.identity === null) {
             this._router.navigate(['/']);
@@ -86,19 +84,6 @@ export class StockTransferModulaComponent implements OnInit {
             }
         );
     }
-
-    /*public updateWarehouseFrom() {
-        this.disabledWhFrom = true;
-    }*/
-
-    /*public updateWarehouseTo() {
-        for (let i = 0; i < this.warehousesTo.length; i++) {
-            if (this.warehousesTo[i].code == this.selectedWarehouseTo) {
-                this.dftBinAbs = this.warehousesTo[i].dftBinAbs;
-                break;
-            }
-        }
-    }*/
 
     public validarReferencia() {
         this.stockTransferErrorMessage = '';
@@ -150,36 +135,49 @@ export class StockTransferModulaComponent implements OnInit {
             this.stockTransferErrorMessage = 'Debe ingresar todos los campos obligatorios.';
         }
 
-        this._stockItemService.checkOutStockItem(this.itemCode.toUpperCase(), this.fromBin.toUpperCase()).subscribe(
+        //Validar si el item si esta creado en modula
+        this._modulaService.getValidateItem(this.itemCode).subscribe(
             response => {
-                if (response[2] >= this.quantity) {
-                    for (let i = 0; i < this.items.length; i++) {
-                        if (this.items[i].itemCode == this.itemCode) {
-                            if (response[2] > this.items[i].quantity) {
-                                this.items[i].quantity += this.quantity;
-                                this.limpiarLinea();
-                                $('#modal_transfer_process').modal('hide');
-                                return;
+                if (response.code === 0) {
+                    this._stockItemService.checkOutStockItem(this.itemCode.toUpperCase(), this.fromBin.toUpperCase()).subscribe(
+                        response => {
+                            if (response[2] >= this.quantity) {
+                                for (let i = 0; i < this.items.length; i++) {
+                                    if (this.items[i].itemCode == this.itemCode) {
+                                        if (response[2] > this.items[i].quantity) {
+                                            this.items[i].quantity += this.quantity;
+                                            this.limpiarLinea();
+                                            $('#modal_transfer_process').modal('hide');
+                                            return;
+                                        } else {
+                                            $('#modal_transfer_process').modal('hide');
+                                            this.stockTransferErrorMessage = 'No hay suficiente stock. Disponible: ' + response[2];
+                                            this.limpiarLinea();
+                                            return;
+                                        }
+                                    }
+                                }
+                                this.addItem();
                             } else {
                                 $('#modal_transfer_process').modal('hide');
-                                this.stockTransferErrorMessage = 'No hay suficiente stock. Disponible: ' + response[2];
+                                this.stockTransferErrorMessage = 'No encontro stock disponible en la ubicación ' + this.fromBin + '.';
                                 this.limpiarLinea();
-                                return;
                             }
+                        },
+                        error => {
+                            console.error(error);
+                            this.redirectIfSessionInvalid(error);
+                            $('#modal_transfer_process').modal('hide');
+                            this.stockTransferErrorMessage = 'Lo sentimos. Se produjo un error interno.';
                         }
-                    }
-                    this.addItem();
+                    );
                 } else {
                     $('#modal_transfer_process').modal('hide');
-                    this.stockTransferErrorMessage = 'No encontro stock disponible en la ubicación ' + this.fromBin + '.';
-                    this.limpiarLinea();
+                    this.stockTransferErrorMessage = response.content;
                 }
-            },
-            error => {
+            }, error => {
                 console.error(error);
-                this.redirectIfSessionInvalid(error);
-                $('#modal_transfer_process').modal('hide');
-                this.stockTransferErrorMessage = 'Lo sentimos. Se produjo un error interno.';
+                this.stockTransferErrorMessage = 'Lo sentimos. Se produjo un error invocando el api de modula.';
             }
         );
     }
@@ -233,16 +231,11 @@ export class StockTransferModulaComponent implements OnInit {
             lines: this.items
         };
 
-        console.log('*****************');
-        console.log(stockTransfer);
-        console.log('*****************');
-
         this._stockTransferService.stockTransferBetweenWarehouse(stockTransfer).subscribe(
             response => {
+                console.log(response);
                 if (response.code === 0) {
-                    this.limpiarTodo();
-                    $('#modal_transfer_process').modal('hide');
-                    this.stockTransferExitMessage = 'Traslado creado correctamente.'
+                    this.depositarStockModula(response.content);
                 } else {
                     $('#modal_transfer_process').modal('hide');
                     this.stockTransferErrorMessage = response.content;
@@ -277,5 +270,43 @@ export class StockTransferModulaComponent implements OnInit {
                 this.stockTransferExitMessage = 'Ítem eliminado correctamente.';
             }
         }
+    }
+
+    public depositarStockModula(docEntry: string) {
+        const orderModulaDTO = {
+            "docEntry": docEntry,
+            "type": "V",
+            "detail": this.items
+        }
+
+        console.log(orderModulaDTO);
+        
+
+        this._modulaService.postStockDeposit(orderModulaDTO).subscribe(
+            response => {
+                if (response.code == 0) {
+                    this.limpiarTodo();
+                    this.stockTransferExitMessage = 'Traslado creado correctamente.'
+                } else {
+                    this.stockTransferErrorMessage = response.content;
+                }
+                $('#modal_transfer_process').modal('hide');
+            }, error => {
+                $('#modal_transfer_process').modal('hide');
+                console.error(error);
+            }
+        );
+    }
+
+    public validarItemModula(itemCode: String) {
+        this._modulaService.getValidateItem(itemCode).subscribe(
+            response => {
+                if (response.code == 0) {
+
+                }
+            }, error => {
+                console.error(error);
+            }
+        );
     }
 }

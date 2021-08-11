@@ -7,13 +7,14 @@ import { DeliveryService } from '../../services/delivery.service';
 import { SalesOrder, SalesOrderLine } from '../../models/sales-order';
 import { HealthchekService } from '../../services/healthchek.service';
 import { ReportService } from '../../services/report.service';
+import { ModulaService } from '../../services/modula.service';
 
 declare var $: any;
 
 @Component({
   templateUrl: './sales-orders.component.html',
   styleUrls: ['./sales-orders.component.css'],
-  providers: [UserService, SalesOrdersService, DeliveryService, HealthchekService, ReportService]
+  providers: [UserService, SalesOrdersService, DeliveryService, HealthchekService, ReportService, ModulaService]
 })
 export class SalesOrdersComponent implements OnInit {
   public urlShared: string = GLOBAL.urlShared;
@@ -37,7 +38,9 @@ export class SalesOrdersComponent implements OnInit {
   public processPrintLabelsStatus: string = 'none';
   public docEntryDelivery: number;
   public orderPickingExpress: String;
+  public orderPickingExpressMDL: String;
   public deliveryErrorMessage: string = '';
+  public pickExpressErrorMessage: string = '';
   public multiPickingErrorMessage: string = '';
   public orderNumber: string = '';
 
@@ -46,7 +49,8 @@ export class SalesOrdersComponent implements OnInit {
     private _deliveryService: DeliveryService,
     private _route: ActivatedRoute, private _router: Router,
     private _healthchekService: HealthchekService,
-    private _reportService: ReportService) {
+    private _reportService: ReportService,
+    private _modulaService: ModulaService) {
     this.orders = new Array<SalesOrder>();
     this.filteredOrders = new Array<SalesOrder>();
     this.selectedOrders = new Map<String, String>();
@@ -78,7 +82,7 @@ export class SalesOrdersComponent implements OnInit {
 
     this.orders = new Array<SalesOrder>();
     this.filteredOrders = new Array<SalesOrder>();
-    this.selectedOrders = new Map<String, any>();
+    this.selectedOrders = new Map<String, String>();
 
     this._salesOrdersService.listOpenOrders(this.showApprovedOnly, this.filterGroup).subscribe(
       response => {
@@ -98,6 +102,7 @@ export class SalesOrdersComponent implements OnInit {
   }
 
   public selectOrder(order: SalesOrder) {
+    this.pickExpressErrorMessage = '';
     if (order.confirmed === 'N' || order.address.length === 0 || order.transp.length === 0) {
       return;
     }
@@ -108,7 +113,7 @@ export class SalesOrdersComponent implements OnInit {
     if (this.selectedOrders.has(order.docNum)) {
       this.selectedOrders.delete(order.docNum);
     } else {
-      this.selectedOrders.set(order.docNum, order.cardCode);
+      this.selectedOrders.set(order.docNum, order.docNumMDL == null ? "" + order.cardCode : order.cardCode + "-" + order.docNumMDL);
     }
   }
 
@@ -128,12 +133,10 @@ export class SalesOrdersComponent implements OnInit {
 
   public assignOrders() {
     if (!this.selectedUser) {
-      //TODO: show error message
       console.error('debes seleccionar un empleado');
       return;
     }
     if (this.selectedOrders.size === 0) {
-      //TODO: show error message
       console.error('debes seleccionar al menos una orden para asignar');
       return;
     }
@@ -141,7 +144,7 @@ export class SalesOrdersComponent implements OnInit {
     const assignment = {
       'assignedBy': this.identity.username,
       'employeeId': this.selectedUser,
-      'orders': Array.from(this.selectedOrders.entries())//.map(Number)
+      'orders': Array.from(this.selectedOrders.entries())
     };
 
     this._salesOrdersService.assignOrders(assignment).subscribe(
@@ -171,7 +174,7 @@ export class SalesOrdersComponent implements OnInit {
   }
 
   public filterOrders(force) {
-    if (this.filter.length > 0/*this.filter !== this.searchFilter || force*/) {
+    if (this.filter.length > 0) {
       this.searchFilter = this.filter.toLowerCase();
       this.filteredOrders = new Array<SalesOrder>();
       for (let i = 0; i < this.orders.length; i++) {
@@ -226,7 +229,7 @@ export class SalesOrdersComponent implements OnInit {
 
   public enableOrder() {
     this._salesOrdersService.enableAssignation(this.selectedOrder).subscribe(
-      result => {
+      response => {
         $('#order_status').modal('hide');
         this.listOpenOrders();
         this.selectedOrder = null;
@@ -271,6 +274,7 @@ export class SalesOrdersComponent implements OnInit {
   }
 
   public getModalPickingExpress() {
+    this.pickExpressErrorMessage = '';
     $('#confirmation_picking').modal('hide');
     this.processDeliveryStatus = 'inprogress';
     $('#process_picking_express').modal({
@@ -281,10 +285,61 @@ export class SalesOrdersComponent implements OnInit {
 
     for (let i = 0; i < Array.from(this.selectedOrders.entries()).length; i++) {
       this.orderPickingExpress = Array.from(this.selectedOrders.entries())[i][0];
+      if (Array.from(this.selectedOrders.entries())[0][1].includes("-")) {
+        this.orderPickingExpressMDL = Array.from(this.selectedOrders.entries())[0][1].slice(-6);
+      }
+      //Validar si la orden de modula esta aprobada y autorizada por el area administrativa.
+      if (this.orderPickingExpressMDL != null) {
+        this._salesOrdersService.validateOrderAuthorized(this.orderPickingExpressMDL).subscribe(
+          response => {
+            if (!response) {
+              $('#process_picking_express').modal('hide');
+              this.getScrollTop();
+              this.selectedOrders.delete(this.orderPickingExpress);
+              this.pickExpressErrorMessage = "La orden " + this.orderPickingExpressMDL + " no esta Autorizada o Aprobada.";
+            } else {
+              //Validar si la orden ya esta completada en el wms Modula.
+              this._modulaService.getValidateOrderCompleted(this.orderPickingExpressMDL).subscribe(
+                response => {
+                  if (!response) {
+                    $('#process_picking_express').modal('hide');
+                    this.getScrollTop();
+                    this.selectedOrders.delete(this.orderPickingExpress);
+                    this.pickExpressErrorMessage = "La orden " + this.orderPickingExpressMDL + " no esta completada en wmw-modula.";
+                  } else {
+                    this.addPickingExpress();
+                  }
+                }, error => {
+                  $('#process_picking_express').modal('hide');
+                  this.getScrollTop();
+                  this.selectedOrders.delete(this.orderPickingExpress);
+                  this.pickExpressErrorMessage = "Lo sentimos. Se produjo un error interno en wms-modula";
+                  console.error(error);
+                }
+              );
+            }
+          }, error => {
+            $('#process_picking_express').modal('hide');
+            this.getScrollTop();
+            this.pickExpressErrorMessage = "Lo sentimos. Se produjo un error interno.";
+            console.error(error);
+            this.redirectIfSessionInvalid(error);
+          }
+        );
+      } else {
+        this.addPickingExpress();
+      }
       break;
     }
+  }
 
-    this._deliveryService.createPickingExpress(this.orderPickingExpress).subscribe(
+  private addPickingExpress() {
+    const pickingExpressOrderDTO = {
+      "orderSAP": this.orderPickingExpress,
+      "orderMDL": this.orderPickingExpressMDL
+    }
+
+    this._deliveryService.createPickingExpress(pickingExpressOrderDTO).subscribe(
       response => {
         if (response.code == 0) {
           this.docEntryDelivery = response.content;
@@ -306,6 +361,7 @@ export class SalesOrdersComponent implements OnInit {
     this.orderNumber = '';
     this.processDeliveryStatus = 'none';
     this.processPrintLabelsStatus = 'none';
+    this.pickExpressErrorMessage = '';
     this.listOpenOrders();
   }
 

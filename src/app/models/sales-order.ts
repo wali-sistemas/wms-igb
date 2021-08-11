@@ -14,6 +14,7 @@ export class SalesOrder {
     public lines: Array<SalesOrderLine>;
     public address: String;
     public transp: String;
+    public docNumMDL: String;
     constructor() { }
 }
 
