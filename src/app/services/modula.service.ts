@@ -11,13 +11,27 @@ export class ModulaService {
     }
 
     public getStockMissing() {
-        let igbHeaders = new IGBHeaders().loadHeaders();
-        console.log("*************");
-        console.log(igbHeaders);
-        console.log("*************");
-        
-        
         return this._http.get(this.urlManager + 'modula/stock-compare', { headers: new IGBHeaders().loadHeaders() })
+            .map(res => res.json());
+    }
+
+    public getValidateItem(itemCode: String) {
+        return this._http.get(this.urlManager + 'modula/validate-item/' + itemCode, { headers: new IGBHeaders().loadHeaders() })
+            .map(res => res.json());
+    }
+
+    public postStockDeposit(orderModulaDTO) {
+        return this._http.post(this.urlManager + 'modula/stock-deposit', orderModulaDTO, { headers: new IGBHeaders().loadHeaders() })
+            .map(res => res.json());
+    }
+
+    public postStockInvenatory(orderModulaDTO) {
+        return this._http.post(this.urlManager + 'modula/stock-inventory', orderModulaDTO, { headers: new IGBHeaders().loadHeaders() })
+            .map(res => res.json());
+    }
+
+    public getValidateOrderCompleted(order: String) {
+        return this._http.get(this.urlManager + 'modula/orders-completed/' + order, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
 }

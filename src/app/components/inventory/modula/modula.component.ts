@@ -52,11 +52,16 @@ export class ModulaComponent implements OnInit {
 
         this._modulaService.getStockMissing().subscribe(
             response => {
-                console.log(response.length);
                 if (response.length == 0) {
                     this.errorWarning = "Inventario consiliado en su totalidad.";
                 } else {
-                    this.itemsDifferences = response;
+                    for (let i = 0; i < response.length; i++) {
+                        if (response[i].qtyMDL != response[i].qtySAP) {
+                            this.itemsDifferences = response;
+                        } else {
+                            this.errorWarning = "Inventario consiliado en su totalidad.";
+                        }
+                    }
                 }
                 $('#modal_process').modal('hide');
             },
