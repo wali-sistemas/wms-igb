@@ -6,7 +6,6 @@ import { StockTransferService } from '../../../services/stock-transfer.service';
 import { BinLocationService } from '../../../services/bin-locations.service';
 import { GenericService } from '../../../services/generic';
 import { StockItemService } from '../../../services/stock-item.service';
-import { ThrowStmt } from '@angular/compiler';
 
 declare var $: any;
 
@@ -129,7 +128,7 @@ export class StockTransferWarehouseComponent implements OnInit {
         );
     }
 
-    /*public agregarReferencia() {
+    public agregarReferencia() {
         $('#modal_transfer_process').modal({
             backdrop: 'static',
             keyboard: false,
@@ -183,55 +182,6 @@ export class StockTransferWarehouseComponent implements OnInit {
                 }
             );
         }
-    }*/
-
-    public agregarReferencia() {
-        $('#modal_transfer_process').modal({
-            backdrop: 'static',
-            keyboard: false,
-            show: true
-        });
-        this.stockTransferErrorMessage = '';
-        this.stockTransferExitMessage = '';
-        if (this.itemCode == null || this.itemCode.length <= 0 || this.quantity == null || this.quantity == 0) {
-            $('#modal_transfer_process').modal('hide');
-            this.stockTransferErrorMessage = 'Debe ingresar todos los campos obligatorios.';
-        }
-
-        this._stockItemService.checkOutStockItem(this.itemCode.toUpperCase(), this.fromBin.toUpperCase()).subscribe(
-            response => {
-                if (response[2] >= this.quantity) {
-                    for (let i = 0; i < this.items.length; i++) {
-                        if (this.items[i].itemCode == this.itemCode) {
-                            if (response[2] > this.items[i].quantity) {
-                                this.items[i].quantity += this.quantity;
-                                this.limpiarLinea();
-                                $('#modal_transfer_process').modal('hide');
-                                return;
-                            } else {
-                                $('#modal_transfer_process').modal('hide');
-                                this.stockTransferErrorMessage = 'No hay suficiente stock. Disponible: ' + response[2];
-                                this.limpiarLinea();
-                                return;
-                            }
-                        } else {
-                            this.stockTransferErrorMessage = 'El ítem no existe o esta mal ingresado.';
-                            $('#modal_transfer_process').modal('hide');
-                        }
-                    }
-                } else {
-                    $('#modal_transfer_process').modal('hide');
-                    this.stockTransferErrorMessage = 'No encontro stock disponible en la ubicación ' + this.fromBin + '.';
-                    this.limpiarLinea();
-                }
-            },
-            error => {
-                console.error(error);
-                this.redirectIfSessionInvalid(error);
-                $('#modal_transfer_process').modal('hide');
-                this.stockTransferErrorMessage = 'Lo sentimos. Se produjo un error interno.';
-            }
-        );
     }
 
     public limpiarLinea() {
