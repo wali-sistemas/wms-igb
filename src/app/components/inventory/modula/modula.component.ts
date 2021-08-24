@@ -13,9 +13,9 @@ declare var $: any;
 })
 export class ModulaComponent implements OnInit {
     public itemsDifferences: Array<any>;
-    public errorDanger: String;
-    public errorWarning: String;
-    public errorSuccess: String;
+    public msgDanger: String;
+    public msgWarning: String;
+    public msgSuccess: String;
     public itemCode: String;
     public quantity: number;
     public identity;
@@ -42,8 +42,7 @@ export class ModulaComponent implements OnInit {
     }
 
     public listItems() {
-        this.errorSuccess = '';
-        this.errorWarning = '';
+        this.clear();
         $('#modal_process').modal({
             backdrop: 'static',
             keyboard: false,
@@ -53,13 +52,13 @@ export class ModulaComponent implements OnInit {
         this._modulaService.getStockMissing().subscribe(
             response => {
                 if (response.length == 0) {
-                    this.errorWarning = "Inventario consiliado en su totalidad.";
+                    this.msgWarning = "Inventario consiliado en su totalidad.";
                 } else {
                     for (let i = 0; i < response.length; i++) {
                         if (response[i].qtyMDL != response[i].qtySAP) {
                             this.itemsDifferences = response;
-                        } else {
-                            this.errorWarning = "Inventario consiliado en su totalidad.";
+                        } else { 
+                            this.msgWarning = "Inventario consiliado en su totalidad.";
                         }
                     }
                 }
@@ -67,14 +66,15 @@ export class ModulaComponent implements OnInit {
             },
             error => {
                 $('#modal_process').modal('hide');
-                this.errorDanger = "Ocurrio un error invoncando el servicio de comparación.";
+                this.msgDanger = "Ocurrio un error invoncando el servicio de comparación.";
                 console.error(error);
                 this.redirectIfSessionInvalid(error);
             }
-        )
+        );
     }
 
     public inventoryItem() {
+        this.clear();
         let fecha = new Date();
         const orderModulaDTO = {
             "docNum": "5" + fecha.getHours() + fecha.getMinutes() + fecha.getSeconds(),
@@ -92,9 +92,9 @@ export class ModulaComponent implements OnInit {
         this._modulaService.postStockInvenatory(orderModulaDTO).subscribe(
             response => {
                 if (response.code == 0) {
-                    this.errorSuccess = response.content;
+                    this.msgSuccess = response.content;
                 } else {
-                    this.errorDanger = response.content;
+                    this.msgDanger = response.content;
                 }
                 $('#modal_inventory').modal('hide');
             }, error => {
@@ -117,9 +117,9 @@ export class ModulaComponent implements OnInit {
     }
 
     public clear() {
-        this.errorWarning = '';
-        this.errorDanger = '';
-        this.errorSuccess = '';
+        this.msgWarning = '';
+        this.msgDanger = '';
+        this.msgSuccess = '';
     }
 
     public getScrollTop() {

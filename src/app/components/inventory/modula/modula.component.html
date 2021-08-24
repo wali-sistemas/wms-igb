@@ -38,24 +38,24 @@
 <div class="container content">
     <h3>Stock SAP vs MODULA</h3>
     <hr />
-    <div class="row" *ngIf="errorDanger">
+    <div class="row" *ngIf="msgDanger">
         <div class="col-xs-12">
             <div class="alert alert-danger">
-                {{errorMessage}}
+                {{msgDanger}}
             </div>
         </div>
     </div>
-    <div class="row" *ngIf="errorWarning">
+    <div class="row" *ngIf="msgWarning">
         <div class="col-xs-12">
             <div class="alert alert-warning">
-                {{errorWarning}}
+                {{msgWarning}}
             </div>
         </div>
     </div>
-    <div class="row" *ngIf="errorSuccess">
+    <div class="row" *ngIf="msgSuccess">
         <div class="col-xs-12">
             <div class="alert alert-success">
-                {{errorSuccess}}
+                {{msgSuccess}}
             </div>
         </div>
     </div>
