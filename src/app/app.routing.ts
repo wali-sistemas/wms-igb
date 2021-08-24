@@ -6,6 +6,8 @@ import { HomeComponent } from './components/home/home.component';
 import { PurchaseOrdersComponent } from './components/purchase-orders/purchase-orders.component';
 import { PurchaseOrderComponent } from './components/purchase-orders/purchase-order.component';
 import { SalesOrdersComponent } from './components/sales-orders/sales-orders.component';
+import { OrdersSapComponent } from './components/sales-orders/orders-sap/orders-sap.component';
+import { OrdersModulaComponent } from './components/sales-orders/orders-modula/orders-modula.component';
 import { PickingComponent } from './components/picking/picking.component';
 import { PackingComponent } from './components/packing/packing.component';
 import { InventoryRandomComponent } from './components/inventory/random/inventory-Random.component';
@@ -34,13 +36,15 @@ const appRoutes: Routes = [
     { path: 'purchase-orders', component: PurchaseOrdersComponent },
     { path: 'purchase-order/:docNum', component: PurchaseOrderComponent },
     { path: 'sales-orders', component: SalesOrdersComponent },
+    { path: 'orders-modula', component: OrdersModulaComponent },
+    { path: 'orders-sap', component: OrdersSapComponent },
     { path: 'picking', component: PickingComponent },
     { path: 'packing', component: PackingComponent },
     { path: 'inventory', component: InventoryComponent },
     { path: 'inventory-random', component: InventoryRandomComponent },
     { path: 'transfer-location', component: StockTransferLocationComponent },
     { path: 'transfer-warehouse', component: StockTransferWarehouseComponent },
-    { path: 'transfer-modula', component: StockTransferModulaComponent},
+    { path: 'transfer-modula', component: StockTransferModulaComponent },
     { path: 'transfer', component: TransferComponent },
     { path: 'stock-item', component: StockItemComponent },
     { path: 'resupply', component: ResupplyComponent },
@@ -53,7 +57,7 @@ const appRoutes: Routes = [
     { path: 'withholding', component: WithholdingTaxesComponent },
     { path: 'ticket-TI', component: TicketTIComponent },
     { path: 'stock-soul', component: SoulStockComponent },
-    { path: 'modula-stock', component:ModulaComponent }
+    { path: 'modula-stock', component: ModulaComponent }
 ];
 
 export const appRoutingProviders: any[] = [];

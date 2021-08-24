@@ -27,13 +27,13 @@
                     </h4>
                 </div>
             </div>
-            <div class="col-xs-12 col-md-6">
+            <div *ngIf="selectedCompany == 'IGB'" class="col-xs-12 col-md-6">
                 <div class="box" [routerLink]="['/stock-soul']">
                     <span class="icon-soul" style="font-size: 132px"></span>
                 </div>
             </div>
-            <div *ngIf="selectedCompany == 'IGB'" class="col-xs-12 col-md-6">
-                <div class="box" [routerLink]="'/modula-stock'">
+            <div *ngIf="selectedCompany == 'IGBPruebas'" class="col-xs-12 col-md-6">
+                <div class="box" [routerLink]="['/modula-stock']">
                     <span class="icon-modula"></span>
                     <h4 class="title">
                         Stock

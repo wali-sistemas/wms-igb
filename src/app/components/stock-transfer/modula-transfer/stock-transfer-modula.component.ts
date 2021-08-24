@@ -274,7 +274,7 @@ export class StockTransferModulaComponent implements OnInit {
 
     public depositarStockModula(docEntry: string) {
         const orderModulaDTO = {
-            "docEntry": docEntry,
+            "docNum": docEntry,
             "type": "V",
             "detail": this.items
         }

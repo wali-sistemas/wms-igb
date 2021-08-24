@@ -12,6 +12,7 @@ declare var $: any;
 
 export class TransferComponent implements OnInit {
     public identity;
+    public selectedCompany: String;
 
     constructor(private _router: Router, private _userService: UserService) {
     }
@@ -21,5 +22,6 @@ export class TransferComponent implements OnInit {
         if (this.identity === null) {
             this._router.navigate(['/']);
         }
+        this.selectedCompany = this.identity.selectedCompany;
     }
 }

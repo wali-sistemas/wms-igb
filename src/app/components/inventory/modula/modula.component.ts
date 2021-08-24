@@ -77,7 +77,7 @@ export class ModulaComponent implements OnInit {
     public inventoryItem() {
         let fecha = new Date();
         const orderModulaDTO = {
-            "docEntry": "5" + fecha.getHours() + fecha.getMinutes() + fecha.getSeconds(),
+            "docNum": "5" + fecha.getHours() + fecha.getMinutes() + fecha.getSeconds(),
             "type": "I",
             "detail": [
                 {

@@ -17,6 +17,23 @@ export class SalesOrdersService {
       .map(res => res.json());
   }
 
+  public listOpenOrdersModula(showApprovedOnly, filterGroup) {
+    const ident = localStorage.getItem('igb.identity');
+    let igbHeaders = new Headers({
+      'Content-Type': 'application/json',
+      'X-Company-Name': localStorage.getItem('igb.selectedCompany'),
+      'X-Warehouse-Code': '30',
+      'Authorization': JSON.parse(ident).token,
+      'X-Employee': JSON.parse(ident).username,
+      'X-Pruebas': localStorage.getItem('igb.pruebas')
+    });
+
+    console.log(igbHeaders);
+
+    return this._http.get(this.url + 'salesorder/list/orders/' + !showApprovedOnly + '/' + filterGroup, { headers: igbHeaders })
+      .map(res => res.json());
+  }
+
   public assignOrders(assignment) {
     let igbHeaders = new IGBHeaders().loadHeaders();
     return this._http.post(this.url + 'salesorder/assign', JSON.stringify(assignment), { headers: igbHeaders })
