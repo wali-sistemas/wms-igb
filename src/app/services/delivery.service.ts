@@ -14,4 +14,9 @@ export class DeliveryService {
         return this._http.post(this.url + 'delivery/express', pickingExpressOrderDTO, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
+
+    public createDeliveryModula(orderMDL: String) {
+        return this._http.post(this.url + 'delivery/modula', orderMDL, { headers: new IGBHeaders().loadHeaders() })
+            .map(res => res.json());
+    }
 }

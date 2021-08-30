@@ -15,38 +15,8 @@
     </div>
   </div>
 </div>
-<!--Modal user-->
-<div id="modal_users" class="modal fade" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <h4 class="modal-title">Asignación de orden</h4>
-      </div>
-      <div class="modal-body">
-        <form>
-          <select name="selectedUser" class="form-control input-lg" [(ngModel)]="selectedUser"
-            *ngIf="assignableUsers && assignableUsers.length > 0">
-            <option disabled selected style="display:none" value="">Selecciona un empleado</option>
-            <option *ngFor="let employee of assignableUsers" [value]="employee.username">{{employee.completeName}}
-            </option>
-          </select>
-          <br />
-          <p>Estás a punto de asignar {{selectedOrders.size}} ordenes para picking. ¿Deseas continuar?</p>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-danger btn-lg" (click)="resetAssignOrder()"
-          style="float: left;">Des-asignar</button>
-        <button type="button" class="btn btn-primary btn-lg" (click)="assignOrders()">Asignar</button>
-      </div>
-    </div>
-  </div>
-</div>
 <!--Modal status order-->
-<div id="order_status" class="modal fade" tabindex="-1" role="dialog">
+<!--<div id="order_status" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-body">
@@ -87,7 +57,7 @@
       </div>
     </div>
   </div>
-</div>
+</div>-->
 <!--Modal confirmacion-->
 <div id="confirmation_picking" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false"
   data-backdrop="static">
@@ -95,7 +65,7 @@
     <div class="modal-content">
       <div class="modal-body text-center">
         <p>
-          <b>¿Estás seguro que deseas crear picking express?</b><br />Al hacerlo, se crearán la entrega y se cerrara el
+          <b>¿Estás seguro que deseas crear entrega express?</b><br />Al hacerlo, se crearán la entrega y se cerrara el
           packing para los ítems.
         </p>
       </div>
@@ -107,7 +77,7 @@
     </div>
   </div>
 </div>
-<!--Modal procesar picking express-->
+<!--Modal procesar entrega express-->
 <div id="process_picking_express" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false"
   data-backdrop="static">
   <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
@@ -116,7 +86,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="clearOrder()">
           <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title">Procesando picking express</h4>
+        <h4 class="modal-title">Procesando entrega express</h4>
       </div>
       <div class="modal-body">
         <div class="row">
@@ -127,26 +97,6 @@
             <span *ngIf="processDeliveryStatus === 'error'" class="glyphicon glyphicon-exclamation-sign"></span>
             <span class="status-text">Creando entrega express </span><i *ngIf="processDeliveryStatus === 'done'"
               style="font-size: 12px; color: #da0611;">({{docEntryDelivery}})</i>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-xs-12 text-center">
-            <span *ngIf="processPrintLabelsStatus === 'none'" class="glyphicon glyphicon-minus-sign"></span>
-            <img *ngIf="processPrintLabelsStatus === 'inprogress'" height="22" src="/assets/images/loading.gif">
-            <span *ngIf="processPrintLabelsStatus === 'done'" class="glyphicon glyphicon-ok"></span>
-            <span *ngIf="processPrintLabelsStatus === 'warn'" class="glyphicon glyphicon-warning-sign"></span>
-            <span *ngIf="processPrintLabelsStatus === 'error'" class="glyphicon glyphicon-exclamation-sign"></span>
-            <span class="status-text">Impresión de documento</span>
-          </div>
-        </div>
-        <div class="modal-body">
-          <div class="row">
-            <div class="col-xs-12 text-center">
-              <div *ngIf="processDeliveryStatus === 'done'" class="box-printer" (click)="printerPick(false)">
-                <span class="icon-printer" style="font-size: 140px"></span>
-                <h4 class="title">Picking</h4>
-              </div>
-            </div>
           </div>
         </div>
         <br />
@@ -170,59 +120,10 @@
     </div>
   </div>
 </div>
-<!--Modal imprimir pickinExpress-->
-<div id="printerPickingExpress" class="modal slide" tabindex="-1" role="dialog" data-backdrop="static">
-  <div class="modal-dialog modal-sm" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="clearOrder()">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <h4 class="modal-title">Imprimir picking express</h4>
-      </div>
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-xs-12">
-            <input id="orderNumber" type="text" class="form-control input-lg" name="box" [(ngModel)]="orderNumber"
-              autocomplete="off" placeholder="Ingrese # ordenes">
-          </div>
-        </div>
-        <br />
-        <div class="row">
-          <div class="col-xs-12 text-center">
-            <span *ngIf="processPrintLabelsStatus === 'none'" class="glyphicon glyphicon-minus-sign"></span>
-            <img *ngIf="processPrintLabelsStatus === 'inprogress'" height="22" src="/assets/images/loading.gif">
-            <span *ngIf="processPrintLabelsStatus === 'done'" class="glyphicon glyphicon-ok"></span>
-            <span *ngIf="processPrintLabelsStatus === 'warn'" class="glyphicon glyphicon-warning-sign"></span>
-            <span *ngIf="processPrintLabelsStatus === 'error'" class="glyphicon glyphicon-exclamation-sign"></span>
-            <span class="status-text">Impresión de documento</span>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <div class="row">
-          <div class="col-xs-12 text-center">
-            <div class="box-printer" (click)="printerPick(true)">
-              <span class="icon-printer" style="font-size: 140px"></span>
-              <h4 class="title">Picking</h4>
-            </div>
-          </div>
-        </div>
-        <div class="row" *ngIf="multiPickingErrorMessage != null && multiPickingErrorMessage.length > 0">
-          <div class="col-xs-12 text-center">
-            <div class="alert alert-danger" role="alert">
-              <p>{{multiPickingErrorMessage}}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <button *ngIf="selectedOrders.size == 1 && pickingExpressModuleAccesible" type="button" class="express-picking"
-  id="btnExpressPicking" data-toggle="modal" data-target="#confirmation_picking" title="Picking Express">
-  <span class="icon-express" style="font-size: 40px;"></span>
+  id="btnExpressPicking" data-toggle="modal" data-target="#confirmation_picking" title="Crear Entrega">
+  <span class="icon-delivery-list" style="font-size: 40px;"></span>
 </button>
 
 <button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span

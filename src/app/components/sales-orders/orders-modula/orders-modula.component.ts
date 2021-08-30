@@ -123,62 +123,6 @@ export class OrdersModulaComponent implements OnInit {
     }
   }
 
-  public listAssignableEmployees() {
-    this.assignableUsers = new Array<any>();
-    this._userService.listUsersByGroup('WMS').subscribe(
-      response => {
-        this.assignableUsers = response;
-        if (this.assignableUsers.length > 0) {
-          $('#modal_users').modal('show');
-        } else {
-          console.error('No se encontraron empleados en el directorio activo para asignar la orden');
-        }
-      }, error => { console.error(error); this.redirectIfSessionInvalid(error); }
-    );
-  }
-
-  public assignOrders() {
-    if (!this.selectedUser) {
-      console.error('debes seleccionar un empleado');
-      return;
-    }
-    if (this.selectedOrders.size === 0) {
-      console.error('debes seleccionar al menos una orden para asignar');
-      return;
-    }
-
-    const assignment = {
-      'assignedBy': this.identity.username,
-      'employeeId': this.selectedUser,
-      'orders': Array.from(this.selectedOrders.entries())
-    };
-
-    this._salesOrdersService.assignOrders(assignment).subscribe(
-      result => {
-        $('#modal_users').modal('hide');
-        this.listOpenOrders();
-        this.selectedUser = '';
-      }, error => {
-        console.error(error);
-        this.redirectIfSessionInvalid(error);
-      }
-    );
-  }
-
-  public resetAssignOrder() {
-    let orders = Array.from(this.selectedOrders.entries());
-    for (let i = 0; i < orders.length; i++) {
-      this._salesOrdersService.deleteAssignOrders(orders[i][0]).subscribe(
-        response => {
-          $('#modal_users').modal('hide');
-          this.listOpenOrders();
-          this.selectedUser = '';
-        },
-        error => { console.error(error); }
-      );
-    }
-  }
-
   public filterOrders(force) {
     if (this.filter.length > 0) {
       this.searchFilter = this.filter.toLowerCase();
@@ -244,42 +188,9 @@ export class OrdersModulaComponent implements OnInit {
     );
   }
 
-  public printerPick(isGroup) {
-    this.multiPickingErrorMessage = '';
-    this.processPrintLabelsStatus = 'inprogress';
-
-    let printReportDTO = {
-      "id": isGroup ? 0 : this.docEntryDelivery,
-      "copias": 1,
-      "documento": isGroup ? "pickingExpressGroup" : "pickingExpress",
-      "companyName": this.identity.selectedCompany,
-      "origen": "S",
-      "filtro": isGroup ? this.orderNumber : null,
-      "imprimir": true
-    }
-
-    this._reportService.generateReport(printReportDTO).subscribe(
-      response => {
-        if (response.code == 0) {
-          this.processPrintLabelsStatus = 'done';
-        } else if (response.code == -2) {
-          this.multiPickingErrorMessage = response.content;
-          this.processPrintLabelsStatus = 'error';
-        } else {
-          this.processPrintLabelsStatus = 'error';
-        }
-        $('#modal_transfer_process').modal('hide');
-      },
-      error => {
-        this.processPrintLabelsStatus = 'error';
-        console.error('Ocurrio un error al generar el doc de pickinExpress.', error);
-        this.redirectIfSessionInvalid(error);
-        $('#modal_transfer_process').modal('hide');
-      }
-    );
-  }
-
   public getModalPickingExpress() {
+    console.log('Entro al metodo');
+
     this.pickExpressErrorMessage = '';
     $('#confirmation_picking').modal('hide');
     this.processDeliveryStatus = 'inprogress';
@@ -291,9 +202,6 @@ export class OrdersModulaComponent implements OnInit {
 
     for (let i = 0; i < Array.from(this.selectedOrders.entries()).length; i++) {
       this.orderPickingExpress = Array.from(this.selectedOrders.entries())[i][0];
-      if (Array.from(this.selectedOrders.entries())[0][1].includes("-")) {
-        this.orderPickingExpressMDL = Array.from(this.selectedOrders.entries())[0][1].slice(-6);
-      }
       //Validar si la orden de modula esta aprobada y autorizada por el area administrativa.
       if (this.orderPickingExpressMDL != null) {
         this._salesOrdersService.validateOrderAuthorized(this.orderPickingExpressMDL).subscribe(
@@ -340,12 +248,7 @@ export class OrdersModulaComponent implements OnInit {
   }
 
   private addPickingExpress() {
-    const pickingExpressOrderDTO = {
-      "orderSAP": this.orderPickingExpress,
-      "orderMDL": this.orderPickingExpressMDL
-    }
-
-    this._deliveryService.createPickingExpress(pickingExpressOrderDTO).subscribe(
+    this._deliveryService.createDeliveryModula(this.orderPickingExpress).subscribe(
       response => {
         if (response.code == 0) {
           this.docEntryDelivery = response.content;
