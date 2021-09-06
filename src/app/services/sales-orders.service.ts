@@ -28,8 +28,6 @@ export class SalesOrdersService {
       'X-Pruebas': localStorage.getItem('igb.pruebas')
     });
 
-    console.log(igbHeaders);
-
     return this._http.get(this.url + 'salesorder/list/orders/' + !showApprovedOnly + '/' + filterGroup, { headers: igbHeaders })
       .map(res => res.json());
   }
