@@ -785,15 +785,15 @@ export class PackingComponent implements OnInit {
                     $('#modal_delivery_pending').modal('show');
                     this.ordersByInvoice = response.content;
                     if (this.ordersByInvoice.length <= 0) {
-                        this.warnMessageOrdersByInvoice = 'No se encontraron órdenes para facturar.';
+                        this.warnMessageOrdersByInvoice = 'No se encontraron ordenes para facturar.';
                     }
                     $('#modal_transfer_process').modal('hide');
                 } else {
-                    this.warnMessageOrdersByInvoice = 'Ocurrio un error listando las órdenes.';
+                    this.warnMessageOrdersByInvoice = 'Ocurrio un error listando las ordenes.';
                     $('#modal_transfer_process').modal('hide');
                 }
             }, error => {
-                console.error("Ocurrio un error listando las órdenes pendientes por factuar.", error);
+                console.error("Ocurrio un error listando las ordenes pendientes por factuar.", error);
                 $('#modal_transfer_process').modal('hide');
                 this.redirectIfSessionInvalid(error);
             }

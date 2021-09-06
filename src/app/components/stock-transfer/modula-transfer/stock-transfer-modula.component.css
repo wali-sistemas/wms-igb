@@ -1,0 +1,87 @@
+.content {
+    margin-top: 60px;
+}
+
+.send {
+    background-color: #da0611;
+    color: #ddd;
+}
+
+.detail {
+    text-align: center;
+    vertical-align: inherit !important;
+}
+
+.photo {
+    width: 100px !important;
+    height: 100px !important;
+    position: relative;
+    left: -15px;
+    top: 8px;
+}
+
+.box {
+    height: 175px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+}
+
+.box .box-itemcode {
+    font-size: 18px;
+    position: absolute;
+    top: 5px;
+    text-align: center;
+    font-weight: bold;
+    left: -35px;
+}
+
+.box .box-stock::before {
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.box .box-stock {
+    position: absolute;
+    top: 40px;
+    width: 155%;
+    font-size: 12px;
+    left: -35px;
+}
+
+.box .box-wharehousename {
+    position: relative;
+    top: 60px;
+    right: 48px;
+    font-size: 10px;
+    font-weight: 900;
+}
+
+.box .box-wharehouse::before {
+    font-weight: bold;
+    font-size: 12px;
+    position: relative;
+    display: block;
+}
+
+.box .box-wharehouse {
+    position: relative;
+    top: 77px;
+    width: 100%;
+    right: 50px;
+    font-size: 12px;
+    border-top: 1px solid #ccc;
+}
+
+.box .box-itemname::before {
+    font-weight: bold;
+    font-size: 15px;
+    display: block;
+}
+
+.box .box-itemname {
+    position: absolute;
+    top: 115px;
+    left: 22px;
+    width: 91%;
+    font-size: 12px;
+}

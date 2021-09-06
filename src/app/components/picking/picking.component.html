@@ -201,7 +201,7 @@
         {{warningMessageNoOrders}}
     </div>
     <h4 *ngIf="!warningMessageNoOrders">Picking
-        <span *ngIf="pickingMethod === 'multiple' && assignedOrders.length > 0"> ({{assignedOrders.length}} órdenes)</span>
+        <span *ngIf="pickingMethod === 'multiple' && assignedOrders.length > 0"> ({{assignedOrders.length}} ordenes)</span>
         <span class="grayed-order" *ngIf="pickingMethod === 'multiple' && assignedOrders.length > 0"> -
             {{nextOrderNumber}}</span>
         <span *ngIf="pickingMethod === 'single'"> (orden #{{selectedOrder}})</span>

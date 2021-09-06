@@ -1,0 +1,149 @@
+.content {
+    margin-top: 60px;
+}
+
+.box {
+    height: 175px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+}
+
+.box .box-itemname {
+    position: absolute;
+    top: 100px;
+    width: 80%;
+    left: 20px;
+}
+
+.photo {
+    width: 100px !important;
+    height: 100px !important;
+    position: relative;
+    left: -15px;
+    top: 8px;
+}
+
+.box .box-itemcode {
+    font-size: 18px;
+    position: absolute;
+    top: 5px;
+    text-align: center;
+    font-weight: bold;
+    left: -35px;
+}
+
+.box .box-stock::before {
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.box .box-stock {
+    position: absolute;
+    top: 40px;
+    width: 155%;
+    font-size: 12px;
+    left: -35px;
+}
+
+.box .box-docdate {
+    position: absolute;
+    top: 35px;
+    right: 20px;
+    font-size: 12px;
+}
+
+.box .box-wharehousename {
+    position: relative;
+    top: 60px;
+    right: 48px;
+    font-size: 10px;
+    font-weight: 900;
+}
+
+.box .box-wharehouse::before {
+    font-weight: bold;
+    font-size: 12px;
+    position: relative;
+    display: block;
+}
+
+.box .box-wharehouse {
+    position: relative;
+    top: 50px;
+    width: 100%;
+    right: 50px;
+    font-size: 12px;
+}
+
+.box .box-price::before {
+    font-weight: bold;
+    font-size: 12px;
+    content: 'Precio';
+    display: block;
+}
+
+.box .box-price {
+    border-top: 1px solid #ddd;
+    position: absolute;
+    top: 60px;
+    left: 55px;
+}
+
+.box .box-itemname::before {
+    font-weight: bold;
+    font-size: 15px;
+    display: block;
+}
+
+.box .box-itemname {
+    border-top: 1px solid #ddd;
+    position: absolute;
+    top: 115px;
+    left: 22px;
+    width: 91%;
+    font-size: 12px;
+}
+
+.box-display-item {
+    display: none;
+}
+
+.box:hover {
+    cursor: pointer;
+    box-shadow: 2px 2px 4px rgb(200, 200, 200);
+}
+
+.refresh {
+    font-size: 35px;
+    right: 0px;
+    cursor: pointer;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 9px;
+    padding-bottom: 8px;
+}
+  
+  .refresh:hover {
+    color: #444;
+    background-color: #ddd;
+}
+
+  .scrollTop {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 30px;
+    z-index: 99;
+    font-size: 25px;
+    border: none;
+    outline: none;
+    background-color: red;
+    color: white;
+    cursor: pointer;
+    padding: 15px;
+    border-radius: 4px;
+}
+  
+  .scrollTop:hover {
+    background-color: #333;
+}

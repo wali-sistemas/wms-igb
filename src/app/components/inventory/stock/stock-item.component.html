@@ -46,7 +46,7 @@
         <div class="col-xs-12 col-md-6" *ngFor="let item of items">
             <div class="box">
                 <div class="col-xs-6 col-md-3">
-                    <img class="photo" src="{{urlShared}}images/mtz/{{item[0]}}.jpg">
+                    <img class="photo" src="{{urlShared}}images/mtz/{{item[0]}}.jpg" onerror="this.src='assets/images/logo-wms.png'">
                 </div>
                 <div class="box-itemname">{{item[1]}}</div>
                 <div class="col-xs-6 col-md-3">

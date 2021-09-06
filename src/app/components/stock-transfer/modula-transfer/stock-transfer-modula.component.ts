@@ -6,34 +6,34 @@ import { StockTransferService } from '../../../services/stock-transfer.service';
 import { BinLocationService } from '../../../services/bin-locations.service';
 import { GenericService } from '../../../services/generic';
 import { StockItemService } from '../../../services/stock-item.service';
+import { ModulaService } from '../../../services/modula.service';
+import { ThrowStmt } from '@angular/compiler';
 
 declare var $: any;
 
 @Component({
-    templateUrl: './stock-transfer-warehouse.component.html',
-    styleUrls: ['./stock-transfer-warehouse.component.css'],
-    providers: [UserService, StockTransferService, BinLocationService, GenericService, StockItemService]
+    templateUrl: './stock-transfer-modula.component.html',
+    styleUrls: ['./stock-transfer-modula.component.css'],
+    providers: [UserService, StockTransferService, BinLocationService, GenericService, StockItemService, ModulaService]
 })
 
-export class StockTransferWarehouseComponent implements OnInit {
+export class StockTransferModulaComponent implements OnInit {
     public urlShared: String = GLOBAL.urlShared;
     public identity;
     public token;
-
     public fromBin: string = '';
-    public toBin: string = '';
+    public toBin: string = '30PRODUCTION';
     public fromBinId: number;
     public toBinId: number;
-    public dftBinAbs: number;
+    public dftBinAbs: number = 85307;
     public itemCode: string = '';
     public quantity: number;
     public items: Array<any>;
     public stockTransferErrorMessage: string = '';
     public stockTransferExitMessage: string = '';
-
     public disabledWhFrom: boolean = false;
-    public selectedWarehouseFrom: string = '';
-    public selectedWarehouseTo: string = '';
+    public selectedWarehouseFrom: string = '01';
+    public selectedWarehouseTo: string = '30';
     public warehousesFrom: Array<any>;
     public warehousesTo: Array<any>;
 
@@ -41,7 +41,8 @@ export class StockTransferWarehouseComponent implements OnInit {
         private _stockTransferService: StockTransferService,
         private _binLocationService: BinLocationService,
         private _router: Router, private _genericService: GenericService,
-        private _stockItemService: StockItemService) {
+        private _stockItemService: StockItemService,
+        private _modulaService: ModulaService) {
         this._userService = _userService;
         this.items = new Array<any>();
         this.warehousesFrom = new Array<any>();
@@ -49,6 +50,12 @@ export class StockTransferWarehouseComponent implements OnInit {
     }
 
     ngOnInit() {
+        //TODO: validar vigencia del token/identity 
+        this.identity = this._userService.getItentity();
+        if (this.identity === null) {
+            this._router.navigate(['/']);
+        }
+
         $('#itemCode').focus();
         this.identity = this._userService.getItentity();
         if (this.identity === null) {
@@ -71,24 +78,11 @@ export class StockTransferWarehouseComponent implements OnInit {
             response => {
                 this.warehousesFrom = response.content;
                 this.warehousesTo = response.content;
-            }, error => { 
+            }, error => {
                 console.error(error);
                 this.redirectIfSessionInvalid(error);
             }
         );
-    }
-
-    public updateWarehouseFrom() {
-        this.disabledWhFrom = true;
-    }
-
-    public updateWarehouseTo() {
-        for (let i = 0; i < this.warehousesTo.length; i++) {
-            if (this.warehousesTo[i].code == this.selectedWarehouseTo) {
-                this.dftBinAbs = this.warehousesTo[i].dftBinAbs;
-                break;
-            }
-        }
     }
 
     public validarReferencia() {
@@ -136,52 +130,68 @@ export class StockTransferWarehouseComponent implements OnInit {
         });
         this.stockTransferErrorMessage = '';
         this.stockTransferExitMessage = '';
-
-        if (this.selectedWarehouseFrom == null || this.selectedWarehouseFrom.length <= 0 || this.selectedWarehouseTo == null || this.selectedWarehouseTo.length <= 0 ||
-            this.itemCode.length <= 0 || this.quantity <= 0) {
+        if (this.itemCode == null || this.itemCode.length <= 0 || this.quantity == null || this.quantity == 0) {
             $('#modal_transfer_process').modal('hide');
             this.stockTransferErrorMessage = 'Debe ingresar todos los campos obligatorios.';
-        } else {
-            if (this.selectedWarehouseFrom == this.selectedWarehouseTo) {
-                $('#modal_transfer_process').modal('hide');
-                this.stockTransferErrorMessage = 'No está permitido realizar traslados entre el mismo almacén.'
-                return;
-            }
-
-            this._stockItemService.stockFind(this.itemCode.toUpperCase(), this.selectedWarehouseFrom).subscribe(
-                response => {
-                    let disponible;
-                    for (let i = 0; i < response.length; i++) {
-                        if (response[i][4] == this.fromBin.toUpperCase() && response[i][2] >= this.quantity) {
-                            const newItem = {
-                                itemCode: this.itemCode.toUpperCase(),
-                                quantity: this.quantity == null ? 1 : this.quantity,
-                                fromWhsCode: this.selectedWarehouseFrom,
-                                whsCode: this.selectedWarehouseTo
-                            };
-                            this.items.unshift(newItem);
-                            this.limpiarLinea();
-                            $('#modal_transfer_process').modal('hide');
-                            $('#itemCode').focus();
-                            disponible = true;
-                            return;
-                        } else {
-                            disponible = false;
-                        }
-                    }
-                    if (!disponible) {
-                        $('#modal_transfer_process').modal('hide');
-                        this.stockTransferErrorMessage = 'No se encontro stock para trasladar.';
-                    }
-                },
-                error => {
-                    console.error(error);
-                    this.redirectIfSessionInvalid(error);
-                    $('#modal_transfer_process').modal('hide');
-                    this.stockTransferErrorMessage = 'Lo sentimos. Se produjo un error interno';
-                }
-            );
         }
+
+        //Validar si el item si esta creado en modula
+        this._modulaService.getValidateItem(this.itemCode).subscribe(
+            response => {
+                if (response.code === 0) {
+                    this._stockItemService.checkOutStockItem(this.itemCode.toUpperCase(), this.fromBin.toUpperCase()).subscribe(
+                        response => {
+                            if (response[2] >= this.quantity) {
+                                for (let i = 0; i < this.items.length; i++) {
+                                    if (this.items[i].itemCode == this.itemCode) {
+                                        if (response[2] > this.items[i].quantity) {
+                                            this.items[i].quantity += this.quantity;
+                                            this.limpiarLinea();
+                                            $('#modal_transfer_process').modal('hide');
+                                            return;
+                                        } else {
+                                            $('#modal_transfer_process').modal('hide');
+                                            this.stockTransferErrorMessage = 'No hay suficiente stock. Disponible: ' + response[2];
+                                            this.limpiarLinea();
+                                            return;
+                                        }
+                                    }
+                                }
+                                this.addItem();
+                            } else {
+                                $('#modal_transfer_process').modal('hide');
+                                this.stockTransferErrorMessage = 'No encontro stock disponible en la ubicación ' + this.fromBin + '.';
+                                this.limpiarLinea();
+                            }
+                        },
+                        error => {
+                            console.error(error);
+                            this.redirectIfSessionInvalid(error);
+                            $('#modal_transfer_process').modal('hide');
+                            this.stockTransferErrorMessage = 'Lo sentimos. Se produjo un error interno.';
+                        }
+                    );
+                } else {
+                    $('#modal_transfer_process').modal('hide');
+                    this.stockTransferErrorMessage = response.content;
+                }
+            }, error => {
+                console.error(error);
+                this.stockTransferErrorMessage = 'Lo sentimos. Se produjo un error invocando el api de modula.';
+            }
+        );
+    }
+
+    private addItem() {
+        const newItem = {
+            itemCode: this.itemCode.toUpperCase(),
+            quantity: this.quantity,
+            toBin: this.toBin.toUpperCase(),
+            fromBin: this.fromBin.toUpperCase()
+        };
+        this.items.unshift(newItem);
+        this.limpiarLinea();
+        $('#modal_transfer_process').modal('hide');
     }
 
     public limpiarLinea() {
@@ -220,12 +230,12 @@ export class StockTransferWarehouseComponent implements OnInit {
             filler: this.selectedWarehouseFrom,
             lines: this.items
         };
+
         this._stockTransferService.stockTransferBetweenWarehouse(stockTransfer).subscribe(
             response => {
+                console.log(response);
                 if (response.code === 0) {
-                    this.limpiarTodo();
-                    $('#modal_transfer_process').modal('hide');
-                    this.stockTransferExitMessage = 'Traslado creado correctamente.'
+                    this.depositarStockModula(response.content);
                 } else {
                     $('#modal_transfer_process').modal('hide');
                     this.stockTransferErrorMessage = response.content;
@@ -260,5 +270,43 @@ export class StockTransferWarehouseComponent implements OnInit {
                 this.stockTransferExitMessage = 'Ítem eliminado correctamente.';
             }
         }
+    }
+
+    public depositarStockModula(docEntry: string) {
+        const orderModulaDTO = {
+            "docNum": docEntry,
+            "type": "V",
+            "detail": this.items
+        }
+
+        console.log(orderModulaDTO);
+        
+
+        this._modulaService.postStockDeposit(orderModulaDTO).subscribe(
+            response => {
+                if (response.code == 0) {
+                    this.limpiarTodo();
+                    this.stockTransferExitMessage = 'Traslado creado correctamente.'
+                } else {
+                    this.stockTransferErrorMessage = response.content;
+                }
+                $('#modal_transfer_process').modal('hide');
+            }, error => {
+                $('#modal_transfer_process').modal('hide');
+                console.error(error);
+            }
+        );
+    }
+
+    public validarItemModula(itemCode: String) {
+        this._modulaService.getValidateItem(itemCode).subscribe(
+            response => {
+                if (response.code == 0) {
+
+                }
+            }, error => {
+                console.error(error);
+            }
+        );
     }
 }

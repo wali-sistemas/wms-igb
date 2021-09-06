@@ -1,18 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
-import { UserService } from '../../services/user.service';
-import { PurchaseOrdersService } from '../../services/purchase-orders.service';
-import { PurchaseOrder } from '../../models/purchase-order';
-import { PurchaseOrderLine } from '../../models/purchase-order-line';
+import { UserService } from '../../../services/user.service';
+import { PurchaseOrdersService } from '../../../services/purchase-orders.service';
+import { PurchaseOrder } from '../../../models/purchase-order';
+import { PurchaseOrderLine } from '../../../models/purchase-order-line';
 
 declare var $: any;
 
 @Component({
-  templateUrl: './sales-order.component.html',
-  styleUrls: ['./sales-order.component.css'],
+  templateUrl: './order-sap.component.html',
+  styleUrls: ['./order-sap.component.css'],
   providers: [UserService, PurchaseOrdersService]
 })
-export class SalesOrderComponent implements OnInit {
+export class OrderSapComponent implements OnInit {
   public identity;
   public token;
   public quantity: number;

@@ -10,8 +10,13 @@ export class DeliveryService {
         this.url = GLOBAL.url;
     }
 
-    public createPickingExpress(order: String) {
-        return this._http.post(this.url + 'delivery/express', order, { headers: new IGBHeaders().loadHeaders() })
+    public createPickingExpress(pickingExpressOrderDTO) {
+        return this._http.post(this.url + 'delivery/express', pickingExpressOrderDTO, { headers: new IGBHeaders().loadHeaders() })
+            .map(res => res.json());
+    }
+
+    public createDeliveryModula(orderMDL: String) {
+        return this._http.post(this.url + 'delivery/modula', orderMDL, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
 }

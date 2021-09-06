@@ -125,7 +125,7 @@ export class PickingComponent implements OnInit {
                         this.assignedOrders.push(order);
                     }
                 } else {
-                    this.warningMessageNoOrders = 'No se encontraron órdenes asignadas para picking.';
+                    this.warningMessageNoOrders = 'No se encontraron ordenes asignadas para picking.';
                 }
             }, error => {
                 console.error(error);
