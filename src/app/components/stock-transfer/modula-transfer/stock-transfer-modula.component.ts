@@ -7,7 +7,6 @@ import { BinLocationService } from '../../../services/bin-locations.service';
 import { GenericService } from '../../../services/generic';
 import { StockItemService } from '../../../services/stock-item.service';
 import { ModulaService } from '../../../services/modula.service';
-import { ThrowStmt } from '@angular/compiler';
 
 declare var $: any;
 
@@ -233,7 +232,6 @@ export class StockTransferModulaComponent implements OnInit {
 
         this._stockTransferService.stockTransferBetweenWarehouse(stockTransfer).subscribe(
             response => {
-                console.log(response);
                 if (response.code === 0) {
                     this.depositarStockModula(response.content);
                 } else {
@@ -278,34 +276,20 @@ export class StockTransferModulaComponent implements OnInit {
             "type": "V",
             "detail": this.items
         }
-
-        console.log(orderModulaDTO);
-        
-
         this._modulaService.postStockDeposit(orderModulaDTO).subscribe(
             response => {
                 if (response.code == 0) {
                     this.limpiarTodo();
                     this.stockTransferExitMessage = 'Traslado creado correctamente.'
+                    $('#modal_transfer_process').modal('hide');
+                    this._router.navigate(['/transfer']);
                 } else {
                     this.stockTransferErrorMessage = response.content;
-                }
-                $('#modal_transfer_process').modal('hide');
-            }, error => {
-                $('#modal_transfer_process').modal('hide');
-                console.error(error);
-            }
-        );
-    }
-
-    public validarItemModula(itemCode: String) {
-        this._modulaService.getValidateItem(itemCode).subscribe(
-            response => {
-                if (response.code == 0) {
-
+                    $('#modal_transfer_process').modal('hide');
                 }
             }, error => {
                 console.error(error);
+                $('#modal_transfer_process').modal('hide');
             }
         );
     }
