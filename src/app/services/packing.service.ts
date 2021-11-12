@@ -101,8 +101,8 @@ export class PackingService {
             .map(res => res.json());
     }
 
-    public addCheckOutOrder(CheckOutDTO) {
-        return this._http.post(this.url + 'packing/add-checkout-order', CheckOutDTO, { headers: new IGBHeaders().loadHeaders() })
+    public addCheckOutOrder(checkOutDTO) {
+        return this._http.post(this.url + 'packing/add-checkout-order', checkOutDTO, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
 

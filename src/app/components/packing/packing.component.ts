@@ -13,6 +13,8 @@ import { PrintService } from '../../services/print.service';
 import { GenericService } from '../../services/generic';
 import { ReportService } from '../../services/report.service';
 import { HealthchekService } from '../../services/healthchek.service';
+import { CubicService } from '../../services/cubic.service';
+import { MotorepuestoService } from '../../services/motorepuesto.service';
 
 import 'rxjs/Rx'
 import { ResupplyComponent } from '../resupply/resupply.component';
@@ -22,15 +24,15 @@ declare var $: any;
 @Component({
     templateUrl: './packing.component.html',
     styleUrls: ['./packing.component.css'],
-    providers: [UserService, PackingService, InvoiceService, PrintService, GenericService, ReportService, HealthchekService]
+    providers: [UserService, PackingService, InvoiceService, PrintService, GenericService, ReportService, HealthchekService, CubicService, MotorepuestoService]
 })
 export class PackingComponent implements OnInit {
-
     public urlShared: string = GLOBAL.urlShared;
     public processDeliveryStatus: string = 'none';
     public processClosePackingOrderStatus: string = 'none';
     public processPrintLabelsStatus: string = 'none';
     public processInvoiceStatus: string = 'none';
+    public processOrderLinkStatus: string = 'none';
     public selectedPrinter: string = '';
     public deliveryErrorMessage: string = '';
     public itemCodeErrorMessage: string = '';
@@ -57,6 +59,7 @@ export class PackingComponent implements OnInit {
     public picked: number;
     public docEntryDelivery: number;
     public docEntryInvoice: number;
+    public idCubic: number;
     public isVisibleItemCode: boolean = false;
     public addNewBoxEnabled: boolean = false;
     public customersListDisabled: boolean = false;
@@ -75,7 +78,7 @@ export class PackingComponent implements OnInit {
     public selectedBoxItems: Map<string, number> = this.selectedBox.items;
     public identity;
 
-    constructor(private _userService: UserService, private _packingService: PackingService, private _invoiceService: InvoiceService, private _printService: PrintService, private _router: Router, private _generic: GenericService, private _reportService: ReportService, private _healthchekService: HealthchekService) {
+    constructor(private _userService: UserService, private _packingService: PackingService, private _invoiceService: InvoiceService, private _printService: PrintService, private _router: Router, private _generic: GenericService, private _reportService: ReportService, private _healthchekService: HealthchekService, private _cubicService: CubicService, private _motorepuestoService: MotorepuestoService) {
         this.start();
     }
 
@@ -347,6 +350,7 @@ export class PackingComponent implements OnInit {
         this.processClosePackingOrderStatus = 'none';
         this.processPrintLabelsStatus = 'none';
         this.processInvoiceStatus = 'none';
+        this.processOrderLinkStatus = 'none';
         $('#process_status').modal({
             backdrop: 'static',
             keyboard: false,
@@ -523,19 +527,21 @@ export class PackingComponent implements OnInit {
         this.processDeliveryStatus = 'done';
         this.processClosePackingOrderStatus = 'done';
         this.processInvoiceStatus = 'done';
-
+        this.processOrderLinkStatus = 'done';
         $('#process_status').modal('show');
-
     }
 
     public createInvoice() {
         this.deliveryErrorMessage = "";
         this.processInvoiceStatus = 'inprogress';
+        this.processOrderLinkStatus = 'none';
+
         this._invoiceService.createInvoice(this.docEntryDelivery).subscribe(
             response => {
                 if (response.code == 0) {
                     this.processInvoiceStatus = 'done';
                     this.docEntryInvoice = response.content;
+                    this.processOrderLinkStatus = 'error';
                 } else {
                     this.processInvoiceStatus = 'error';
                     this.deliveryErrorMessage = response.content + ". Inténtelo creandola desde SAP.";
@@ -549,11 +555,35 @@ export class PackingComponent implements OnInit {
         );
     }
 
+    public createOrderCubic() {
+        this.processOrderLinkStatus = 'inprogress';
+
+        this._cubicService.addOrder(this.docEntryInvoice).subscribe(
+            response => {
+                this.processOrderLinkStatus = 'done';
+                this.idCubic = response.data.respuestas.id;
+            }, error => {
+                this.processOrderLinkStatus = 'error';
+                console.error(error);
+            }
+        );
+    }
+
+    public createPurchaseInvoice(docNum) {
+        console.log('Entro al metodo de crear factura de compra');
+        this._motorepuestoService.postCreatePurchaseInvoice(docNum).subscribe(
+            response => {
+                console.log(response);
+            }, error => { console.error(error); }
+        );
+    }
+
     public inProgress() {
         return this.processClosePackingOrderStatus === 'inprogress'
             || this.processDeliveryStatus === 'inprogress'
             || this.processInvoiceStatus === 'inprogress'
-            || this.processPrintLabelsStatus === 'inprogress';
+            || this.processPrintLabelsStatus === 'inprogress'
+            || this.processOrderLinkStatus === 'inprogress';
     }
 
     public selectItem(orderList: any) {
@@ -813,6 +843,12 @@ export class PackingComponent implements OnInit {
             response => {
                 if (response.code == 0) {
                     this.exitMessage = "Factura #[" + response.content + "] creada éxitosamente.";
+
+                    //TODO: Solo se crea factura de compra cuando el cliente es Motorepuesto.com
+                    if (this.ordersByInvoice[i][6] == 'C900998242') {
+                        this.createPurchaseInvoice(response.content);
+                    }
+
                     $('#modal_transfer_process').modal('hide');
                 } else {
                     this.errorMessage = response.content;

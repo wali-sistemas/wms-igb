@@ -141,4 +141,14 @@ export class ReportService {
         return this._http.get(this.url + 'report/comex/purchase-factor?year=' + year + '&month=' + month, { headers: igbHeaders })
             .map(res => res.json());
     }
+
+    public getTrackingOrder(order: string, companyName: string, testing: boolean) {
+        let igbHeaders = new Headers({
+            'Content-Type': 'application/json',
+            'X-Company-Name': companyName,
+            'X-Pruebas': testing
+        });
+        return this._http.get(this.url + 'report/comex/tracking-order/' + order, { headers: igbHeaders })
+            .map(res => res.json());
+    }
 }

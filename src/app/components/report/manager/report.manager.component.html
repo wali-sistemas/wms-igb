@@ -127,6 +127,10 @@
                                                 [ngClass]="{active: activeCostoImport}" id="list-cedi-list"
                                                 data-toggle="list" role="tab" style="border-radius: 0px;"
                                                 (click)="getActiveComexCostoImport()">Costo de Importación</a>
+                                            <a class="list-group-item list-group-item-action"
+                                                [ngClass]="{active: activeTimeImport}" id="list-cedi-list"
+                                                data-toggle="list" role="tab" style="border-radius: 0px;"
+                                                (click)="getTimeImport()">Tracking de Compra</a>
                                         </div>
                                     </div>
                                 </div>
@@ -744,7 +748,7 @@
             </table>
         </div>
     </div>
-    <!--costo anual importacion-->
+    <!--costo de importacion-->
     <div class="row" *ngIf="activeCostoImport">
         <div class="col-xs-12">
             <h2 class="text-center">Costo de importación</h2>
@@ -831,6 +835,122 @@
                     </td>
                 </tr>
             </table>
+        </div>
+    </div>
+    <!--linea de tiempo-->
+    <div class="row" *ngIf="activeTimeImport">
+        <div class="col-xs-12">
+            <h2 class="text-center">Tracking de Compra</h2>
+        </div>
+        <div class="form-group">
+            <div class="col-md-6 col-md-offset-3">
+                <form (submit)="getTrackingOrder()">
+                    <input type="text" id="trackOrder" class="form-control input-lg" [(ngModel)]="trackOrder" name="trackOrder" placeholder="Seguir Order"/>
+                </form>
+            </div>
+        </div>
+        <div *ngIf="activeTracking">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="body">
+                        <div class="cd-horizontal-timeline loaded">
+                            <div class="timeline">
+                                <div class="events-wrapper">
+                                    <div class="events" style="width: 1800px;">
+                                        <ol>
+                                            <li><a style="left: 100px;" class="older-event" [class.selected]="createDate.length > 0">Orden Creada<br/>{{createDate}}</a></li>
+                                            <li><a style="left: 200px;" class="older-event" [class.selected]="cargaLista.length > 0">Carga Puerto<br/>{{cargaLista}}</a></li>
+                                            <li><a style="left: 300px;" class="older-event" [class.selected]="zarpe.length > 0">Zarpe<br/>{{zarpe}}</a></li>
+                                            <li><a style="left: 400px;" class="older-event" [class.selected]="arriboPuerto.length > 0">Tránsito<br/>mar</a></li>
+                                            <li><a style="left: 500px;" class="older-event" [class.selected]="arriboPuerto.length > 0">Arribo Puerto<br/>{{arriboPuerto}}</a></li>
+                                            <li><a style="left: 600px;" class="older-event" [class.selected]="arriboCedi.length > 0">Arribo Cedi<br/>{{arriboCedi}}</a></li>
+                                        </ol>
+                                        <span class="filling-line" aria-hidden="true" style="transform: scaleX(0.481506);"></span>
+                                    </div>
+                                </div>
+                                <ul class="cd-timeline-navigation">
+                                    <li><a class="prev"></a></li>
+                                    <li><a class="next"></a></li>
+                                </ul>
+                            </div>
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-8 col-md-offset-2">
+                <div class="text-center">
+                    <div class="col-sm-12">
+                        <h4>{{supplier}}<br>
+                            <small>Proveedor</small>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-8 col-md-offset-2">
+                <div class="text-center">
+                    <div class="col-sm-3">
+                        <h4>{{typeShipment}}<br>
+                            <small>Embarque</small>
+                        </h4>
+                    </div>
+                    <div class="col-sm-3">
+                        <h4>{{nroQty}}<br>
+                            <small>#</small>
+                        </h4>
+                    </div>
+                    <div class="col-sm-3">
+                        <h4>25 FACTOR<br>
+                            <small>Liquidación</small>
+                        </h4>
+                    </div>
+                    <div class="col-sm-3">
+                        <h4>{{orderTime}}<br>
+                            <small>Orden</small>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-8 col-md-offset-2">
+                <div class="text-center">
+                    <div class="col-sm-8">
+                        <div class="emp-assigned">
+                            <img class="avatar" src="{{urlShared}}images/users/import/{{buyer}}.jpg">
+                        </div>
+                        <h4>{{buyer}}<br>
+                            <small>Encargado</small>
+                        </h4>
+                    </div>
+                    <div class="col-sm-4">
+                        <div style="position: relative;top: 60px;left: 35px;">
+                            <h4>{{createDate}}<br>
+                                <small>Creado</small>
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-8 col-md-offset-2">
+                <!-- Tabla Desktop y mobile-->
+                <table class="table table-sm visible-lg visible-md visible-sm visible-xs" style="border: solid 1px; width: 100%; border-color: hsl(0, 32%, 8%);">
+                    <tr>
+                        <td style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
+                            <h4>Concepto</h4>
+                        </td>
+                        <td style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
+                            <h4>Información</h4>
+                        </td>
+                    </tr>
+                    <tr *ngFor="let time of timesImports;let i=index;">
+                        <td style="border: solid 1px; border-color: #828282; width: 50%;">
+                            {{time.concept}}
+                        </td>
+                        <td style="border: solid 1px; border-color: #828282; width: 50%;">
+                            {{time.information}}
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
     <hr>
