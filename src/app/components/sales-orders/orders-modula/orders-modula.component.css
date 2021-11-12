@@ -138,6 +138,11 @@
   border-color: #c3c;
 }
 
+.order.identity-2 {
+  background-color: #FDFD96;
+  border-color: #E5BE01;
+}
+
 .order.warning .assigned-employee, .order.warning .glyphicon-warning-sign{
   color: #f0ad4e;
 }

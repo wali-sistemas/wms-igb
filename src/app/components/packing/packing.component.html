@@ -85,6 +85,16 @@
                 </div>
                 <!--<div class="row">
                     <div class="col-xs-12">
+                        <span *ngIf="processOrderLinkStatus === 'none'" class="glyphicon glyphicon-minus-sign"></span>
+                        <img *ngIf="processOrderLinkStatus === 'inprogress'" height="22" src="/assets/images/loading.gif">
+                        <span *ngIf="processOrderLinkStatus === 'done'" class="glyphicon glyphicon-ok"></span>
+                        <span *ngIf="processOrderLinkStatus === 'error'" class="glyphicon glyphicon-exclamation-sign"></span>
+                        <span class="status-text">Pedido Link creado </span><i *ngIf="processOrderLinkStatus === 'done'"
+                            style="font-size: 12px; color: #da0611;">({{idCubic}})</i>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
                         <span *ngIf="processPrintLabelsStatus === 'none'" class="glyphicon glyphicon-minus-sign"></span>
                         <img *ngIf="processPrintLabelsStatus === 'inprogress'" height="22" src="/assets/images/loading.gif">
                         <span *ngIf="processPrintLabelsStatus === 'done'" class="glyphicon glyphicon-ok"></span>
@@ -115,6 +125,19 @@
                     </div>
                 </div>
             </div>
+            <!--<div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12 text-center">
+                        <div *ngIf="processDeliveryStatus === 'done' && processInvoiceStatus === 'done' && (processOrderLinkStatus === 'error' || processOrderLinkStatus === 'none')"
+                            class="box-invoice" (click)="createOrderCubic()">
+                            <span class="icon-invoice" style="font-size: 100px"></span>
+                            <h3 class="title">
+                                Crear Pedido Link
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            </div>-->
             <div class="modal-footer">
                 <div class="row">
                     <div class="col-xs-12 text-center">
