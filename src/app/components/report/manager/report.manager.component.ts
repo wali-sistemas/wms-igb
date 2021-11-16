@@ -179,7 +179,8 @@ export class ReportManagerComponent implements OnInit {
         /***Informe factor compra COMEX***/
         if (this.activeFactorCompra) {
             //this.barChartLabelsFactorCompra = [this.factoresCompras[0][2], this.factoresCompras[1][2], this.factoresCompras[2][2], this.factoresCompras[3][2], this.factoresCompras[4][2], this.factoresCompras[5][2], this.factoresCompras[6][2]];
-            this.barChartLabelsFactorCompra = ['EXTERNO LLANTAS', 'ARANCELES', 'MARÍTIMO', 'NACIONAL', 'PORTUARIOS', 'SEGURO', 'ADUANEROS'];
+            //this.barChartLabelsFactorCompra = ['EXTERNO LLANTAS', 'ARANCELES', 'MARÍTIMO', 'NACIONAL', 'PORTUARIOS', 'SEGURO', 'ADUANEROS'];
+            this.barChartLabelsFactorCompra = ['MARÍTIMO', 'PORTUARIOS', 'ARANCELES', 'ADUANEROS', 'NACIONAL', 'SEGURO', 'EXTERNO LLANTAS',];
             this.barChartDataFactorCompra = [
                 { data: [this.factoresCompras[0][5], this.factoresCompras[1][5], this.factoresCompras[2][5], this.factoresCompras[3][5], this.factoresCompras[4][5], this.factoresCompras[5][5], this.factoresCompras[6][5]], label: this.factoresCompras[0][0] },
             ];
