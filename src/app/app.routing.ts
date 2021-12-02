@@ -29,6 +29,7 @@ import { SoulStockComponent } from './components/inventory/soul/soul-stock.compo
 import { ModulaComponent } from './components/inventory/modula/modula.component';
 import { from } from 'rxjs/observable/from';
 import { StockTransferModulaComponent } from './components/stock-transfer/modula-transfer/stock-transfer-modula.component';
+import { ReportComexComponent } from './components/report/comex/report.comex.component';
 
 const appRoutes: Routes = [
     { path: '', component: LoginComponent },
@@ -57,7 +58,8 @@ const appRoutes: Routes = [
     { path: 'withholding', component: WithholdingTaxesComponent },
     { path: 'ticket-TI', component: TicketTIComponent },
     { path: 'stock-soul', component: SoulStockComponent },
-    { path: 'modula-stock', component: ModulaComponent }
+    { path: 'modula-stock', component: ModulaComponent },
+    { path: 'report/comex/tracking', component: ReportComexComponent }
 ];
 
 export const appRoutingProviders: any[] = [];

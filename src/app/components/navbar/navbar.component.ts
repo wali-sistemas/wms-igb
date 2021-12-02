@@ -22,6 +22,7 @@ export class NavBarComponent implements OnInit {
   public shippingModuleAccesible: boolean = false;
   public ticketTIModuleAccesible: boolean = false;
   public pickingExpressModuleAccesible: boolean = false;
+  public compraTrackingModuleAccesible: boolean = false;
 
   constructor(private _userService: UserService, private _route: ActivatedRoute, private _router: Router) { }
 
@@ -54,6 +55,7 @@ export class NavBarComponent implements OnInit {
       this.shippingModuleAccesible = userAccess.shippingModuleAccesible;
       this.ticketTIModuleAccesible = userAccess.ticketTIModuleAccesible;
       this.pickingExpressModuleAccesible = userAccess.pickingExpressModuleAccesible;
+      this.compraTrackingModuleAccesible = userAccess.compraTrackingModuleAccesible;
       return;
     }
 
@@ -67,7 +69,8 @@ export class NavBarComponent implements OnInit {
       inventoryModuleAccesible: false,
       shippingModuleAccesible: false,
       ticketTIModuleAccesible: false,
-      pickingExpressModuleAccesible: false
+      pickingExpressModuleAccesible: false,
+      compraTrackingModuleAccesible: false
     };
 
     localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
@@ -208,6 +211,20 @@ export class NavBarComponent implements OnInit {
           localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
         } else {
           this.pickingExpressModuleAccesible = false;
+        }
+      }, error => { console.error(error); }
+    );
+
+    //validar si el usuario puede acceder a la opción de compras(tracking)
+    this._userService.canAccess(this.identity.username, 'tracking').subscribe(
+      response => {
+        if (response.code == 0) {
+          this.compraTrackingModuleAccesible = true;
+          userAccess = JSON.parse(localStorage.getItem('igb.user.access'));
+          userAccess.compraTrackingModuleAccesible = true;
+          localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
+        } else {
+          this.compraTrackingModuleAccesible = false;
         }
       }, error => { console.error(error); }
     );

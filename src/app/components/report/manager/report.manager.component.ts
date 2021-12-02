@@ -122,6 +122,7 @@ export class ReportManagerComponent implements OnInit {
     public buyer: string;
     public typeShipment: string;
     public nroQty: string;
+    public liquid: string;
     public activeTracking: boolean = false;
     public arriboPuerto: string;
     public arriboCedi: string;
@@ -623,6 +624,7 @@ export class ReportManagerComponent implements OnInit {
         this.arriboCedi = '';
         this.zarpe = '';
         this.embarque = '';
+        this.liquid = '';
 
         this.timesImports = new Array<any>();
         $('#modal_transfer_process').modal({
@@ -641,6 +643,7 @@ export class ReportManagerComponent implements OnInit {
                 this.buyer = this.timesImports[0].buyer;
                 this.typeShipment = this.timesImports[0].typeShipment;
                 this.nroQty = this.timesImports[0].nroQty;
+                this.liquid = this.timesImports[0].liquid;
 
                 this.embarque = this.timesImports[2].information;
                 this.zarpe = this.timesImports[2].information;
