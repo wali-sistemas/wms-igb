@@ -99,7 +99,6 @@ export class ReportComexComponent implements OnInit {
                 this.typeShipment = this.timesImports[0].typeShipment;
                 this.nroQty = this.timesImports[0].nroQty;
                 this.liquid = this.timesImports[0].liquid;
-
                 this.embarque = this.timesImports[2].information;
                 this.zarpe = this.timesImports[2].information;
                 this.arriboPuerto = this.timesImports[3].information;
