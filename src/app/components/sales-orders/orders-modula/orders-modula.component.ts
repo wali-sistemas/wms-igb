@@ -38,7 +38,7 @@ export class OrdersModulaComponent implements OnInit {
   public processPrintLabelsStatus: string = 'none';
   public docEntryDelivery: number;
   public orderPickingExpress: String;
-  public orderPickingExpressMDL: string;
+  public orderPickingExpressMDL: string = '';
   public salesOrderMessage: string = '';
   public deliveryErrorMessage: string = '';
   public pickExpressErrorMessage: string = '';
@@ -119,7 +119,7 @@ export class OrdersModulaComponent implements OnInit {
     if (this.selectedOrders.has(order.docNum)) {
       this.selectedOrders.delete(order.docNum);
     } else {
-      this.selectedOrders.set(order.docNum, order.docNumMDL == null ? "" + order.cardCode : order.cardCode + "-" + order.docNumMDL);
+      this.selectedOrders.set(order.docNum, order.docNumMDL.length === 0 ? "" + order.cardCode : order.cardCode + "-" + order.docNumMDL);
     }
   }
 

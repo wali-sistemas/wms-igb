@@ -38,7 +38,7 @@ export class OrdersSapComponent implements OnInit {
   public processPrintLabelsStatus: string = 'none';
   public docEntryDelivery: number;
   public orderPickingExpress: String;
-  public orderPickingExpressMDL: String;
+  public orderPickingExpressMDL: string = '';
   public deliveryErrorMessage: string = '';
   public pickExpressErrorMessage: string = '';
   public multiPickingErrorMessage: string = '';
@@ -113,7 +113,7 @@ export class OrdersSapComponent implements OnInit {
     if (this.selectedOrders.has(order.docNum)) {
       this.selectedOrders.delete(order.docNum);
     } else {
-      this.selectedOrders.set(order.docNum, order.docNumMDL == null ? "" + order.cardCode : order.cardCode + "-" + order.docNumMDL);
+      this.selectedOrders.set(order.docNum, order.docNumMDL.length == 0 ? "" + order.cardCode : order.cardCode + "-" + order.docNumMDL);
     }
   }
 
@@ -290,7 +290,7 @@ export class OrdersSapComponent implements OnInit {
         this.orderPickingExpressMDL = Array.from(this.selectedOrders.entries())[0][1].slice(-6);
       }
       //Validar si la orden de modula esta aprobada y autorizada por el area administrativa.
-      if (this.orderPickingExpressMDL != null) {
+      if (this.orderPickingExpressMDL.length > 0) {
         this._salesOrdersService.validateOrderAuthorized(this.orderPickingExpressMDL).subscribe(
           response => {
             if (!response) {
