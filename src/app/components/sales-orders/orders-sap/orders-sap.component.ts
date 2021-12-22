@@ -176,10 +176,11 @@ export class OrdersSapComponent implements OnInit {
   public filterOrders(force) {
     if (this.filter.length > 0) {
       this.searchFilter = this.filter.toLowerCase();
-      this.filteredOrders = new Array<SalesOrder>();
+      this.filteredOrders = new Array<SalesOrder>(); 
       for (let i = 0; i < this.orders.length; i++) {
         const ord = this.orders[i];
         if (ord.docNum.toLowerCase().includes(this.searchFilter)
+          || ord.docNumMDL.toLowerCase().includes(this.searchFilter)
           || ord.cardCode.toLowerCase().includes(this.searchFilter)
           || ord.cardName.toLowerCase().includes(this.searchFilter)
           || (ord.assignedPickingEmployee && ord.assignedPickingEmployee.toLowerCase().includes(this.searchFilter))) {

@@ -286,7 +286,7 @@
           <div class="col-sm-3">
             <div class="date"><b>{{order.docDate}}</b></div>
           </div>
-          <div class="col-sm-3" *ngIf="order.docNumMDL != null">
+          <div class="col-sm-3" *ngIf="order.docNumMDL != ''">
             <div class="order-num" style="background-color: #F2A033;"><b>MDL {{order.docNumMDL}}</b></div>
           </div>
           <div class="col-sm-3" style="min-height: 24px;">
@@ -319,7 +319,7 @@
         <br>
         <div class="row">
           <div class="col-xs-12">
-            <p><b>{{order.address}}</b></p>
+            <p style="font-size: 11px;"><b>{{order.address}}</b></p>
           </div>
         </div>
       </div>
