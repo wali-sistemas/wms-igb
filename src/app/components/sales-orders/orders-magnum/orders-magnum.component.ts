@@ -55,6 +55,10 @@ export class OrdersMagnumComponent implements OnInit {
   public subTotal: Number;
   public address: String = '';
   public comments: String = '';
+  public valorDeclPack: Number;
+  public pesoPack: Number;
+  public flete: Number;
+  public lio: Number;
 
   constructor(private _userService: UserService, private _salesOrdersService: SalesOrdersService, private _deliveryService: DeliveryService, private _route: ActivatedRoute, private _router: Router, private _healthchekService: HealthchekService, private _modulaService: ModulaService, private _genericService: GenericService) {
     this.orders = new Array<SalesOrder>();
