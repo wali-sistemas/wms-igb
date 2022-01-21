@@ -32,6 +32,12 @@ export class SalesOrdersService {
       .map(res => res.json());
   }
 
+  public listOpenOrdersMagnum() {
+    let igbHeaders = new IGBHeaders().loadHeaders();
+    return this._http.get(this.url + 'salesorder/list/orders/magnum', { headers: igbHeaders })
+      .map(res => res.json());
+  }
+
   public assignOrders(assignment) {
     let igbHeaders = new IGBHeaders().loadHeaders();
     return this._http.post(this.url + 'salesorder/assign', JSON.stringify(assignment), { headers: igbHeaders })

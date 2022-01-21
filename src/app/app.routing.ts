@@ -30,6 +30,7 @@ import { ModulaComponent } from './components/inventory/modula/modula.component'
 import { from } from 'rxjs/observable/from';
 import { StockTransferModulaComponent } from './components/stock-transfer/modula-transfer/stock-transfer-modula.component';
 import { ReportComexComponent } from './components/report/comex/report.comex.component';
+import { OrdersMagnumComponent } from './components/sales-orders/orders-magnum/orders-magnum.component';
 
 const appRoutes: Routes = [
     { path: '', component: LoginComponent },
@@ -39,6 +40,7 @@ const appRoutes: Routes = [
     { path: 'sales-orders', component: SalesOrdersComponent },
     { path: 'orders-modula', component: OrdersModulaComponent },
     { path: 'orders-sap', component: OrdersSapComponent },
+    { path: 'orders-magnum', component: OrdersMagnumComponent },
     { path: 'picking', component: PickingComponent },
     { path: 'packing', component: PackingComponent },
     { path: 'inventory', component: InventoryComponent },

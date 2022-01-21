@@ -77,9 +77,98 @@
     </div>
   </div>
 </div>
+<!--Modal crear guia-->
+<div id="modal_add_invoice" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title text-center">Orden # {{order}} - {{whsCode}}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-xs-12">
+            <select id="transp" class="form-control input-lg" [(ngModel)]="selectedTransp" name="selectedTransp"
+              style="margin-top: 5px;" (change)="listTransport()">
+              <option value="" disabled>Seleccione transportadora</option>
+              <option *ngFor="let transp of transports" value="{{transp[0]}}">{{transp[1]}}</option>
+            </select>
+          </div>
+        </div>
+        <br />
+        <div class="row">
+          <div class="col-xs-6">
+            <input type="number" id="lio" class="form-control input-lg" [(ngModel)]="lio" autocomplete="off"
+              name="lio" autocorrect="off" autocapitalize="none" placeholder="Lios">
+          </div>
+          <div class="col-xs-6">
+            <input type="number" id="pesoPack" class="form-control input-lg" [(ngModel)]="pesoPack" autocomplete="off"
+              name="pesoPack" autocorrect="off" autocapitalize="none" placeholder="Peso Kg">
+          </div>
+        </div>
+        <br />
+        <div class="row">
+          <div class="col-xs-12">
+            <input type="number" id="valorDeclPack" class="form-control input-lg" [(ngModel)]="valorDeclPack"
+              autocomplete="off" name="valorDeclPack" autocorrect="off" autocapitalize="none"
+              placeholder="$ Valor declarado">
+          </div>
+        </div>
+        <br />
+        <div class="row">
+          <div class="col-xs-12">
+            <select id="statusOrder" class="form-control input-lg" [(ngModel)]="selectedStatusOrder"
+              name="selectedStatusOrder" required>
+              <option value="" disabled>Seleccione estado orden contado</option>
+              <option>En proceso</option>
+              <option>Para despachar</option>
+              <option>Despachado</option>
+            </select>
+          </div>
+        </div>
+        <br />
+        <div class="row">
+          <div class="col-xs-12">
+            <h4>Destino</h4>
+            <label for="address">{{address}}</label>
+          </div>
+        </div>
+        <hr>
+        <div class="row">
+          <div class="col-xs-12">
+            <h4>Trazabilidad</h4>
+            <label for="address">{{comments}}</label>
+          </div>
+        </div>
+        <hr>
+        <div class="row">
+          <div class="col-xs-6 text-center">
+            <div style="border: solid 1px;left: 16px;">
+              <label for="docTotal" style="font-size: 17px;">
+                <h4>SubTotal</h4>${{subTotal | number}}
+              </label>
+            </div>
+          </div>
+          <div class="col-xs-6">
+            <label for="docTotal">Calcular Flete</label>
+            <input type="number" id="flete" class="form-control input-lg" [(ngModel)]="flete" autocomplete="off"
+              name="flete" autocorrect="off" autocapitalize="none" placeholder="Flete">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-danger btn-lg">Facturar</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-<button *ngIf="selectedOrders.size == 1 && pickingExpressModuleAccesible" type="button" class="express-picking"
-  id="btnExpressPicking" data-toggle="modal" data-target="#confirmation_picking" title="Crear Entrega">
+<button type="button" class="express-picking" id="btnExpressPicking" data-toggle="modal"
+  data-target="#modal_add_invoice" title="prueba">
   <span class="icon-delivery-list" style="font-size: 40px;"></span>
 </button>
 
@@ -89,29 +178,14 @@
 <div class="container content">
   <div class="row">
     <div class="col-xs-12">
-      <h3>Ordenes de Modula pendientes</h3>
-    </div>
-  </div>
-  <div class="row" *ngIf="pickExpressErrorMessage">
-    <div class="col-xs-12">
-      <div class="alert alert-danger">
-        {{pickExpressErrorMessage}}
-      </div>
+      <h3>Ordenes de Magnum pendientes</h3>
     </div>
   </div>
   <div class="row">
     <div class="col-xs-12">
       <form>
-        <div class="input-group">
-          <input type="text" class="form-control input-lg" id="filter" name="filter" placeholder="Escribe para filtrar"
-            [(ngModel)]="filter" (keyup)="filterOrders(false)" autocomplete="off" />
-          <span class="input-group-btn">
-            <button type="button" [class.box]="filterGroup" class="btn btn-default btn-lg"
-              (click)="filterGroupOrders()">
-              <span class="icon-groups" title="Filtrar grupos"></span>
-            </button>
-          </span>
-        </div>
+        <input type="text" class="form-control input-lg" id="filter" name="filter" placeholder="Escribe para filtrar"
+          [(ngModel)]="filter" (keyup)="filterOrders(false)" autocomplete="off" />
       </form>
     </div>
   </div>
@@ -127,19 +201,18 @@
     <div class="col-xs-12 col-md-6" *ngFor="let order of filteredOrders">
       <div class="order" [class.warning]="order.status == 'warning'" [class.identity]="order.cardCode == 'C900998242'"
         [class.identity-2]="order.cardCode == 'C900640419'"
-        [class.unauthorized]="order.confirmed === 'N' || order.address.length === 0 || order.transp.length === 0"
+        [class.unauthorized]="order.address.length === 0 || order.transp.length === 0"
         [class.selected]="selectedOrders.has(order.docNum)" (click)="selectOrder(order)">
         <div class="row">
           <div class="col-sm-4">
             <div class="date"><b>{{order.docDate}}</b></div>
           </div>
           <div class="col-sm-4" style="min-height: 24px;">
-            <div class="order-num"><b>MDL {{order.docNum}}</b></div>
+            <div class="order-num"><b>SAP {{order.docNum}}</b></div>
           </div>
-          <div class="col-sm-4"><span *ngIf="order.status == 'warning'"
-              class="glyphicon glyphicon-warning-sign warn"></span>
-            <div class="assigned-employee" *ngIf="order.assignedPickingEmployee"><span class="icon-user"
-                style="font-size: 18px;"></span>{{order.assignedPickingEmployee}}</div>
+          <div class="col-sm-4">
+            <div class="assigned-employee"><span class="icon-warehouse-all"
+                style="font-size: 18px;"></span>{{order.whsCode == '26' ? 'CARTAGENA' : 'CALI'}}</div>
           </div>
         </div>
         <br>

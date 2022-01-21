@@ -30,4 +30,9 @@ export class GenericService {
     return this._http.get(this.url + 'generic/warehouses/actives', { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
+
+  public listActivesTransp() {
+    return this._http.get(this.url + 'generic/companies/transports', { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
 }
