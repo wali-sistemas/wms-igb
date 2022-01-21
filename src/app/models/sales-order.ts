@@ -15,6 +15,9 @@ export class SalesOrder {
     public address: String;
     public transp: String;
     public docNumMDL: String;
+    public whsCode: String;
+    public subTotal: Number;
+    public comments: String;
     constructor() { }
 }
 

@@ -14,6 +14,7 @@ import { SalesOrdersComponent } from './components/sales-orders/sales-orders.com
 import { OrderSapComponent } from './components/sales-orders/orders-sap/order-sap.component';
 import { OrdersSapComponent } from './components/sales-orders/orders-sap/orders-sap.component';
 import { OrdersModulaComponent } from './components/sales-orders/orders-modula/orders-modula.component';
+import { OrdersMagnumComponent } from './components/sales-orders/orders-magnum/orders-magnum.component';
 import { PickingComponent } from './components/picking/picking.component';
 import { PackingComponent } from './components/packing/packing.component';
 import { InventoryRandomComponent } from './components/inventory/random/inventory-Random.component';
@@ -51,6 +52,7 @@ import { from } from 'rxjs/observable/from';
     OrderSapComponent,
     OrdersSapComponent,
     OrdersModulaComponent,
+    OrdersMagnumComponent,
     PickingComponent,
     PackingComponent,
     InventoryComponent,

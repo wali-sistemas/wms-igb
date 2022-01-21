@@ -1,0 +1,248 @@
+<igb-navbar></igb-navbar>
+
+<!--Modal procesando-->
+<div id="modal_transfer_process" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="progress">
+          <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100"
+            aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+            <span class="sr-only">Procesando transferencia</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--Modal confirmacion-->
+<div id="confirmation_picking" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false"
+  data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body text-center">
+        <p>
+          <b>¿Estás seguro que deseas crear entrega express?</b><br />Al hacerlo, se crearán la entrega y se cerrara el
+          packing para los ítems.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" (click)="clearOrder()"
+          style="float: left;">No</button>
+        <button type="button" class="btn btn-primary btn-lg" (click)="getModalPickingExpress()">Sí</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--Modal procesar entrega express-->
+<div id="process_picking_express" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false"
+  data-backdrop="static">
+  <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="clearOrder()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Procesando entrega express</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-xs-12 text-center">
+            <span *ngIf="processDeliveryStatus === 'none'" class="glyphicon glyphicon-minus-sign"></span>
+            <img *ngIf="processDeliveryStatus === 'inprogress'" height="22" src="/assets/images/loading.gif">
+            <span *ngIf="processDeliveryStatus === 'done'" class="glyphicon glyphicon-ok"></span>
+            <span *ngIf="processDeliveryStatus === 'error'" class="glyphicon glyphicon-exclamation-sign"></span>
+            <span class="status-text">Creando entrega express </span><i *ngIf="processDeliveryStatus === 'done'"
+              style="font-size: 12px; color: #da0611;">({{docEntryDelivery}})</i>
+          </div>
+        </div>
+        <br />
+        <div class="row" *ngIf="deliveryErrorMessage">
+          <div class="col-xs-12">
+            <div class="alert alert-danger">
+              {{deliveryErrorMessage}}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="row">
+          <div class="col-xs-12 text-center">
+            <button *ngIf="deliveryErrorMessage" class="btn btn-danger btn-lg" type="button" data-dismiss="modal"
+              (click)="resetSesionId()" [disabled]="inProgress()"><span class="icon-refresh"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--Modal crear guia-->
+<div id="modal_add_invoice" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title text-center">Orden # {{order}} - {{whsCode}}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-xs-12">
+            <select id="transp" class="form-control input-lg" [(ngModel)]="selectedTransp" name="selectedTransp"
+              style="margin-top: 5px;" (change)="listTransport()">
+              <option value="" disabled>Seleccione transportadora</option>
+              <option *ngFor="let transp of transports" value="{{transp[0]}}">{{transp[1]}}</option>
+            </select>
+          </div>
+        </div>
+        <br />
+        <div class="row">
+          <div class="col-xs-6">
+            <input type="number" id="qtyPack" class="form-control input-lg" [(ngModel)]="qtyPack" autocomplete="off"
+              name="qtyPack" autocorrect="off" autocapitalize="none" placeholder="Lios"
+              [class.required-field]="!validQtyPack" required>
+          </div>
+          <div class="col-xs-6">
+            <input type="number" id="pesoPack" class="form-control input-lg" [(ngModel)]="pesoPack" autocomplete="off"
+              name="pesoPack" autocorrect="off" autocapitalize="none" placeholder="Peso Kg"
+              [class.required-field]="!validPesoPack" required>
+          </div>
+        </div>
+        <br />
+        <div class="row">
+          <div class="col-xs-12">
+            <input type="number" id="valorDeclPack" class="form-control input-lg" [(ngModel)]="valorDeclPack"
+              autocomplete="off" name="valorDeclPack" autocorrect="off" autocapitalize="none"
+              placeholder="$ Valor declarado" [class.required-field]="!validValorDeclPack" required>
+          </div>
+        </div>
+        <br />
+        <div class="row">
+          <div class="col-xs-12">
+            <select id="statusOrder" class="form-control input-lg" [(ngModel)]="selectedStatusOrder"
+              name="selectedStatusOrder" required>
+              <option value="" disabled>Seleccione estado orden contado</option>
+              <option>En proceso</option>
+              <option>Para despachar</option>
+              <option>Despachado</option>
+            </select>
+          </div>
+        </div>
+        <br />
+        <div class="row">
+          <div class="col-xs-12">
+            <h4>Destino</h4>
+            <label for="address">{{address}}</label>
+          </div>
+        </div>
+        <hr>
+        <div class="row">
+          <div class="col-xs-12">
+            <h4>Trazabilidad</h4>
+            <label for="address">{{comments}}</label>
+          </div>
+        </div>
+        <hr>
+        <div class="row">
+          <div class="col-xs-6 text-center">
+            <div style="border: solid 1px;left: 16px;">
+              <label for="docTotal" style="font-size: 17px;">
+                <h4>SubTotal</h4>${{subTotal | number}}
+              </label>
+            </div>
+          </div>
+          <div class="col-xs-6">
+            <label for="docTotal">Calcular Flete</label>
+            <input type="number" id="flete" class="form-control input-lg" [(ngModel)]="flete" autocomplete="off"
+              name="flete" autocorrect="off" autocapitalize="none" placeholder="Flete"
+              [class.required-field]="!validAddressReceive" required>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-danger btn-lg" (click)="generateGuia()">Facturar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button type="button" class="express-picking" id="btnExpressPicking" data-toggle="modal"
+  data-target="#modal_add_invoice" title="prueba">
+  <span class="icon-delivery-list" style="font-size: 40px;"></span>
+</button>
+
+<button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span
+    class="icon-chevron-up"></span></button>
+
+<div class="container content">
+  <div class="row">
+    <div class="col-xs-12">
+      <h3>Ordenes de Magnum pendientes</h3>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <form>
+        <input type="text" class="form-control input-lg" id="filter" name="filter" placeholder="Escribe para filtrar"
+          [(ngModel)]="filter" (keyup)="filterOrders(false)" autocomplete="off" />
+      </form>
+    </div>
+  </div>
+  <br />
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="alert alert-warning" role="alert" *ngIf="salesOrderMessage">
+        {{salesOrderMessage}}
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12 col-md-6" *ngFor="let order of filteredOrders">
+      <div class="order" [class.warning]="order.status == 'warning'" [class.identity]="order.cardCode == 'C900998242'"
+        [class.identity-2]="order.cardCode == 'C900640419'"
+        [class.unauthorized]="order.address.length === 0 || order.transp.length === 0"
+        [class.selected]="selectedOrders.has(order.docNum)" (click)="selectOrder(order)">
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="date"><b>{{order.docDate}}</b></div>
+          </div>
+          <div class="col-sm-4" style="min-height: 24px;">
+            <div class="order-num"><b>SAP {{order.docNum}}</b></div>
+          </div>
+          <div class="col-sm-4">
+            <div class="assigned-employee"><span class="icon-warehouse-all"
+                style="font-size: 18px;"></span>{{order.whsCode == '26' ? 'CARTAGENA' : 'CALI'}}</div>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-sm-2 col-xs-3">
+            <p><b>Refs </b><span class="badge">{{order.items}}</span></p>
+            <hr>
+            <p><b>Cliente</b><br>{{order.cardCode}}</p>
+          </div>
+          <div class="col-sm-10 col-xs-9">
+            <p><b>Comentarios</b></p>
+            <hr>
+            <p>{{order.comments}}</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            <p>{{order.cardName}}</p>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-xs-12">
+            <p><b>{{order.address}}</b></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
