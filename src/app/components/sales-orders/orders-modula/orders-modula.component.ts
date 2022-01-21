@@ -37,7 +37,6 @@ export class OrdersModulaComponent implements OnInit {
   public processDeliveryStatus: string = 'none';
   public processPrintLabelsStatus: string = 'none';
   public docEntryDelivery: number;
-  //public orderPickingExpress: String;
   public orderPickingExpressMDL: String = '';
   public salesOrderMessage: string = '';
   public deliveryErrorMessage: string = '';
@@ -201,9 +200,6 @@ export class OrdersModulaComponent implements OnInit {
     for (let i = 0; i < Array.from(this.selectedOrders.entries()).length; i++) {
       this.orderPickingExpressMDL = Array.from(this.selectedOrders.entries())[i][0];
       //Validar si la orden de modula esta aprobada y autorizada por el area administrativa.
-
-      console.log(this.orderPickingExpressMDL);
-      
       if (this.orderPickingExpressMDL != null) {
         this._salesOrdersService.validateOrderAuthorized(this.orderPickingExpressMDL).subscribe(
           response => {
