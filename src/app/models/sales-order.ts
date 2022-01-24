@@ -18,6 +18,8 @@ export class SalesOrder {
     public whsCode: String;
     public subTotal: Number;
     public comments: String;
+    public peso: Number;
+    public vrlDeclarad: Number;
     constructor() { }
 }
 
