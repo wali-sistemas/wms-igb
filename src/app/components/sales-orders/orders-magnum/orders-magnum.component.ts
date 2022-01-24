@@ -158,7 +158,6 @@ export class OrdersMagnumComponent implements OnInit {
     console.log(order);
     console.log('**************');
 
-
     /*if (order.status === 'warning') {
       this.listAvailableStock(order.docNum);
       return;
