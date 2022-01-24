@@ -130,6 +130,16 @@ export class OrdersMagnumComponent implements OnInit {
     );
   }
 
+  public calculateVrlDeclarad(order: SalesOrder) {
+    console.log('Entro a calcular vrl declarado');
+
+    console.log(order);
+
+
+    this.pesoPack = order.peso;
+    this.valorDeclPack = order.vrlDeclarad;
+  }
+
   public selectOrder(order: SalesOrder) {
     this.pickExpressErrorMessage = '';
     if (order.address.length === 0 || order.transp.length === 0) {
@@ -144,7 +154,9 @@ export class OrdersMagnumComponent implements OnInit {
     this.comments = order.comments;
     this.selectedTransp = order.transp;
 
-    
+    console.log('**************');
+    console.log(order);
+    console.log('**************');
 
     /*if (order.status === 'warning') {
       this.listAvailableStock(order.docNum);

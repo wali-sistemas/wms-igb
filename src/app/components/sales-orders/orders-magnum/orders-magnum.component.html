@@ -77,7 +77,7 @@
     </div>
   </div>
 </div>
-<!--Modal crear guia-->
+<!--Modal crear factura-->
 <div id="modal_add_invoice" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
   aria-hidden="true" data-backdrop="static">
   <div class="modal-dialog modal-dialog-centered" role="document">
@@ -102,7 +102,7 @@
         <div class="row">
           <div class="col-xs-6">
             <input type="number" id="lio" class="form-control input-lg" [(ngModel)]="lio" autocomplete="off"
-              name="lio" autocorrect="off" autocapitalize="none" placeholder="Lios">
+              name="lio" autocorrect="off" autocapitalize="none" placeholder="Lios" (change)="calculateVrlDeclarad(order)">
           </div>
           <div class="col-xs-6">
             <input type="number" id="pesoPack" class="form-control input-lg" [(ngModel)]="pesoPack" autocomplete="off"
@@ -166,11 +166,6 @@
     </div>
   </div>
 </div>
-
-<button type="button" class="express-picking" id="btnExpressPicking" data-toggle="modal"
-  data-target="#modal_add_invoice" title="prueba">
-  <span class="icon-delivery-list" style="font-size: 40px;"></span>
-</button>
 
 <button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span
     class="icon-chevron-up"></span></button>
