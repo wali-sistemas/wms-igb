@@ -1,25 +1,26 @@
 export class SalesOrder {
-    public docEntry: Number;
-    public docNum: String;
-    public series: String;
+    public docEntry: number;
+    public docNum: string;
+    public series: string;
     public docDate: Date;
-    public docTotal: Number;
-    public docTotalFC: Number;
-    public cardCode: String;
-    public cardName: String;
-    public assignedPickingEmployee: String;
-    public confirmed: String;
-    public items: Number;
-    public status: String;
+    public docTotal: number;
+    public docTotalFC: number;
+    public cardCode: string;
+    public cardName: string;
+    public assignedPickingEmployee: string;
+    public confirmed: string;
+    public items: number;
+    public status: string;
     public lines: Array<SalesOrderLine>;
-    public address: String;
-    public transp: String;
-    public docNumMDL: String;
-    public whsCode: String;
-    public subTotal: Number;
-    public comments: String;
-    public peso: Number;
-    public vrlDeclarad: Number;
+    public address: string;
+    public transp: string;
+    public docNumMDL: string;
+    public whsName: string;
+    public whsCode: string;
+    public subTotal: number;
+    public comments: string;
+    public undEmpStand: number;
+    public vlrDeclarStand: number;
     constructor() { }
 }
 

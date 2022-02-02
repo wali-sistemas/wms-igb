@@ -16,26 +16,26 @@
   </div>
 </div>
 <!--Modal confirmacion-->
-<div id="confirmation_picking" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false"
+<div id="confirmation_document" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false"
   data-backdrop="static">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-body text-center">
         <p>
-          <b>¿Estás seguro que deseas crear entrega express?</b><br />Al hacerlo, se crearán la entrega y se cerrara el
-          packing para los ítems.
+          <b>¿Estás seguro que deseas facturar?</b><br />Al hacerlo, se creará la entrega y se cerrara la orden en
+          SAP.
         </p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" (click)="clearOrder()"
           style="float: left;">No</button>
-        <button type="button" class="btn btn-primary btn-lg" (click)="getModalPickingExpress()">Sí</button>
+        <button type="button" class="btn btn-primary btn-lg" (click)="getModalInvoiceExpress()">Sí</button>
       </div>
     </div>
   </div>
 </div>
-<!--Modal procesar entrega express-->
-<div id="process_picking_express" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false"
+<!--Modal estado procesos-->
+<div id="process_invoice_express" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false"
   data-backdrop="static">
   <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
     <div class="modal-content">
@@ -43,17 +43,29 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="clearOrder()">
           <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title">Procesando entrega express</h4>
+        <h4 class="modal-title">Procesando orden</h4>
       </div>
       <div class="modal-body">
         <div class="row">
-          <div class="col-xs-12 text-center">
+          <div class="col-xs-12">
             <span *ngIf="processDeliveryStatus === 'none'" class="glyphicon glyphicon-minus-sign"></span>
             <img *ngIf="processDeliveryStatus === 'inprogress'" height="22" src="/assets/images/loading.gif">
             <span *ngIf="processDeliveryStatus === 'done'" class="glyphicon glyphicon-ok"></span>
             <span *ngIf="processDeliveryStatus === 'error'" class="glyphicon glyphicon-exclamation-sign"></span>
-            <span class="status-text">Creando entrega express </span><i *ngIf="processDeliveryStatus === 'done'"
+            <span class="status-text">Entrega creada </span><i *ngIf="processDeliveryStatus === 'done'"
               style="font-size: 12px; color: #da0611;">({{docEntryDelivery}})</i>
+            <span *ngIf="processDeliveryStatus === 'done'" class="icon-delivery" style="font-size: 24px;float: right;"
+              (click)="getUrlReport('delivery','S')" title="Documento de entrega"></span>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            <span *ngIf="processInvoiceStatus === 'none'" class="glyphicon glyphicon-minus-sign"></span>
+            <img *ngIf="processInvoiceStatus === 'inprogress'" height="22" src="/assets/images/loading.gif">
+            <span *ngIf="processInvoiceStatus === 'done'" class="glyphicon glyphicon-ok"></span>
+            <span *ngIf="processInvoiceStatus === 'error'" class="glyphicon glyphicon-exclamation-sign"></span>
+            <span class="status-text">Factura creada </span><i *ngIf="processInvoiceStatus === 'done'"
+              style="font-size: 12px; color: #da0611;">({{docEntryInvoice}})</i>
           </div>
         </div>
         <br />
@@ -65,11 +77,26 @@
           </div>
         </div>
       </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-xs-12 text-center">
+            <div class="box-invoice"
+              *ngIf="processDeliveryStatus === 'done' && (processInvoiceStatus === 'error' || processInvoiceStatus === 'none')"
+              (click)="createInvoice()">
+              <span class="icon-invoice" style="font-size: 100px"></span>
+              <h3 class="title">
+                Crear Factura
+              </h3>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="modal-footer">
         <div class="row">
           <div class="col-xs-12 text-center">
             <button *ngIf="deliveryErrorMessage" class="btn btn-danger btn-lg" type="button" data-dismiss="modal"
-              (click)="resetSesionId()" [disabled]="inProgress()"><span class="icon-refresh"></span>
+              (click)="resetSesionId()" data-toggle="modal" data-target="#close_confirmation" [disabled]="inProgress()">
+              Intentar Finalizar
             </button>
           </div>
         </div>
@@ -83,16 +110,23 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="clearOrder()">
           <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title text-center">Orden # {{order}} - {{whsCode}}</h4>
+        <h4 class="modal-title text-center">Orden # {{order}} - Bodega # {{whsCode}}</h4>
       </div>
       <div class="modal-body">
+        <div class="row" *ngIf="invoiceErrorMessage">
+          <div class="col-xs-12">
+            <div class="alert alert-danger">
+              {{invoiceErrorMessage}}
+            </div>
+          </div>
+        </div>
         <div class="row">
           <div class="col-xs-12">
             <select id="transp" class="form-control input-lg" [(ngModel)]="selectedTransp" name="selectedTransp"
-              style="margin-top: 5px;" (change)="listTransport()">
+              style="margin-top: 5px;" (change)="listTransport()" [class.required-field]="!validTransp" required>
               <option value="" disabled>Seleccione transportadora</option>
               <option *ngFor="let transp of transports" value="{{transp[0]}}">{{transp[1]}}</option>
             </select>
@@ -102,11 +136,13 @@
         <div class="row">
           <div class="col-xs-6">
             <input type="number" id="lio" class="form-control input-lg" [(ngModel)]="lio" autocomplete="off" name="lio"
-              autocorrect="off" autocapitalize="none" placeholder="Lios">
+              autocorrect="off" autocapitalize="none" placeholder="Lios" (change)="calculateVrlDeclarad(order)"
+              [class.required-field]="!validLio" required>
           </div>
           <div class="col-xs-6">
             <input type="number" id="pesoPack" class="form-control input-lg" [(ngModel)]="pesoPack" autocomplete="off"
-              name="pesoPack" autocorrect="off" autocapitalize="none" placeholder="Peso Kg">
+              name="pesoPack" autocorrect="off" autocapitalize="none" placeholder="Peso Kg"
+              [class.required-field]="!validLio" required>
           </div>
         </div>
         <br />
@@ -114,18 +150,19 @@
           <div class="col-xs-12">
             <input type="number" id="valorDeclPack" class="form-control input-lg" [(ngModel)]="valorDeclPack"
               autocomplete="off" name="valorDeclPack" autocorrect="off" autocapitalize="none"
-              placeholder="$ Valor declarado">
+              placeholder="$ Valor declarado" [class.required-field]="!validLio" required>
           </div>
         </div>
         <br />
         <div class="row">
           <div class="col-xs-12">
             <select id="statusOrder" class="form-control input-lg" [(ngModel)]="selectedStatusOrder"
-              name="selectedStatusOrder" required>
+              name="selectedStatusOrder" [class.required-field]="!validStatusOrder" required>
               <option value="" disabled>Seleccione estado orden contado</option>
-              <option>En proceso</option>
-              <option>Para despachar</option>
+              <option>En Proceso</option>
+              <option>Para Despachar</option>
               <option>Despachado</option>
+              <option>Anulada</option>
             </select>
           </div>
         </div>
@@ -155,19 +192,19 @@
           <div class="col-xs-6">
             <label for="docTotal">Calcular Flete</label>
             <input type="number" id="flete" class="form-control input-lg" [(ngModel)]="flete" autocomplete="off"
-              name="flete" autocorrect="off" autocapitalize="none" placeholder="Flete">
+              name="flete" autocorrect="off" autocapitalize="none" placeholder="Flete"
+              [class.required-field]="!validFlete" required>
           </div>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-danger btn-lg">Facturar</button>
+        <button type="button" class="btn btn-danger btn-lg" (click)="validateParamenter()">Facturar</button>
       </div>
     </div>
   </div>
 </div>
 
-<button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span
+<button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop()" title="Arriba"><span
     class="icon-chevron-up"></span></button>
 
 <div class="container content">
