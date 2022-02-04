@@ -158,20 +158,27 @@
                 <table style="border: solid 1px; width: 100%; border-color: #828282;">
                     <tr>
                         <td
-                            style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
+                            style="border: solid 1px; border-color: #333; width: 10%; background-color: #333; color: #fff;">
                             <h4>Año</h4>
                         </td>
                         <td
-                            style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
-                            <h4>Ventas</h4>
+                            style="border: solid 1px; border-color: #333; width: 45%; background-color: #333; color: #fff;">
+                            <h4>Comercial</h4>
+                        </td>
+                        <td
+                            style="border: solid 1px; border-color: #333; width: 45%; background-color: #333; color: #fff;">
+                            <h4>Financiero</h4>
                         </td>
                     </tr>
                     <tr *ngFor="let venta of ventasAnuales">
-                        <td style="border: solid 1px; border-color: #828282; width: 50%;">
+                        <td style="border: solid 1px; border-color: #828282; width: 10%;">
                             {{venta.year}}
                         </td>
-                        <td style="border: solid 1px; border-color: #828282; width: 50%;">
+                        <td style="border: solid 1px; border-color: #828282; width: 45%;">
                             $ {{venta.totalSale | number}}
+                        </td>
+                        <td style="border: solid 1px; border-color: #828282; width: 45%;">
+                            $ {{venta.totalDescFin | number}}
                         </td>
                     </tr>
                 </table>
@@ -193,20 +200,27 @@
                 <table style="border: solid 1px; width: 100%; border-color: #828282;">
                     <tr>
                         <td
-                            style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
+                            style="border: solid 1px; border-color: #333; width: 20%; background-color: #333; color: #fff;">
                             <h4>Mes</h4>
                         </td>
                         <td
-                            style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
-                            <h4>Ventas</h4>
+                            style="border: solid 1px; border-color: #333; width: 40%; background-color: #333; color: #fff;">
+                            <h4>Comercial</h4>
+                        </td>
+                        <td
+                            style="border: solid 1px; border-color: #333; width: 40%; background-color: #333; color: #fff;">
+                            <h4>Financiero</h4>
                         </td>
                     </tr>
                     <tr *ngFor="let venta of ventasMensuales">
-                        <td style="border: solid 1px; border-color: #828282; width: 50%;">
+                        <td style="border: solid 1px; border-color: #828282; width: 20%;">
                             {{venta.month}}
                         </td>
-                        <td style="border: solid 1px; border-color: #828282; width: 50%;">
+                        <td style="border: solid 1px; border-color: #828282; width: 40%;">
                             $ {{venta.totalSale | number}}
+                        </td>
+                        <td style="border: solid 1px; border-color: #828282; width: 40%;">
+                            $ {{venta.totalDescFin | number}}
                         </td>
                     </tr>
                 </table>
@@ -227,20 +241,27 @@
                 <table style="border: solid 1px; width: 100%; border-color: #828282;">
                     <tr>
                         <td
-                            style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
+                            style="border: solid 1px; border-color: #333; width: 10%; background-color: #333; color: #fff;">
                             <h4>Año</h4>
                         </td>
                         <td
-                            style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
-                            <h4>Margen</h4>
+                            style="border: solid 1px; border-color: #333; width: 45%; background-color: #333; color: #fff;">
+                            <h4>Comercial</h4>
+                        </td>
+                        <td
+                            style="border: solid 1px; border-color: #333; width: 45%; background-color: #333; color: #fff;">
+                            <h4>Financiero</h4>
                         </td>
                     </tr>
                     <tr *ngFor="let venta of ventasAnuales">
-                        <td style="border: solid 1px; border-color: #828282; width: 50%;">
+                        <td style="border: solid 1px; border-color: #828282; width: 10%;">
                             {{venta.year}}
                         </td>
-                        <td style="border: solid 1px; border-color: #828282; width: 50%;">
+                        <td style="border: solid 1px; border-color: #828282; width: 45%;">
                             % {{venta.margeSale | number}}
+                        </td>
+                        <td style="border: solid 1px; border-color: #828282; width: 45%;">
+                            % {{venta.margeDesFin | number}}
                         </td>
                     </tr>
                 </table>
@@ -261,20 +282,27 @@
                 <table style="border: solid 1px; width: 100%; border-color: hsl(0, 32%, 8%);">
                     <tr>
                         <td
-                            style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
+                            style="border: solid 1px; border-color: #333; width: 20%; background-color: #333; color: #fff;">
                             <h4>Mes</h4>
                         </td>
                         <td
-                            style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
-                            <h4>Margen</h4>
+                            style="border: solid 1px; border-color: #333; width: 40%; background-color: #333; color: #fff;">
+                            <h4>Comercial</h4>
+                        </td>
+                        <td
+                            style="border: solid 1px; border-color: #333; width: 40%; background-color: #333; color: #fff;">
+                            <h4>Finaciero</h4>
                         </td>
                     </tr>
                     <tr *ngFor="let venta of ventasMensuales">
-                        <td style="border: solid 1px; border-color: #828282; width: 50%;">
+                        <td style="border: solid 1px; border-color: #828282; width: 20%;">
                             {{venta.month}}
                         </td>
-                        <td style="border: solid 1px; border-color: #828282; width: 50%;">
+                        <td style="border: solid 1px; border-color: #828282; width: 40%;">
                             % {{venta.margeSale | number}}
+                        </td>
+                        <td style="border: solid 1px; border-color: #828282; width: 40%;">
+                            % {{venta.margeDesFin | number}}
                         </td>
                     </tr>
                 </table>

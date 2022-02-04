@@ -21,6 +21,9 @@ export class SalesOrder {
     public comments: string;
     public undEmpStand: number;
     public vlrDeclarStand: number;
+    public qty: number;
+    public porcFlet: number;
+
     constructor() { }
 }
 

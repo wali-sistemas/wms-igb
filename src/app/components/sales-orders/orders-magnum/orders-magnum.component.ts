@@ -53,6 +53,7 @@ export class OrdersMagnumComponent implements OnInit {
   public validStatusOrder: boolean = true;
   public validFlete: boolean = true;
   public invoiceErrorMessage: string = '';
+  public qtyUnd: number;
 
   constructor(private _userService: UserService, private _salesOrdersService: SalesOrdersService, private _deliveryService: DeliveryService, private _route: ActivatedRoute, private _router: Router, private _healthchekService: HealthchekService, private _genericService: GenericService, private _invoiceService: InvoiceService) {
     this.orders = new Array<SalesOrder>();
@@ -154,6 +155,19 @@ export class OrdersMagnumComponent implements OnInit {
     this.address = order.address;
     this.comments = order.comments;
     this.selectedTransp = order.transp;
+    this.qtyUnd = order.qty;
+    this.lio = Math.round(order.qty / 6);
+    this.flete = Math.round(order.subTotal * (order.porcFlet / 100));
+
+    //Calculando peso y valor declarado
+    for (let i = 0; i < this.orders.length; i++) {
+      const ord = this.orders[i];
+      if (ord.docNum == order.docNum) {
+        this.pesoPack = (ord.undEmpStand * this.lio);
+        this.valorDeclPack = (ord.vlrDeclarStand * this.lio);
+        break;
+      }
+    }
 
     $('#modal_add_invoice').modal('show');
   }
