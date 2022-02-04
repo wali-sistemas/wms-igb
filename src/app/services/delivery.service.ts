@@ -19,4 +19,9 @@ export class DeliveryService {
         return this._http.post(this.url + 'delivery/modula', orderMDL, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
+
+    public createDeliveryMagnum(deliveryNoteMagnumDTO) {
+        return this._http.post(this.url + 'delivery/magnum', deliveryNoteMagnumDTO, { headers: new IGBHeaders().loadHeaders() })
+            .map(res => res.json());
+    }
 }

@@ -226,6 +226,28 @@
   top: 14px;
 }
 
+.ng-valid[required], .ng-valid.required {
+  border-color: #6D9197
+}
+
+.ng-touched.ng-invalid[required], .ng-untouched.ng-pristine.ng-invalid[required].required-field {
+  border-color: #da0611;
+}
+
+.box-invoice{
+  height: 175px;
+  margin-bottom: 10px;
+  background-color: #333;
+  color: #ddd;
+  /*font-size: 100px;*/
+  text-align: center;
+}
+
+.box-invoice:hover {
+  color: #ddd;
+  background-color: #da0611;
+}
+
 @media only screen and (max-width: 769px) {
   .date {
     text-align: center;
