@@ -99,12 +99,10 @@ export class ReportComexComponent implements OnInit {
                 this.typeShipment = this.timesImports[0].typeShipment;
                 this.nroQty = this.timesImports[0].nroQty;
                 this.liquid = this.timesImports[0].liquid;
-                this.embarque = this.timesImports[2].information;
-                this.zarpe = this.timesImports[2].information;
-                this.arriboPuerto = this.timesImports[3].information;
-                this.arriboCedi = this.timesImports[4].information;
-                this.cargaLista = this.timesImports[5].information;
-
+                this.zarpe = this.timesImports[3].information;
+                this.cargaLista = this.timesImports[2].information;
+                this.arriboPuerto = this.timesImports[4].information;
+                this.arriboCedi = this.timesImports[5].information;
                 this.activeTracking = true;
                 this.trackOrder = '';
                 $('#modal_transfer_process').modal('hide');
