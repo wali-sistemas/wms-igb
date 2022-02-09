@@ -51,6 +51,17 @@
         </div>
         <br />
         <div class="row">
+            <div class="col-xs-12 margin-bottom-10">
+                <select id="tipo" class="form-control input-lg" [(ngModel)]="selectedYear" name="selectedYear"
+                    [class.required-field]="!validYear" required>
+                    <option style="display:none" disabled selected value="">Selecciona año</option>
+                    <option value="2020">2020</option>
+                    <option value="2021">2021</option>
+                </select>
+            </div>
+        </div>
+        <br />
+        <div class="row">
             <div class="col-xs-12">
                 <button class="btn btn-danger btn-lg" type="button" style="width: 100%;" (click)="getUrlReport()">
                     Generar

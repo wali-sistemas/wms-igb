@@ -17,8 +17,10 @@ export class WithholdingTaxesComponent implements OnInit {
     public logo: string;
     public document: string;
     public selectedType: string = "";
+    public selectedYear: string = "";
     public validDocument: boolean = true;
     public validType: boolean = true;
+    public validYear: boolean = true;
 
     constructor(private _reportService: ReportService, private _router: Router, private _routerParam: ActivatedRoute) {
         this._reportService = _reportService;
@@ -62,8 +64,14 @@ export class WithholdingTaxesComponent implements OnInit {
             return;
         }
 
+        if (this.selectedYear == null || this.selectedYear.length <= 0) {
+            this.validYear = false;
+            $('#modal_transfer_process').modal('hide');
+            return;
+        }
+
         let printReportDTO = {
-            "id": this.document, "copias": 0, "documento": "withholding", "companyName": this.queryParam.id, "origen": "W", "imprimir": false, "filtro": this.selectedType
+            "id": this.document, "copias": 0, "documento": "withholding", "companyName": this.queryParam.id, "origen": "W", "imprimir": false, "filtro": this.selectedType, "filtroSec": this.selectedYear
         }
 
         this._reportService.generateReportManager(printReportDTO).subscribe(
