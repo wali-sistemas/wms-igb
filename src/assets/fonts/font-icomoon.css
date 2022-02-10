@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?thskyf');
-  src:  url('fonts/icomoon.eot?thskyf#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?thskyf') format('truetype'),
-    url('fonts/icomoon.woff?thskyf') format('woff'),
-    url('fonts/icomoon.svg?thskyf#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?x6m7rs');
+  src:  url('fonts/icomoon.eot?x6m7rs#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?x6m7rs') format('truetype'),
+    url('fonts/icomoon.woff?x6m7rs') format('woff'),
+    url('fonts/icomoon.svg?x6m7rs#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -33,6 +33,30 @@
 }
 .icon-shuffle:before {
   content: "\e980";
+}
+.icon-port:before {
+  content: "\e96c";
+}
+.icon-harbor:before {
+  content: "\e96d";
+}
+.icon-port_2:before {
+  content: "\e96e";
+}
+.icon-freight:before {
+  content: "\e96f";
+}
+.icon-container:before {
+  content: "\e970";
+}
+.icon-container-truck:before {
+  content: "\e971";
+}
+.icon-cruise:before {
+  content: "\e96a";
+}
+.icon-boat:before {
+  content: "\e96b";
 }
 .icon-codeqr:before {
   content: "\e983";
