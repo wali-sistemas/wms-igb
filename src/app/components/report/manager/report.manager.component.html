@@ -459,7 +459,8 @@
                             <td scope="col" style="border-bottom: 0px;">$ {{total121a360 | number}}</td>
                             <td scope="col" style="border-bottom: 0px;">$ {{totalMayor360 | number}}</td>
                             <td scope="col" style="border-bottom: 0px;">$
-                                {{totalSinVencer + total0a20 + total21a55 + total56a120 + total121a360 + totalMayor360 | number}}
+                                {{totalSinVencer + total0a20 + total21a55 + total56a120 + total121a360 + totalMayor360 |
+                                number}}
                             </td>
                         </tr>
                     </tfoot>
@@ -873,7 +874,8 @@
         <div class="form-group">
             <div class="col-md-6 col-md-offset-3">
                 <form (submit)="getTrackingOrder()">
-                    <input type="text" id="trackOrder" class="form-control input-lg" [(ngModel)]="trackOrder" name="trackOrder" placeholder="Seguir Order"/>
+                    <input type="text" id="trackOrder" class="form-control input-lg" [(ngModel)]="trackOrder"
+                        name="trackOrder" placeholder="Seguir Order" />
                 </form>
             </div>
         </div>
@@ -886,14 +888,43 @@
                                 <div class="events-wrapper">
                                     <div class="events" style="width: 1800px;">
                                         <ol>
-                                            <li><a style="left: 100px;" class="older-event" [class.selected]="createDate.length > 0">Orden Creada<br/>{{createDate}}</a></li>
-                                            <li><a style="left: 200px;" class="older-event" [class.selected]="cargaLista.length > 0">Carga Puerto<br/>{{cargaLista}}</a></li>
-                                            <li><a style="left: 300px;" class="older-event" [class.selected]="zarpe.length > 0">Zarpe<br/>{{zarpe}}</a></li>
-                                            <li><a style="left: 400px;" class="older-event" [class.selected]="arriboPuerto.length > 0">Tránsito<br/>mar</a></li>
-                                            <li><a style="left: 500px;" class="older-event" [class.selected]="arriboPuerto.length > 0">Arribo Puerto<br/>{{arriboPuerto}}</a></li>
-                                            <li><a style="left: 600px;" class="older-event" [class.selected]="arriboCedi.length > 0">Arribo Cedi<br/>{{arriboCedi}}</a></li>
+                                            <li><a style="left: 100px;" class="older-event"
+                                                    [class.selected]="createDate.length > 0">Orden
+                                                    Creada<br />{{createDate}}</a>
+                                                <span class="icon-container"
+                                                    style="position: absolute;left: 111px;font-size: 34px;top: 12px;"></span>
+                                            </li>
+                                            <li><a style="left: 200px;" class="older-event"
+                                                    [class.selected]="cargaLista.length > 0">Carga
+                                                    Puerto<br />{{cargaLista}}</a>
+                                                <span class="icon-port_2"
+                                                    style="position: absolute;left: 210px;font-size: 34px;top: 12px;"></span>
+                                            </li>
+                                            <li><a style="left: 300px;" class="older-event"
+                                                    [class.selected]="zarpe.length > 0">Zarpe<br />{{zarpe}}</a>
+                                                <span class="icon-boat"
+                                                    style="position: absolute;left: 310px;font-size: 33px;top: 12px;"></span>
+                                            </li>
+                                            <li><a style="left: 400px;" class="older-event"
+                                                    [class.selected]="arriboPuerto.length > 0">Tránsito<br />mar</a>
+                                                <span class="icon-cruise"
+                                                    style="position: absolute;left: 401px;font-size: 32px;top: 12px;"></span>
+                                            </li>
+                                            <li><a style="left: 500px;" class="older-event"
+                                                    [class.selected]="arriboPuerto.length > 0">Arribo
+                                                    Puerto<br />{{arriboPuerto}}</a>
+                                                <span class="icon-harbor"
+                                                    style="position: absolute;left: 515px;font-size: 35px;top: 12px;"></span>
+                                            </li>
+                                            <li><a style="left: 600px;" class="older-event"
+                                                    [class.selected]="arriboCedi.length > 0">Arribo
+                                                    Cedi<br />{{arriboCedi}}</a>
+                                                <span class="icon-container-truck"
+                                                    style="position: absolute;left: 615px;font-size: 35px;top: 12px;"></span>
+                                            </li>
                                         </ol>
-                                        <span class="filling-line" aria-hidden="true" style="transform: scaleX(0.481506);"></span>
+                                        <span class="filling-line" aria-hidden="true"
+                                            style="transform: scaleX(0.481506);"></span>
                                     </div>
                                 </div>
                                 <ul class="cd-timeline-navigation">
@@ -960,12 +991,15 @@
             </div>
             <div class="col-xs-12 col-md-8 col-md-offset-2">
                 <!-- Tabla Desktop y mobile-->
-                <table class="table table-sm visible-lg visible-md visible-sm visible-xs" style="border: solid 1px; width: 100%; border-color: hsl(0, 32%, 8%);">
+                <table class="table table-sm visible-lg visible-md visible-sm visible-xs"
+                    style="border: solid 1px; width: 100%; border-color: hsl(0, 32%, 8%);">
                     <tr>
-                        <td style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
+                        <td
+                            style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
                             <h4>Concepto</h4>
                         </td>
-                        <td style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
+                        <td
+                            style="border: solid 1px; border-color: #333; width: 50%; background-color: #333; color: #fff;">
                             <h4>Información</h4>
                         </td>
                     </tr>
