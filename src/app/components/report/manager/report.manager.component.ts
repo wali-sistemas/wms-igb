@@ -93,7 +93,7 @@ export class ReportManagerComponent implements OnInit {
     public barChartTypeCostoCompra: string = 'bar';
     public barChartLegend = true;
     public barChartLabelsCostoCompra: string[];
-    public barChartDataCostoCompra: any[] = [{ data: [], label: '' }, { data: [], label: '' }, { data: [], label: '' }];
+    public barChartDataCostoCompra: any[] = [{ data: [], label: '' }, { data: [], label: '' }, { data: [], label: '' }, { data: [], label: '' }];
     public costosCompras: Array<PurchaseCost>;
     /***COMEX Factor compra***/
     public factoresCompras: Array<any>;
@@ -165,7 +165,8 @@ export class ReportManagerComponent implements OnInit {
             this.barChartDataCostoCompra = [
                 { data: [this.costosCompras[0].costLogistic, this.costosCompras[1].costLogistic, this.costosCompras[2].costLogistic, this.costosCompras[3].costLogistic, this.costosCompras[4].costLogistic, this.costosCompras[5].costLogistic, this.costosCompras[6].costLogistic, this.costosCompras[7].costLogistic, this.costosCompras[8].costLogistic, this.costosCompras[9].costLogistic, this.costosCompras[10].costLogistic, this.costosCompras[11].costLogistic], label: '2019' },
                 { data: [this.costosCompras[12].costLogistic, this.costosCompras[13].costLogistic, this.costosCompras[14].costLogistic, this.costosCompras[15].costLogistic, this.costosCompras[16].costLogistic, this.costosCompras[17].costLogistic, this.costosCompras[18].costLogistic, this.costosCompras[19].costLogistic, this.costosCompras[20].costLogistic, this.costosCompras[21].costLogistic, this.costosCompras[22].costLogistic, this.costosCompras[23].costLogistic], label: '2020' },
-                { data: [this.costosCompras[24].costLogistic, this.costosCompras[25].costLogistic, this.costosCompras[26].costLogistic, this.costosCompras[27].costLogistic, this.costosCompras[28].costLogistic, this.costosCompras[29].costLogistic, this.costosCompras[30].costLogistic, this.costosCompras[31].costLogistic, this.costosCompras[32].costLogistic, this.costosCompras[33].costLogistic, this.costosCompras[34].costLogistic, this.costosCompras[35].costLogistic], label: '2021' }
+                { data: [this.costosCompras[24].costLogistic, this.costosCompras[25].costLogistic, this.costosCompras[26].costLogistic, this.costosCompras[27].costLogistic, this.costosCompras[28].costLogistic, this.costosCompras[29].costLogistic, this.costosCompras[30].costLogistic, this.costosCompras[31].costLogistic, this.costosCompras[32].costLogistic, this.costosCompras[33].costLogistic, this.costosCompras[34].costLogistic, this.costosCompras[35].costLogistic], label: '2021' },
+                { data: [this.costosCompras[36].costLogistic, this.costosCompras[37].costLogistic, this.costosCompras[38].costLogistic, this.costosCompras[39].costLogistic, this.costosCompras[40].costLogistic, this.costosCompras[41].costLogistic, this.costosCompras[42].costLogistic, this.costosCompras[43].costLogistic, this.costosCompras[44].costLogistic, this.costosCompras[45].costLogistic, this.costosCompras[46].costLogistic, this.costosCompras[47].costLogistic], label: '2022' }
             ];
         }
         /***Informe costo import COMEX***/
@@ -235,7 +236,7 @@ export class ReportManagerComponent implements OnInit {
     }
 
     private cleanCostoCompra() {
-        this.barChartDataCostoCompra = [{ data: [], label: '' }, { data: [], label: '' }, { data: [], label: '' }];
+        this.barChartDataCostoCompra = [{ data: [], label: '' }, { data: [], label: '' }, { data: [], label: '' }, { data: [], label: '' }];
         this.costosCompras = new Array<PurchaseCost>();
     }
 
