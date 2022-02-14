@@ -264,11 +264,7 @@ export class OrdersMagnumComponent implements OnInit {
       this.validFlete = false;
       return;
     }
-    if (this.flete === 0) {
-      this.invoiceErrorMessage = 'El flete debe ser mayor a 0.';
-      return;
-    }
-    if (this.lio === 0) {
+    if (this.lio <= 0) {
       this.invoiceErrorMessage = 'Lios debe ser mayor a 0.';
       return;
     }
