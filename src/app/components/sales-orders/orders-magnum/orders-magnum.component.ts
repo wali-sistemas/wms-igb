@@ -23,7 +23,7 @@ export class OrdersMagnumComponent implements OnInit {
   public token;
   public orders: Array<SalesOrder>;
   public filteredOrders: Array<SalesOrder>;
-  public selectedOrders: Map<String, String>;
+  public selectedOrders: Map<string, string>;
   public pickingExpressModuleAccesible: boolean = false;
   public salesOrderMessage: string = '';
   public pickExpressErrorMessage: string = '';
@@ -58,7 +58,7 @@ export class OrdersMagnumComponent implements OnInit {
   constructor(private _userService: UserService, private _salesOrdersService: SalesOrdersService, private _deliveryService: DeliveryService, private _route: ActivatedRoute, private _router: Router, private _healthchekService: HealthchekService, private _genericService: GenericService, private _invoiceService: InvoiceService) {
     this.orders = new Array<SalesOrder>();
     this.filteredOrders = new Array<SalesOrder>();
-    this.selectedOrders = new Map<String, String>();
+    this.selectedOrders = new Map<string, string>();
     this.transports = new Array<any>();
   }
 
@@ -102,7 +102,7 @@ export class OrdersMagnumComponent implements OnInit {
 
     this.orders = new Array<SalesOrder>();
     this.filteredOrders = new Array<SalesOrder>();
-    this.selectedOrders = new Map<String, String>();
+    this.selectedOrders = new Map<string, string>();
 
     this._salesOrdersService.listOpenOrdersMagnum().subscribe(
       response => {
@@ -308,6 +308,9 @@ export class OrdersMagnumComponent implements OnInit {
   }
 
   public clearOrder() {
+    this.searchFilter = '';
+    this.docEntryDelivery = 0;
+    this.deliveryErrorMessage = '';
     this.transport = '';
     this.lio = 0;
     this.pesoPack = 0;

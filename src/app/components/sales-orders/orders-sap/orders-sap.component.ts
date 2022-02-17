@@ -26,7 +26,7 @@ export class OrdersSapComponent implements OnInit {
   public searchFilter: string;
   public showApprovedOnly: boolean = true;
   public filterGroup: boolean = false;
-  public selectedOrders: Map<String, String>;
+  public selectedOrders: Map<string, string>;
   public assignableUsers: Array<any>;
   public availableStock: Array<any>;
   public selectedUser: string = '';
@@ -37,7 +37,7 @@ export class OrdersSapComponent implements OnInit {
   public processDeliveryStatus: string = 'none';
   public processPrintLabelsStatus: string = 'none';
   public docEntryDelivery: number;
-  public orderPickingExpress: String;
+  public orderPickingExpress: string = '';
   public orderPickingExpressMDL: string = '';
   public deliveryErrorMessage: string = '';
   public pickExpressErrorMessage: string = '';
@@ -53,7 +53,7 @@ export class OrdersSapComponent implements OnInit {
     private _modulaService: ModulaService) {
     this.orders = new Array<SalesOrder>();
     this.filteredOrders = new Array<SalesOrder>();
-    this.selectedOrders = new Map<String, String>();
+    this.selectedOrders = new Map<string, string>();
   }
 
   ngOnInit() {
@@ -82,7 +82,9 @@ export class OrdersSapComponent implements OnInit {
 
     this.orders = new Array<SalesOrder>();
     this.filteredOrders = new Array<SalesOrder>();
-    this.selectedOrders = new Map<String, String>();
+    this.selectedOrders = new Map<string, string>();
+    this.assignableUsers = new Array<any>();
+    this.availableStock = new Array<any>();
 
     this._salesOrdersService.listOpenOrders(this.showApprovedOnly, this.filterGroup).subscribe(
       response => {
@@ -176,7 +178,7 @@ export class OrdersSapComponent implements OnInit {
   public filterOrders(force) {
     if (this.filter.length > 0) {
       this.searchFilter = this.filter.toLowerCase();
-      this.filteredOrders = new Array<SalesOrder>(); 
+      this.filteredOrders = new Array<SalesOrder>();
       for (let i = 0; i < this.orders.length; i++) {
         const ord = this.orders[i];
         if (ord.docNum.toLowerCase().includes(this.searchFilter)
@@ -289,6 +291,10 @@ export class OrdersSapComponent implements OnInit {
       if (Array.from(this.selectedOrders.entries())[0][1].includes("-")) {
         this.orderPickingExpressMDL = Array.from(this.selectedOrders.entries())[0][1].slice(-6);
       }
+
+      console.log('Orden de SAP=', this.orderPickingExpress);
+      console.log('Orden de MDL=', this.orderPickingExpressMDL);
+
       //Validar si la orden de modula esta aprobada y autorizada por el area administrativa.
       if (this.orderPickingExpressMDL.length > 0) {
         this._salesOrdersService.validateOrderAuthorized(this.orderPickingExpressMDL).subscribe(
@@ -340,6 +346,9 @@ export class OrdersSapComponent implements OnInit {
       "orderMDL": this.orderPickingExpressMDL
     }
 
+    console.log('DTO para crear Entrega=', pickingExpressOrderDTO);
+
+
     this._deliveryService.createPickingExpress(pickingExpressOrderDTO).subscribe(
       response => {
         if (response.code == 0) {
@@ -363,6 +372,19 @@ export class OrdersSapComponent implements OnInit {
     this.processDeliveryStatus = 'none';
     this.processPrintLabelsStatus = 'none';
     this.pickExpressErrorMessage = '';
+    this.searchFilter = '';
+    this.showApprovedOnly = true;
+    this.filterGroup = false;
+    this.selectedUser = '';
+    this.allStockAvailable = true;
+    this.loadingAvailableStock = false;
+    this.selectedOrder = 0;
+    this.docEntryDelivery = 0;
+    this.orderPickingExpress = '';
+    this.orderPickingExpressMDL = '';
+    this.deliveryErrorMessage = '';
+    this.multiPickingErrorMessage = '';
+    this.orderNumber = '';
     this.listOpenOrders();
   }
 
