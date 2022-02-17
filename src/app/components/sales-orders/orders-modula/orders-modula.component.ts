@@ -26,7 +26,7 @@ export class OrdersModulaComponent implements OnInit {
   public searchFilter: string;
   public showApprovedOnly: boolean = true;
   public filterGroup: boolean = false;
-  public selectedOrders: Map<String, String>;
+  public selectedOrders: Map<string, string>;
   public assignableUsers: Array<any>;
   public availableStock: Array<any>;
   public selectedUser: string = '';
@@ -37,7 +37,7 @@ export class OrdersModulaComponent implements OnInit {
   public processDeliveryStatus: string = 'none';
   public processPrintLabelsStatus: string = 'none';
   public docEntryDelivery: number;
-  public orderPickingExpressMDL: String = '';
+  public orderPickingExpressMDL: string = '';
   public salesOrderMessage: string = '';
   public deliveryErrorMessage: string = '';
   public pickExpressErrorMessage: string = '';
@@ -53,7 +53,7 @@ export class OrdersModulaComponent implements OnInit {
     private _modulaService: ModulaService) {
     this.orders = new Array<SalesOrder>();
     this.filteredOrders = new Array<SalesOrder>();
-    this.selectedOrders = new Map<String, String>();
+    this.selectedOrders = new Map<string, string>();
   }
 
   ngOnInit() {
@@ -83,7 +83,7 @@ export class OrdersModulaComponent implements OnInit {
 
     this.orders = new Array<SalesOrder>();
     this.filteredOrders = new Array<SalesOrder>();
-    this.selectedOrders = new Map<String, String>();
+    this.selectedOrders = new Map<string, string>();
 
     this._salesOrdersService.listOpenOrdersModula(this.showApprovedOnly, this.filterGroup).subscribe(
       response => {
@@ -268,6 +268,18 @@ export class OrdersModulaComponent implements OnInit {
     this.processDeliveryStatus = 'none';
     this.processPrintLabelsStatus = 'none';
     this.pickExpressErrorMessage = '';
+    this.searchFilter = '';
+    this.showApprovedOnly = true;
+    this.filterGroup = false;
+    this.selectedUser = '';
+    this.allStockAvailable = true;
+    this.loadingAvailableStock = false;
+    this.selectedOrder = 0;
+    this.docEntryDelivery = 0;
+    this.orderPickingExpressMDL = '';
+    this.deliveryErrorMessage = '';
+    this.multiPickingErrorMessage = '';
+    this.orderNumber = '';
     this.listOpenOrders();
   }
 
