@@ -237,13 +237,16 @@
         [class.unauthorized]="order.address.length === 0 || order.transp.length === 0"
         [class.selected]="selectedOrders.has(order.docNum)" (click)="selectOrder(order)">
         <div class="row">
-          <div class="col-sm-4">
+          <div class="col-sm-3">
             <div class="date"><b>{{order.docDate}}</b></div>
           </div>
-          <div class="col-sm-4" style="min-height: 24px;">
+          <div class="col-sm-3" style="min-height: 24px;">
             <div class="order-num"><b>SAP {{order.docNum}}</b></div>
           </div>
-          <div class="col-sm-4">
+          <div class="col-sm-3" style="min-height: 24px;">
+            <div class="order-num"><b>{{order.condPayment}}</b></div>
+          </div>
+          <div class="col-sm-3">
             <div class="assigned-employee"><span class="icon-warehouse-all"
                 style="font-size: 18px;"></span>{{order.whsCode == '26' ? 'CALI' : 'CARTAGENA'}}</div>
           </div>

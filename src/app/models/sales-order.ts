@@ -23,6 +23,7 @@ export class SalesOrder {
     public vlrDeclarStand: number;
     public qty: number;
     public porcFlet: number;
+    public condPayment: number;
 
     constructor() { }
 }
