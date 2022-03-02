@@ -9,7 +9,7 @@
 
 <script src="assets/js/scroll.js"></script>
 
-<!--Modal procesadndo-->
+<!--Modal procesando-->
 <div id="modal_transfer_process" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -25,38 +25,51 @@
     </div>
 </div>
 
-<!--<button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span class="icon-chevron-up"></span></button>style="width: 50%;"-->
-
 <div class="container content">
-    <h3 class="text-center">Certificado de Retenciones</h3>
+    <h3 class="text-center" *ngIf="selectedUser=='P'">Certificado de Retenciones</h3>
+    <h3 class="text-center" *ngIf="selectedUser=='C'">Certificado de Compras</h3>
     <hr>
     <form id="form">
         <div class="row">
             <div class="col-xs-12 margin-bottom-10">
-                <input id="doc" type="number" class="form-control input-lg" [(ngModel)]="document" name="document"
-                    autocorrect="off" [class.required-field]="!validDocument" autocapitalize="none" placeholder="Ingrese Nit"
-                    required>
-            </div>
-        </div>
-        <br />
-        <div class="row">
-            <div class="col-xs-12 margin-bottom-10">
-                <select id="tipo" class="form-control input-lg" [(ngModel)]="selectedType" name="selectedType"
-                    [class.required-field]="!validType" required>
-                    <option style="display:none" disabled selected value="">Selecciona tipo</option>
-                    <option value="RENTA">RENTA</option>
-                    <option value="ICA">ICA</option>
+                <select id="user" class="form-control input-lg" [(ngModel)]="selectedUser" name="selectedUser"
+                    [class.required-field]="!validUser" required>
+                    <option style="display:none" disabled selected value="">Selecciona usuario</option>
+                    <option value="P">PROVEEDOR</option>
+                    <option value="C">CLIENTE</option>
                 </select>
             </div>
         </div>
         <br />
         <div class="row">
             <div class="col-xs-12 margin-bottom-10">
-                <select id="tipo" class="form-control input-lg" [(ngModel)]="selectedYear" name="selectedYear"
+                <input id="doc" type="number" class="form-control input-lg" [(ngModel)]="document" name="document"
+                    autocorrect="off" [class.required-field]="!validDocument" autocapitalize="none"
+                    placeholder="Ingrese Nit o Cc" required>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-xs-12 margin-bottom-10">
+                <select id="year" class="form-control input-lg" [(ngModel)]="selectedYear" name="selectedYear"
                     [class.required-field]="!validYear" required>
                     <option style="display:none" disabled selected value="">Selecciona año</option>
+                    <option value="2018">2018</option>
+                    <option value="2019">2019</option>
                     <option value="2020">2020</option>
                     <option value="2021">2021</option>
+                    <option value="2022">2022</option>
+                </select>
+            </div>
+        </div>
+        <br />
+        <div class="row" *ngIf="selectedUser=='P'">
+            <div class="col-xs-12 margin-bottom-10">
+                <select id="tipo" class="form-control input-lg" [(ngModel)]="selectedType" name="selectedType"
+                    [class.required-field]="!validType" required>
+                    <option style="display:none" disabled selected value="">Selecciona tipo</option>
+                    <option value="RENTA">RENTA</option>
+                    <option value="ICA">ICA</option>
                 </select>
             </div>
         </div>
