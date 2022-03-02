@@ -21,6 +21,8 @@ export class WithholdingTaxesComponent implements OnInit {
     public validDocument: boolean = true;
     public validType: boolean = true;
     public validYear: boolean = true;
+    public selectedUser: string = "P";
+    public validUser: boolean = true;
 
     constructor(private _reportService: ReportService, private _router: Router, private _routerParam: ActivatedRoute) {
         this._reportService = _reportService;
@@ -41,7 +43,7 @@ export class WithholdingTaxesComponent implements OnInit {
             this._router.navigate(['/']);
             return;
         }
-        $('#doc').focus();
+        $('#user').focus();
     }
 
     public getUrlReport() {
@@ -51,27 +53,36 @@ export class WithholdingTaxesComponent implements OnInit {
             show: true
         });
 
-        if (this.document == null || this.document.length <= 0) {
+        if (this.selectedUser == null || this.selectedUser.length <= 0) {
+            this.validUser = false;
+            $('#modal_transfer_process').modal('hide');
+            return;
+        } else if (this.document == null || this.document.length <= 0) {
             this.validDocument = false;
             $('#modal_transfer_process').modal('hide');
             $('#doc').focus();
             return;
-        }
-
-        if (this.selectedType == null || this.selectedType.length <= 0) {
-            this.validType = false;
-            $('#modal_transfer_process').modal('hide');
-            return;
-        }
-
-        if (this.selectedYear == null || this.selectedYear.length <= 0) {
+        } else if (this.selectedYear == null || this.selectedYear.length <= 0) {
             this.validYear = false;
             $('#modal_transfer_process').modal('hide');
             return;
+        } else if (this.selectedUser == 'P') {
+            if (this.selectedType == null || this.selectedType.length <= 0) {
+                this.validType = false;
+                $('#modal_transfer_process').modal('hide');
+                return;
+            }
         }
 
         let printReportDTO = {
-            "id": this.document, "copias": 0, "documento": "withholding", "companyName": this.queryParam.id, "origen": "W", "imprimir": false, "filtro": this.selectedType, "filtroSec": this.selectedYear
+            "id": this.selectedUser == 'P' ? this.document : "C" + this.document,
+            "copias": 0,
+            "documento": this.selectedUser == 'P' ? "withholding" : "shopping",
+            "companyName": this.queryParam.id,
+            "origen": "W",
+            "imprimir": false,
+            "filtro": this.selectedType,
+            "filtroSec": this.selectedYear
         }
 
         this._reportService.generateReportManager(printReportDTO).subscribe(
@@ -92,7 +103,8 @@ export class WithholdingTaxesComponent implements OnInit {
     }
 
     private clear() {
-        this.document = '';
-        this.selectedType = '';
+        this.document = "";
+        this.selectedType = "";
+        this.selectedYear = "";
     }
 }
