@@ -79,7 +79,7 @@ export class WithholdingTaxesComponent implements OnInit {
             "copias": 0,
             "documento": this.selectedUser == 'P' ? "withholding" : "shopping",
             "companyName": this.queryParam.id,
-            "origen": "W",
+            "origen": this.selectedUser == 'P' ? "W" : "S",
             "imprimir": false,
             "filtro": this.selectedType,
             "filtroSec": this.selectedYear
