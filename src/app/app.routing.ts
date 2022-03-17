@@ -31,6 +31,7 @@ import { from } from 'rxjs/observable/from';
 import { StockTransferModulaComponent } from './components/stock-transfer/modula-transfer/stock-transfer-modula.component';
 import { ReportComexComponent } from './components/report/comex/report.comex.component';
 import { OrdersMagnumComponent } from './components/sales-orders/orders-magnum/orders-magnum.component';
+import { ClientRedplasComponent } from './components/event-feria/client-redplas/client-redplas.component';
 
 const appRoutes: Routes = [
     { path: '', component: LoginComponent },
@@ -55,6 +56,7 @@ const appRoutes: Routes = [
     { path: 'report/manager', component: ReportManagerComponent },
     { path: 'feria/igb', component: ClientIgbComponent },
     { path: 'feria/motozone', component: ClientMtzComponent },
+    { path: 'feria/redplas', component: ClientRedplasComponent },
     { path: 'check-out', component: CheckOutComponent },
     { path: 'shipping', component: ShippingComponent },
     { path: 'withholding', component: WithholdingTaxesComponent },
