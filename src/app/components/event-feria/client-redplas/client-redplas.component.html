@@ -76,16 +76,14 @@
         <br />
         <div class="row">
             <div class="col-xs-12 margin-bottom-10">
-                <select id="region" class="form-control input-lg" [(ngModel)]="selectedRegion" name="selectedRegion"
-                    [class.required-field]="!validSelectRegion" [disabled]="!authorizeData" required>
-                    <option style="display:none" disabled selected value="">Selecciona una región</option>
-                    <option value="REGION ANTIOQUIA">Antioquia</option>
-                    <option value="REGION CUNDINAMARCA">Cundinamarca</option>
-                    <option value="REGION COSTA">Costa</option>
-                    <option value="REGION NORTE">Norte</option>
-                    <option value="REGION ORIENTAL">Oriental</option>
-                    <option value="REGION VALLE">Valle</option>
-                    <option value="REGION SUR">Sur</option>
+                <select id="region" class="form-control input-lg" [(ngModel)]="selectedTipoCliente" name="selectedTipoCliente"
+                    [class.required-field]="!validSelectedTipoCliente" [disabled]="!authorizeData" required>
+                    <option style="display:none" disabled selected value="">Selecciona tipo de cliente</option>
+                    <option value="IMPORTADORA">Importadora</option>
+                    <option value="MAYORISTA">Mayorista</option>
+                    <option value="ALMACEN">Almacen</option>
+                    <option value="EXTRANJERO">Extranjero</option>
+                    <option value="NATURAL">Natural</option>
                 </select>
             </div>
         </div>
