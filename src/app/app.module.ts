@@ -39,6 +39,7 @@ import { ReportComexComponent} from './components/report/comex/report.comex.comp
 
 import { routing, appRoutingProviders } from './app.routing';
 import { from } from 'rxjs/observable/from';
+import { ClientRedplasComponent } from './components/event-feria/client-redplas/client-redplas.component';
 
 @NgModule({
   declarations: [
@@ -67,6 +68,7 @@ import { from } from 'rxjs/observable/from';
     StockItemComponent,
     ClientIgbComponent,
     ClientMtzComponent,
+    ClientRedplasComponent,
     CheckOutComponent,
     ShippingComponent,
     WithholdingTaxesComponent,

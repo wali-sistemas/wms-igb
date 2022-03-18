@@ -1,8 +1,8 @@
 <nav class="topnav visible-md visible-lg">
-    <a class="topnav-logo"><img src="/assets/images/logo-mtz.png" /></a>
+    <a class="topnav-logo"><img src="/assets/images/logo-redplas.png" /></a>
 </nav>
 <nav class="topnav visible-xs visible-sm">
-    <a class="topnav-logo"><img src="/assets/images/logo-mtz.png" /></a>
+    <a class="topnav-logo"><img src="/assets/images/logo-redplas.png" /></a>
 </nav>
 <div id="myNav" class="overlay visible-xs visible-sm">
 </div>
@@ -25,8 +25,6 @@
     </div>
 </div>
 
-<button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span class="icon-chevron-up"></span></button>
-
 <div class="container content">
     <div class="row" *ngIf="errorMessage != null && errorMessage.length > 0">
         <div class="col-xs-12">
@@ -48,7 +46,7 @@
         <div class="row">
             <div class="col-xs-12 margin-bottom-10">
                 <input id="data" type="checkbox" name="authorizeData" [(ngModel)]="authorizeData" (change)="getData()">
-                <label for="data" class="lblData">Autoriza a Motozone S.A.S al uso de los datos.<br />
+                <label for="data" class="lblData">Autoriza a IGB S.A.S al uso de los datos.<br />
                     <i>(Artículo 20 Decreto Reglamentario 1377 de 2013 de la Ley de Habeas Data)</i></label>
             </div>
         </div>
@@ -81,10 +79,13 @@
                 <select id="region" class="form-control input-lg" [(ngModel)]="selectedRegion" name="selectedRegion"
                     [class.required-field]="!validSelectRegion" [disabled]="!authorizeData" required>
                     <option style="display:none" disabled selected value="">Selecciona una región</option>
-                    <option value="PAISAS">Paisas</option>
-                    <option value="CACHACOS">Cachacos</option>
-                    <option value="NORTEÑOS">Norteños</option>
-                    <option value="SUREÑOS">Sureños</option>
+                    <option value="REGION ANTIOQUIA">Antioquia</option>
+                    <option value="REGION CUNDINAMARCA">Cundinamarca</option>
+                    <option value="REGION COSTA">Costa</option>
+                    <option value="REGION NORTE">Norte</option>
+                    <option value="REGION ORIENTAL">Oriental</option>
+                    <option value="REGION VALLE">Valle</option>
+                    <option value="REGION SUR">Sur</option>
                 </select>
             </div>
         </div>
@@ -112,30 +113,30 @@
             </div>
         </div>
         <br />
-        <label for="interes">Interesado en lubricantes para:</label>
+        <label for="interes">Interesado en:</label>
         <div class="row">
             <div class="col-xs-6 col-md-3">
-                <div class="interes" [class.selected]="selected.has(0)" (click)="selectedInteres(0,'Lubricante Moto')">
-                    <span class="icon-motorcycle" style="font-size: 100px"></span>
-                    <h3 class="title">Moto</h3>
+                <div class="interes" [class.selected]="selected.has(0)" (click)="selectedInteres(0,'Guardabarros')">
+                    <span class="icon-guardabarro2" style="font-size: 100px"></span>
+                    <h3 class="title">Guardabarros</h3>
                 </div>
             </div>
             <div class="col-xs-6 col-md-3">
-                <div class="interes" [class.selected]="selected.has(1)" (click)="selectedInteres(1,'Lubricante Auto')">
-                    <span class="icon-auto" style="font-size: 100px"></span>
-                    <h3 class="title">Auto</h3>
+                <div class="interes" [class.selected]="selected.has(1)" (click)="selectedInteres(1,'Carenajes')">
+                    <span class="icon-carenaje" style="font-size: 100px"></span>
+                    <h3 class="title">Carenajes</h3>
                 </div>
             </div>
             <div class="col-xs-6 col-md-3">
-                <div class="interes" [class.selected]="selected.has(2)" (click)="selectedInteres(2,'Lubricante Industrial')">
-                    <span class="icon-indrustry" style="font-size: 100px"></span>
-                    <h3 class="title">Industrial</h3>
+                <div class="interes" [class.selected]="selected.has(2)" (click)="selectedInteres(2,'Laterales')">
+                    <span class="icon-tapaLateral" style="font-size: 100px"></span>
+                    <h3 class="title">Laterales</h3>
                 </div>
             </div>
             <div class="col-xs-6 col-md-3">
-                <div class="interes" [class.selected]="selected.has(3)" (click)="selectedInteres(3,'Repuestos')">
-                    <span class="icon-repuestos" style="font-size: 100px"></span>
-                    <h3 class="title">Repuestos</h3>
+                <div class="interes" [class.selected]="selected.has(3)" (click)="selectedInteres(3,'Visores')">
+                    <span class="icon-visorMoto" style="font-size: 100px"></span>
+                    <h3 class="title">Visores</h3>
                 </div>
             </div>
         </div>
@@ -143,10 +144,10 @@
         <br />
         <div class="row">
             <div class="col-xs-12">
-                <button class="btn btn-danger btn-lg" type="button" (click)="clearForm()" [disabled]="!authorizeData">
+                <button class="btn btn-default btn-lg" type="button" (click)="clearForm()" [disabled]="!authorizeData">
                     Limpiar
                 </button>
-                <button class="btn btn-default btn-lg" type="button" (click)="captureClient()" [disabled]="!authorizeData">
+                <button class="btn btn-success btn-lg" type="button" (click)="captureClient()" [disabled]="!authorizeData">
                     Enviar
                 </button>
             </div>
