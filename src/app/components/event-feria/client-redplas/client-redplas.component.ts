@@ -14,7 +14,7 @@ export class ClientRedplasComponent implements OnInit {
     public contact: string;
     public whsName: string;
     public document: string;
-    public selectedRegion: string = "";
+    public selectedTipoCliente: string = "";
     public city: string;
     public phone: string;
     public mail: string;
@@ -26,7 +26,7 @@ export class ClientRedplasComponent implements OnInit {
     public validPhone: boolean = true;
     public validDocument: boolean = true;
     public validMail: boolean = true;
-    public validSelectRegion: boolean = true;
+    public validSelectedTipoCliente: boolean = true;
     public authorizeData: boolean = false;
 
     constructor(private _eventService: EventService) {
@@ -68,12 +68,6 @@ export class ClientRedplasComponent implements OnInit {
             $('#modal_transfer_process').modal('hide');
             return;
         }
-        /*if (this.selectedRegion == null || this.selectedRegion.length <= 0) {
-            this.validSelectRegion = false;
-            this.getScrollTop();
-            $('#modal_transfer_process').modal('hide');
-            return;
-        }*/
         if (this.phone == null || this.phone.length <= 0) {
             this.validPhone = false;
             this.getScrollTop();
@@ -104,7 +98,7 @@ export class ClientRedplasComponent implements OnInit {
             "correo": this.mail.toUpperCase(),
             "almacen": this.whsName,
             "interes": interes.trim(),
-            "regional": "",
+            "regional": this.selectedTipoCliente,
             "ciudad": this.city,
             "companyName": "REDPLAS"
         }
@@ -143,7 +137,7 @@ export class ClientRedplasComponent implements OnInit {
         this.phone = "";
         this.mail = "";
         this.whsName = "";
-        this.selectedRegion = "";
+        this.selectedTipoCliente = "";
         this.authorizeData = false;
         this.selected = new Map<number, string>();
         this.errorMessage = "";
