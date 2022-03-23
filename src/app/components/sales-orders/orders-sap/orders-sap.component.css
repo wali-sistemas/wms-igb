@@ -143,6 +143,17 @@
   border-color: #E5BE01;
 }
 
+.order.identity-motoSport {
+  border-color: #FF8000;
+}
+
+.order-num-motoSport {
+  background-color: #F2A033;
+  border-radius: 10px;
+  color: #333;
+  text-align: center;
+}
+
 .order.warning .assigned-employee, .order.warning .glyphicon-warning-sign{
   color: #f0ad4e;
 }
