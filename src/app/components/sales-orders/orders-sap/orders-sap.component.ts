@@ -43,6 +43,7 @@ export class OrdersSapComponent implements OnInit {
   public pickExpressErrorMessage: string = '';
   public multiPickingErrorMessage: string = '';
   public orderNumber: string = '';
+  public selectedCompany: string;
 
   constructor(private _userService: UserService,
     private _salesOrdersService: SalesOrdersService,
@@ -63,6 +64,7 @@ export class OrdersSapComponent implements OnInit {
     }
     this.listOpenOrders();
     this.pickingExpressModuleAccesible = JSON.parse(localStorage.getItem('igb.user.access')).pickingExpressModuleAccesible;
+    this.selectedCompany = this.identity.selectedCompany;
   }
 
   private redirectIfSessionInvalid(error) {

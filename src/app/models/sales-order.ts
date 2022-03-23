@@ -24,6 +24,7 @@ export class SalesOrder {
     public qty: number;
     public porcFlet: number;
     public condPayment: number;
+    public marca: string;
 
     constructor() { }
 }
