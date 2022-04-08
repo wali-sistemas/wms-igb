@@ -34,4 +34,9 @@ export class ModulaService {
         return this._http.get(this.urlManager + 'modula/orders-completed/' + order, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
+
+    public getReplicateItemModula(itemCode: string, minStock: number, maxStock: number) {
+        return this._http.get(this.urlManager + 'modula/replicate-item/' + itemCode + '/' + minStock + '/' + maxStock, { headers: new IGBHeaders().loadHeaders() })
+            .map(res => res.json());
+    }
 }
