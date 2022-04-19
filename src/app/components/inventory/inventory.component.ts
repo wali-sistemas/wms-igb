@@ -24,7 +24,8 @@ export class InventoryComponent implements OnInit {
   public itemVisible: any;
   public differences: Array<any>;
   public history: Array<any>;
-  public selectedCompany: String;
+  public selectedCompany: string;
+  public resupplyModuleAccesible: boolean = false;
 
   constructor(private _stockTransferService: StockTransferService,
     private _inventoryService: InventoryService,
@@ -52,6 +53,8 @@ export class InventoryComponent implements OnInit {
     $('#modal_process').modal('show');
     //Buscar si hay un conteo iniciado
     this.validateInventoryOpen();
+
+    this.resupplyModuleAccesible = JSON.parse(localStorage.getItem('igb.user.access')).resupplyModuleAccesible;
   }
 
   public validateInventoryOpen() {
