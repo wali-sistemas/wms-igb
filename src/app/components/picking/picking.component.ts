@@ -262,7 +262,7 @@ export class PickingComponent implements OnInit {
             binAbsFrom: this.nextBinAbs,
             binAbsTo: this.selectedCart,
             quantity: this.pickedItemQuantity,
-            expectedQuantity: this.getQuantityToPick(),
+            expectedQuantity: this.nextItemQuantity,//this.getQuantityToPick(),
             itemCode: this.nextItemCode.trim(),
             orderNumber: (this.selectedOrder == null || this.selectedOrder.length === 0) ? this.nextOrderNumber : this.selectedOrder,
             username: this.identity.username,
