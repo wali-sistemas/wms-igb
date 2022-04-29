@@ -258,6 +258,7 @@ export class PickingComponent implements OnInit {
         $('#modal_confirm_quantity_diff').modal('hide');
         console.log('confirmando cantidad para trasladar item, ' + this.nextItemQuantity + ', ' + this.pickedItemQuantity);
         this.pickedItemQuantityValidated = true;
+
         const itemTransfer = {
             binAbsFrom: this.nextBinAbs,
             binAbsTo: this.selectedCart,
@@ -268,6 +269,7 @@ export class PickingComponent implements OnInit {
             username: this.identity.username,
             warehouseCode: this._userService.getWarehouseCode()
         }
+        
         $('#modal_transfer_process').modal({
             backdrop: 'static',
             keyboard: false,
