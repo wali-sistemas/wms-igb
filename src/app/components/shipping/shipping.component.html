@@ -237,6 +237,14 @@
                 <br />
                 <div class="row">
                     <div class="col-xs-12">
+                        <input type="number" id="qtyPack" class="form-control input-lg" [(ngModel)]="qtyPack"
+                            autocomplete="off" name="qtyPack" autocorrect="off" autocapitalize="none"
+                            placeholder="Total embalaje" [class.required-field]="!validQtyPack" required>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-xs-12">
                         <input type="number" id="pesoPack" class="form-control input-lg" [(ngModel)]="pesoPack"
                             autocomplete="off" name="pesoPack" autocorrect="off" autocapitalize="none"
                             placeholder="Peso kg" [class.required-field]="!validPesoPack" required>
@@ -334,7 +342,6 @@
         <div class="col-xs-12 col-md-6" *ngFor="let invoice of invoicesShipping">
             <div class="invoice" [class.selected]="selectedInvoices.has(invoice.docNum)"
                 (click)="selectShippingInvoice(invoice)">
-                <!--(click)="openInvoice(invoice.docNum, invoice.box)"-->
                 <div class="row">
                     <div class="col-sm-4">
                         <div class="date" title="Fecha Factura"><b>{{invoice.docDate}}</b></div>
