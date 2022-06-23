@@ -31,6 +31,7 @@ export class ShippingComponent implements OnInit {
     public docNumPayroll: string = '';
     public transportPayroll: string = '';
     public selectBox: number = 0;
+    public qtyPack: number;
     public fullShipping: boolean = false;
     public validQtyPack: boolean = false;
     public validPesoPack: boolean = false;
@@ -165,26 +166,18 @@ export class ShippingComponent implements OnInit {
     }
 
     public addShipping() {
-        $('#modal_transfer_process').modal({
-            backdrop: 'static',
-            keyboard: false,
-            show: true
-        });
-
-        let ShippingDTO = { 'invoice_number': this.selectInvoice, 'box_sum_shipping': this.selectBox }
+        let ShippingDTO = { 'invoice_number': this.selectInvoice, 'box_sum_shipping': this.qtyPack }
 
         this._shippingService.addShipping(ShippingDTO).subscribe(
             response => {
                 if (response.code < 0) {
                     this.warningMessage = response.content;
                 }
-                $('#close_confirmation').modal('hide');
                 this.listInvoices();
                 this.clean();
             },
             error => {
                 console.error("Ocurrio un error al crear el shipping.", error);
-                $('#modal_transfer_process').modal('hide');
                 this.redirectIfSessionInvalid(error);
             }
         );
@@ -330,6 +323,7 @@ export class ShippingComponent implements OnInit {
         this.warningMessage = '';
         this.errorMessage = '';
         this.fullShipping = false;
+        this.qtyPack = 0;
     }
 
     public setIdContainer() {
@@ -405,15 +399,20 @@ export class ShippingComponent implements OnInit {
                             //Registramos shipping en tablas temporales
                             this.addShipping();
 
+                            $('#modal_transfer_process').modal('hide');
+
                             let landingUrl = response.content;
                             window.open(landingUrl, "_blank");
                             this.clean();
                         } else {
                             this.warningMessage = response.content;
+                            $('#modal_transfer_process').modal('hide');
                         }
-                        $('#modal_transfer_process').modal('hide');
                     },
-                    error => { console.error(error); }
+                    error => {
+                        console.error(error);
+                        this.redirectIfSessionInvalid(error);
+                    }
                 );
                 break;
             case 'SAFERBO':
