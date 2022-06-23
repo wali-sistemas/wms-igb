@@ -91,18 +91,18 @@ export class WithholdingTaxesComponent implements OnInit {
                     let landingUrl = this.urlShared + printReportDTO.companyName + "/" + printReportDTO.documento + "/" + printReportDTO.filtro + "/" + printReportDTO.id + ".pdf";
                     window.open(landingUrl, "_self");
                 }
-                this.clear();
+                this.clean();
                 $('#modal_transfer_process').modal('hide');
             },
             error => {
                 console.error('Ocurrio un error al generar el certificado.', error);
-                this.clear();
+                this.clean();
                 $('#modal_transfer_process').modal('hide');
             }
         );
     }
 
-    private clear() {
+    private clean() {
         this.document = "";
         this.selectedType = "";
         this.selectedYear = "";
