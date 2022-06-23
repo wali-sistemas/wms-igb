@@ -21,7 +21,7 @@ export class ShippingService {
             .map(res => res.json());
     }
 
-    public createGuiaTransport(ApiSaferboDTO) {
+    public createGuiaSaferbo(ApiSaferboDTO) {
         return this._http.post(this.url + 'shipping/add-guia-saferbo', ApiSaferboDTO, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
@@ -38,6 +38,11 @@ export class ShippingService {
 
     public listTransPayroll() {
         return this._http.get(this.url + 'shipping/list-transp-payroll', { headers: new IGBHeaders().loadHeaders() })
+            .map(res => res.json());
+    }
+
+    public createGuiaRapidoochoa(GuiaDTO, invoices) {
+        return this._http.post(this.url + 'shipping/add-guia-rapidoochoa/' + invoices, GuiaDTO, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
 }
