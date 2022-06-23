@@ -398,6 +398,7 @@ export class ShippingComponent implements OnInit {
                         if (response.code == 0) {
                             //Registramos shipping en tablas temporales
                             this.addShipping();
+
                             $('#modal_transfer_process').modal('hide');
 
                             let landingUrl = response.content;
