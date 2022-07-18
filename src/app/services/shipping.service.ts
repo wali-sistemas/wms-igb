@@ -45,4 +45,9 @@ export class ShippingService {
         return this._http.post(this.url + 'shipping/add-guia-rapidoochoa/' + invoices, GuiaDTO, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
+
+    public createGuiaOla(GuiaOlaDTO, invoices) {
+        return this._http.post(this.url + 'shipping/add-guia-ola/' + invoices, GuiaOlaDTO, { headers: new IGBHeaders().loadHeaders() })
+            .map(res => res.json());
+    }
 }
