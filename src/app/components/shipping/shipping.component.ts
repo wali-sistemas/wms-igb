@@ -33,12 +33,13 @@ export class ShippingComponent implements OnInit {
     public selectBox: number = 0;
     public qtyPack: number;
     public fullShipping: boolean = false;
-    public validQtyPack: boolean = false;
-    public validPesoPack: boolean = false;
-    public validValorDeclPack: boolean = false;
-    public validAddressReceive: boolean = false;
-    public validCityReceive: boolean = false;
-    public validCommetPack: boolean = false;
+    public validQtyPack: boolean = true;
+    public validPesoPack: boolean = true;
+    public validValorDeclPack: boolean = true;
+    public validAddressReceive: boolean = true;
+    public validCityReceive: boolean = true;
+    public validCommetPack: boolean = true;
+    public validSelectedTypePack: boolean = true;
     public invoicesShipping: Array<ShippingInvoice>;
     public selectedInvoices: Map<String, ShippingInvoice>;
     public transports: Array<any>;
@@ -326,6 +327,12 @@ export class ShippingComponent implements OnInit {
         this.errorMessage = '';
         this.fullShipping = false;
         this.qtyPack = 0;
+        this.selectedTypePack = '';
+        this.pesoPack = 0;
+        this.valorDeclPack = 0;
+        this.addressReceive = '';
+        this.commetPack = '';
+        this.selectedInvoices = new Map<String, ShippingInvoice>();
     }
 
     public setIdContainer() {
@@ -374,11 +381,18 @@ export class ShippingComponent implements OnInit {
             invoices = this.selectInvoice;
         }
 
+        let poblacionDestino;
+        if (this.selectInvoicesPack[0].depart == 'ANTIOQUIA' || this.selectInvoicesPack[0].depart == 'ATLANTICO') {
+            poblacionDestino = this.selectInvoicesPack[0].codCity.substring(1, this.selectInvoicesPack[0].codCity.length) + "000";
+        } else {
+            poblacionDestino = this.selectInvoicesPack[0].codCity + "000";
+        }
+
         switch (this.selectedTransp) {
             case 'RAPIDO OCHOA':
                 const rapidoochoaDTO = {
                     "cdPoblacionOrigen": "5001000",//Medellin
-                    "cdPoblacionDestino": this.selectInvoicesPack[0].depart == 'ANTIOQUIA' ? this.selectInvoicesPack[0].codCity.substring(1, this.selectInvoicesPack[0].codCity.length) + "000" : this.selectInvoicesPack[0].codCity + "000",
+                    "cdPoblacionDestino": poblacionDestino,
                     "nmPesoDeclarado": this.pesoPack,
                     "nmUnidPorEmbalaje": this.selectedTypePack,
                     "vmValorDeclarado": this.valorDeclPack,
@@ -395,11 +409,7 @@ export class ShippingComponent implements OnInit {
                     "nmFormaDePago": "CRÉDITO"
                 }
 
-                console.log(rapidoochoaDTO);
-                console.log(this.selectInvoicesPack);
-
-
-                /*this._shippingService.createGuiaRapidoochoa(rapidoochoaDTO, invoices).subscribe(
+                this._shippingService.createGuiaRapidoochoa(rapidoochoaDTO, invoices).subscribe(
                     response => {
                         if (response.code == 0) {
                             //Registramos shipping en tablas temporales
@@ -419,9 +429,9 @@ export class ShippingComponent implements OnInit {
                         console.error(error);
                         this.redirectIfSessionInvalid(error);
                     }
-                );*/
+                );
                 break;
-            case 'SAFERBO':
+            /*case 'SAFERBO':
                 const apiSaferboDTO = {
                     //Datos del Remitente
                     "identificacionRemitente": "900011909",
@@ -462,21 +472,15 @@ export class ShippingComponent implements OnInit {
                     "facturas": this.selectInvoice
                 }
 
-                /*this._shippingService.createGuiaSaferbo(apiSaferboDTO).subscribe(
+                this._shippingService.createGuiaSaferbo(apiSaferboDTO).subscribe(
                     response => {
                         console.log(response);
                     },
                     error => {
                         console.error(error);
                     }
-                );*/
-                break;
-            case 'TRANSPRENSA':
-                // statement N
-                break;
-            case 'GO PACK365':
-                // statement N
-                break;
+                );
+                break;*/
             case 'OLA':
                 const GuiaOlaDTO = {
                     "tipoflete": "credito",
@@ -524,9 +528,36 @@ export class ShippingComponent implements OnInit {
                 );
                 break;
             default:
-                // 
+                this.clean();
+                this.warningMessage = "Lo sentimos. Actualmente no esta integrada la transportadora.";
+                $('#modal_transfer_process').modal('hide');
                 break;
         }
+    }
+
+    public validateData() {
+        if (this.selectedTypePack == null || this.selectedTypePack.length <= 0) {
+            this.validSelectedTypePack = false;
+            return;
+        } else if (this.qtyPack == null || this.qtyPack <= 0) {
+            this.validQtyPack = false;
+            return;
+        } else if (this.pesoPack == null || this.pesoPack <= 0) {
+            this.validPesoPack = false;
+            return;
+        } else if (this.valorDeclPack == null || this.valorDeclPack <= 0) {
+            this.validValorDeclPack = false;
+            return;
+        } else if (this.addressReceive == null || this.addressReceive.length <= 0) {
+            this.validAddressReceive = false;
+            return;
+        } else if (this.commetPack == null || this.commetPack.length <= 0) {
+            this.validCommetPack = false;
+            return;
+        }
+
+        $('#modal_crear_guia').modal('hide');
+        $('#confirmation_generate_guia').modal('show');
     }
 
     public getUrlGuia() {

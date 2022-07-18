@@ -235,6 +235,16 @@
   background-color: #da0611;
 }
 
+.ng-valid[required], .ng-valid.required {
+  /*border-left: 5px solid #6D9197;*/
+  border-color: #6D9197
+}
+
+.ng-touched.ng-invalid[required], .ng-untouched.ng-pristine.ng-invalid[required].required-field {
+  /*border-left: 5px solid #65092D;*/
+  border-color: #c21d17;
+}
+
 @media only screen and (max-width: 769px) {
   .date {
     text-align: center;

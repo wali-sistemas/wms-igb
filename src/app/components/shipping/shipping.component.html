@@ -258,7 +258,7 @@
                 <div class="row">
                     <div class="col-xs-12">
                         <select id="typePack" class="form-control input-lg" [(ngModel)]="selectedTypePack"
-                            name="selectedTypePack" required>
+                            name="selectedTypePack" [class.required-field]="!validSelectedTypePack" required>
                             <option value="" disabled>Seleccione empaque</option>
                             <option>CAJAS</option>
                             <option>LIOS</option>
@@ -320,8 +320,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" data-toggle="modal"
-                    data-target="#confirmation_generate_guia">Generar</button>
+                <button type="button" class="btn btn-danger btn-lg" (click)="validateData()">Generar</button>
             </div>
         </div>
     </div>
