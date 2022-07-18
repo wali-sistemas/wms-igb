@@ -25,10 +25,9 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" (click)="clean()"
-                    style="float: left; font-size: 16px;">No,
-                    cancelar</button>
+                    style="float: left; font-size: 16px;">No</button>
                 <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal" (click)="addShipping()"
-                    style="font-size: 16px;">Sí,confirmar</button>
+                    style="font-size: 16px;">Si</button>
             </div>
         </div>
     </div>
@@ -45,7 +44,40 @@
                 <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" (click)="clean()"
                     style="float: left; font-size: 16px;">No</button>
                 <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal" (click)="generateGuia()"
-                    style="font-size: 16px;">Sí</button>
+                    style="font-size: 16px;">Si</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal imprimir documentos-->
+<div id="print_document" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Visualizar</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-6 text-center">
+                        <div class="box-invoice" (click)="getUrlGuia()">
+                            <span class="icon-post" style="font-size: 100px"></span>
+                            <h3 class="title">
+                                Guia
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="col-xs-6 text-center">
+                        <div class="box-invoice" (click)="getUrlRotulo()">
+                            <span class="icon-sticky-note" style="font-size: 100px"></span>
+                            <h3 class="title">
+                                Rotulo
+                            </h3>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

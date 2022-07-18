@@ -54,6 +54,8 @@ export class ShippingComponent implements OnInit {
     public commetPack: string = '';
     public idReceive: String = '';
     public nameReceive: String = '';
+    public urlGuia: string = '';
+    public urlRotulo: string = '';
 
     constructor(private _userService: UserService, private _router: Router, private _shippingService: ShippingService, private _reportService: ReportService) {
         this.invoicesShipping = new Array<ShippingInvoice>();
@@ -375,8 +377,8 @@ export class ShippingComponent implements OnInit {
         switch (this.selectedTransp) {
             case 'RAPIDO OCHOA':
                 const rapidoochoaDTO = {
-                    "cdPoblacionOrigen": "5380000",//La Estrella
-                    "cdPoblacionDestino": this.selectInvoicesPack[0].codCity + "000",
+                    "cdPoblacionOrigen": "5001000",//Medellin
+                    "cdPoblacionDestino": this.selectInvoicesPack[0].depart == 'ANTIOQUIA' ? this.selectInvoicesPack[0].codCity.substring(1, this.selectInvoicesPack[0].codCity.length) + "000" : this.selectInvoicesPack[0].codCity + "000",
                     "nmPesoDeclarado": this.pesoPack,
                     "nmUnidPorEmbalaje": this.selectedTypePack,
                     "vmValorDeclarado": this.valorDeclPack,
@@ -393,7 +395,11 @@ export class ShippingComponent implements OnInit {
                     "nmFormaDePago": "CRÉDITO"
                 }
 
-                this._shippingService.createGuiaRapidoochoa(rapidoochoaDTO, invoices).subscribe(
+                console.log(rapidoochoaDTO);
+                console.log(this.selectInvoicesPack);
+
+
+                /*this._shippingService.createGuiaRapidoochoa(rapidoochoaDTO, invoices).subscribe(
                     response => {
                         if (response.code == 0) {
                             //Registramos shipping en tablas temporales
@@ -413,7 +419,7 @@ export class ShippingComponent implements OnInit {
                         console.error(error);
                         this.redirectIfSessionInvalid(error);
                     }
-                );
+                );*/
                 break;
             case 'SAFERBO':
                 const apiSaferboDTO = {
@@ -471,10 +477,68 @@ export class ShippingComponent implements OnInit {
             case 'GO PACK365':
                 // statement N
                 break;
+            case 'OLA':
+                const GuiaOlaDTO = {
+                    "tipoflete": "credito",
+                    "origen": "MEDELLIN",
+                    "destino": this.selectInvoicesPack[0].city,
+                    "unidades": this.qtyPack,
+                    "kilos": this.pesoPack,
+                    "volumen": 25,
+                    "vlrmcia": this.valorDeclPack,
+                    "obs": "Tipo Empaque: " + this.selectedTypePack + " " + this.commetPack,
+                    "nitr": "811011909",
+                    "nombrer": "IGB MOTORCYCLE PARTS S.A.S",
+                    "telr": "4442025",
+                    "dirr": "CALLE 98 SUR # 42-225 BOB 114",
+                    "correor": "analistatransporte@igbcolombia.com",
+                    "nombredg": this.selectInvoicesPack[0].cardName,
+                    "nitd": this.selectInvoicesPack[0].cardCode.replace('C', ''),
+                    "teld": "4442025",
+                    "dird": this.addressReceive,
+                    "correod": "analistatransporte@igbcolombia.com",
+                    "adicionales": "Facturas relacionadas: " + invoices,
+                    "cartaporte": "",
+                }
+
+                this._shippingService.createGuiaOla(GuiaOlaDTO, invoices).subscribe(
+                    response => {
+                        if (response.code == 0) {
+                            //Registramos shipping en tablas temporales
+                            this.addShipping();
+
+                            this.urlGuia = response.content[0];
+                            this.urlRotulo = response.content[1];
+
+                            $('#modal_transfer_process').modal('hide');
+                            $('#print_document').modal('show');
+                        } else {
+                            this.warningMessage = response.content;
+                            $('#modal_transfer_process').modal('hide');
+                        }
+                    },
+                    error => {
+                        console.error(error);
+                        this.redirectIfSessionInvalid(error);
+                    }
+                );
+                break;
             default:
                 // 
                 break;
         }
+    }
+
+    public getUrlGuia() {
+        let landingUrl = this.urlGuia;
+        window.open(landingUrl, "_blank");
+        this.clean();
+    }
+
+    public getUrlRotulo() {
+        let landingUrl = this.urlRotulo;
+        window.open(landingUrl, "_blank");
+        this.clean();
     }
 
     public getScrollTop() {

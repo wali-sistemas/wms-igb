@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?yux4zn');
-  src:  url('fonts/icomoon.eot?yux4zn#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?yux4zn') format('truetype'),
-    url('fonts/icomoon.woff?yux4zn') format('woff'),
-    url('fonts/icomoon.svg?yux4zn#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?ctjj4d');
+  src:  url('fonts/icomoon.eot?ctjj4d#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?ctjj4d') format('truetype'),
+    url('fonts/icomoon.woff?ctjj4d') format('woff'),
+    url('fonts/icomoon.svg?ctjj4d#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -33,6 +33,12 @@
 }
 .icon-shuffle:before {
   content: "\e980";
+}
+.icon-post:before {
+  content: "\e976";
+}
+.icon-sticky-note:before {
+  content: "\e977";
 }
 .icon-repuestos:before {
   content: "\e972";
@@ -105,24 +111,6 @@
 }
 .icon-search-stock:before {
   content: "\e95e";
-}
-.icon-carenaje2:before {
-  content: "\e978";
-}
-.icon-visorMoto:before {
-  content: "\e979";
-}
-.icon-guardabarro2:before {
-  content: "\e97a";
-}
-.icon-tapaLateral:before {
-  content: "\e97b";
-}
-.icon-carenaje:before {
-  content: "\e976";
-}
-.icon-guardabarro:before {
-  content: "\e977";
 }
 .icon-soul:before {
   content: "\e97d";
