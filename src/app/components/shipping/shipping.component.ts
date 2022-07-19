@@ -388,7 +388,7 @@ export class ShippingComponent implements OnInit {
             poblacionDestino = this.selectInvoicesPack[0].codCity + "000";
         }
 
-        switch (this.selectedTransp) {
+        switch (this.selectInvoicesPack[0].transport) {
             case 'RAPIDO OCHOA':
                 const rapidoochoaDTO = {
                     "cdPoblacionOrigen": "5001000",//Medellin
