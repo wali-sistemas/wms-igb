@@ -311,6 +311,18 @@
                 <br />
                 <div class="row">
                     <div class="col-xs-12">
+                        <select id="typeProduct" class="form-control input-lg" [(ngModel)]="selectedTypeProduct"
+                            name="selectedTypeProduct" [class.required-field]="!validSelectedTypeProduct" required>
+                            <option value="" disabled>Seleccione uno</option>
+                            <option value="PARTES Y REPUESTOS">PARTES Y REPUESTOS</option>
+                            <option value="LIOS DE LLANTAS">LIOS DE LLANTAS</option>
+                            <option value="ACEITES">ACEITES</option>
+                        </select>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-xs-12">
                         <textarea id="commetPack" class="md-textarea form-control" name="commetPack"
                             style="width: 100%;" rows="10" placeholder="Ingrese aquí una observación"
                             [(ngModel)]="commetPack" autocomplete="off" [class.required-field]="!validCommetPack"
