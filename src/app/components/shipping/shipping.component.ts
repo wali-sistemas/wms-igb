@@ -57,6 +57,8 @@ export class ShippingComponent implements OnInit {
     public nameReceive: String = '';
     public urlGuia: string = '';
     public urlRotulo: string = '';
+    public selectedTypeProduct: string = '';
+    public validSelectedTypeProduct: boolean = true;
 
     constructor(private _userService: UserService, private _router: Router, private _shippingService: ShippingService, private _reportService: ReportService) {
         this.invoicesShipping = new Array<ShippingInvoice>();
@@ -403,7 +405,7 @@ export class ShippingComponent implements OnInit {
                     "dsDireccionDestinatario": this.addressReceive,
                     "dsTelefonoDestinatario": "4442025",
                     "dsDocReferencia": invoices,
-                    "dsDiceContener": "PARTES Y REPUESTOS",
+                    "dsDiceContener": this.selectedTypeProduct,
                     "cdTipoDniDestinatario": "Cedula",
                     "vmValorOtros": "0",
                     "nmFormaDePago": "CRÉDITO"
@@ -550,6 +552,9 @@ export class ShippingComponent implements OnInit {
             return;
         } else if (this.addressReceive == null || this.addressReceive.length <= 0) {
             this.validAddressReceive = false;
+            return;
+        } else if (this.selectedTypeProduct == null || this.selectedTypeProduct.length <= 0) {
+            this.validSelectedTypeProduct = false;
             return;
         } else if (this.commetPack == null || this.commetPack.length <= 0) {
             this.validCommetPack = false;
