@@ -24,8 +24,9 @@ export class ShippingComponent implements OnInit {
     public urlShared: string = GLOBAL.urlShared;
     public warningMessage: string = '';
     public errorMessage: string = '';
-    public selectedTransp: String = '';
-    public selectInvoice: String = '';
+    public shippingErrorMessage: string = '';
+    public selectedTransp: string = '';
+    public selectInvoice: string = '';
     public filter: string = '';
     public idContainer: string = '';
     public docNumPayroll: string = '';
@@ -50,11 +51,11 @@ export class ShippingComponent implements OnInit {
     public selectedTypePack: string = '';
     public pesoPack: number;
     public valorDeclPack: number;
-    public addressReceive: String = '';
+    public addressReceive: string = '';
     public cityReceive: string = '';
     public commetPack: string = '';
-    public idReceive: String = '';
-    public nameReceive: String = '';
+    public idReceive: string = '';
+    public nameReceive: string = '';
     public urlGuia: string = '';
     public urlRotulo: string = '';
     public selectedTypeProduct: string = '';
@@ -335,6 +336,7 @@ export class ShippingComponent implements OnInit {
         this.addressReceive = '';
         this.commetPack = '';
         this.selectedInvoices = new Map<String, ShippingInvoice>();
+        this.selectInvoicesPack = new Array<ShippingInvoice>();
     }
 
     public setIdContainer() {
@@ -563,6 +565,21 @@ export class ShippingComponent implements OnInit {
 
         $('#modal_crear_guia').modal('hide');
         $('#confirmation_generate_guia').modal('show');
+    }
+
+    public calculateVrlDeclarad() {
+        this.shippingErrorMessage = '';
+        if (this.qtyPack === 0) {
+            this.shippingErrorMessage = 'Embalaje debe ser mayor a 0.';
+            return;
+        }
+
+        for (let i = 0; i < this.selectInvoicesPack.length; i++) {
+            const ord = this.selectInvoicesPack[i];
+            this.pesoPack = (ord.unidEmpStand * this.qtyPack);
+            this.valorDeclPack = (ord.valStandDecl * this.qtyPack);
+            break;
+        }
     }
 
     public getUrlGuia() {
