@@ -505,8 +505,8 @@ export class ShippingComponent implements OnInit {
                     "teld": "4442025",
                     "dird": this.addressReceive,
                     "correod": localStorage.getItem('igb.selectedCompany') == 'IGB' ? "analistatransporte@igbcolombia.com" : "logistica@motozonecolombia.com",
-                    "adicionales": "Facturas relacionadas: " + invoices,
-                    "cartaporte": "",
+                    "adicionales": "",
+                    "cartaporte": "Factura(s): " + invoices
                 }
 
                 this._shippingService.createGuiaOla(GuiaOlaDTO, invoices).subscribe(
