@@ -41,6 +41,7 @@ export class ShippingComponent implements OnInit {
     public validCityReceive: boolean = true;
     public validCommetPack: boolean = true;
     public validSelectedTypePack: boolean = true;
+    public validDepartamentReceive: boolean = true;
     public invoicesShipping: Array<ShippingInvoice>;
     public selectedInvoices: Map<String, ShippingInvoice>;
     public transports: Array<any>;
@@ -53,6 +54,7 @@ export class ShippingComponent implements OnInit {
     public valorDeclPack: number;
     public addressReceive: string = '';
     public cityReceive: string = '';
+    public departamentReceive: string = '';
     public commetPack: string = '';
     public idReceive: string = '';
     public nameReceive: string = '';
@@ -94,7 +96,7 @@ export class ShippingComponent implements OnInit {
         });
 
         this.errorMessage = '';
-        //this.warningMessage = '';
+        this.warningMessage = '';
         this.invoicesShipping = new Array<ShippingInvoice>();
         this.selectedInvoices = new Map<String, any>();
 
@@ -346,7 +348,8 @@ export class ShippingComponent implements OnInit {
     public getModalGuia() {
         for (let i = 0; i < this.selectInvoicesPack.length; i++) {
             this.addressReceive = this.selectInvoicesPack[i].street;
-            this.cityReceive = this.selectInvoicesPack[i].city + "-" + this.selectInvoicesPack[i].depart + "-" + this.selectInvoicesPack[i].codCity + "000";
+            this.cityReceive = this.selectInvoicesPack[i].city.replace(' ', '');
+            this.departamentReceive = this.selectInvoicesPack[i].depart;
             this.idReceive = this.selectInvoicesPack[i].cardCode;
             this.nameReceive = this.selectInvoicesPack[i].cardName;
 
@@ -489,7 +492,7 @@ export class ShippingComponent implements OnInit {
                 const GuiaOlaDTO = {
                     "tipoflete": "credito",
                     "origen": localStorage.getItem('igb.selectedCompany') == 'IGB' ? "MEDELLIN" : "CARTAGENA",
-                    "destino": this.selectInvoicesPack[0].city,
+                    "destino": this.cityReceive,
                     "unidades": this.qtyPack,
                     "kilos": this.pesoPack,
                     "volumen": 25,
@@ -554,6 +557,9 @@ export class ShippingComponent implements OnInit {
             return;
         } else if (this.addressReceive == null || this.addressReceive.length <= 0) {
             this.validAddressReceive = false;
+            return;
+        } else if (this.cityReceive == null || this.cityReceive.length <= 0) {
+            this.validCityReceive = false;
             return;
         } else if (this.selectedTypeProduct == null || this.selectedTypeProduct.length <= 0) {
             this.validSelectedTypeProduct = false;

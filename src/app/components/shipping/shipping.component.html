@@ -313,7 +313,16 @@
                     <div class="col-xs-12">
                         <input type="text" id="cityReceive" class="form-control input-lg" [(ngModel)]="cityReceive"
                             autocomplete="off" name="cityReceive" autocorrect="off" autocapitalize="none"
-                            placeholder="Ciudad-departamento" [class.required-field]="!validCityReceive" required>
+                            placeholder="Ciudad" [class.required-field]="!validCityReceive" required>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input type="text" id="departamentReceive" class="form-control input-lg"
+                            [(ngModel)]="departamentReceive" autocomplete="off" name="departamentReceive"
+                            autocorrect="off" autocapitalize="none" placeholder="Departamento"
+                            [class.required-field]="!validDepartamentReceive" required>
                     </div>
                 </div>
                 <br />
