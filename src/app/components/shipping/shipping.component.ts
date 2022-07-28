@@ -401,7 +401,7 @@ export class ShippingComponent implements OnInit {
                     "cdPoblacionOrigen": "5001000",//Medellin
                     "cdPoblacionDestino": poblacionDestino,
                     "nmPesoDeclarado": this.pesoPack,
-                    "nmUnidPorEmbalaje": this.selectedTypePack,
+                    "nmUnidPorEmbalaje": this.qtyPack,
                     "vmValorDeclarado": this.valorDeclPack,
                     "dsNombreRemitente": "IGB",
                     "dniCliente": "811011909",
