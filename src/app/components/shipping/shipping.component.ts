@@ -11,6 +11,8 @@ import { ShippingInvoice } from '../../models/shipping-invoice';
 import 'rxjs/Rx'
 import { ResupplyComponent } from '../resupply/resupply.component';
 import { from } from 'rxjs/observable/from';
+import { Cities } from 'app/models/cities';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 declare var $: any;
 
@@ -39,7 +41,6 @@ export class ShippingComponent implements OnInit {
     public validValorDeclPack: boolean = true;
     public validAddressReceive: boolean = true;
     public validCityReceive: boolean = true;
-    public validCommetPack: boolean = true;
     public validSelectedTypePack: boolean = true;
     public validDepartamentReceive: boolean = true;
     public invoicesShipping: Array<ShippingInvoice>;
@@ -55,13 +56,17 @@ export class ShippingComponent implements OnInit {
     public addressReceive: string = '';
     public cityReceive: string = '';
     public departamentReceive: string = '';
-    public commetPack: string = '';
     public idReceive: string = '';
     public nameReceive: string = '';
     public urlGuia: string = '';
     public urlRotulo: string = '';
     public selectedTypeProduct: string = '';
     public validSelectedTypeProduct: boolean = true;
+    public listDestinations: Array<Cities>;
+    public listDestinationsByDep: Array<Cities>;
+    public selectedCityDest: string = '';
+    public validSelectedCityDest: boolean = true;
+    public checkSede: boolean = false;
 
     constructor(private _userService: UserService, private _router: Router, private _shippingService: ShippingService, private _reportService: ReportService) {
         this.invoicesShipping = new Array<ShippingInvoice>();
@@ -78,6 +83,7 @@ export class ShippingComponent implements OnInit {
         }
         this.listInvoices();
         this.listTransport();
+        this.listCitiesDestinationsOla();
     }
 
     private redirectIfSessionInvalid(error) {
@@ -148,7 +154,7 @@ export class ShippingComponent implements OnInit {
             } else {
                 //valide si son misma transportadora para agregar a la creación de guia
                 for (let i = 0; i < this.selectInvoicesPack.length; i++) {
-                    if (this.selectInvoicesPack[i].transport === invoice.transport) {
+                    if (this.selectInvoicesPack[i].cardCode === invoice.cardCode && this.selectInvoicesPack[i].transport === invoice.transport) {
                         this.selectedInvoices.set(invoice.docNum, invoice);
                         this.selectInvoicesPack.push(invoice);
                         return;
@@ -336,9 +342,11 @@ export class ShippingComponent implements OnInit {
         this.pesoPack = 0;
         this.valorDeclPack = 0;
         this.addressReceive = '';
-        this.commetPack = '';
         this.selectedInvoices = new Map<String, ShippingInvoice>();
         this.selectInvoicesPack = new Array<ShippingInvoice>();
+        this.listDestinationsByDep = new Array<Cities>();
+        this.selectedCityDest = '';
+        this.checkSede = false;
     }
 
     public setIdContainer() {
@@ -363,6 +371,7 @@ export class ShippingComponent implements OnInit {
             }
             break;
         }
+        this.getCitiesDestinationsOla(this.cityReceive);
         $('#modal_crear_guia').modal('show');
     }
 
@@ -497,7 +506,7 @@ export class ShippingComponent implements OnInit {
                     "kilos": this.pesoPack,
                     "volumen": 25,
                     "vlrmcia": this.valorDeclPack,
-                    "obs": "Tipo Empaque: " + this.selectedTypePack + " " + this.commetPack,
+                    "obs": "Tipo Empaque: " + this.selectedTypePack,
                     "nitr": localStorage.getItem('igb.selectedCompany') == 'IGB' ? "811011909" : "900255414",
                     "nombrer": localStorage.getItem('igb.selectedCompany') == 'IGB' ? "IGB MOTORCYCLE PARTS S.A.S" : "MOTOZONE S.A.S",
                     "telr": "4442025",
@@ -555,20 +564,26 @@ export class ShippingComponent implements OnInit {
         } else if (this.valorDeclPack == null || this.valorDeclPack <= 0) {
             this.validValorDeclPack = false;
             return;
-        } else if (this.addressReceive == null || this.addressReceive.length <= 0) {
-            this.validAddressReceive = false;
-            return;
-        } else if (this.cityReceive == null || this.cityReceive.length <= 0) {
-            this.validCityReceive = false;
-            return;
         } else if (this.selectedTypeProduct == null || this.selectedTypeProduct.length <= 0) {
             this.validSelectedTypeProduct = false;
             return;
-        } else if (this.commetPack == null || this.commetPack.length <= 0) {
-            this.validCommetPack = false;
-            return;
+        } else if (this.checkSede) {
+            this.addressReceive = "CALLE 98 SUR # 48-225 BOD 114";
+            this.cityReceive = "LA ESTRELLA";
+            this.departamentReceive = "ANTIOQUIA";
+            this.selectedCityDest = "LA ESTRELLA";
+        } else {
+            if (this.addressReceive == null || this.addressReceive.length <= 0) {
+                this.validAddressReceive = false;
+                return;
+            } else if (this.cityReceive == null || this.cityReceive.length <= 0) {
+                this.validCityReceive = false;
+                return;
+            } else if (this.selectedCityDest == null || this.selectedCityDest.length <= 0) {
+                this.validSelectedCityDest = false;
+                return;
+            }
         }
-
         $('#modal_crear_guia').modal('hide');
         $('#confirmation_generate_guia').modal('show');
     }
@@ -603,5 +618,25 @@ export class ShippingComponent implements OnInit {
     public getScrollTop() {
         document.body.scrollTop = 0;
         document.documentElement.scrollTop = 0;
+    }
+
+    public listCitiesDestinationsOla() {
+        this._shippingService.listCitiesDestinationsOla().subscribe(
+            response => {
+                this.listDestinations = response.content.data.sort();
+            }, error => { console.error(error); }
+        );
+    }
+
+    public getCitiesDestinationsOla(cityDest: string) {
+        this.listDestinationsByDep = new Array<Cities>();
+
+        for (let i = 0; i < this.listDestinations.length; i++) {
+            const city = this.listDestinations[i];
+            if (city.nombre.toLowerCase().includes(cityDest.toLowerCase())) {
+                this.listDestinationsByDep.push(city);
+                return;
+            }
+        }
     }
 }

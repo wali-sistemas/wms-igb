@@ -235,14 +235,36 @@
   background-color: #da0611;
 }
 
-.ng-valid[required], .ng-valid.required {
+.ng-valid[required],
+.ng-valid.required {
   /*border-left: 5px solid #6D9197;*/
   border-color: #6D9197
 }
 
-.ng-touched.ng-invalid[required], .ng-untouched.ng-pristine.ng-invalid[required].required-field {
+.ng-touched.ng-invalid[required],
+.ng-untouched.ng-pristine.ng-invalid[required].required-field {
   /*border-left: 5px solid #65092D;*/
   border-color: #c21d17;
+}
+
+.mascarar input[type="checkbox"] {
+  display: none;
+}
+
+.mascarar input[type="checkbox"]+label span {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  margin: -1px 4px 0 0;
+  vertical-align: middle;
+  background: url("../../../assets/images/checkbox-uncheck.png");
+  background-size: cover;
+  cursor: pointer;
+}
+
+.mascarar input[type="checkbox"]:checked+label span {
+  background: url("../../../assets/images/checkbox-check.png");
+  background-size: cover;
 }
 
 @media only screen and (max-width: 769px) {
