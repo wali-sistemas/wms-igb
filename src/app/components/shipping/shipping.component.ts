@@ -347,6 +347,7 @@ export class ShippingComponent implements OnInit {
         this.listDestinationsByDep = new Array<Cities>();
         this.selectedCityDest = '';
         this.checkSede = false;
+        this.selectedTypeProduct = '';
     }
 
     public setIdContainer() {
@@ -360,6 +361,7 @@ export class ShippingComponent implements OnInit {
             this.departamentReceive = this.selectInvoicesPack[i].depart;
             this.idReceive = this.selectInvoicesPack[i].cardCode;
             this.nameReceive = this.selectInvoicesPack[i].cardName;
+            this.selectedTransp = this.selectInvoicesPack[i].transport;
 
             if (this.selectInvoicesPack.length == 1) {
                 this.selectInvoice = this.selectInvoicesPack[i].docNum;
@@ -501,7 +503,7 @@ export class ShippingComponent implements OnInit {
                 const GuiaOlaDTO = {
                     "tipoflete": "credito",
                     "origen": localStorage.getItem('igb.selectedCompany') == 'IGB' ? "MEDELLIN" : "CARTAGENA",
-                    "destino": this.cityReceive,
+                    "destino": this.selectedCityDest,
                     "unidades": this.qtyPack,
                     "kilos": this.pesoPack,
                     "volumen": 25,
@@ -579,9 +581,11 @@ export class ShippingComponent implements OnInit {
             } else if (this.cityReceive == null || this.cityReceive.length <= 0) {
                 this.validCityReceive = false;
                 return;
-            } else if (this.selectedCityDest == null || this.selectedCityDest.length <= 0) {
-                this.validSelectedCityDest = false;
-                return;
+            } else if (this.selectedTransp === "OLA") {
+                if (this.selectedCityDest == null || this.selectedCityDest.length <= 0) {
+                    this.validSelectedCityDest = false;
+                    return;
+                }
             }
         }
         $('#modal_crear_guia').modal('hide');

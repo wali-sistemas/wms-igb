@@ -333,7 +333,7 @@
                 </div>
                 <br />
                 <div class="row">
-                    <div *ngIf="!checkSede" class="col-xs-12">
+                    <div *ngIf="!checkSede && selectedTransp=='OLA'" class="col-xs-12">
                         <select id="warehouse" class="form-control input-lg" [(ngModel)]="selectedCityDest"
                             name="selectedCityDest" [class.required-field]="!validSelectedCityDest" required>
                             <option value="" disabled>Seleccione un destino activo</option>
