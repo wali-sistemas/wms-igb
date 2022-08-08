@@ -50,4 +50,9 @@ export class ShippingService {
         return this._http.post(this.url + 'shipping/add-guia-ola/' + invoices, GuiaOlaDTO, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
+
+    public listCitiesDestinationsOla() {
+        return this._http.get(this.url + 'shipping/list-destination-ola', { headers: new IGBHeaders().loadHeaders() })
+        .map(res => res.json());
+    }
 }
