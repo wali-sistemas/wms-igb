@@ -545,6 +545,94 @@ export class ShippingComponent implements OnInit {
                     }
                 );
                 break;
+            case 'COORDINADORA':
+                const ApiCoordinadoraDTO = {
+                    "nameDestination": this.selectInvoicesPack[0].cardName,
+                    "addressDestination": this.addressReceive,
+                    "cityDestination": this.selectInvoicesPack[0].codCity + "000",
+                    "phoneDestination": "4442025",
+                    "invoice": invoices,
+                    "observation": "Tipo Empaque: " + this.selectedTypePack,
+                    "contents": "PRODUCTOS DE IGB, DELICADOS",
+                    "mailDestination": "analistatransporte@igbcolombia.com",
+                    "nomEmpaque": this.selectedTypePack,
+                    "valorDeclarado": this.valorDeclPack,
+                    "alto": this.selectedTypePack = 'CAJA PEQUEÑA' ? "50" : "52",
+                    "ancho": this.selectedTypePack = 'CAJA PEQUEÑA' ? "50" : "66",
+                    "largo": this.selectedTypePack = 'CAJA PEQUEÑA' ? "16" : "57",
+                    "peso": this.selectedTypePack = 'CAJA PEQUEÑA' ? "16" : "57",
+                    "unidades": this.qtyPack
+                }
+
+                this._shippingService.createGuiaCoordinadora(ApiCoordinadoraDTO, invoices).subscribe(
+                    response => {
+                        if (response.code == 0) {
+                            //Registramos shipping en tablas temporales
+                            this.addShipping();
+
+                            this.urlGuia = response.content[0];
+                            this.urlRotulo = response.content[1];
+
+                            $('#modal_transfer_process').modal('hide');
+                            $('#print_document').modal('show');
+                        } else {
+                            this.warningMessage = response.content;
+                            $('#modal_transfer_process').modal('hide');
+                        }
+                    },
+                    error => {
+                        console.error(error);
+                        this.redirectIfSessionInvalid(error);
+                    }
+                );
+                break;
+            case 'TRANSPRENSA':
+                const ApiTransprensaDTO = {
+                    "observacion": "Tipo Empaque: " + this.selectedTypePack,
+                    "factura": invoices,
+                    "peso": this.pesoPack,
+                    "volumen": 16,
+                    "vlrDecl": this.valorDeclPack,
+                    "codProducto": "",
+                    "cant": this.qtyPack,
+                    "descripcion": this.selectedTypePack,
+                    //Remite
+                    "documentor": "811011909",
+                    "nombrer": "IGB MOTORCYCLE PARTS S.A.S",
+                    "direccionr": "CALLE 98 SUR # 42-225 BOB 114",
+                    "telefonor": "4442025",
+                    "codCiudadr": "05380000",//La Estrella
+                    //Destino
+                    "tipoDocumentod": "1",
+                    "documentod": this.selectInvoicesPack[0].cardCode.replace('C', ''),
+                    "nombred": this.selectInvoicesPack[0].cardName,
+                    "direcciond": this.addressReceive,
+                    "telefonod": "4442025",
+                    "codCiudadd": this.selectInvoicesPack[0].codCity + "000"
+                }
+
+                this._shippingService.createGuiaTransprensa(ApiTransprensaDTO, invoices).subscribe(
+                    response => {
+                        if (response.code == 0) {
+                            //Registramos shipping en tablas temporales
+                            this.addShipping();
+
+                            //this.urlGuia = response.content[0];
+                            this.urlRotulo = response.content[1];
+
+                            $('#modal_transfer_process').modal('hide');
+                            $('#print_document').modal('show');
+                        } else {
+                            this.warningMessage = response.content;
+                            $('#modal_transfer_process').modal('hide');
+                        }
+                    },
+                    error => {
+                        console.error(error);
+                        this.redirectIfSessionInvalid(error);
+                    }
+                );
+                break;
             default:
                 this.clean();
                 this.warningMessage = "Lo sentimos. Actualmente no esta integrada la transportadora.";
