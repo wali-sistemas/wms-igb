@@ -53,6 +53,16 @@ export class ShippingService {
 
     public listCitiesDestinationsOla() {
         return this._http.get(this.url + 'shipping/list-destination-ola', { headers: new IGBHeaders().loadHeaders() })
-        .map(res => res.json());
+            .map(res => res.json());
+    }
+
+    public createGuiaCoordinadora(ApiCoordinadoraDTO, invoices) {
+        return this._http.post(this.url + 'shipping/add-guia-coordinadora/' + invoices, ApiCoordinadoraDTO, { headers: new IGBHeaders().loadHeaders() })
+            .map(res => res.json());
+    }
+
+    public createGuiaTransprensa(ApiTransprensaDTO, invoices) {
+        return this._http.post(this.url + 'shipping/add-guia-transprensa/' + invoices, ApiTransprensaDTO, { headers: new IGBHeaders().loadHeaders() })
+            .map(res => res.json());
     }
 }
