@@ -449,56 +449,6 @@ export class ShippingComponent implements OnInit {
                     }
                 );
                 break;
-            /*case 'SAFERBO':
-                const apiSaferboDTO = {
-                    //Datos del Remitente
-                    "identificacionRemitente": "900011909",
-                    "nombreRemitente": "IGB MOTORCYCLE PARTS S.A.S",
-                    "telefonoRemitente": "4442025",
-                    "direccionRemitente": "CALLE 98 SUR # 48-225 BOD 114",
-                    "ciudadRemitente": "LA ESTRELLA-ANTIOQUIA-05380000",
-                    //Datos del Destinatario
-                    "codigoDestinatario": "",
-                    "identificacionDestinatario": this.idReceive,
-                    "nombreDestinatario": this.nameReceive,
-                    "telefonoDestinatario": "0",
-                    "direccionDestinatario": this.addressReceive,
-                    "ciudadDestinatario": this.cityReceive,
-                    //Datos guia
-                    "largo": "0",
-                    "peso": this.pesoPack,
-                    "ancho": "0",
-                    "alto": "0",
-                    //"volumen": this.qtyPack,
-                    "valorDeclarado": this.valorDeclPack,
-                    //"observacion": this.commetPack + '-Total en ' + this.selectedTypePack + ': ' + this.qtyPack + ' Factura(s): ' + this.selectInvoice,
-                    //Entorno pruebas
-                    "codigoCliente": "999997",
-                    //Estandar de SAFERBO
-                    "tipoEnvio": "1",
-                    "tipoLiquidacion": "1",
-                    "tipoNegociacion": "1",
-                    "tipoDato": "2",
-                    "tipoAcceso": "1",
-                    "tarifaXTrayecto": "2",
-                    "pagoContraentrega": "0",
-                    "dsUnidad": "0",
-                    "dsKilos": "0",
-                    "dsConsec": "0",
-                    "valorRecaudar": "125000",
-                    "arUnidades": "1-2",
-                    "facturas": this.selectInvoice
-                }
-
-                this._shippingService.createGuiaSaferbo(apiSaferboDTO).subscribe(
-                    response => {
-                        console.log(response);
-                    },
-                    error => {
-                        console.error(error);
-                    }
-                );
-                break;*/
             case 'OLA':
                 const GuiaOlaDTO = {
                     "tipoflete": "credito",
