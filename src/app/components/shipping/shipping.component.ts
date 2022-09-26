@@ -67,6 +67,8 @@ export class ShippingComponent implements OnInit {
     public selectedCityDest: string = '';
     public validSelectedCityDest: boolean = true;
     public checkSede: boolean = false;
+    public valStandDeclMTZ: number;
+    public unidEmpStandMTZ: number;
 
     constructor(private _userService: UserService, private _router: Router, private _shippingService: ShippingService, private _reportService: ReportService) {
         this.invoicesShipping = new Array<ShippingInvoice>();
@@ -637,11 +639,16 @@ export class ShippingComponent implements OnInit {
             return;
         }
 
-        for (let i = 0; i < this.selectInvoicesPack.length; i++) {
-            const ord = this.selectInvoicesPack[i];
-            this.pesoPack = (ord.unidEmpStand * this.qtyPack);
-            this.valorDeclPack = (ord.valStandDecl * this.qtyPack);
-            break;
+        if (this.identity.selectedCompany == 'IGB') {
+            for (let i = 0; i < this.selectInvoicesPack.length; i++) {
+                const ord = this.selectInvoicesPack[i];
+                this.pesoPack = (ord.unidEmpStand * this.qtyPack);
+                this.valorDeclPack = (ord.valStandDecl * this.qtyPack);
+                break;
+            }
+        } else {
+            this.valorDeclPack = (this.valStandDeclMTZ * this.qtyPack);
+            this.pesoPack = (this.unidEmpStandMTZ * this.qtyPack);
         }
     }
 
@@ -680,5 +687,38 @@ export class ShippingComponent implements OnInit {
                 return;
             }
         }
+    }
+
+    public getVrlDeclarad(selectedTypePack: string) {
+        this.qtyPack = 0;
+        this.pesoPack = 0;
+        switch (selectedTypePack) {
+            case "CAJA":
+                this.valorDeclPack = 180000;
+                this.pesoPack = 12;
+                break;
+            case "UNIDAD":
+                this.valorDeclPack = 150000;
+                this.pesoPack = 12;
+                break;
+            case "LIO":
+                this.valorDeclPack = 250000;
+                this.pesoPack = 20;
+                break;
+            case "VALDE":
+                this.valorDeclPack = 200000;
+                this.pesoPack = 20;
+                break;
+            case "TAMBOR":
+                this.valorDeclPack = 2000000;
+                this.pesoPack = 108;
+                break;
+            case "CONTENEDOR":
+                this.valorDeclPack = 15000000;
+                this.pesoPack = 1000;
+                break;
+        }
+        this.valStandDeclMTZ = this.valorDeclPack;
+        this.unidEmpStandMTZ = this.pesoPack;
     }
 }

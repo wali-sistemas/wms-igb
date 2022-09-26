@@ -265,11 +265,14 @@
                 <div class="row">
                     <div class="col-xs-12">
                         <select id="typePack" class="form-control input-lg" [(ngModel)]="selectedTypePack"
-                            name="selectedTypePack" [class.required-field]="!validSelectedTypePack" required>
+                            name="selectedTypePack" [class.required-field]="!validSelectedTypePack" (change)="getVrlDeclarad(selectedTypePack)" required>
                             <option value="" disabled>Seleccione empaque</option>
-                            <option>CAJAS</option>
-                            <option>LIOS</option>
+                            <option>CAJA</option>
+                            <option>LIO</option>
                             <option>UNIDAD</option>
+                            <option>TAMBOR</option>
+                            <option>VALDE</option>
+                            <option>CONTENEDOR</option>
                             <option *ngIf="selectedTransp=='COORDINADORA'">CAJA PEQUEÑA</option>
                             <option *ngIf="selectedTransp=='COORDINADORA'">CAJA GRANDE</option>
                         </select>
