@@ -4,6 +4,7 @@ import { UserService } from '../../services/user.service';
 import { PurchaseOrdersService } from '../../services/purchase-orders.service';
 import { PurchaseOrder } from '../../models/purchase-order';
 import { PurchaseOrderLine } from '../../models/purchase-order-line';
+import { PurchaseOrderUDF } from '../../models/purchase-order-udf';
 
 declare var $: any;
 
@@ -23,12 +24,54 @@ export class PurchaseOrderComponent implements OnInit {
   public order: PurchaseOrder;
   public receivedItems: Array<PurchaseOrderLine>;
   public processingItem: PurchaseOrderLine;
-  public displayType: string = 'table';
+  public displayType: string = 'UDF';
   private processingItemIndex: number = 0;
   public creatingSAPDocument: boolean = false;
   public editingQuantity: boolean = false;
   private editingPosition: number = -1;
   private received: Map<String, number>;
+  //UDF
+  private selectedTransport: string = '';
+  private dateEmbarq: Date;
+  private selectedTermNeg: string = '';
+  private selectedModTransp: string = '';
+  private selectedPuertoDest: string = '';
+  private selectedStatusOC: string = '';
+  private selectedEmb: string = '';
+  private docBL: string = '';
+  private dateEntComex: Date;
+  private dateArribPuert: Date;
+  private dateArribAlm: Date;
+  private selectedEmp: string = '';
+  private newNotes: string = '';
+  private selectedPuertEmb: string = '';
+  private transpTerr: string = '';
+  private cbm: string = '';
+  private dateArribCed: Date;
+  private cantCont: number;
+  private dateCargList: Date;
+  private tiempTrans: string = '';
+  private dateSalPuert: Date;
+  private tiempPuert: string = '';
+  private tiempEntreg: number;
+  private dateConfBooking: Date;
+  private tiempEspBooking: number;
+  private dateEstEmb: Date;
+  private dateEstArribCed: Date;
+  private dateLiq: Date;
+  private dateLibBL: Date;
+  private dateRecDocFin: Date;
+  private emisionBLDest: string = '';
+  private selectedInspPuerto: string = '';
+  private selectedNotifBL: string = '';
+  private liqComex: string = '';
+  private conductor: string = '';
+  private cedCond: string = '';
+  private placVeh: string = '';
+  private contenedor: string = '';
+  private precinto: string = '';
+  private selectedEnvDatCond: string = '';
+  private selectedAnalistComex: string = '';
 
   constructor(private _userService: UserService,
     private _purchaseOrdersService: PurchaseOrdersService,
@@ -96,8 +139,132 @@ export class PurchaseOrderComponent implements OnInit {
             }
           }
         );
+        this.loadOrderUDF(params['docNum']);
       }
     });
+  }
+
+  public loadOrderUDF(order) {
+    this._purchaseOrdersService.loadOrderUDF(order).subscribe(
+      response => {
+        this.selectedTransport = response.transp;
+        this.dateEmbarq = response.fembarque;
+        this.selectedTermNeg = response.termNeg;
+        this.selectedModTransp = response.modTranp;
+        this.selectedPuertoDest = response.puertDes;
+        this.selectedStatusOC = response.estOC;
+        this.selectedEmb = response.embarc;
+        this.docBL = response.docTras;
+        this.dateEntComex = response.fdocTras;
+        this.dateArribPuert = response.farribPuert;
+        this.dateArribAlm = response.farribAlm;
+        this.selectedEmp = response.tipoEmp;
+        this.newNotes = response.observ;
+        this.selectedPuertEmb = response.puertEmb;
+        this.transpTerr = response.transpTerr;
+        this.dateArribCed = response.farriboCed;
+        this.cantCont = response.cantCont;
+        this.cbm = response.cbm;
+        this.dateCargList = response.fcargaList;
+        this.tiempTrans = response.tiempTrans;
+        this.dateSalPuert = response.fsalPuert;
+        this.tiempPuert = response.tiempPuert;
+        this.tiempEntreg = response.tiempEntComex;
+        this.dateConfBooking = response.fbooking;
+        this.tiempEspBooking = response.tiempEspBooking;
+        this.dateEstEmb = response.festimEmb;
+        this.dateRecDocFin = response.frecDocFin;
+        this.emisionBLDest = response.emisBL;
+        this.selectedInspPuerto = response.insp;
+        this.dateEstArribCed = response.dateEstArribCed;
+        this.selectedNotifBL = response.notifBL;
+        this.liqComex = response.liqComex;
+        this.dateLiq = response.fliq;
+        this.dateLibBL = response.flibBL;
+        this.conductor = response.conduct;
+        this.cedCond = response.cedulCond;
+        this.placVeh = response.placa;
+        this.contenedor = response.contened;
+        this.precinto = response.precint;
+        this.selectedEnvDatCond = response.enviarDatos;
+        this.selectedAnalistComex = response.vendedor;
+
+      }, error => {
+        this.redirectIfSessionInvalid(error);
+        console.error(error);
+      }
+    );
+  }
+
+  public updateUDF() {
+    this.generalErrorMessage = '';
+    $('#confirmation_udf').modal('hide');
+    $('#modal_transfer_process').modal({
+      backdrop: 'static',
+      keyboard: false,
+      show: true
+    });
+
+    let UserFieldDTO = {
+      'transp': this.selectedTransport,
+      'fembarque': this.dateEmbarq,
+      'termNeg': this.selectedTermNeg,
+      'modTranp': this.selectedModTransp,
+      'puertDes': this.selectedPuertoDest,
+      'estOC': this.selectedStatusOC,
+      'embarc': this.selectedEmb,
+      'docTras': this.docBL,
+      'fdocTras': this.dateEntComex,
+      'farribPuert': this.dateArribPuert,
+      'farribAlm': this.dateArribAlm,
+      'tipoEmp': this.selectedEmp,
+      'observ': this.newNotes,
+      'puertEmb': this.selectedPuertEmb,
+      'transpTerr': this.transpTerr,
+      'farriboCed': this.dateArribCed,
+      'cantCont': this.cantCont,
+      'cbm': this.cbm,
+      'fcargaList': this.dateCargList,
+      'tiempTrans': this.tiempTrans,
+      'fsalPuert': this.dateSalPuert,
+      'tiempPuert': this.tiempPuert,
+      'tiempEntComex': this.tiempEntreg,
+      'fbooking': this.dateConfBooking,
+      'tiempEspBooking': this.tiempEspBooking,
+      'festimEmb': this.dateEstEmb,
+      'frecDocFin': this.dateRecDocFin,
+      'emisBL': this.emisionBLDest,
+      'insp': this.selectedInspPuerto,
+      'farribCedEst': this.dateEstArribCed,
+      'notifBL': this.selectedNotifBL,
+      'liqComex': this.liqComex,
+      'fliq': this.dateLiq,
+      'flibBL': this.dateLibBL,
+      'conduct': this.conductor,
+      'cedulCond': this.cedCond,
+      'placa': this.placVeh,
+      'contened': this.contenedor,
+      'precint': this.precinto,
+      'enviarDatos': this.selectedEnvDatCond,
+      'vendedor': this.selectedAnalistComex,
+      'docNum': this.order.docNum
+    }
+
+    this._purchaseOrdersService.updateOrderUDF(UserFieldDTO).subscribe(
+      response => {
+        if (response.code === 1) {
+          $('#modal_transfer_process').modal('hide');
+          this._router.navigate(['/purchase-orders']);
+        } else {
+          $('#modal_transfer_process').modal('hide');
+          this.generalErrorMessage = 'Lo sentimos. Se produjo un error interno.';
+        }
+      }, error => {
+        this.redirectIfSessionInvalid(error);
+        $('#modal_transfer_process').modal('hide');
+        console.error(error);
+      }
+    );
   }
 
   public scanItem() {
@@ -250,11 +417,16 @@ export class PurchaseOrderComponent implements OnInit {
     }
   }
 
-  public toggleDisplayType() {
-    if (this.displayType === 'table') {
-      this.displayType = 'grid';
-    } else {
-      this.displayType = 'table';
+  private redirectIfSessionInvalid(error) {
+    if (error && error.status && error.status == 401) {
+      localStorage.removeItem('igb.identity');
+      localStorage.removeItem('igb.selectedCompany');
+      this._router.navigate(['/']);
     }
+  }
+
+  public getScrollTop() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
   }
 }

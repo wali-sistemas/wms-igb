@@ -189,6 +189,8 @@ export class OrdersModulaComponent implements OnInit {
 
   public getModalPickingExpress() {
     this.pickExpressErrorMessage = '';
+    this.orderPickingExpressMDL = '';
+
     $('#confirmation_picking').modal('hide');
     this.processDeliveryStatus = 'inprogress';
     $('#process_picking_express').modal({
@@ -216,7 +218,7 @@ export class OrdersModulaComponent implements OnInit {
                     $('#process_picking_express').modal('hide');
                     this.getScrollTop();
                     this.selectedOrders.delete(this.orderPickingExpressMDL);
-                    this.pickExpressErrorMessage = "La orden " + this.orderPickingExpressMDL + " no esta completada en wmw-modula.";
+                    this.pickExpressErrorMessage = "La orden " + this.orderPickingExpressMDL + " no esta completada en wms-modula.";
                   } else {
                     this.addPickingExpress();
                   }
