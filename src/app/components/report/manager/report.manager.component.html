@@ -118,7 +118,7 @@
                                             <a class="list-group-item list-group-item-action"
                                                 [ngClass]="{active: activeFactorCompra}" id="list-cedi-list"
                                                 data-toggle="list" role="tab" style="border-radius: 0px;"
-                                                (click)="getActiveFactorCompra()">Factor de Compra</a>
+                                                (click)="getActiveFactorCompra()">Factor de Importación</a>
                                             <a class="list-group-item list-group-item-action"
                                                 [ngClass]="{active: activeCostoCompra}" id="list-recaudo-list"
                                                 data-toggle="list" role="tab" style="border-radius: 0px;"
@@ -131,6 +131,10 @@
                                                 [ngClass]="{active: activeTimeImport}" id="list-cedi-list"
                                                 data-toggle="list" role="tab" style="border-radius: 0px;"
                                                 (click)="getTimeImport()">Tracking de Compra</a>
+                                            <a class="list-group-item list-group-item-action"
+                                                [ngClass]="{active: activeTimeOperation}" id="list-cedi-list"
+                                                data-toggle="list" role="tab" style="border-radius: 0px;"
+                                                (click)="getTimeOperationComex()">Tiempo de Operación</a>
                                         </div>
                                     </div>
                                 </div>
@@ -613,7 +617,7 @@
     <!--costo compra-->
     <div class="row" *ngIf="activeCostoCompra">
         <div class="col-xs-12">
-            <h2 class="text-center">Comparativo costos logísticos</h2>
+            <h2 class="text-center">Comparativo Costos Logísticos</h2>
         </div>
         <div class="col-xs-12">
             <div class="margin-20">
@@ -702,19 +706,21 @@
     <!--factor compra-->
     <div class="row" *ngIf="activeFactorCompra">
         <div class="col-xs-12">
-            <h2 class="text-center">Factor de compra por mes</h2>
+            <h2 class="text-center">Factor de Importación</h2>
         </div>
-        <div class="col-xs-3"></div>
-        <div class="col-xs-3">
+        <div class="col-md-3"></div>
+        <div class="col-md-3">
             <select id="year" class="form-control input-lg" [(ngModel)]="selectedYear" name="selectedYear"
                 (change)="getFactorCompra()">
                 <option value="0" disabled>Seleccione uno</option>
                 <option>2020</option>
                 <option>2021</option>
                 <option>2022</option>
+                <option>2023</option>
             </select>
         </div>
-        <div class="col-xs-3">
+        <br />
+        <div class="col-md-3">
             <select id="month" class="form-control input-lg" [(ngModel)]="selectedMonth" name="selectedMonth"
                 (change)="getFactorCompra()">
                 <option value="" disabled>Seleccione uno</option>
@@ -754,9 +760,9 @@
                     <td style="border: solid 1px; border-color: #333; width: 30%; background-color: #333; color: #fff;">
                         <h4>Costo Estimado</h4>
                     </td>
-                    <td style="border: solid 1px; border-color: #333; width: 30%; background-color: #333; color: #fff;">
+                    <!--<td style="border: solid 1px; border-color: #333; width: 30%; background-color: #333; color: #fff;">
                         <h4>Costo Real</h4>
-                    </td>
+                    </td>-->
                     <td style="border: solid 1px; border-color: #333; width: 15%; background-color: #333; color: #fff;">
                         <h4>Factor</h4>
                     </td>
@@ -768,9 +774,9 @@
                     <td style="border: solid 1px; border-color: #828282; width: 30%;">
                         $ {{factor[3] | number}}
                     </td>
-                    <td style="border: solid 1px; border-color: #828282; width: 30%;">
+                    <!--<td style="border: solid 1px; border-color: #828282; width: 30%;">
                         $ {{factor[4] | number}}
-                    </td>
+                    </td>-->
                     <td style="border: solid 1px; border-color: #828282; width: 15%;">
                         % {{factor[5] | number}}
                     </td>
@@ -781,7 +787,7 @@
     <!--costo de importacion-->
     <div class="row" *ngIf="activeCostoImport">
         <div class="col-xs-12">
-            <h2 class="text-center">Costo de importación</h2>
+            <h2 class="text-center">Costo de Importación</h2>
         </div>
         <div class="col-xs-12">
             <div class="margin-20">
@@ -1016,7 +1022,80 @@
             </div>
         </div>
     </div>
-    <hr>
+    <!--Tiempo de operacion-->
+    <div class="row" *ngIf="activeTimeOperation">
+        <div class="col-xs-12">
+            <h2 class="text-center">Tiempo de Operación</h2>
+        </div>
+        <div class="col-md-3"></div>
+        <div class="col-md-3">
+            <select id="year" class="form-control input-lg" [(ngModel)]="selectedYearTimeOper"
+                name="selectedYearTimeOper" (change)="getTimeOperations()">
+                <option value="0" disabled>Seleccione uno</option>
+                <option>2020</option>
+                <option>2021</option>
+                <option>2022</option>
+                <option>2023</option>
+            </select>
+        </div>
+        <br />
+        <div class="col-md-3">
+            <select id="month" class="form-control input-lg" [(ngModel)]="selectedMonthTimeOper"
+                name="selectedMonthTimeOper" (change)="getTimeOperations()">
+                <option value="" disabled>Seleccione uno</option>
+                <option value="1">Enero</option>
+                <option value="2">Febrero</option>
+                <option value="3">Marzo</option>
+                <option value="4">Abril</option>
+                <option value="5">Mayo</option>
+                <option value="6">Junio</option>
+                <option value="7">Julio</option>
+                <option value="8">Agosto</option>
+                <option value="9">Septiembre</option>
+                <option value="10">Octubre</option>
+                <option value="11">Noviembre</option>
+                <option value="12">Diciembre</option>
+            </select>
+        </div>
+        <div class="col-xs-3"></div>
+        <div class="row" *ngFor="let timeOper of timeOperations">
+            <div class="col-xs-12 col-md-8 col-md-offset-2" style="top: 30px;border-bottom: #9c9c9c 1px solid;">
+                <div class="col-xs-4 text-center">
+                    <h4>Tiempo Estimado</h4>
+                    <h5>Carga Suelta<br />
+                        <small>#{{timeOper.timeEstCargaS/10 | number}}</small>
+                        <br />
+                        <small>10 días</small>
+                    </h5>
+                    <h5>Contenedor<br />
+                        <small>#{{timeOper.timeEstContainer/8 | number}}</small>
+                        <br />
+                        <small>8 días</small>
+                    </h5>
+                </div>
+                <div class="col-xs-4 text-center">
+                    <div class="emp-assigned">
+                        <img class="avatar" src="{{urlShared}}images/users/comex/{{timeOper.userName}}.jpg"
+                            onerror="this.src='assets/images/logo-igb.png'">
+                    </div>
+                    <h4>{{timeOper.userName}}<br>
+                        <small>Analista</small>
+                    </h4>
+                </div>
+                <div class="col-xs-4 text-center">
+                    <h4>Tiempo Real</h4>
+                    <h5>
+                        <small>{{timeOper.timeRealCargaS}} días</small><br /><span class="icon-rating-3"
+                            style="font-size: 40px;"></span>
+                    </h5>
+                    <h5>
+                        <small>{{timeOper.timeRealContainer}} días</small><br /><span class="icon-rating-1"
+                            style="font-size: 40px;"></span>
+                    </h5>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <!-- Finanzas -->
 <!-- <div class="finanzas">

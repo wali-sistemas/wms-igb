@@ -262,7 +262,9 @@ th, td {
   background-position: 50%;
   border-radius: 50%;
   background-size: 100% auto;
-  width: 60px;
+  width: 100px;
+  position: relative;
+  bottom: -7px;
 }
   
 /* When the height of the screen is less than 450 pixels, change the font-size of the links and position the close button again, so they don't overlap */
