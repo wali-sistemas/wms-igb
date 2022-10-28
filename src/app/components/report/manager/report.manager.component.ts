@@ -5,6 +5,7 @@ import { SalesAnnual } from '../../../models/sales-annual';
 import { SalesMonthly } from '../../../models/sales-monthly';
 import { ByCollect } from '../../../models/byCollect';
 import { PurchaseCost } from '../../../models/purchase-cost';
+import { TimeOperation } from '../../../models/time-operation';
 
 import { UserService } from '../../../services/user.service';
 import { ReportService } from '../../../services/report.service';
@@ -129,6 +130,11 @@ export class ReportManagerComponent implements OnInit {
     public zarpe: string;
     public embarque: string;
     public cargaLista: string;
+    /***COMEX Tiempo operacion***/
+    public activeTimeOperation: boolean = false;
+    public timeOperations: Array<TimeOperation>;
+    public selectedYearTimeOper: number;
+    public selectedMonthTimeOper: string = '';
 
     constructor(private _userService: UserService, private _router: Router, private _reportService: ReportService, private _routerParam: ActivatedRoute) {
         this.byCollect = new Array<ByCollect>();
@@ -186,7 +192,7 @@ export class ReportManagerComponent implements OnInit {
             this.barChartDataFactorCompra = [
                 { data: [this.factoresCompras[0][5], this.factoresCompras[1][5], this.factoresCompras[2][5], this.factoresCompras[3][5], this.factoresCompras[4][5], this.factoresCompras[5][5], this.factoresCompras[6][5]], label: this.factoresCompras[0][0] },
             ];
-        }  
+        }
     }
 
     private initializeAnnual() {
@@ -662,12 +668,35 @@ export class ReportManagerComponent implements OnInit {
         );
     }
 
+    public getTimeOperations() {
+        this.timeOperations = new Array<TimeOperation>();
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+
+        this._reportService.getTimeOperation(this.selectedYearTimeOper, this.selectedMonthTimeOper, this.queryParam.id, false).subscribe(
+            response => {
+                this.timeOperations = response;
+                $('#modal_transfer_process').modal('hide');
+                console.log(this.timeOperations);
+            },
+            error => {
+                console.error(error);
+                $('#modal_transfer_process').modal('hide');
+                this.redirectIfSessionInvalid(error);
+            }
+        );
+    }
+
     public getActiveFactorCompra() {
         this.activeContentComex = true;
         this.activeCostoCompra = false;
         this.activeFactorCompra = true;
         this.activeCostoImport = false;
         this.activeTimeImport = false;
+        this.activeTimeOperation = false;
         this.initializeComex();
     }
 
@@ -677,6 +706,17 @@ export class ReportManagerComponent implements OnInit {
         this.activeCostoImport = false;
         this.activeTimeImport = true;
         this.activeTracking = false;
+        this.activeTimeOperation = false;
+    }
+
+    public getTimeOperationComex() {
+        this.activeCostoCompra = false;
+        this.activeFactorCompra = false;
+        this.activeCostoImport = false;
+        this.activeTimeImport = false;
+        this.activeTracking = false;
+        this.activeTimeOperation = true;
+        this.getTimeOperations();
     }
 
     public getActiveComexCostoCompra() {
@@ -685,6 +725,7 @@ export class ReportManagerComponent implements OnInit {
         this.activeFactorCompra = false;
         this.activeCostoImport = false;
         this.activeTimeImport = false;
+        this.activeTimeOperation = false;
         this.barChartLabelsCostoCompra = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
         this.initializeComex();
     }
@@ -695,6 +736,7 @@ export class ReportManagerComponent implements OnInit {
         this.activeFactorCompra = false;
         this.activeCostoImport = true;
         this.activeTimeImport = false;
+        this.activeTimeOperation = false;
         this.barChartLabelsCostoImport = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
         this.initializeComex();
     }
@@ -825,6 +867,11 @@ export class ReportManagerComponent implements OnInit {
         this.activeFactorCompra = false;
         this.activeCostoImport = false;
         this.activeTimeImport = false;
+        this.activeTimeOperation = false;
+        this.selectedYear = 2020;
+        this.selectedMonth = 'Enero';
+        this.selectedMonthTimeOper = '1';
+        this.selectedYearTimeOper = 2022;
         this.getCostoCompra();
         this.getImportCompra();
         this.getFactorCompra();

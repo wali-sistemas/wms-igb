@@ -29,4 +29,16 @@ export class PurchaseOrdersService {
     return this._http.post(this.url + 'reception/receive-items', JSON.stringify(document), { headers: igbHeaders })
       .map(res => res.json());
   }
+
+  public loadOrderUDF(docNum) {
+    let igbHeaders = new IGBHeaders().loadHeaders();
+    return this._http.get(this.url + 'reception/load/order/udf/' + docNum, { headers: igbHeaders })
+      .map(res => res.json());
+  }
+
+  public updateOrderUDF(userFieldDTO) {
+    let igbHeaders = new IGBHeaders().loadHeaders();
+    return this._http.put(this.url + 'reception/update/order/udf', userFieldDTO, { headers: igbHeaders })
+      .map(res => res.json());
+  }
 }

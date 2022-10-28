@@ -3,5 +3,6 @@ export class SalesAnnual {
     public totalCost: number;
     public totalSale: number;
     public margeSale: number;
+
     constructor() { }
 }
