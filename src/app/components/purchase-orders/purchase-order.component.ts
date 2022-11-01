@@ -48,14 +48,14 @@ export class PurchaseOrderComponent implements OnInit {
   private transpTerr: string = '';
   private cbm: string = '';
   private dateArribCed: Date;
-  private cantCont: number;
+  private cantCont: number = 0;
   private dateCargList: Date;
   private tiempTrans: string = '';
   private dateSalPuert: Date;
   private tiempPuert: string = '';
-  private tiempEntreg: number;
+  private tiempEntreg: number = 0;
   private dateConfBooking: Date;
-  private tiempEspBooking: number;
+  private tiempEspBooking: number = 0;
   private dateEstEmb: Date;
   private dateEstArribCed: Date;
   private dateLiq: Date;
@@ -66,7 +66,7 @@ export class PurchaseOrderComponent implements OnInit {
   private selectedNotifBL: string = '';
   private liqComex: string = '';
   private conductor: string = '';
-  private cedCond: string = '';
+  private cedCond: number = 0;
   private placVeh: string = '';
   private contenedor: string = '';
   private precinto: string = '';
@@ -252,7 +252,7 @@ export class PurchaseOrderComponent implements OnInit {
 
     this._purchaseOrdersService.updateOrderUDF(UserFieldDTO).subscribe(
       response => {
-        if (response.code === 1) {
+        if (response.code === 0) {
           $('#modal_transfer_process').modal('hide');
           this._router.navigate(['/purchase-orders']);
         } else {
