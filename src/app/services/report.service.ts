@@ -161,4 +161,24 @@ export class ReportService {
         return this._http.get(this.url + 'report/comex/time-operation?year=' + year + '&month=' + month, { headers: igbHeaders })
             .map(res => res.json());
     }
+
+    public getTimeLiquid(year: number, month: string, companyName: string, testing: boolean) {
+        let igbHeaders = new Headers({
+            'Content-Type': 'application/json',
+            'X-Company-Name': companyName,
+            'X-Pruebas': testing
+        });
+        return this._http.get(this.url + 'report/comex/time-liquid?year=' + year + '&month=' + month, { headers: igbHeaders })
+            .map(res => res.json());
+    }
+
+    public getBooking(year: number, month: string, companyName: string, testing: boolean) {
+        let igbHeaders = new Headers({
+            'Content-Type': 'application/json',
+            'X-Company-Name': companyName,
+            'X-Pruebas': testing
+        });
+        return this._http.get(this.url + 'report/comex/booking?year=' + year + '&month=' + month, { headers: igbHeaders })
+            .map(res => res.json());
+    }
 }

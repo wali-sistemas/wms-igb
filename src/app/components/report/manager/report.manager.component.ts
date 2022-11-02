@@ -6,6 +6,8 @@ import { SalesMonthly } from '../../../models/sales-monthly';
 import { ByCollect } from '../../../models/byCollect';
 import { PurchaseCost } from '../../../models/purchase-cost';
 import { TimeOperation } from '../../../models/time-operation';
+import { TimeLiquid } from '../../../models/time-liquid';
+import { Booking } from '../../../models/booking';
 
 import { UserService } from '../../../services/user.service';
 import { ReportService } from '../../../services/report.service';
@@ -112,7 +114,6 @@ export class ReportManagerComponent implements OnInit {
     public barChartDataCostoImport: any[] = [{ data: [], label: '' }, { data: [], label: '' }, { data: [], label: '' }, { data: [], label: '' }];
     /***COMEX Trazabilidad importacion***/
     public timesImports: Array<any>;
-    public activeTimeImport: boolean = false;
     public barChartTypeTimeImport: string = 'line';
     public barChartLabelsTimeImport: string[];
     public barChartDataTimeImport: any[] = [{ data: [], label: '' }];
@@ -125,6 +126,7 @@ export class ReportManagerComponent implements OnInit {
     public nroQty: string;
     public liquid: string;
     public activeTracking: boolean = false;
+    public activeGraphTracking: boolean = false;
     public arriboPuerto: string;
     public arriboCedi: string;
     public zarpe: string;
@@ -135,6 +137,12 @@ export class ReportManagerComponent implements OnInit {
     public timeOperations: Array<TimeOperation>;
     public selectedYearTimeOper: number;
     public selectedMonthTimeOper: string = '';
+    /***COMEX Tiempo Liquidacion***/
+    public activeTimeLiquid: boolean = false;
+    public timeLiquids: Array<TimeLiquid>;
+    /***COMEX Tiempo Booking***/
+    public activeBooking: boolean = false;
+    public bookings: Array<Booking>;
 
     constructor(private _userService: UserService, private _router: Router, private _reportService: ReportService, private _routerParam: ActivatedRoute) {
         this.byCollect = new Array<ByCollect>();
@@ -656,7 +664,7 @@ export class ReportManagerComponent implements OnInit {
                 this.arriboPuerto = this.timesImports[4].information;
                 this.arriboCedi = this.timesImports[5].information;
 
-                this.activeTracking = true;
+                this.activeGraphTracking = true;
                 this.trackOrder = '';
                 $('#modal_transfer_process').modal('hide');
             },
@@ -680,7 +688,48 @@ export class ReportManagerComponent implements OnInit {
             response => {
                 this.timeOperations = response;
                 $('#modal_transfer_process').modal('hide');
-                console.log(this.timeOperations);
+            },
+            error => {
+                console.error(error);
+                $('#modal_transfer_process').modal('hide');
+                this.redirectIfSessionInvalid(error);
+            }
+        );
+    }
+
+    public getTimeLiquid() {
+        this.timeLiquids = new Array<TimeLiquid>();
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+
+        this._reportService.getTimeLiquid(this.selectedYearTimeOper, this.selectedMonthTimeOper, this.queryParam.id, false).subscribe(
+            response => {
+                this.timeLiquids = response;
+                $('#modal_transfer_process').modal('hide');
+            },
+            error => {
+                console.error(error);
+                $('#modal_transfer_process').modal('hide');
+                this.redirectIfSessionInvalid(error);
+            }
+        );
+    }
+
+    public getBooking() {
+        this.bookings = new Array<Booking>();
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+
+        this._reportService.getBooking(this.selectedYearTimeOper, this.selectedMonthTimeOper, this.queryParam.id, false).subscribe(
+            response => {
+                this.bookings = response;
+                $('#modal_transfer_process').modal('hide');
             },
             error => {
                 console.error(error);
@@ -695,28 +744,55 @@ export class ReportManagerComponent implements OnInit {
         this.activeCostoCompra = false;
         this.activeFactorCompra = true;
         this.activeCostoImport = false;
-        this.activeTimeImport = false;
+        this.activeTracking = false;
         this.activeTimeOperation = false;
+        this.activeTimeLiquid = false;
+        this.activeBooking = false;
         this.initializeComex();
     }
 
-    public getTimeImport() {
+    public getTracking() {
         this.activeCostoCompra = false;
         this.activeFactorCompra = false;
         this.activeCostoImport = false;
-        this.activeTimeImport = true;
-        this.activeTracking = false;
+        this.activeTracking = true;
+        this.activeGraphTracking = false;
         this.activeTimeOperation = false;
+        this.activeTimeLiquid = false;
+        this.activeBooking = false;
     }
 
     public getTimeOperationComex() {
         this.activeCostoCompra = false;
         this.activeFactorCompra = false;
         this.activeCostoImport = false;
-        this.activeTimeImport = false;
         this.activeTracking = false;
         this.activeTimeOperation = true;
+        this.activeTimeLiquid = false;
+        this.activeBooking = false;
         this.getTimeOperations();
+    }
+
+    public getTimeLiquidComex() {
+        this.activeCostoCompra = false;
+        this.activeFactorCompra = false;
+        this.activeCostoImport = false;
+        this.activeTracking = false;
+        this.activeTimeOperation = false;
+        this.activeTimeLiquid = true;
+        this.activeBooking = false;
+        this.getTimeLiquid();
+    }
+
+    public getBookingComex() {
+        this.activeCostoCompra = false;
+        this.activeFactorCompra = false;
+        this.activeCostoImport = false;
+        this.activeTracking = false;
+        this.activeTimeOperation = false;
+        this.activeTimeLiquid = false;
+        this.activeBooking = true;
+        this.getTimeLiquid();
     }
 
     public getActiveComexCostoCompra() {
@@ -724,8 +800,9 @@ export class ReportManagerComponent implements OnInit {
         this.activeCostoCompra = true;
         this.activeFactorCompra = false;
         this.activeCostoImport = false;
-        this.activeTimeImport = false;
+        this.activeTracking = false;
         this.activeTimeOperation = false;
+        this.activeTimeLiquid = false;
         this.barChartLabelsCostoCompra = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
         this.initializeComex();
     }
@@ -735,8 +812,9 @@ export class ReportManagerComponent implements OnInit {
         this.activeCostoCompra = false;
         this.activeFactorCompra = false;
         this.activeCostoImport = true;
-        this.activeTimeImport = false;
+        this.activeTracking = false;
         this.activeTimeOperation = false;
+        this.activeTimeLiquid = false;
         this.barChartLabelsCostoImport = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
         this.initializeComex();
     }
@@ -866,7 +944,7 @@ export class ReportManagerComponent implements OnInit {
         this.activeCostoCompra = false;
         this.activeFactorCompra = false;
         this.activeCostoImport = false;
-        this.activeTimeImport = false;
+        this.activeTracking = false;
         this.activeTimeOperation = false;
         this.selectedYear = 2020;
         this.selectedMonth = 'Enero';
