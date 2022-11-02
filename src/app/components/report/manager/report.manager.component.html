@@ -128,13 +128,21 @@
                                                 data-toggle="list" role="tab" style="border-radius: 0px;"
                                                 (click)="getActiveComexCostoImport()">Costo de Importación</a>
                                             <a class="list-group-item list-group-item-action"
-                                                [ngClass]="{active: activeTimeImport}" id="list-cedi-list"
+                                                [ngClass]="{active: activeTracking}" id="list-cedi-list"
                                                 data-toggle="list" role="tab" style="border-radius: 0px;"
-                                                (click)="getTimeImport()">Tracking de Compra</a>
+                                                (click)="getTracking()">Tracking de Compra</a>
                                             <a class="list-group-item list-group-item-action"
                                                 [ngClass]="{active: activeTimeOperation}" id="list-cedi-list"
                                                 data-toggle="list" role="tab" style="border-radius: 0px;"
                                                 (click)="getTimeOperationComex()">Tiempo de Operación</a>
+                                            <a class="list-group-item list-group-item-action"
+                                                [ngClass]="{active: activeTimeLiquid}" id="list-cedi-list"
+                                                data-toggle="list" role="tab" style="border-radius: 0px;"
+                                                (click)="getTimeLiquidComex()">Tiempo de Liquidación</a>
+                                            <a class="list-group-item list-group-item-action"
+                                                [ngClass]="{active: activeBooking}" id="list-cedi-list"
+                                                data-toggle="list" role="tab" style="border-radius: 0px;"
+                                                (click)="getBookingComex()">Consecución Booking</a>
                                         </div>
                                     </div>
                                 </div>
@@ -874,7 +882,7 @@
         </div>
     </div>
     <!--linea de tiempo-->
-    <div class="row" *ngIf="activeTimeImport">
+    <div class="row" *ngIf="activeTracking">
         <div class="col-xs-12">
             <h2 class="text-center">Tracking de Compra</h2>
         </div>
@@ -886,7 +894,7 @@
                 </form>
             </div>
         </div>
-        <div *ngIf="activeTracking">
+        <div *ngIf="activeGraphTracking">
             <div class="col-lg-12">
                 <div class="card">
                     <div class="body">
@@ -1090,6 +1098,154 @@
                     </h5>
                     <h5>
                         <small>{{timeOper.timeRealContainer}} días</small><br /><span class="icon-rating-1"
+                            style="font-size: 40px;"></span>
+                    </h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Tiempo de liquidacion-->
+    <div class="row" *ngIf="activeTimeLiquid">
+        <div class="col-xs-12">
+            <h2 class="text-center">Tiempo de Liquidación</h2>
+        </div>
+        <div class="col-md-3"></div>
+        <div class="col-md-3">
+            <select id="year" class="form-control input-lg" [(ngModel)]="selectedYearTimeOper"
+                name="selectedYearTimeOper" (change)="getTimeLiquid()">
+                <option value="0" disabled>Seleccione uno</option>
+                <option>2020</option>
+                <option>2021</option>
+                <option>2022</option>
+                <option>2023</option>
+            </select>
+        </div>
+        <br />
+        <div class="col-md-3">
+            <select id="month" class="form-control input-lg" [(ngModel)]="selectedMonthTimeOper"
+                name="selectedMonthTimeOper" (change)="getTimeLiquid()">
+                <option value="" disabled>Seleccione uno</option>
+                <option value="1">Enero</option>
+                <option value="2">Febrero</option>
+                <option value="3">Marzo</option>
+                <option value="4">Abril</option>
+                <option value="5">Mayo</option>
+                <option value="6">Junio</option>
+                <option value="7">Julio</option>
+                <option value="8">Agosto</option>
+                <option value="9">Septiembre</option>
+                <option value="10">Octubre</option>
+                <option value="11">Noviembre</option>
+                <option value="12">Diciembre</option>
+            </select>
+        </div>
+        <div class="col-xs-3"></div>
+        <div class="row" *ngFor="let timeLiq of timeLiquids">
+            <div class="col-xs-12 col-md-8 col-md-offset-2" style="top: 30px;border-bottom: #9c9c9c 1px solid;">
+                <div class="col-xs-4 text-center">
+                    <h4>Tiempo Estimado</h4>
+                    <h5>Carga Suelta<br />
+                        <small>#{{timeLiq.timeEstCargaS/1 | number}}</small>
+                        <br />
+                        <small>1 días</small>
+                    </h5>
+                    <h5>Contenedor<br />
+                        <small>#{{timeLiq.timeEstContainer/1 | number}}</small>
+                        <br />
+                        <small>1 días</small>
+                    </h5>
+                </div>
+                <div class="col-xs-4 text-center">
+                    <div class="emp-assigned">
+                        <img class="avatar" src="{{urlShared}}images/users/comex/{{timeLiq.userName}}.jpg"
+                            onerror="this.src='assets/images/logo-igb.png'">
+                    </div>
+                    <h4>{{timeLiq.userName}}<br>
+                        <small>Analista</small>
+                    </h4>
+                </div>
+                <div class="col-xs-4 text-center">
+                    <h4>Tiempo Real</h4>
+                    <h5>
+                        <small>{{timeLiq.timeRealCargaS}} días</small><br /><span class="icon-rating-3"
+                            style="font-size: 40px;"></span>
+                    </h5>
+                    <h5>
+                        <small>{{timeLiq.timeRealContainer}} días</small><br /><span class="icon-rating-1"
+                            style="font-size: 40px;"></span>
+                    </h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--COnsecucion booking-->
+    <div class="row" *ngIf="activeBooking">
+        <div class="col-xs-12">
+            <h2 class="text-center">Consecución Booking</h2>
+        </div>
+        <div class="col-md-3"></div>
+        <div class="col-md-3">
+            <select id="year" class="form-control input-lg" [(ngModel)]="selectedYearTimeOper"
+                name="selectedYearTimeOper" (change)="getBooking()">
+                <option value="0" disabled>Seleccione uno</option>
+                <option>2020</option>
+                <option>2021</option>
+                <option>2022</option>
+                <option>2023</option>
+            </select>
+        </div>
+        <br />
+        <div class="col-md-3">
+            <select id="month" class="form-control input-lg" [(ngModel)]="selectedMonthTimeOper"
+                name="selectedMonthTimeOper" (change)="getBooking()">
+                <option value="" disabled>Seleccione uno</option>
+                <option value="1">Enero</option>
+                <option value="2">Febrero</option>
+                <option value="3">Marzo</option>
+                <option value="4">Abril</option>
+                <option value="5">Mayo</option>
+                <option value="6">Junio</option>
+                <option value="7">Julio</option>
+                <option value="8">Agosto</option>
+                <option value="9">Septiembre</option>
+                <option value="10">Octubre</option>
+                <option value="11">Noviembre</option>
+                <option value="12">Diciembre</option>
+            </select>
+        </div>
+        <div class="col-xs-3"></div>
+        <div class="row" *ngFor="let booking of bookings">
+            <div class="col-xs-12 col-md-8 col-md-offset-2" style="top: 30px;border-bottom: #9c9c9c 1px solid;">
+                <div class="col-xs-4 text-center">
+                    <h4>Tiempo Estimado</h4>
+                    <h5>Carga Suelta<br />
+                        <small>#{{booking.timeEstCargaS/3 | number}}</small>
+                        <br />
+                        <small>3 días</small>
+                    </h5>
+                    <h5>Contenedor<br />
+                        <small>#{{booking.timeEstContainer/3 | number}}</small>
+                        <br />
+                        <small>3 días</small>
+                    </h5>
+                </div>
+                <div class="col-xs-4 text-center">
+                    <div class="emp-assigned">
+                        <img class="avatar" src="{{urlShared}}images/users/comex/{{booking.userName}}.jpg"
+                            onerror="this.src='assets/images/logo-igb.png'">
+                    </div>
+                    <h4>{{booking.userName}}<br>
+                        <small>Analista</small>
+                    </h4>
+                </div>
+                <div class="col-xs-4 text-center">
+                    <h4>Tiempo Real</h4>
+                    <h5>
+                        <small>{{booking.timeRealCargaS}} días</small><br /><span class="icon-rating-3"
+                            style="font-size: 40px;"></span>
+                    </h5>
+                    <h5>
+                        <small>{{booking.timeRealContainer}} días</small><br /><span class="icon-rating-1"
                             style="font-size: 40px;"></span>
                     </h5>
                 </div>
