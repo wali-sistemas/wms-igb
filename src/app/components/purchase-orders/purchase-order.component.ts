@@ -176,7 +176,7 @@ export class PurchaseOrderComponent implements OnInit {
         this.dateRecDocFin = response.frecDocFin;
         this.emisionBLDest = response.emisBL;
         this.selectedInspPuerto = response.insp;
-        this.dateEstArribCed = response.dateEstArribCed;
+        this.dateEstArribCed = response.farribCedEst;
         this.selectedNotifBL = response.notifBL;
         this.liqComex = response.liqComex;
         this.dateLiq = response.fliq;
@@ -188,7 +188,6 @@ export class PurchaseOrderComponent implements OnInit {
         this.precinto = response.precint;
         this.selectedEnvDatCond = response.enviarDatos;
         this.selectedAnalistComex = response.vendedor;
-
       }, error => {
         this.redirectIfSessionInvalid(error);
         console.error(error);
