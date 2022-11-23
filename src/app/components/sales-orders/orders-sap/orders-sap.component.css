@@ -154,6 +154,17 @@
   text-align: center;
 }
 
+.order.identity-xcelink {
+  border-color: #87CEFA;
+}
+
+.order-num-xcelink {
+  background-color: #6495ED;
+  border-radius: 10px;
+  color: #333;
+  text-align: center;
+}
+
 .order.warning .assigned-employee, .order.warning .glyphicon-warning-sign{
   color: #f0ad4e;
 }
