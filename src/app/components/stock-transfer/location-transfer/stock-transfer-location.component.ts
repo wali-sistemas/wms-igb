@@ -5,20 +5,20 @@ import { UserService } from '../../../services/user.service';
 import { StockTransferService } from '../../../services/stock-transfer.service';
 import { BinLocationService } from '../../../services/bin-locations.service';
 import { StockItemService } from '../../../services/stock-item.service';
+import { ReportService } from '../../../services/report.service';
 
 declare var $: any;
 
 @Component({
     templateUrl: './stock-transfer-location.component.html',
     styleUrls: ['./stock-transfer-location.component.css'],
-    providers: [UserService, StockTransferService, BinLocationService, StockItemService]
+    providers: [UserService, StockTransferService, BinLocationService, StockItemService, ReportService]
 })
 
 export class StockTransferLocationComponent implements OnInit {
     public urlShared: String = GLOBAL.urlShared;
     public identity;
     public token;
-
     public fromBin: string = '';
     public toBin: string = '';
     public fromBinId: number;
@@ -30,12 +30,14 @@ export class StockTransferLocationComponent implements OnInit {
     public stockTransferExitMessage: string = '';
     public routerLinkActive: string = 'active';
     public disabled: boolean = false;
+    public transferNumber: string = '';
 
     constructor(private _userService: UserService,
         private _stockTransferService: StockTransferService,
         private _binLocationService: BinLocationService,
         private _router: Router,
-        private _stockItemService: StockItemService) {
+        private _stockItemService: StockItemService,
+        private _reportService: ReportService) {
         this._userService = _userService;
         this.items = new Array<any>();
     }
@@ -259,16 +261,23 @@ export class StockTransferLocationComponent implements OnInit {
             warehouseCode: this.identity.warehouseCode,
             lines: this.items
         };
-        console.log(stockTransfer);
+
         this._stockTransferService.stockTransfer(stockTransfer).subscribe(
             response => {
-                console.log(response);
                 if (response.code === 0) {
                     this.limpiarTodo();
                     $('#modal_transfer_process').modal('hide');
-                    this.stockTransferExitMessage = 'Traslado creado correctamente.';
+
+                    $('#modal_visualize_transfer').modal({
+                        backdrop: 'static',
+                        keyboard: false,
+                        show: true
+                    });
+
+                    this.transferNumber = response.content;
                     $('#itemCode').focus();
                 } else {
+                    $('#modal_transfer_process').modal('hide');
                     this.stockTransferErrorMessage = response.content;
                 }
             }, error => {
@@ -283,6 +292,32 @@ export class StockTransferLocationComponent implements OnInit {
                 }
             }
         );
+    }
+
+    public openReport(documento: string, origen: string) {
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+        if (this.transferNumber != null) {
+            let printReportDTO = {
+                "id": this.transferNumber, "copias": 0, "documento": documento, "companyName": this.identity.selectedCompany, "origen": origen, "imprimir": false
+            }
+            this._reportService.generateReport(printReportDTO).subscribe(
+                response => {
+                    if (response.code == 0) {
+                        let landingUrl = this.urlShared + this.identity.selectedCompany + "/" + documento + "/" + this.transferNumber + ".pdf";
+                        window.open(landingUrl, "_self");
+                    }
+                    $('#modal_transfer_process').modal('hide');
+                },
+                error => {
+                    console.error('Ocurrio un error al guardar la transferencia de stock.', error);
+                    $('#modal_transfer_process').modal('hide');
+                }
+            );
+        }
     }
 
     public eliminarItem(itemCode: string) {
