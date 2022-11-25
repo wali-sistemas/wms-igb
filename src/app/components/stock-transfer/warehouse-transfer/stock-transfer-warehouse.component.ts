@@ -6,20 +6,20 @@ import { StockTransferService } from '../../../services/stock-transfer.service';
 import { BinLocationService } from '../../../services/bin-locations.service';
 import { GenericService } from '../../../services/generic';
 import { StockItemService } from '../../../services/stock-item.service';
+import { ReportService } from '../../../services/report.service';
 
 declare var $: any;
 
 @Component({
     templateUrl: './stock-transfer-warehouse.component.html',
     styleUrls: ['./stock-transfer-warehouse.component.css'],
-    providers: [UserService, StockTransferService, BinLocationService, GenericService, StockItemService]
+    providers: [UserService, StockTransferService, BinLocationService, GenericService, StockItemService, ReportService]
 })
 
 export class StockTransferWarehouseComponent implements OnInit {
     public urlShared: String = GLOBAL.urlShared;
     public identity;
     public token;
-
     public fromBin: string = '';
     public toBin: string = '';
     public fromBinId: number;
@@ -30,18 +30,19 @@ export class StockTransferWarehouseComponent implements OnInit {
     public items: Array<any>;
     public stockTransferErrorMessage: string = '';
     public stockTransferExitMessage: string = '';
-
     public disabledWhFrom: boolean = false;
     public selectedWarehouseFrom: string = '';
     public selectedWarehouseTo: string = '';
     public warehousesFrom: Array<any>;
     public warehousesTo: Array<any>;
+    public transferNumber: string = '';
 
     constructor(private _userService: UserService,
         private _stockTransferService: StockTransferService,
         private _binLocationService: BinLocationService,
         private _router: Router, private _genericService: GenericService,
-        private _stockItemService: StockItemService) {
+        private _stockItemService: StockItemService,
+        private _reportService: ReportService) {
         this._userService = _userService;
         this.items = new Array<any>();
         this.warehousesFrom = new Array<any>();
@@ -71,7 +72,7 @@ export class StockTransferWarehouseComponent implements OnInit {
             response => {
                 this.warehousesFrom = response.content;
                 this.warehousesTo = response.content;
-            }, error => { 
+            }, error => {
                 console.error(error);
                 this.redirectIfSessionInvalid(error);
             }
@@ -184,6 +185,32 @@ export class StockTransferWarehouseComponent implements OnInit {
         }
     }
 
+    public openReport(documento: string, origen: string) {
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+        if (this.transferNumber != null) {
+            let printReportDTO = {
+                "id": this.transferNumber, "copias": 0, "documento": documento, "companyName": this.identity.selectedCompany, "origen": origen, "imprimir": false
+            }
+            this._reportService.generateReport(printReportDTO).subscribe(
+                response => {
+                    if (response.code == 0) {
+                        let landingUrl = this.urlShared + this.identity.selectedCompany + "/" + documento + "/" + this.transferNumber + ".pdf";
+                        window.open(landingUrl, "_self");
+                    }
+                    $('#modal_transfer_process').modal('hide');
+                },
+                error => {
+                    console.error('Ocurrio un error al guardar la transferencia de stock.', error);
+                    $('#modal_transfer_process').modal('hide');
+                }
+            );
+        }
+    }
+
     public limpiarLinea() {
         this.itemCode = '';
         this.quantity = null;
@@ -225,7 +252,14 @@ export class StockTransferWarehouseComponent implements OnInit {
                 if (response.code === 0) {
                     this.limpiarTodo();
                     $('#modal_transfer_process').modal('hide');
-                    this.stockTransferExitMessage = 'Traslado creado correctamente.'
+
+                    $('#modal_visualize_transfer').modal({
+                        backdrop: 'static',
+                        keyboard: false,
+                        show: true
+                    });
+
+                    this.transferNumber = response.content;
                 } else {
                     $('#modal_transfer_process').modal('hide');
                     this.stockTransferErrorMessage = response.content;
