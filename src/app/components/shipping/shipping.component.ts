@@ -695,27 +695,27 @@ export class ShippingComponent implements OnInit {
         this.pesoPack = 0;
         switch (selectedTypePack) {
             case "CAJA":
-                this.valorDeclPack = 180000;
+                this.valorDeclPack = 200000;
                 this.pesoPack = 12;
                 break;
             case "UNIDAD":
-                this.valorDeclPack = 150000;
+                this.valorDeclPack = 200000;
                 this.pesoPack = 12;
                 break;
             case "LIO":
-                this.valorDeclPack = 250000;
-                this.pesoPack = 20;
-                break;
-            case "VALDE":
                 this.valorDeclPack = 200000;
                 this.pesoPack = 20;
                 break;
+            case "VALDE":
+                this.valorDeclPack = 600000;
+                this.pesoPack = 20;
+                break;
             case "TAMBOR":
-                this.valorDeclPack = 2000000;
+                this.valorDeclPack = 600000;
                 this.pesoPack = 108;
                 break;
             case "CONTENEDOR":
-                this.valorDeclPack = 15000000;
+                this.valorDeclPack = 600000;
                 this.pesoPack = 1000;
                 break;
         }
