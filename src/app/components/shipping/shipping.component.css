@@ -122,6 +122,14 @@
   color: #037040;
   font-weight: bold;
   text-align: right;
+  height: 15px;
+}
+
+.rexpedition {
+  position: relative;
+  top: -20px;
+  font-size: 10px;
+  left: 3px;
 }
 
 .check {

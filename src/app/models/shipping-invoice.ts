@@ -11,6 +11,7 @@ export class ShippingInvoice {
     public codCity: string;
     public valStandDecl: number;
     public unidEmpStand: number;
+    public rexpedition: string;
 
     constructor() { }
 }
