@@ -246,7 +246,8 @@ export class PurchaseOrderComponent implements OnInit {
       'precint': this.precinto,
       'enviarDatos': this.selectedEnvDatCond == null ? '' : this.selectedEnvDatCond,
       'vendedor': this.selectedAnalistComex == null ? '' : this.selectedAnalistComex,
-      'docNum': this.order.docNum
+      'docNum': this.order.docNum,
+      'docDate': this.order.docDate
     }
 
     this._purchaseOrdersService.updateOrderUDF(UserFieldDTO).subscribe(
