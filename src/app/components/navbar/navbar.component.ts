@@ -32,10 +32,22 @@ export class NavBarComponent implements OnInit {
       this._router.navigate(['/']);
     }
 
-    if (this.identity.selectedCompany == 'VARROC' || this.identity.selectedCompany == 'VARROCPruebas') {
-      this.logo = 'logo-mtz.png';
-    } else {
-      this.logo = 'logo-igb.png';
+    switch (this.identity.selectedCompany) {
+      case 'IGB':
+        this.logo = 'logo-igb.png';
+        break;
+      case 'IGBPruebas':
+        this.logo = 'logo-igb.png';
+        break;
+      case 'VARROC':
+        this.logo = 'logo-mtz.png';
+      case 'VARROCPruebas':
+        this.logo = 'logo-mtz.png';
+        break;
+      case 'REDPLAS':
+        this.logo = 'logo-redplas.png';
+      case 'REDPLASPruebas':
+        this.logo = 'logo-redplas.png';
     }
 
     this.initializeAccessParameters();
