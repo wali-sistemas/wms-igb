@@ -141,9 +141,6 @@ export class StockTransferLocationComponent implements OnInit {
                                 this.limpiarLinea();
                                 return;
                             }
-                        } else {
-                            this.stockTransferErrorMessage = 'El ítem no existe o esta mal ingresado.';
-                            $('#modal_transfer_process').modal('hide');
                         }
                     }
                     if (response[2] >= this.quantity) {
