@@ -98,10 +98,10 @@ export class StockTransferWarehouseComponent implements OnInit {
         this.itemCode = this.itemCode.replace(/\s/g, '');
     }
 
-    public validarUbicacion(fromBin, type) {
+    public validarUbicacion(bin, type) {
         this.stockTransferErrorMessage = '';
         this.stockTransferExitMessage = '';
-        this._binLocationService.getBinAbs(fromBin.toUpperCase()).subscribe(
+        this._binLocationService.getBinAbs(bin.toUpperCase()).subscribe(
             response => {
                 if (type === 'to') {
                     if (response.content) {
@@ -242,7 +242,8 @@ export class StockTransferWarehouseComponent implements OnInit {
             username: this.identity.username,
             binCodeFrom: this.fromBin.toUpperCase(),
             binAbsFrom: this.fromBinId,
-            binAbsTo: this.dftBinAbs,
+            //TODO: se asigna campo this.dftBinAbs cuando se defina por defecto una ubicación
+            binAbsTo: this.toBinId,
             warehouseCode: this.selectedWarehouseTo,
             filler: this.selectedWarehouseFrom,
             lines: this.items

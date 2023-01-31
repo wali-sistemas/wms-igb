@@ -58,8 +58,8 @@
     <div class="row">
         <div class="col-xs-12">
             <label for="warehouse">Almacén Origen*</label>
-            <select id="warehouse" class="form-control input-lg" [(ngModel)]="selectedWarehouseFrom" name="selectedWarehouseFrom"
-                (change)="updateWarehouseFrom()" disabled="{{disabledWhFrom}}">
+            <select id="warehouse" class="form-control input-lg" [(ngModel)]="selectedWarehouseFrom"
+                name="selectedWarehouseFrom" (change)="updateWarehouseFrom()" disabled="{{disabledWhFrom}}">
                 <option value="" disabled>Seleccione uno</option>
                 <option *ngFor="let warehouse of warehousesFrom" value="{{warehouse.code}}">({{warehouse.code}})
                     {{warehouse.name}}</option>
@@ -69,9 +69,20 @@
     <br />
     <div class="row">
         <div class="col-xs-12">
+            <form (submit)="validarUbicacion(fromBin, 'from')">
+                <label for="fromBin">Ubicación Origen*</label>
+                <input type="text" class="form-control input-lg" autocomplete="off" id="fromBin" name="fromBin"
+                    placeholder="escanea la ubicación de origen" [(ngModel)]="fromBin"
+                    (blur)="validarUbicacion(fromBin, 'from')">
+            </form>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-xs-12">
             <label for="warehouse">Almacén Destino*</label>
-            <select id="warehouse" class="form-control input-lg" [(ngModel)]="selectedWarehouseTo" name="selectedWarehouseTo"
-                (change)="updateWarehouseTo()">
+            <select id="warehouse" class="form-control input-lg" [(ngModel)]="selectedWarehouseTo"
+                name="selectedWarehouseTo" (change)="updateWarehouseTo()">
                 <option value="" disabled>Seleccione uno</option>
                 <option *ngFor="let warehouse of warehousesTo" value="{{warehouse.code}}">({{warehouse.code}})
                     {{warehouse.name}}</option>
@@ -81,20 +92,21 @@
     <br />
     <div class="row">
         <div class="col-xs-12">
-            <form (submit)="validarReferencia()">
-                <label for="itemCode">Referencia*</label>
-                <input type="text" class="form-control input-lg" autocomplete="off" id="itemCode" name="itemCode"
-                    placeholder="escanea la referencia" [(ngModel)]="itemCode" (blur)="validarReferencia()">
+            <form (submit)="validarUbicacion(toBin, 'to')">
+                <label for="toBin">Ubicación Destino*</label>
+                <input type="text" class="form-control input-lg" autocomplete="off" id="toBin" name="toBin"
+                    placeholder="escanea la ubicación de destino" [(ngModel)]="toBin"
+                    (blur)="validarUbicacion(toBin, 'to')">
             </form>
         </div>
     </div>
     <br />
     <div class="row">
         <div class="col-xs-12">
-            <form (submit)="validarUbicacion(fromBin, 'from')">
-                <label for="fromBin">Ubicación Origen*</label>
-                <input type="text" class="form-control input-lg" autocomplete="off" id="fromBin" name="fromBin"
-                    placeholder="escanea la ubicación de origen" [(ngModel)]="fromBin" (blur)="validarUbicacion(fromBin, 'from')">
+            <form (submit)="validarReferencia()">
+                <label for="itemCode">Referencia*</label>
+                <input type="text" class="form-control input-lg" autocomplete="off" id="itemCode" name="itemCode"
+                    placeholder="escanea la referencia" [(ngModel)]="itemCode" (blur)="validarReferencia()">
             </form>
         </div>
     </div>
@@ -129,7 +141,7 @@
                 <tr *ngFor="let item of items">
                     <td class="detail">{{item.itemCode}}</td>
                     <td class="detail">{{item.fromWhsCode}}<span class="bin-code"> ({{fromBin}})</span></td>
-                    <td class="detail">{{item.whsCode}}</td>
+                    <td class="detail">{{item.whsCode}}<span class="bin-code"> ({{toBin}})</span></td>
                     <td class="detail">{{item.quantity}}</td>
                     <td class="detail">
                         <span class="refresh" (click)="eliminarItem(item.itemCode)" style="font-size: 25px;"><span
@@ -147,7 +159,8 @@
             </button>
         </div>
         <div class="col-xs-6">
-            <button class="btn btn-danger btn-lg" type="button" (click)="crearTraslado()" [disabled]="items.length == 0" style="float: right;">
+            <button class="btn btn-danger btn-lg" type="button" (click)="crearTraslado()" [disabled]="items.length == 0"
+                style="float: right;">
                 Finalizar
             </button>
         </div>

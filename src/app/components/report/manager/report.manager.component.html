@@ -42,7 +42,7 @@
                                     data-toggle="tab" (click)="getActiveSaleCollect()">Cartera</a></li>
                             <li role="presentation"><a href="#logistica" aria-controls="logistica" role="tab"
                                     data-toggle="tab" (click)="getActiveLogistica()">Logística</a></li>
-                            <li role="presentation"><a href="#comex" aria-controls="comex" role="tab" data-toggle="tab"
+                            <li role="presentation"><a href="#comex" aria-controls="comex" role="tab" data-toggle="tab" [class.display]="!authorizeModuleComex"
                                     (click)="getActiveComex()">Comex</a></li>
                         </ul>
                         <!-- Tab panel -->
@@ -303,7 +303,7 @@
                         </td>
                         <td
                             style="border: solid 1px; border-color: #333; width: 40%; background-color: #333; color: #fff;">
-                            <h4>Finaciero</h4>
+                            <h4>Financiero</h4>
                         </td>
                     </tr>
                     <tr *ngFor="let venta of ventasMensuales">
@@ -434,7 +434,7 @@
                     {{year}}</h4>
                 <!-- Tabla Desktop -->
                 <table class="table table-sm visible-lg visible-md" style="border-collapse: initial !important;">
-                    <thead>
+                    <thead *ngIf="queryParam.id != 'REDPLAS'">
                         <tr>
                             <th scope="col" style="border-bottom: 0px;">Mes</th>
                             <th scope="col" style="border-bottom: 0px;">Sin Vencer</th>
@@ -443,6 +443,18 @@
                             <th scope="col" style="border-bottom: 0px;">56 a 120</th>
                             <th scope="col" style="border-bottom: 0px;">121 a 360</th>
                             <th scope="col" style="border-bottom: 0px;">Mayor de 360</th>
+                            <th scope="col" style="border-bottom: 0px;">SubTotal</th>
+                        </tr>
+                    </thead>
+                    <thead *ngIf="queryParam.id == 'REDPLAS'">
+                        <tr>
+                            <th scope="col" style="border-bottom: 0px;">Mes</th>
+                            <th scope="col" style="border-bottom: 0px;">Sin Vencer</th>
+                            <th scope="col" style="border-bottom: 0px;">0 a 15</th>
+                            <th scope="col" style="border-bottom: 0px;">16 a 30</th>
+                            <th scope="col" style="border-bottom: 0px;">31 a 60</th>
+                            <th scope="col" style="border-bottom: 0px;">61 a 90</th>
+                            <th scope="col" style="border-bottom: 0px;">Mayor de 90</th>
                             <th scope="col" style="border-bottom: 0px;">SubTotal</th>
                         </tr>
                     </thead>
@@ -482,7 +494,7 @@
                     <thead>
                         <tr>
                             <th scope="col">Mes</th>
-                            <th>
+                            <th *ngIf="queryParam.id != 'REDPLAS'">
                                 <select id="diasAtraso" class="form-control input-md" [(ngModel)]="selectedDiasAtraso">
                                     <option value="a" style="border-bottom: 0px;">Sin Vencer</option>
                                     <option value="b" style="border-bottom: 0px;">0 a 20</option>
@@ -490,6 +502,16 @@
                                     <option value="d" style="border-bottom: 0px;">56 a 120</option>
                                     <option value="e" style="border-bottom: 0px;">121 a 360</option>
                                     <option value="f" style="border-bottom: 0px;">Mayor de 360</option>
+                                </select>
+                            </th>
+                            <th *ngIf="queryParam.id == 'REDPLAS'">
+                                <select id="diasAtraso" class="form-control input-md" [(ngModel)]="selectedDiasAtraso">
+                                    <option value="a" style="border-bottom: 0px;">Sin Vencer</option>
+                                    <option value="b" style="border-bottom: 0px;">0 a 15</option>
+                                    <option value="c" style="border-bottom: 0px;">16 a 30</option>
+                                    <option value="d" style="border-bottom: 0px;">31 a 60</option>
+                                    <option value="e" style="border-bottom: 0px;">61 a 90</option>
+                                    <option value="f" style="border-bottom: 0px;">Mayor de 90</option>
                                 </select>
                             </th>
                         </tr>
