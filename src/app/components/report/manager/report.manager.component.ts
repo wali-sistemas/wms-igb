@@ -143,6 +143,7 @@ export class ReportManagerComponent implements OnInit {
     /***COMEX Tiempo Booking***/
     public activeBooking: boolean = false;
     public bookings: Array<Booking>;
+    public authorizeModuleComex = false;
 
     constructor(private _userService: UserService, private _router: Router, private _reportService: ReportService, private _routerParam: ActivatedRoute) {
         this.byCollect = new Array<ByCollect>();
@@ -153,17 +154,37 @@ export class ReportManagerComponent implements OnInit {
             this.queryParam = params;
         })
 
-        if (this.queryParam == null) {
-            this._router.navigate(['/']);
-        } else if (this.queryParam.id == 'VARROC') {
-            this.logo = 'logo-mtz.png';
-        } else if (this.queryParam.id == 'IGB') {
-            this.logo = 'logo-igb.png';
-        } else if (this.queryParam.id == 'VELEZ') {
-            this.logo = 'logo-mr.png';
-        } else {
+        if (this.queryParam === null) {
             this._router.navigate(['/']);
             return;
+        }
+
+        switch (this.queryParam.id) {
+            case 'IGB':
+                this.logo = 'logo-igb.png';
+                this.authorizeModuleComex = true;
+                break;
+            case 'VARROC':
+                this.logo = 'logo-mtz.png';
+                break;
+            case 'VARROCPruebas':
+                this.logo = 'logo-mtz.png';
+                break;
+            case 'REDPLAS':
+                this.logo = 'logo-redplas.png';
+                break;
+            case 'REDPLASPruebas':
+                this.logo = 'logo-redplas.png';
+                break;
+            case 'VELEZ':
+                this.logo = 'logo-mr.png';
+                break;
+            case 'VELEZPruebas':
+                this.logo = 'logo-mr.png';
+                break;
+            default:
+                this._router.navigate(['/']);
+                break;
         }
 
         let date = new Date();

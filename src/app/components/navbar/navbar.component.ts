@@ -41,13 +41,16 @@ export class NavBarComponent implements OnInit {
         break;
       case 'VARROC':
         this.logo = 'logo-mtz.png';
+        break;
       case 'VARROCPruebas':
         this.logo = 'logo-mtz.png';
         break;
       case 'REDPLAS':
         this.logo = 'logo-redplas.png';
+        break;
       case 'REDPLASPruebas':
         this.logo = 'logo-redplas.png';
+        break;
     }
 
     this.initializeAccessParameters();
