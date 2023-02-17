@@ -69,6 +69,7 @@ export class ShippingComponent implements OnInit {
     public checkSede: boolean = false;
     public valStandDeclMTZ: number;
     public unidEmpStandMTZ: number;
+    public guia: string;
 
     constructor(private _userService: UserService, private _router: Router, private _shippingService: ShippingService, private _reportService: ReportService) {
         this.invoicesShipping = new Array<ShippingInvoice>();
@@ -592,6 +593,28 @@ export class ShippingComponent implements OnInit {
                 $('#modal_transfer_process').modal('hide');
                 break;
         }
+    }
+
+    public printStickerGuia() {
+        $("#printStickerGuia").modal('hide');
+        $('#modal_transfer_process').modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+
+        this._shippingService.printStickerGuiaOla(this.guia).subscribe(
+            response => {
+                window.open(response.content);
+                $('#modal_transfer_process').modal('hide');
+                this.guia = '';
+                this.selectedTransp = '';
+            },
+            error => {
+                console.error(error);
+                $('#modal_transfer_process').modal('hide');
+            }
+        );
     }
 
     public validateData() {

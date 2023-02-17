@@ -65,4 +65,9 @@ export class ShippingService {
         return this._http.post(this.url + 'shipping/add-guia-transprensa/' + invoices, ApiTransprensaDTO, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
+
+    public printStickerGuiaOla(guia: String) {
+        return this._http.get(this.url + 'shipping/print-sticker-ola/' + guia, { headers: new IGBHeaders().loadHeaders() })
+            .map(res => res.json());
+    }
 }
