@@ -714,35 +714,37 @@ export class ShippingComponent implements OnInit {
     }
 
     public getVrlDeclarad(selectedTypePack: string) {
-        this.qtyPack = 0;
-        this.pesoPack = 0;
-        switch (selectedTypePack) {
-            case "CAJA":
-                this.valorDeclPack = 200000;
-                this.pesoPack = 12;
-                break;
-            case "UNIDAD":
-                this.valorDeclPack = 200000;
-                this.pesoPack = 12;
-                break;
-            case "LIO":
-                this.valorDeclPack = 200000;
-                this.pesoPack = 20;
-                break;
-            case "VALDE":
-                this.valorDeclPack = 600000;
-                this.pesoPack = 20;
-                break;
-            case "TAMBOR":
-                this.valorDeclPack = 600000;
-                this.pesoPack = 108;
-                break;
-            case "CONTENEDOR":
-                this.valorDeclPack = 600000;
-                this.pesoPack = 1000;
-                break;
+        if (this.identity.selectedCompany == 'VARROC') {
+            this.qtyPack = 0;
+            this.pesoPack = 0;
+            switch (selectedTypePack) {
+                case "CAJA":
+                    this.valorDeclPack = 200000;
+                    this.pesoPack = 10;
+                    break;
+                case "UNIDAD":
+                    this.valorDeclPack = 200000;
+                    this.pesoPack = 10;
+                    break;
+                case "LIO":
+                    this.valorDeclPack = 200000;
+                    this.pesoPack = 20;
+                    break;
+                case "VALDE":
+                    this.valorDeclPack = 600000;
+                    this.pesoPack = 20;
+                    break;
+                case "TAMBOR":
+                    this.valorDeclPack = 600000;
+                    this.pesoPack = 208;
+                    break;
+                case "CONTENEDOR":
+                    this.valorDeclPack = 600000;
+                    this.pesoPack = 1000;
+                    break;
+            }
+            this.valStandDeclMTZ = this.valorDeclPack;
+            this.unidEmpStandMTZ = this.pesoPack;
         }
-        this.valStandDeclMTZ = this.valorDeclPack;
-        this.unidEmpStandMTZ = this.pesoPack;
     }
 }
