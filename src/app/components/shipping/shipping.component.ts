@@ -70,6 +70,7 @@ export class ShippingComponent implements OnInit {
     public valStandDeclMTZ: number;
     public unidEmpStandMTZ: number;
     public guia: string;
+    public selectCompany: string;
 
     constructor(private _userService: UserService, private _router: Router, private _shippingService: ShippingService, private _reportService: ReportService) {
         this.invoicesShipping = new Array<ShippingInvoice>();
@@ -81,6 +82,8 @@ export class ShippingComponent implements OnInit {
 
     ngOnInit() {
         this.identity = this._userService.getItentity();
+        this.selectCompany = this.identity.selectedCompany;
+
         if (this.identity === null) {
             this._router.navigate(['/']);
         }
@@ -714,7 +717,7 @@ export class ShippingComponent implements OnInit {
     }
 
     public getVrlDeclarad(selectedTypePack: string) {
-        if (this.identity.selectedCompany == 'VARROC') {
+        if (this.selectCompany == 'VARROC') {
             this.qtyPack = 0;
             this.pesoPack = 0;
             switch (selectedTypePack) {
@@ -745,6 +748,8 @@ export class ShippingComponent implements OnInit {
             }
             this.valStandDeclMTZ = this.valorDeclPack;
             this.unidEmpStandMTZ = this.pesoPack;
+        } else {
+            return;
         }
     }
 }
