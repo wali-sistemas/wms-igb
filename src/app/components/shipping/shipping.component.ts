@@ -70,7 +70,7 @@ export class ShippingComponent implements OnInit {
     public valStandDeclMTZ: number;
     public unidEmpStandMTZ: number;
     public guia: string;
-    public selectCompany: string;
+    public selectedCompany: string;
 
     constructor(private _userService: UserService, private _router: Router, private _shippingService: ShippingService, private _reportService: ReportService) {
         this.invoicesShipping = new Array<ShippingInvoice>();
@@ -82,7 +82,7 @@ export class ShippingComponent implements OnInit {
 
     ngOnInit() {
         this.identity = this._userService.getItentity();
-        this.selectCompany = this.identity.selectedCompany;
+        this.selectedCompany = this.identity.selectedCompany;
 
         if (this.identity === null) {
             this._router.navigate(['/']);
@@ -112,7 +112,7 @@ export class ShippingComponent implements OnInit {
         this.invoicesShipping = new Array<ShippingInvoice>();
         this.selectedInvoices = new Map<String, any>();
 
-        //TODO: serie de facturación electronica sobrepasa la cantidad de caracteres 
+        //TODO: serie de facturación electronica sobrepasa la cantidad de caracteres
         let invoice = this.filter.trim();
         if (this.filter.includes('-')) {
             if (this.identity.selectedCompany.includes('VARROC')) {
@@ -212,7 +212,7 @@ export class ShippingComponent implements OnInit {
 
     public addContainer() {
         this.errorMessage = '';
-        //TODO: serie de facturación electronica sobrepasa la cantidad de caracteres 
+        //TODO: serie de facturación electronica sobrepasa la cantidad de caracteres
         let invoice;
         let caracteres;
 
@@ -717,7 +717,7 @@ export class ShippingComponent implements OnInit {
     }
 
     public getVrlDeclarad(selectedTypePack: string) {
-        if (this.selectCompany == 'VARROC') {
+        if (this.selectedCompany == 'VARROC') {
             this.qtyPack = 0;
             this.pesoPack = 0;
             switch (selectedTypePack) {
