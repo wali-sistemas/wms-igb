@@ -35,7 +35,9 @@ import { WithholdingTaxesComponent } from './components/withholding-taxes/withho
 import { TicketTIComponent } from './components/ticket-TI/ticket-TI.component';
 import { SoulStockComponent } from './components/inventory/soul/soul-stock.component';
 import { ModulaComponent } from './components/inventory/modula/modula.component';
-import { ReportComexComponent} from './components/report/comex/report.comex.component';
+import { ReportComexComponent } from './components/report/comex/report.comex.component';
+import { CollectionComponent } from './components/collection/collection.component';
+import { ApproveComponent } from './components/collection/approve/approve.component';
 
 import { routing, appRoutingProviders } from './app.routing';
 import { from } from 'rxjs/observable/from';
@@ -75,7 +77,9 @@ import { ClientRedplasComponent } from './components/event-feria/client-redplas/
     TicketTIComponent,
     SoulStockComponent,
     ModulaComponent,
-    ReportComexComponent
+    ReportComexComponent,
+    CollectionComponent,
+    ApproveComponent
   ],
   imports: [
     BrowserModule,

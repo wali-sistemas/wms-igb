@@ -1,6 +1,7 @@
 <nav class="topnav visible-md visible-lg">
   <a [routerLink]="['/home']" class="topnav-logo"><img src="/assets/images/{{logo}}" /></a>
   <a *ngIf="ticketTIModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/ticket-TI']">Ticket</a>
+  <a href="#" routerLinkActive="active" [routerLink]="['/collection']">Cartera</a>
   <a *ngIf="compraTrackingModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/report/comex/tracking']">Tracking</a>
   <a *ngIf="receptionModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/purchase-orders']">Recepción</a>
   <a *ngIf="inventoryModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/inventory']">Inventario</a>
