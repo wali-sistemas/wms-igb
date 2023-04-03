@@ -1,0 +1,108 @@
+<igb-navbar></igb-navbar>
+
+<!--Modal procesando-->
+<div id="modal_transfer_process" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="progress">
+          <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100"
+            aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+            <span class="sr-only">Procesando transferencia</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal Confirmacion -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        <button (click)="showAlert()" type="button" class="btn btn-danger" data-dismiss="modal">Aprobar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span
+    class="icon-chevron-up"></span></button>
+
+<div class="container content">
+  <h3>Aprobación facturas de contado</h3>
+  <div class="row">
+    <div class="col-xs-10">
+      <form>
+        <input type="text" class="form-control input-lg" autocomplete="off" id="invoice" name="filter"
+          placeholder="Escriba factura de venta" [(ngModel)]="filter" (keyup)="filterInvoices(false)">
+      </form>
+    </div>
+    <div class="col-xs-2" style="top: 5px; right: 25px;">
+      <span class="refresh" (click)="listCashInvoices()" (click)="clear()"><span class="icon-refresh"></span></span>
+    </div>
+  </div>
+  <br />
+  <!--Alerta Error-->
+  <div class="row" *ngIf="changeInvoiceErrorMessage" role="alert">
+    <div class="col-xs-12">
+      <div class="alert alert-danger">
+        {{changeInoviceErrorMessage}}
+      </div>
+    </div>
+  </div>
+  <!--Alerta Aprobación-->
+  <div class="row" *ngIf="changeInvoiceMessage" role="alert">
+    <div class="col-xs-12">
+      <div class="alert alert-success">
+        {{changeInvoiceMessage}}
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <!--Tabla Listar Facturas-->
+    <div class="row">
+      <table id="ordering-table" class="table">
+        <thead>
+          <tr>
+            <th>Factura</th>
+            <th>Cliente</th>
+            <th>Saldo</th>
+            <th>Categoría</th>
+            <th>Días</th>
+            <th>Fecha</th>
+            <th>Valor</th>
+            <th>Asesor</th>
+            <th>Despachar</th>
+          </tr>
+        </thead>
+        <tbody *ngFor="let filteredInvoices of filteredInvoices">
+          <tr>
+            <td>{{filteredInvoices.docNum}}</td>
+            <td>{{filteredInvoices.cardCode}}-{{filteredInvoices.cardName}}</td>
+            <td>{{filteredInvoices.balance | number}}</td>
+            <td>{{filteredInvoices.category}}</td>
+            <td>{{filteredInvoices.day}}</td>
+            <td>{{filteredInvoices.docDate}}</td>
+            <td>{{filteredInvoices.docTotal | number}}</td>
+            <td>{{filteredInvoices.slpName}}</td>
+            <td>
+              <label class="switch">
+                <input type="checkbox" (click)="handleChecked(filteredInvoices.docNum)">
+                <div class="slider"></div>
+              </label>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
