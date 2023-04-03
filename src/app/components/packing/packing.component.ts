@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { GLOBAL } from '../../services/global';
 
-import { PackingBox } from './../../models/packing-box';
+import { PackingBox } from '../../models/packing-box';
 import { PackingRecord } from '../../models/packing-record';
 import { Printer } from '../../models/printer';
 
