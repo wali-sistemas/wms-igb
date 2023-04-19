@@ -20,6 +20,8 @@
 <div id="myNav" class="overlay visible-xs visible-sm">
   <!-- Overlay content -->
   <div class="overlay-content">
+    <a *ngIf="ticketTIModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/ticket-TI']">Ticket</a>
+    <a *ngIf="collectionModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/collection']">Cartera</a>
     <a *ngIf="receptionModuleAccesible" routerLinkActive="active" [routerLink]="['/purchase-orders']" href="#">Recepción</a>
     <a *ngIf="inventoryModuleAccesible" routerLinkActive="active" [routerLink]="['/inventory']" href="#">Inventario</a>
     <a *ngIf="transferModuleAccesible" routerLinkActive="active" [routerLink]="['/transfer']" href="#">Traslados</a>
