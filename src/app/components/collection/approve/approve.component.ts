@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, Params } from '@angular/router';
+import { Component, HostListener } from '@angular/core';
+import { Router } from '@angular/router';
 import { InvoiceService } from '../../../services/invoice.service';
 import { Counted } from '../../../models/counted';
+
 
 declare var $: any;
 
@@ -14,23 +15,25 @@ declare var $: any;
 export class ApproveComponent {
   public idChecked: boolean = false;
   public alertVisible: boolean = false;
-  public invoices: Array<Counted>;
   public filter: string = '';
   public searchInvoice: string;
+  public invoices: Array<Counted>;
   public filteredInvoices: Array<Counted>;
   public orderNumber: string = '';
   public changeInvoiceErrorMessage: string = null;
   public changeInvoiceMessage: string = null;
+  public locations: Array<string>;
+  public filteredLocations: Array<string>;
+  public selectedValue: string;
+  public location: string;
+  public docNum: number;
 
   constructor(private _invoicesService: InvoiceService, private _router: Router) {
   }
 
   ngOnInit() {
     this.listCashInvoices();
-  }
-
-  public showAlert() {
-    this.alertVisible = true;
+    this.clear()
   }
 
   public listCashInvoices() {
@@ -38,14 +41,16 @@ export class ApproveComponent {
       response => {
         this.invoices = response.content;
         this.filteredInvoices = response.content;
+        this.locations = this.invoices.map((item, i) => { return item.location })
+        this.filteredLocations = Array.from(new Set(this.locations));
       }, error => {
-        console.error(error);
         this.redirectIfSessionInvalid(error);
       }
     );
+    this.clear();
   }
 
-  private redirectIfSessionInvalid(error) {
+  private redirectIfSessionInvalid(error): void {
     if (error && error.status && error.status == 401) {
       localStorage.removeItem('igb.identity');
       localStorage.removeItem('igb.selectedCompany');
@@ -53,13 +58,17 @@ export class ApproveComponent {
     }
   }
 
-  public filterInvoices(force) {
+  public filterInvoices() {
     this.searchInvoice = this.filter;
     if (this.filter.length > 0) {
       this.filteredInvoices = new Array<Counted>();
       for (let i = 0; i < this.invoices.length; i++) {
         const inv = this.invoices[i];
-        if (inv.docNum.toString().includes(this.searchInvoice)) {
+        if (inv.docNum.toString().includes(this.searchInvoice)
+          || inv.cardCode.toString().includes(this.searchInvoice)
+          || inv.cardName.toLocaleLowerCase().includes(this.searchInvoice)
+          || inv.location.toString().includes(this.searchInvoice)
+        ) {
           this.filteredInvoices.push(inv);
         }
       }
@@ -68,31 +77,35 @@ export class ApproveComponent {
     }
   }
 
-  public handleChecked(data) {
-    this.changeInvoiceErrorMessage = '';
-    $('#modal_transfer_process').modal({
-      backdrop: 'static',
-      Keyboard: false,
-      show: true
-    });
-    this._invoicesService.updateStatusCashInvoice(data, "Para Despachar").subscribe(
+  public handleChecked(docNum: number) {
+    $('#confirmedModal').modal('show');
+    this.docNum = docNum;
+  }
+
+  public sendInvoice() {
+    this._invoicesService.updateStatusCashInvoice(this.docNum, "Para Despachar").subscribe(
       response => {
         if (response.code == 0) {
           $('#modal_transfer_process').modal('hide');
           this.listCashInvoices();
           this.changeInvoiceMessage = response.content;
+          $('#modal_transfer_process').modal('close');
         } else {
           $('#modal_transfer_process').modal('hide');
           this.changeInvoiceErrorMessage = response.content;
         }
       },
       error => {
-        console.error(error);
         $('#modal_transfer_process').modal('hide');
         this.changeInvoiceErrorMessage = 'Ha ocurrido un error de conexion';
         this.redirectIfSessionInvalid(error);
+        this.clear()
       }
     );
+  }
+
+  public onLocationSelect() {
+    this.filteredInvoices = this.invoices.filter(invoices => invoices.location === this.location)
   }
 
   public getScrollTop() {
@@ -102,6 +115,11 @@ export class ApproveComponent {
 
   public clear() {
     this.filter = '';
-    $('#invoice').focus();
+    this.selectedValue = '';
+    this.filteredLocations = new Array<string>();
+    this.location = '';
+    this.changeInvoiceMessage = '';
+    $('#filter').focus();
+    this.docNum = 0;
   }
 }
