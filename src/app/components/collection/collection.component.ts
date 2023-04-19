@@ -12,7 +12,7 @@ declare var $: any;
 
 export class CollectionComponent {
   public identity;
-  public selectedCompany: String;
+  public selectedCompany: string;
 
   constructor(private _router: Router, private _userService: UserService) {
   }

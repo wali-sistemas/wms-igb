@@ -15,39 +15,55 @@
     </div>
   </div>
 </div>
-<!-- Modal Confirmacion -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-  aria-hidden="true">
+<!-- Modal Aprobacion -->
+<div id="confirmedModal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+      <div class="modal-body text-center">
+        <p>
+          <b>¿Estás seguro que deseas aprobar la factura?</b><br />Al hacerlo, se autorizará la factura para ser
+          despachada por el área de logística y se cerrará.
+        </p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-        <button (click)="showAlert()" type="button" class="btn btn-danger" data-dismiss="modal">Aprobar</button>
+        <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" (click)="listCashInvoices()"
+          style="float: left;">No</button>
+        <button type="button" class="btn btn-primary btn-lg" (click)="sendInvoice()">Sí</button>
       </div>
     </div>
   </div>
 </div>
-
+<!-- Boton Subir pagina -->
 <button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span
     class="icon-chevron-up"></span></button>
-
+<!-- Titulo - Icono -->
 <div class="container content">
-  <h3>Aprobación facturas de contado</h3>
+  <div class="col-xs-4">
+    <div class="reload">
+    </div>
+  </div>
+  <!-- Barra buscar & selecionar region-->
   <div class="row">
     <div class="col-xs-10">
-      <form>
-        <input type="text" class="form-control input-lg" autocomplete="off" id="invoice" name="filter"
-          placeholder="Escriba factura de venta" [(ngModel)]="filter" (keyup)="filterInvoices(false)">
-      </form>
+      <h4>Aprobación facturas de contado</h4>
     </div>
-    <div class="col-xs-2" style="top: 5px; right: 25px;">
-      <span class="refresh" (click)="listCashInvoices()" (click)="clear()"><span class="icon-refresh"></span></span>
+    <div class="col-xs-2">
+      <div class="reload">
+        <span class="icon-refresh" (click)="listCashInvoices()" title="Recargar Facturas"></span>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12 col-md-6">
+      <input type="text" class="form-control input-lg" id="filter" name="filter" placeholder="Digitar factura"
+        autocomplete="off" [(ngModel)]="filter" (keyup)="filterInvoices()" style="margin-top: 5px;" />
+    </div>
+    <div class="col-xs-12 col-md-6">
+      <select class="form-control input-lg" (change)="onLocationSelect()" [(ngModel)]="location"
+        style="margin-top: 5px;">
+        <option value="" disabled>Seleccione región</option>
+        <option *ngFor="let zone of filteredLocations">{{zone}}</option>
+      </select>
     </div>
   </div>
   <br />
@@ -67,42 +83,63 @@
       </div>
     </div>
   </div>
-  <div class="row">
-    <!--Tabla Listar Facturas-->
-    <div class="row">
-      <table id="ordering-table" class="table">
-        <thead>
-          <tr>
-            <th>Factura</th>
-            <th>Cliente</th>
-            <th>Saldo</th>
-            <th>Categoría</th>
-            <th>Días</th>
-            <th>Fecha</th>
-            <th>Valor</th>
-            <th>Asesor</th>
-            <th>Despachar</th>
-          </tr>
-        </thead>
-        <tbody *ngFor="let filteredInvoices of filteredInvoices">
-          <tr>
-            <td>{{filteredInvoices.docNum}}</td>
-            <td>{{filteredInvoices.cardCode}}-{{filteredInvoices.cardName}}</td>
-            <td>{{filteredInvoices.balance | number}}</td>
-            <td>{{filteredInvoices.category}}</td>
-            <td>{{filteredInvoices.day}}</td>
-            <td>{{filteredInvoices.docDate}}</td>
-            <td>{{filteredInvoices.docTotal | number}}</td>
-            <td>{{filteredInvoices.slpName}}</td>
-            <td>
-              <label class="switch">
-                <input type="checkbox" (click)="handleChecked(filteredInvoices.docNum)">
-                <div class="slider"></div>
-              </label>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+  <!--Tabla Listar Facturas Descktop-->
+  <table id="ordering-table" class="table-desktop">
+    <thead>
+      <tr>
+        <th>Factura</th>
+        <th>NIT</th>
+        <th>Cliente</th>
+        <th>Saldo</th>
+        <th>Categoría</th>
+        <th>Días</th>
+        <th>Fecha</th>
+        <th>Valor</th>
+        <th>Asesor</th>
+        <th>Despachar</th>
+      </tr>
+    </thead>
+    <tbody *ngFor="let filteredInvoices of filteredInvoices">
+      <tr>
+        <td>{{filteredInvoices.docNum}}</td>
+        <td>{{filteredInvoices.cardCode}}</td>
+        <td>{{filteredInvoices.cardName}}</td>
+        <td>{{filteredInvoices.balance | number}}</td>
+        <td>{{filteredInvoices.category}}</td>
+        <td>{{filteredInvoices.day}}</td>
+        <td class="tableData">{{filteredInvoices.docDate}}</td>
+        <td>{{filteredInvoices.docTotal | number}}</td>
+        <td>{{filteredInvoices.slpName}}</td>
+        <td>
+          <label class="switch">
+            <input type="checkbox" class="tableCenter" (click)="handleChecked(filteredInvoices.docNum)">
+            <div class="slider"></div>
+          </label>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <br>
+  <!--Tabla Listar Facturas mobile-->
+  <table id="ordering-table" class="table-responsive">
+    <tbody *ngFor="let filteredInvoices of filteredInvoices">
+      <tr class="table-responsive tr">
+        <td><b>Factura</b><br>{{filteredInvoices.docNum}}</td>
+        <td><b>Nit</b><br>{{filteredInvoices.cardCode}}</td>
+        <td><b>Cliente</b><br>{{filteredInvoices.cardName}}</td>
+        <td><b>Saldo</b><br>{{filteredInvoices.balance | number}}</td>
+        <td><b>Categoría</b><br>{{filteredInvoices.category}}</td>
+        <td><b>Días</b><br>{{filteredInvoices.day}}</td>
+        <td><b>Fecha</b><br>{{filteredInvoices.docDate}}</td>
+        <td><b>Valor</b><br>{{filteredInvoices.docTotal | number}}</td>
+        <td><b>Asesor</b><br>{{filteredInvoices.slpName}}</td>
+        <td><b>Despachar</b><br>
+          <label class="switch">
+            <input type="checkbox" class="tableCenter" (click)="handleChecked(filteredInvoices.docNum)">
+            <div class="slider"></div><br>
+          </label>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>

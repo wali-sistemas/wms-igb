@@ -8,6 +8,7 @@ export class Counted {
   public docNum: number;
   public docTotal: number;
   public slpName: string;
+  public location: string;
 
   constructor() { }
 }
