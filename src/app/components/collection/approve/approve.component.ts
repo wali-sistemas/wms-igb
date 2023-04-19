@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { InvoiceService } from '../../../services/invoice.service';
 import { Counted } from '../../../models/counted';
 
-
 declare var $: any;
 
 @Component({
@@ -33,7 +32,6 @@ export class ApproveComponent {
 
   ngOnInit() {
     this.listCashInvoices();
-    this.clear()
   }
 
   public listCashInvoices() {
