@@ -2,408 +2,399 @@
 
 <!--Modal procesando-->
 <div id="modal_ticket_process" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-body">
-                <div class="progress">
-                    <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
-                        aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
-                        <span class="sr-only">Procesando ticket</span>
-                    </div>
-                </div>
-            </div>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="progress">
+          <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100"
+            aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+            <span class="sr-only">Procesando ticket</span>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
-
 <!--Modal asignar ticket-->
 <div id="modal_assigned_ticket" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-    aria-hidden="true" data-backdrop="static">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title">Asignar ticket #{{idTicket}}</h4>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-xs-12">
-                        <label for="priority">Asignar ticket a</label>
-                        <select id="priority" class="form-control input-lg"
-                            [class.required-field]="!validSelectedAssigned" [(ngModel)]="selectedAssigned"
-                            name="selectedAssigned" required>
-                            <option value="" disabled>Seleccione uno</option>
-                            <option value="jguisao">Jadilson Guisao</option>
-                            <option value="rzapata">Ricardo Zapata</option>
-                            <option value="bperez">Brahiam Perez</option>
-                            <option value="rmoncada">Rodian Moncada</option>
-                            <option value="pcolorado">Paola Colorado</option>
-                            <option value="sistemas">Grupo TI</option>
-                        </select>
-                    </div>
-                </div>
-                <br />
-                <div class="row">
-                    <div class="col-xs-12">
-                        <label for="priority">Modificar prioridad</label>
-                        <select id="priority" class="form-control input-lg" [(ngModel)]="selectedPriority"
-                            name="selectedPriority" required>
-                            <option value="" disabled>Seleccione uno</option>
-                            <option>ALTA</option>
-                            <option>MEDIA</option>
-                            <option>BAJA</option>
-                        </select>
-                    </div>
-                </div>
-                <br />
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-danger btn-lg"
-                    (click)="assignTicket(idTicket, selectedPriority)">Asignar</button>
-            </div>
+  aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Asignar ticket #{{idTicket}}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-xs-12">
+            <label for="priority">Asignar ticket a</label>
+            <select id="priority" class="form-control input-lg" [class.required-field]="!validSelectedAssigned"
+              [(ngModel)]="selectedAssigned" name="selectedAssigned" required>
+              <option value="" disabled>Seleccione uno</option>
+              <option value="jguisao">Jadilson Guisao</option>
+              <option value="rzapata">Ricardo Zapata</option>
+              <option value="bperez">Brahiam Perez</option>
+              <option value="rmoncada">Rodian Moncada</option>
+              <option value="pcolorado">Paola Colorado</option>
+              <option value="sistemas">Grupo TI</option>
+            </select>
+          </div>
         </div>
+        <br />
+        <div class="row">
+          <div class="col-xs-12">
+            <label for="priority">Modificar prioridad</label>
+            <select id="priority" class="form-control input-lg" [(ngModel)]="selectedPriority" name="selectedPriority"
+              required>
+              <option value="" disabled>Seleccione uno</option>
+              <option>ALTA</option>
+              <option>MEDIA</option>
+              <option>BAJA</option>
+            </select>
+          </div>
+        </div>
+        <br />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-danger btn-lg"
+          (click)="assignTicket(idTicket, selectedPriority)">Asignar</button>
+      </div>
     </div>
+  </div>
 </div>
-
 <!--Modal crear ticket-->
 <div id="modal_new_ticket" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
-    aria-labelledby="exampleModalCenterTitle" aria-hidden="true" data-backdrop="static">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title">Nuevo Ticket</h4>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-xs-12">
-                        <label for="typeTicket">Asunto*</label>
-                        <input type="text" id="txtAsunt" class="form-control input-lg" [(ngModel)]="asunt"
-                            autocomplete="off" name="asunt" autocorrect="off" autocapitalize="none"
-                            placeholder="Ingrese un asunto corto" [class.required-field]="!validAsunt" required>
-                    </div>
-                </div>
-                <br />
-                <div class="row">
-                    <div class="col-xs-12">
-                        <label for="typeTicket">Tipo de ticket*</label>
-                        <select id="typeTicket" class="form-control input-lg" [(ngModel)]="selectedIdTypeTicket"
-                            name="selectedIdTypeTicket" [class.required-field]="!validTypeTicket" required>
-                            <option value="null" disabled>Seleccione uno</option>
-                            <option *ngFor="let typeTicket of ticketTypes" value="{{typeTicket[0]}}">
-                                {{typeTicket[1]}}</option>
-                        </select>
-                    </div>
-                </div>
-                <br />
-                <div class="row">
-                    <div class="col-xs-12">
-                        <label for="departament">Departamento*</label>
-                        <select id="departament" class="form-control input-lg" [(ngModel)]="selectedDepartament"
-                            name="selectedDepartament" [class.required-field]="!validSelectDep" required>
-                            <option value="" disabled>Seleccione uno</option>
-                            <option>ADMINISTRATIVA</option>
-                            <option>BODEGA</option>
-                            <option>COMEX</option>
-                            <option>CONTABILIDAD</option>
-                            <option>CARTERA</option>
-                            <option>COMERCIAL</option>
-                            <option>COMPRAS</option>
-                            <option>FACTURACION</option>
-                            <option>GERENCIA</option>
-                            <option>LOGISTICA</option>
-                            <option>MERCADEO</option>
-                            <option>MOTOREPUESTOS</option>
-                            <option>TESORERIA</option>
-                            <option>TELEMERCADEO</option>
-                            <option>TALENTO HUMANO</option>
-                            <option>RECEPCION</option>
-                            <option>REDPLAS</option>
-                            <option>SISTEMAS</option>
-                        </select>
-                    </div>
-                </div>
-                <br />
-                <div class="row">
-                    <div class="col-xs-12">
-                        <label for="priority">Prioridad*</label>
-                        <select id="priority" class="form-control input-lg" [(ngModel)]="selectedPriority"
-                            name="selectedPriority" [class.required-field]="!validSelectPri" required>
-                            <option value="" disabled>Seleccione uno</option>
-                            <option>ALTA</option>
-                            <option>MEDIA</option>
-                            <option>BAJA</option>
-                        </select>
-                    </div>
-                </div>
-                <br />
-                <div class="row">
-                    <div class="col-xs-12">
-                        <textarea id="newNotes" class="md-textarea form-control" name="newNotes" style="width: 100%;"
-                            rows="10" placeholder="Ingrese aquí un comentario" [(ngModel)]="newNotes" autocomplete="off"
-                            [class.required-field]="!validNewNotes" required></textarea>
-                    </div>
-                </div>
-                <br />
-                <div class="row">
-                    <div class="col-xs-12">
-                        <div class="input-group form-control input-lg">
-                            <label class="input-group-addon" for="customFileLang">Adjunto <span
-                                    class="icon-attachment"></span></label>
-                            <input type="file" class="form-control input-lg" id="customFileLang" [(ngModel)]="attached"
-                                accept=".xls,.xlsx,.jpg,.jpeg,.png,.pdf" lang="es" style="top: -25px;"
-                                (change)="handleFileInput($event)">
-                        </div>
-                    </div>
-                </div>
-                <br />
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-danger btn-lg" (click)="createNewTicket()">Crear</button>
-            </div>
+  aria-labelledby="exampleModalCenterTitle" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Nuevo Ticket</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-xs-12">
+            <label for="typeTicket">Asunto*</label>
+            <input type="text" id="txtAsunt" class="form-control input-lg" [(ngModel)]="asunt" autocomplete="off"
+              name="asunt" autocorrect="off" autocapitalize="none" placeholder="Ingrese un asunto corto"
+              [class.required-field]="!validAsunt" required>
+          </div>
         </div>
+        <br />
+        <div class="row">
+          <div class="col-xs-12">
+            <label for="typeTicket">Tipo de ticket*</label>
+            <select id="typeTicket" class="form-control input-lg" [(ngModel)]="selectedIdTypeTicket"
+              name="selectedIdTypeTicket" [class.required-field]="!validTypeTicket" required>
+              <option value="null" disabled>Seleccione uno</option>
+              <option *ngFor="let typeTicket of ticketTypes" value="{{typeTicket[0]}}">
+                {{typeTicket[1]}}</option>
+            </select>
+          </div>
+        </div>
+        <br />
+        <div class="row">
+          <div class="col-xs-12">
+            <label for="departament">Departamento*</label>
+            <select id="departament" class="form-control input-lg" [(ngModel)]="selectedDepartament"
+              name="selectedDepartament" [class.required-field]="!validSelectDep" required>
+              <option value="" disabled>Seleccione uno</option>
+              <option>ADMINISTRATIVA</option>
+              <option>BODEGA</option>
+              <option>COMEX</option>
+              <option>CONTABILIDAD</option>
+              <option>CARTERA</option>
+              <option>COMERCIAL</option>
+              <option>COMPRAS</option>
+              <option>FACTURACION</option>
+              <option>GERENCIA</option>
+              <option>LOGISTICA</option>
+              <option>MERCADEO</option>
+              <option>MOTOREPUESTOS</option>
+              <option>TESORERIA</option>
+              <option>TELEMERCADEO</option>
+              <option>TALENTO HUMANO</option>
+              <option>RECEPCION</option>
+              <option>REDPLAS</option>
+              <option>SISTEMAS</option>
+            </select>
+          </div>
+        </div>
+        <br />
+        <div class="row">
+          <div class="col-xs-12">
+            <label for="priority">Prioridad*</label>
+            <select id="priority" class="form-control input-lg" [(ngModel)]="selectedPriority" name="selectedPriority"
+              [class.required-field]="!validSelectPri" required>
+              <option value="" disabled>Seleccione uno</option>
+              <option>ALTA</option>
+              <option>MEDIA</option>
+              <option>BAJA</option>
+            </select>
+          </div>
+        </div>
+        <br />
+        <div class="row">
+          <div class="col-xs-12">
+            <textarea id="newNotes" class="md-textarea form-control" name="newNotes" style="width: 100%;" rows="10"
+              placeholder="Ingrese aquí un comentario" [(ngModel)]="newNotes" autocomplete="off"
+              [class.required-field]="!validNewNotes" required></textarea>
+          </div>
+        </div>
+        <br />
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="input-group form-control input-lg">
+              <label class="input-group-addon" for="customFileLang">Adjunto <span
+                  class="icon-attachment"></span></label>
+              <input type="file" class="form-control input-lg" id="customFileLang" [(ngModel)]="attached"
+                accept=".xls,.xlsx,.jpg,.jpeg,.png,.pdf" lang="es" style="top: -25px;"
+                (change)="handleFileInput($event)">
+            </div>
+          </div>
+        </div>
+        <br />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-danger btn-lg" (click)="createNewTicket()">Crear</button>
+      </div>
     </div>
+  </div>
 </div>
-
 <!--Modal crear proyecto-->
 <div id="modal_new_proyect" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
-    aria-labelledby="exampleModalCenterTitle" aria-hidden="true" data-backdrop="static">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title">Crear Proyecto</h4>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-xs-12">
-                        <label for="typeTicket">Proyecto*</label>
-                        <input type="text" id="txtAsunt" class="form-control input-lg" [(ngModel)]="asunt"
-                            autocomplete="off" name="asunt" autocorrect="off" autocapitalize="none"
-                            placeholder="Ingrese nombre del proyecto" [class.required-field]="!validAsunt" required>
-                    </div>
-                </div>
-                <br />
-                <div class="row">
-                    <div class="col-xs-12">
-                        <label for="departament">Dirigido a*</label>
-                        <select id="departament" class="form-control input-lg" [(ngModel)]="selectedDepartament"
-                            name="selectedDepartament" [class.required-field]="!validSelectDep" required>
-                            <option value="" disabled>Seleccione uno</option>
-                            <option>BODEGA</option>
-                            <option>CONTABILIDAD</option>
-                            <option>CARTERA</option>
-                            <option>COMERCIAL</option>
-                            <option>COMPRAS</option>
-                            <option>FACTURACION</option>
-                            <option>GERENCIA</option>
-                            <option>LOGISTICA</option>
-                            <option>MERCADEO</option>
-                            <option>MOTOREPUESTOS</option>
-                            <option>TESORERIA</option>
-                            <option>TELEMERCADEO</option>
-                            <option>TALENTO HUMANO</option>
-                            <option>RECEPCION</option>
-                            <option>SISTEMAS</option>
-                        </select>
-                    </div>
-                </div>
-                <br />
-                <div class="row">
-                    <div class="col-xs-12">
-                        <label for="priority">Prioridad*</label>
-                        <select id="priority" class="form-control input-lg" [(ngModel)]="selectedPriority"
-                            name="selectedPriority" [class.required-field]="!validSelectPri" required>
-                            <option value="" disabled>Seleccione uno</option>
-                            <option>ALTA</option>
-                            <option>MEDIA</option>
-                            <option>BAJA</option>
-                        </select>
-                    </div>
-                </div>
-                <br />
-                <div class="row">
-                    <div class="col-xs-12">
-                        <label for="dateEnd">Fecha Entrega*</label>
-                        <input type="date" id="start" class="form-control input-lg" [(ngModel)]="dateEnd" name="dateEnd"
-                            min="2021-01-01" max="2050-12-31" required>
-                    </div>
-                </div>
-                <br />
-                <div class="row">
-                    <div class="col-xs-12">
-                        <textarea id="newNotes" class="md-textarea form-control" name="newNotes" style="width: 100%;"
-                            rows="10" placeholder="Ingrese aquí un comentario" [(ngModel)]="newNotes" autocomplete="off"
-                            [class.required-field]="!validNewNotes" required></textarea>
-                    </div>
-                </div>
-                <br />
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-danger btn-lg" (click)="createNewProyect()">Crear</button>
-            </div>
+  aria-labelledby="exampleModalCenterTitle" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Crear Proyecto</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-xs-12">
+            <label for="typeTicket">Proyecto*</label>
+            <input type="text" id="txtAsunt" class="form-control input-lg" [(ngModel)]="asunt" autocomplete="off"
+              name="asunt" autocorrect="off" autocapitalize="none" placeholder="Ingrese nombre del proyecto"
+              [class.required-field]="!validAsunt" required>
+          </div>
         </div>
+        <br />
+        <div class="row">
+          <div class="col-xs-12">
+            <label for="departament">Dirigido a*</label>
+            <select id="departament" class="form-control input-lg" [(ngModel)]="selectedDepartament"
+              name="selectedDepartament" [class.required-field]="!validSelectDep" required>
+              <option value="" disabled>Seleccione uno</option>
+              <option>BODEGA</option>
+              <option>CONTABILIDAD</option>
+              <option>CARTERA</option>
+              <option>COMERCIAL</option>
+              <option>COMPRAS</option>
+              <option>FACTURACION</option>
+              <option>GERENCIA</option>
+              <option>LOGISTICA</option>
+              <option>MERCADEO</option>
+              <option>MOTOREPUESTOS</option>
+              <option>TESORERIA</option>
+              <option>TELEMERCADEO</option>
+              <option>TALENTO HUMANO</option>
+              <option>RECEPCION</option>
+              <option>SISTEMAS</option>
+            </select>
+          </div>
+        </div>
+        <br />
+        <div class="row">
+          <div class="col-xs-12">
+            <label for="priority">Prioridad*</label>
+            <select id="priority" class="form-control input-lg" [(ngModel)]="selectedPriority" name="selectedPriority"
+              [class.required-field]="!validSelectPri" required>
+              <option value="" disabled>Seleccione uno</option>
+              <option>ALTA</option>
+              <option>MEDIA</option>
+              <option>BAJA</option>
+            </select>
+          </div>
+        </div>
+        <br />
+        <div class="row">
+          <div class="col-xs-12">
+            <label for="dateEnd">Fecha Entrega*</label>
+            <input type="date" id="start" class="form-control input-lg" [(ngModel)]="dateEnd" name="dateEnd"
+              min="2021-01-01" max="2050-12-31" required>
+          </div>
+        </div>
+        <br />
+        <div class="row">
+          <div class="col-xs-12">
+            <textarea id="newNotes" class="md-textarea form-control" name="newNotes" style="width: 100%;" rows="10"
+              placeholder="Ingrese aquí un comentario" [(ngModel)]="newNotes" autocomplete="off"
+              [class.required-field]="!validNewNotes" required></textarea>
+          </div>
+        </div>
+        <br />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-danger btn-lg" (click)="createNewProyect()">Crear</button>
+      </div>
     </div>
+  </div>
 </div>
-
 <!--Modal ticket Notas-->
 <div id="modal_ticket_notes" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
-    aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                    (click)="closedModalAssigned()">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title">Notas de ticket #{{idTicket}}</h4>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-xs-12">
-                        <textarea id="notes" class="md-textarea form-control" name="notes" style="width: 100%;"
-                            rows="10" placeholder="Ingrese aquí un comentario" [(ngModel)]="notes" autocomplete="off"
-                            [class.required-field]="!validNotes" required></textarea>
-                    </div>
-                </div>
-                <div class="row" *ngFor="let note of ticketNotes">
-                    <div class="box-note">
-                        <div class="col-xs-1">
-                            <img class="avatar" src="{{urlShared}}images/users/{{note.empNote}}.jpg"
-                                title="{{note.empNote}}">
-                        </div>
-                        <div class="col-xs-11">
-                            <p class="box-note-user">
-                                {{note.dateNote}} {{note.note}}</p>
-                        </div>
-                    </div>
-                </div>
-                <br />
-                <div class="row" *ngIf="ticketNotes.length <= 0">
-                    <div class="col-xs-12">
-                        <div class="alert alert-warning" role="alert">
-                            <p>{{msjNotes}}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button *ngIf="statusTicket == 'ASIGNADO'" type="button" class="btn btn-secondary btn-lg"
-                    style="background-color: #333; color: #fff;">Cancelar</button>
-                <button *ngIf="statusTicket == 'ASIGNADO'" type="button" class="btn btn-secondary btn-lg"
-                    (click)="closeTicket(idTicket)">Cerrar</button>
-                <button type="button" class="btn btn-danger btn-lg"
-                    (click)="createNoteTicket(idTicket)">Agregar</button>
-            </div>
+  aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closedModalAssigned()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Notas de ticket #{{idTicket}}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-xs-12">
+            <textarea id="notes" class="md-textarea form-control" name="notes" style="width: 100%;" rows="10"
+              placeholder="Ingrese aquí un comentario" [(ngModel)]="notes" autocomplete="off"
+              [class.required-field]="!validNotes" required></textarea>
+          </div>
         </div>
+        <div class="row" *ngFor="let note of ticketNotes">
+          <div class="box-note">
+            <div class="col-xs-1">
+              <img class="avatar" src="{{urlShared}}images/users/{{note.empNote}}.jpg" title="{{note.empNote}}">
+            </div>
+            <div class="col-xs-11">
+              <p class="box-note-user">
+                {{note.dateNote}} {{note.note}}</p>
+            </div>
+          </div>
+        </div>
+        <br />
+        <div class="row" *ngIf="ticketNotes.length <= 0">
+          <div class="col-xs-12">
+            <div class="alert alert-warning" role="alert">
+              <p>{{msjNotes}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button *ngIf="statusTicket == 'ASIGNADO'" type="button" class="btn btn-secondary btn-lg"
+          style="background-color: #333; color: #fff;">Cancelar</button>
+        <button *ngIf="statusTicket == 'ASIGNADO'" type="button" class="btn btn-secondary btn-lg"
+          (click)="closeTicket(idTicket)">Cerrar</button>
+        <button type="button" class="btn btn-danger btn-lg" (click)="createNoteTicket(idTicket)">Agregar</button>
+      </div>
     </div>
+  </div>
 </div>
 
 <button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span
-        class="icon-chevron-up"></span></button>
+    class="icon-chevron-up"></span></button>
 
 <div class="container content">
-    <h3>Mis Tickets</h3>
-    <div class="row">
-        <div class="col-xs-12">
-            <form>
-                <div class="input-group">
-                    <input type="text" class="form-control input-lg" id="filter" name="filter"
-                        placeholder="Buscar ticket" [(ngModel)]="filter" (keyup)="filterTicket()" autocomplete="off" />
-                    <span class="input-group-btn">
-                        <button type="button" class="box" class="btn btn-default btn-lg" data-toggle="modal"
-                            data-target="#modal_new_proyect" (click)="clearFrom()" style="height: 46px;width: 50px;"
-                            [class.authorize]="authorizeAddProyect == false">
-                            <span class="icon-dos-cuatro" title="Nuevo Proyecto"
-                                style="font-size: 40px;position: absolute;left: 5px;top: 1px;"></span>
-                        </button>
-                        <button type="button" class="box" class="btn btn-default btn-lg" data-toggle="modal"
-                            data-target="#modal_new_ticket" (click)="clearFrom()">
-                            <span class="icon-plus-square" title="Nuevo Ticket"></span>
-                        </button>
-                    </span>
-                </div>
-            </form>
+  <h3>Mis Tickets</h3>
+  <div class="row">
+    <div class="col-xs-12">
+      <form>
+        <div class="input-group">
+          <input type="text" class="form-control input-lg" id="filter" name="filter" placeholder="Buscar ticket"
+            [(ngModel)]="filter" (keyup)="filterTicket()" autocomplete="off" />
+          <span class="input-group-btn">
+            <button type="button" class="box" class="btn btn-default btn-lg" data-toggle="modal"
+              data-target="#modal_new_proyect" (click)="clearFrom()" style="height: 46px;width: 50px;"
+              [class.authorize]="authorizeAddProyect == false">
+              <span class="icon-dos-cuatro" title="Nuevo Proyecto"
+                style="font-size: 40px;position: absolute;left: 5px;top: 1px;"></span>
+            </button>
+            <button type="button" class="box" class="btn btn-default btn-lg" data-toggle="modal"
+              data-target="#modal_new_ticket" (click)="clearFrom()">
+              <span class="icon-plus-square" title="Nuevo Ticket"></span>
+            </button>
+          </span>
         </div>
+      </form>
     </div>
-    <br />
-    <div class="row" *ngIf="tickets.length <= 0">
-        <div class="col-xs-12">
-            <div class="alert alert-warning" role="alert">
-                <p>{{msjTicket}}</p>
+  </div>
+  <br />
+  <div class="row" *ngIf="tickets.length < 0">
+    <div class="col-xs-12">
+      <div class="alert alert-warning" role="alert">
+        <p>{{msjTicket}}</p>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12 col-md-6" *ngFor="let ticket of tickets">
+      <div class="ticket" [class.closed]="ticket.status == 'CERRADO'" [class.canceled]="ticket.status == 'CANCELADO'">
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="date"><b>{{ticket.dateTicket}}</b></div>
+          </div>
+          <div class="col-sm-4">
+            <div class="ticket-num" (click)="selectTicket(ticket)"><b>{{ticket.type}} #
+                {{ticket.idTicket}}</b></div>
+          </div>
+          <div class="col-sm-4">
+            <div class="emp-assigned" *ngIf="ticket.empSet">
+              <img class="avatar" src="{{urlShared}}images/users/{{ticket.empSet}}.jpg"
+                title="Asignado a: {{ticket.empSet}}">
             </div>
+          </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-12 col-md-6" *ngFor="let ticket of tickets">
-            <div class="ticket" [class.closed]="ticket.status == 'CERRADO'"
-                [class.canceled]="ticket.status == 'CANCELADO'">
-                <div class="row">
-                    <div class="col-sm-4">
-                        <div class="date"><b>{{ticket.dateTicket}}</b></div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="ticket-num" (click)="selectTicket(ticket)"><b>{{ticket.type}} #
-                                {{ticket.idTicket}}</b></div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="emp-assigned" *ngIf="ticket.empSet">
-                            <img class="avatar" src="{{urlShared}}images/users/{{ticket.empSet}}.jpg"
-                                title="Asignado a: {{ticket.empSet}}">
-                        </div>
-                    </div>
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col-sm-2 col-xs-3">
-                        <p><span class="badge">{{ticket.priority}}</span></p>
-                        <hr>
-                        <p><br><b>{{ticket.company}}</b></p>
-                    </div>
-                    <div class="col-sm-10 col-xs-9">
-                        <p><b>Asunto</b></p>
-                        <hr>
-                        <p>{{ticket.asunt}}</p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-6">
-                        <p>{{ticket.department}}</p>
-                    </div>
-                    <div class="col-xs-6">
-                        <div class="notes">
-                            <span class="icon-sms" style="font-size: 60px;" (click)="getTicketNotes(ticket)"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-12">
-                        <p>{{ticket.empAdd}}</p>
-                    </div>
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col-xs-6">
-                        <div class="date">
-                            <b>{{ticket.typeTicket == 'OTRO' ? ticket.dateEnd : ticket.typeTicket}}</b>
-                        </div>
-                    </div>
-                    <div class="col-xs-6">
-                        <div class="status">
-                            <p><b>{{ticket.status}}</b></p>
-                        </div>
-                    </div>
-                </div>
+        <br>
+        <div class="row">
+          <div class="col-sm-2 col-xs-3">
+            <p><span class="badge">{{ticket.priority}}</span></p>
+            <hr>
+            <p><br><b>{{ticket.company}}</b></p>
+          </div>
+          <div class="col-sm-10 col-xs-9">
+            <p><b>Asunto</b></p>
+            <hr>
+            <p>{{ticket.asunt}}</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-6">
+            <p>{{ticket.department}}</p>
+          </div>
+          <div class="col-xs-6">
+            <div class="notes">
+              <span class="icon-sms" style="font-size: 60px;" (click)="getTicketNotes(ticket)"></span>
             </div>
+          </div>
         </div>
+        <div class="row">
+          <div class="col-xs-12">
+            <p>{{ticket.empAdd}}</p>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-xs-6">
+            <div class="date">
+              <b>{{ticket.typeTicket == 'OTRO' ? ticket.dateEnd : ticket.typeTicket}}</b>
+            </div>
+          </div>
+          <div class="col-xs-6">
+            <div class="status">
+              <p><b>{{ticket.status}}</b></p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </div>

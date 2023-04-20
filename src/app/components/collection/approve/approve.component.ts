@@ -35,13 +35,22 @@ export class ApproveComponent {
   }
 
   public listCashInvoices() {
+    $('#modal_transfer_process').modal({
+      backdrop: 'static',
+      keyboard: false,
+      show: true
+    });
+
     this._invoicesService.listCashInvoices().subscribe(
       response => {
         this.invoices = response.content;
         this.filteredInvoices = response.content;
         this.locations = this.invoices.map((item, i) => { return item.location })
         this.filteredLocations = Array.from(new Set(this.locations));
+        $('#modal_transfer_process').modal('hide');
       }, error => {
+        $('#modal_transfer_process').modal('hide');
+        console.error(error);
         this.redirectIfSessionInvalid(error);
       }
     );
@@ -76,6 +85,7 @@ export class ApproveComponent {
   }
 
   public handleChecked(docNum: number) {
+    this.changeInvoiceMessage = '';
     $('#confirmedModal').modal('show');
     this.docNum = docNum;
   }
