@@ -1,26 +1,26 @@
 export class TicketTI {
-    public idTicket: Number;
-    public idTypeTicket: Number;
-    public asunt: String;
-    public typeTicket: String;
+    public idTicket: number;
+    public idTypeTicket: number;
+    public asunt: string;
+    public typeTicket: string;
     public dateTicket: Date;
-    public department: String;
-    public empAdd: String;
-    public empSet: String
-    public urlAttached: String;
-    public priority: String;
-    public company: String;
-    public status: String;
+    public department: string;
+    public empAdd: string;
+    public empSet: string
+    public urlAttached: string;
+    public priority: string;
+    public company: string;
+    public status: string;
     public notes: Array<TicketTINotes>;
-    public type: String;
+    public type: string;
     public dateEnd: Date;
     constructor() { }
 }
 
 export class TicketTINotes {
-    public idTicket: Number;
+    public idTicket: number;
     public dateNote: Date;
-    public empNote: String;
-    public note: String;
+    public empNote: string;
+    public note: string;
     constructor() { }
 }
