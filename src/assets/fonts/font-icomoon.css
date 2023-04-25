@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?93kc2u');
-  src:  url('fonts/icomoon.eot?93kc2u#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?93kc2u') format('truetype'),
-    url('fonts/icomoon.woff?93kc2u') format('woff'),
-    url('fonts/icomoon.svg?93kc2u#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?i4uckm');
+  src:  url('fonts/icomoon.eot?i4uckm#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?i4uckm') format('truetype'),
+    url('fonts/icomoon.woff?i4uckm') format('woff'),
+    url('fonts/icomoon.svg?i4uckm#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -123,6 +123,24 @@
 }
 .icon-search-stock:before {
   content: "\e95e";
+}
+.icon-carenaje:before {
+  content: "\e97c";
+}
+.icon-carenaje2:before {
+  content: "\e985";
+}
+.icon-guardabarro:before {
+  content: "\e986";
+}
+.icon-guardabarro2:before {
+  content: "\e987";
+}
+.icon-tapaLateral:before {
+  content: "\e988";
+}
+.icon-visorMoto:before {
+  content: "\e989";
 }
 .icon-soul:before {
   content: "\e97d";
