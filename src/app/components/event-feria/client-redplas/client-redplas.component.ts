@@ -80,6 +80,12 @@ export class ClientRedplasComponent implements OnInit {
       $('#modal_transfer_process').modal('hide');
       return;
     }
+    if (this.selectedAsesor == null || this.selectedAsesor.length <= 0) {
+      this.validSelectedAsesor = false;
+      this.getScrollTop();
+      $('#modal_transfer_process').modal('hide');
+      return;
+    }
 
     for (let key of Array.from(this.selected.keys())) {
       interes += this.selected.get(key) + " ";
