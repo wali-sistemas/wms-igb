@@ -111,7 +111,7 @@ export class ClientRedplasComponent implements OnInit {
       "almacen": this.whsName,
       "interes": interes.trim(),
       "regional": this.selectedTipoCliente,
-      "ciudad": this.city,
+      "ciudad": this.city.toUpperCase(),
       "companyName": "REDPLAS",
       "asesor": this.selectedAsesor
     }
