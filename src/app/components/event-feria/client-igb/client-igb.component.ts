@@ -111,7 +111,7 @@ export class ClientIgbComponent implements OnInit {
       "almacen": this.whsName,
       "interes": interes.trim(),
       "regional": this.selectedRegion,
-      "ciudad": this.city,
+      "ciudad": this.city.toUpperCase(),
       "companyName": "IGB",
       "asesor": this.selectedAsesor
     }

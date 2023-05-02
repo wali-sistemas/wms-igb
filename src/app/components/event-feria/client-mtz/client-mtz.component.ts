@@ -111,7 +111,7 @@ export class ClientMtzComponent implements OnInit {
       "almacen": this.whsName,
       "interes": interes.trim(),
       "regional": this.selectedRegion,
-      "ciudad": this.city,
+      "ciudad": this.city.toUpperCase(),
       "companyName": "VARROC",
       "asesor": this.selectedAsesor
     }
