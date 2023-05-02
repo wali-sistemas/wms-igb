@@ -68,6 +68,12 @@ export class ClientRedplasComponent implements OnInit {
       $('#modal_transfer_process').modal('hide');
       return;
     }
+    if (this.selectedTipoCliente == null || this.selectedTipoCliente.length <= 0) {
+      this.validSelectedTipoCliente = false;
+      this.getScrollTop();
+      $('#modal_transfer_process').modal('hide');
+      return;
+    }
     if (this.phone == null || this.phone.length <= 0) {
       this.validPhone = false;
       this.getScrollTop();
@@ -110,7 +116,7 @@ export class ClientRedplasComponent implements OnInit {
       "asesor": this.selectedAsesor
     }
 
-    /*this._eventService.captureClient(clientFeriaDTO).subscribe(
+    this._eventService.captureClient(clientFeriaDTO).subscribe(
       response => {
         if (response.code === 0) {
           this.clearForm();
@@ -127,7 +133,7 @@ export class ClientRedplasComponent implements OnInit {
         this.errorMessage = "Lo sentimos. Se produjo un error interno.";
         $('#modal_transfer_process').modal('hide');
       }
-    );*/
+    );
   }
 
   public getData() {
