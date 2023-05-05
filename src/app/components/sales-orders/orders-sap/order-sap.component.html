@@ -1,51 +1,52 @@
 <igb-navbar></igb-navbar>
 
+<!--modal modificar cantidad-->
 <div id="modal_quantity" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <form (submit)="confirmItem()">
         <div class="modal-body">
           <div class="form-group">
-            <label class="control-label" for="quantity" *ngIf="processingItem">Cantidad {{processingItem.itemCode}}</label>
+            <label class="control-label" for="quantity" *ngIf="processingItem">Cantidad
+              {{processingItem.itemCode}}</label>
             <p *ngIf="editingQuantity">Modifica la cantidad o elimina el ítem</p>
-            <input id="quantity" type="number" class="form-control input-lg" autocomplete="off" name="quantity" placeholder="ingresa la cantidad" [(ngModel)]="quantity" />
+            <input id="quantity" type="number" class="form-control input-lg" autocomplete="off" name="quantity"
+              placeholder="ingresa la cantidad" [(ngModel)]="quantity" />
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-warning btn-lg" *ngIf="editingQuantity" (click)="eliminarItem()"><span class="glyphicon glyphicon-trash"></span> Eliminar</button>
+          <button type="button" class="btn btn-warning btn-lg" *ngIf="editingQuantity" (click)="eliminarItem()"><span
+              class="glyphicon glyphicon-trash"></span> Eliminar</button>
           <button type="submit" class="btn btn-primary btn-lg">Guardar</button>
           <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cancelar</button>
         </div>
       </form>
     </div>
-    <!-- /.modal-content -->
   </div>
-  <!-- /.modal-dialog -->
 </div>
-<!-- /.modal -->
-
+<!--modal advertir cantidad errada-->
 <div id="modal_warning" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-body">
-        <p *ngIf="quantity && processingItem">La cantidad que ingresaste ({{quantity}}) es inferior a la cantidad de la orden ({{processingItem.quantity}}). ¿Deseas <b>continuar</b> agregando la cantidad ingresada o <b>volver</b> y revisar dicha cantidad?</p>
+        <p *ngIf="quantity && processingItem">La cantidad que ingresaste ({{quantity}}) es inferior a la cantidad de la
+          orden ({{processingItem.quantity}}). ¿Deseas <b>continuar</b> agregando la cantidad ingresada o <b>volver</b>
+          y revisar dicha cantidad?</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary btn-lg" (click)="confirmItemPartial()">Continuar</button>
         <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Volver</button>
       </div>
     </div>
-    <!-- /.modal-content -->
   </div>
-  <!-- /.modal-dialog -->
 </div>
-<!-- /.modal -->
-
+<!--modal confirmar recepción-->
 <div id="modal_confirm_reception" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-body">
-        <p>¿Estás seguro que deseas finalizar? Este proceso generará una entrada de mercancía en SAP y no se podrá deshacer</p>
+        <p>¿Estás seguro que deseas finalizar? Este proceso generará una entrada de mercancía en SAP y no se podrá
+          deshacer</p>
       </div>
       <div class="modal-footer">
         <div id="botones" *ngIf="!creatingSAPDocument">
@@ -54,18 +55,17 @@
         </div>
         <div id="botones" *ngIf="creatingSAPDocument">
           <div class="progress">
-            <div class="progress-bar progress-bar-warning progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+            <div class="progress-bar progress-bar-warning progress-bar-striped active" role="progressbar"
+              aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
               <span class="sr-only">100% Complete</span>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <!-- /.modal-content -->
   </div>
-  <!-- /.modal-dialog -->
 </div>
-<!-- /.modal -->
+
 <div class="container content" *ngIf="generalErrorMessage">
   <div class="alert alert-danger" role="alert">
     <p>{{generalErrorMessage}}</p>
@@ -74,8 +74,10 @@
 <div class="container content" *ngIf="order.docNum">
   <div class="row">
     <div class="col-xs-12">
-      <span class="btn btn-default" [routerLink]="['/purchase-orders']"><span class="glyphicon glyphicon-download"></span> Volver</span>
-      <span class="btn btn-default" (click)="restart()"><span class="glyphicon glyphicon-refresh"></span> Reiniciar</span>
+      <span class="btn btn-default" [routerLink]="['/purchase-orders']"><span
+          class="glyphicon glyphicon-download"></span> Volver</span>
+      <span class="btn btn-default" (click)="restart()"><span class="glyphicon glyphicon-refresh"></span>
+        Reiniciar</span>
       <span class="order-number pull-right">Órden #{{order.docNum}}</span>
     </div>
     <div class="col-xs-12">
@@ -87,7 +89,8 @@
       <form (submit)="scanItem()">
         <div class="form-group" [class.has-error]="errorMessage">
           <label class="control-label" for="itemcode" aria-hidden="true">Referencia</label>
-          <input id="itemcode" type="text" class="form-control input-lg" autocomplete="off" name="scannedText" placeholder="escanea o escribe" [(ngModel)]="scannedText" />
+          <input id="itemcode" type="text" class="form-control input-lg" autocomplete="off" name="scannedText"
+            placeholder="escanea o escribe" [(ngModel)]="scannedText" />
         </div>
       </form>
     </div>
@@ -95,20 +98,18 @@
       <div class="alert alert-danger" role="alert" *ngIf="errorMessage">{{errorMessage}}</div>
     </div>
   </div>
-
   <div class="row">
     <div class="col-xs-12">
-      <!-- Nav tabs -->
       <ul class="nav nav-tabs" role="tablist">
         <li role="presentation" class="active">
-          <a href="#scanned" aria-controls="scanned" role="tab" data-toggle="tab">Recibidos <span class="badge">{{receivedItems.length}}</span></a>
+          <a href="#scanned" aria-controls="scanned" role="tab" data-toggle="tab">Recibidos <span
+              class="badge">{{receivedItems.length}}</span></a>
         </li>
         <li role="presentation">
-          <a href="#pending" aria-controls="pending" role="tab" data-toggle="tab">Pendientes <span class="badge">{{order.lines.length}}</span></a>
+          <a href="#pending" aria-controls="pending" role="tab" data-toggle="tab">Pendientes <span
+              class="badge">{{order.lines.length}}</span></a>
         </li>
       </ul>
-
-      <!-- Tab panes -->
       <div class="tab-content">
         <div role="tabpanel" class="tab-pane fade active in" id="scanned">
           <p *ngIf="!receivedItems || receivedItems.length == 0">Aún no has recibido ningún artículo</p>
@@ -122,7 +123,8 @@
           </div>
           <div class="row" *ngIf="receivedItems && receivedItems.length > 0">
             <div class="col-xs-12">
-              <button type="button" class="btn btn-warning btn-lg" onclick="$('#modal_confirm_reception').modal({backdrop: 'static', keyboard:false, show: true})">Finalizar</button>
+              <button type="button" class="btn btn-warning btn-lg"
+                onclick="$('#modal_confirm_reception').modal({backdrop: 'static', keyboard:false, show: true})">Finalizar</button>
             </div>
           </div>
         </div>
