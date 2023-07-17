@@ -166,6 +166,7 @@ export class ReportManagerComponent implements OnInit {
                 break;
             case 'VARROC':
                 this.logo = 'logo-mtz.png';
+                this.authorizeModuleComex = true;
                 break;
             case 'VARROCPruebas':
                 this.logo = 'logo-mtz.png';

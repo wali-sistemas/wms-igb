@@ -230,15 +230,13 @@
 
 <div class="container content">
   <div class="row">
-    <div class="col-xs-12">
+    <div class="col-xs-10">
+      <h3>Ordenes de SAP pendientes</h3>
+    </div>
+    <div class="col-xs-2">
       <div class="option" data-toggle="modal" data-target="#printerPickingExpress">
         <span class="icon-printer" title="Imprimir Picking"></span>
       </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-xs-12">
-      <h3>Ordenes de SAP pendientes</h3>
     </div>
   </div>
   <div class="row" *ngIf="pickExpressErrorMessage">
@@ -253,13 +251,13 @@
       <form>
         <div class="input-group">
           <span class="input-group-btn" *ngIf="selectedOrders && selectedOrders.size > 0">
-            <button type="button" class="btn btn-default btn-lg" (click)="listAssignableEmployees()">
+            <button type="button" class="btn btn-default btn-lg" (click)="listAssignableEmployees()" style="left: 1px;">
               <span class="badge">{{selectedOrders.size}}</span>
               <span class="icon-user"></span>
             </button>
           </span>
           <input type="text" class="form-control input-lg" id="filter" name="filter" placeholder="Escribe para filtrar"
-            [(ngModel)]="filter" (keyup)="filterOrders(false)" autocomplete="off" />
+            [(ngModel)]="filter" (keyup)="filterOrders(false)" autocomplete="off" style="left: 1px;"/>
           <span class="input-group-btn">
             <button type="button" class="btn btn-default btn-lg" (click)="toggleEye()" style="border-radius: 0px;">
               <span class="icon-eye" [ngClass]="{'icon-eye': !showApprovedOnly, 'icon-eye-off': showApprovedOnly}"

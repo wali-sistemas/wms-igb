@@ -1,89 +1,94 @@
 <igb-navbar></igb-navbar>
 <!--Modal confirmacion-->
-<div id="close_confirmation" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-body">
-                <p>
-                    <b>¿Estás seguro que deseas finalizar?</b> Al hacerlo, se crearán la entrega y se cerrara el
-                    packing para los ítems empacados.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" (click)="cleanItemTable()"
-                    style="float: left;">Cancelar</button>
-                <button type="button" class="btn btn-primary btn-lg" (click)="createDelivery()">Sí,finalizar</button>
-            </div>
-        </div>
+<div id="close_confirmation" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false"
+  data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <p>
+          <b>¿Estás seguro que deseas finalizar?</b> Al hacerlo, se crearán la entrega y se cerrara el
+          packing para los ítems empacados.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" (click)="cleanItemTable()"
+          style="float: left;">Cancelar</button>
+        <button type="button" class="btn btn-primary btn-lg" (click)="createDelivery()">Sí,finalizar</button>
+      </div>
     </div>
+  </div>
 </div>
 <!--Modal imprimir-->
 <div id="printer_selection" class="modal slide" tabindex="-1" role="dialog" data-backdrop="static">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-xs-12">
-                        <label for="printer">Se imprimirá en</label>
-                        <select id="printer" class="form-control input-lg" [(ngModel)]="selectedPrinter" name="selectedPrinter">
-                            <option style="display:none" disabled value="">Selecciona una impresora</option>
-                            <option *ngFor="let printer of printersList" value="{{printer.printServiceName}}">
-                                {{printer.printerName}}</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary btn-lg" (click)="createDelivery()">Continuar</button>
-                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" (click)="cleanItemTable()">Cancelar</button>
-            </div>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-xs-12">
+            <label for="printer">Se imprimirá en</label>
+            <select id="printer" class="form-control input-lg" [(ngModel)]="selectedPrinter" name="selectedPrinter">
+              <option style="display:none" disabled value="">Selecciona una impresora</option>
+              <option *ngFor="let printer of printersList" value="{{printer.printServiceName}}">
+                {{printer.printerName}}</option>
+            </select>
+          </div>
         </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary btn-lg" (click)="createDelivery()">Continuar</button>
+        <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal"
+          (click)="cleanItemTable()">Cancelar</button>
+      </div>
     </div>
+  </div>
 </div>
 <!--Modal estado procesos-->
 <div id="process_status" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
-    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title">Procesando orden</h4>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-xs-12">
-                        <span *ngIf="processDeliveryStatus === 'none'" class="glyphicon glyphicon-minus-sign"></span>
-                        <img *ngIf="processDeliveryStatus === 'inprogress'" height="22" src="/assets/images/loading.gif">
-                        <span *ngIf="processDeliveryStatus === 'done'" class="glyphicon glyphicon-ok"></span>
-                        <span *ngIf="processDeliveryStatus === 'error'" class="glyphicon glyphicon-exclamation-sign"></span>
-                        <span class="status-text">Entrega creada </span><i *ngIf="processDeliveryStatus === 'done'"
-                            style="font-size: 12px; color: #da0611;">({{docEntryDelivery}})</i>
-                        <span *ngIf="processDeliveryStatus === 'done'" class="icon-delivery" style="font-size: 24px;float: right;"
-                            (click)="getUrlReport('delivery','S')" title="Documento de entrega"></span>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-12">
-                        <span *ngIf="processClosePackingOrderStatus === 'none'" class="glyphicon glyphicon-minus-sign"></span>
-                        <img *ngIf="processClosePackingOrderStatus === 'inprogress'" height="22" src="/assets/images/loading.gif">
-                        <span *ngIf="processClosePackingOrderStatus === 'done'" class="glyphicon glyphicon-ok"></span>
-                        <span *ngIf="processClosePackingOrderStatus === 'error'" class="glyphicon glyphicon-exclamation-sign"></span>
-                        <span class="status-text">Packing finalizado</span>
-                        <span *ngIf="processClosePackingOrderStatus === 'done'" class="icon-packingList" style="font-size: 24px;float: right;"
-                            (click)="getUrlReport('packingList','W')" title="Lista de empaque"></span>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-12">
-                        <span *ngIf="processInvoiceStatus === 'none'" class="glyphicon glyphicon-minus-sign"></span>
-                        <img *ngIf="processInvoiceStatus === 'inprogress'" height="22" src="/assets/images/loading.gif">
-                        <span *ngIf="processInvoiceStatus === 'done'" class="glyphicon glyphicon-ok"></span>
-                        <span *ngIf="processInvoiceStatus === 'error'" class="glyphicon glyphicon-exclamation-sign"></span>
-                        <span class="status-text">Factura creada </span><i *ngIf="processInvoiceStatus === 'done'"
-                            style="font-size: 12px; color: #da0611;">({{docEntryInvoice}})</i>
-                    </div>
-                </div>
-                <!--<div class="row">
+  <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Procesando orden</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-xs-12">
+            <span *ngIf="processDeliveryStatus === 'none'" class="glyphicon glyphicon-minus-sign"></span>
+            <img *ngIf="processDeliveryStatus === 'inprogress'" height="22" src="/assets/images/loading.gif">
+            <span *ngIf="processDeliveryStatus === 'done'" class="glyphicon glyphicon-ok"></span>
+            <span *ngIf="processDeliveryStatus === 'error'" class="glyphicon glyphicon-exclamation-sign"></span>
+            <span class="status-text">Entrega creada </span><i *ngIf="processDeliveryStatus === 'done'"
+              style="font-size: 12px; color: #da0611;">({{docEntryDelivery}})</i>
+            <span *ngIf="processDeliveryStatus === 'done'" class="icon-delivery" style="font-size: 24px;float: right;"
+              (click)="getUrlReport('delivery','S')" title="Documento de entrega"></span>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            <span *ngIf="processClosePackingOrderStatus === 'none'" class="glyphicon glyphicon-minus-sign"></span>
+            <img *ngIf="processClosePackingOrderStatus === 'inprogress'" height="22" src="/assets/images/loading.gif">
+            <span *ngIf="processClosePackingOrderStatus === 'done'" class="glyphicon glyphicon-ok"></span>
+            <span *ngIf="processClosePackingOrderStatus === 'error'"
+              class="glyphicon glyphicon-exclamation-sign"></span>
+            <span class="status-text">Packing finalizado</span>
+            <span *ngIf="processClosePackingOrderStatus === 'done'" class="icon-packingList"
+              style="font-size: 24px;float: right;" (click)="getUrlReport('packingList','W')"
+              title="Lista de empaque"></span>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            <span *ngIf="processInvoiceStatus === 'none'" class="glyphicon glyphicon-minus-sign"></span>
+            <img *ngIf="processInvoiceStatus === 'inprogress'" height="22" src="/assets/images/loading.gif">
+            <span *ngIf="processInvoiceStatus === 'done'" class="glyphicon glyphicon-ok"></span>
+            <span *ngIf="processInvoiceStatus === 'error'" class="glyphicon glyphicon-exclamation-sign"></span>
+            <span class="status-text">Factura creada </span><i *ngIf="processInvoiceStatus === 'done'"
+              style="font-size: 12px; color: #da0611;">({{docEntryInvoice}})</i>
+          </div>
+        </div>
+        <!--<div class="row">
                     <div class="col-xs-12">
                         <span *ngIf="processOrderLinkStatus === 'none'" class="glyphicon glyphicon-minus-sign"></span>
                         <img *ngIf="processOrderLinkStatus === 'inprogress'" height="22" src="/assets/images/loading.gif">
@@ -103,29 +108,30 @@
                         <span class="status-text">Impresión de etiquetas</span>
                     </div>
                 </div>-->
-                <br />
-                <div class="row" *ngIf="deliveryErrorMessage">
-                    <div class="col-xs-12">
-                        <div class="alert alert-danger">
-                            {{deliveryErrorMessage}}
-                        </div>
-                    </div>
-                </div>
+        <br />
+        <div class="row" *ngIf="deliveryErrorMessage">
+          <div class="col-xs-12">
+            <div class="alert alert-danger">
+              {{deliveryErrorMessage}}
             </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-xs-12 text-center">
-                        <div *ngIf="processDeliveryStatus === 'done' && (processInvoiceStatus === 'error' || processInvoiceStatus === 'none')"
-                            class="box-invoice" (click)="createInvoice()">
-                            <span class="icon-invoice" style="font-size: 100px"></span>
-                            <h3 class="title">
-                                Crear Factura
-                            </h3>
-                        </div>
-                    </div>
-                </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-xs-12 text-center">
+            <div
+              *ngIf="processDeliveryStatus === 'done' && (processInvoiceStatus === 'error' || processInvoiceStatus === 'none')"
+              class="box-invoice" (click)="createInvoice()">
+              <span class="icon-invoice" style="font-size: 100px"></span>
+              <h3 class="title">
+                Crear Factura
+              </h3>
             </div>
-            <!--<div class="modal-body">
+          </div>
+        </div>
+      </div>
+      <!--<div class="modal-body">
                 <div class="row">
                     <div class="col-xs-12 text-center">
                         <div *ngIf="processDeliveryStatus === 'done' && processInvoiceStatus === 'done' && (processOrderLinkStatus === 'error' || processOrderLinkStatus === 'none')"
@@ -138,382 +144,385 @@
                     </div>
                 </div>
             </div>-->
-            <div class="modal-footer">
-                <div class="row">
-                    <div class="col-xs-12 text-center">
-                        <button *ngIf="deliveryErrorMessage" class="btn btn-danger btn-lg" type="button" data-dismiss="modal"
-                            (click)="resetSesionId()" data-toggle="modal" data-target="#close_confirmation" [disabled]="inProgress()">
-                            Intentar Finalizar
-                        </button>
-                    </div>
-                </div>
-            </div>
+      <div class="modal-footer">
+        <div class="row">
+          <div class="col-xs-12 text-center">
+            <button *ngIf="deliveryErrorMessage" class="btn btn-danger btn-lg" type="button" data-dismiss="modal"
+              (click)="resetSesionId()" data-toggle="modal" data-target="#close_confirmation" [disabled]="inProgress()">
+              Intentar Finalizar
+            </button>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 <!--Modal procesando-->
 <div id="modal_transfer_process" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-body">
-                <div class="progress">
-                    <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
-                        aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
-                        <span class="sr-only">Procesando transferencia</span>
-                    </div>
-                </div>
-            </div>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="progress">
+          <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100"
+            aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+            <span class="sr-only">Procesando transferencia</span>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 <!--Modal confirmar cantidad por item-->
 <div id="cantidad" class="modal slide" tabindex="-1" role="dialog" data-backdrop="static">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title">{{itemCode}}</h4>
-                <p style="font-size: 10px; font-style: italic;">{{dscripction}}</p>
-            </div>
-            <br />
-            <div class="row" *ngIf="errorMessageModal != null && errorMessageModal.length > 0">
-                <div class="col-xs-12">
-                    <div class="alert alert-danger" role="alert">
-                        <p>{{errorMessageModal}}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-xs-12">
-                        <form (submit)="validateItemQuantity()">
-                            <input id="input_packedQuantity" type="number" class="form-control input-lg" name="itemQuantity"
-                                placeholder="Confirme cantidad" [(ngModel)]="itemQuantity" autocomplete="off">
-                        </form>
-                        <br />
-                        <form (submit)="validateItemQuantity()">
-                            <select class="form-control input-lg" [(ngModel)]="qtyBox" name="qtyBox" (change)="confirmAddToBox(qtyBox)">
-                                <option style="display:none" disabled value="null">Selecciona caja a empacar</option>
-                                <option value="0">Nueva caja</option>
-                                <ng-container *ngFor="let usedBox of usedBoxesList">
-                                    <option value="{{usedBox.boxNumber}}">{{usedBox.boxDisplayName}}</option>
-                                </ng-container>
-                            </select>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary btn-lg" (click)="validateItemQuantity()">Confirmar</button>
-            </div>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">{{itemCode}}</h4>
+        <p style="font-size: 10px; font-style: italic;">{{dscripction}}</p>
+      </div>
+      <br />
+      <div class="row" *ngIf="errorMessageModal != null && errorMessageModal.length > 0">
+        <div class="col-xs-12">
+          <div class="alert alert-danger" role="alert">
+            <p>{{errorMessageModal}}</p>
+          </div>
         </div>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-xs-12">
+            <form (submit)="validateItemQuantity()">
+              <input id="input_packedQuantity" type="number" class="form-control input-lg" name="itemQuantity"
+                placeholder="Confirme cantidad" [(ngModel)]="itemQuantity" autocomplete="off">
+            </form>
+            <br />
+            <form (submit)="validateItemQuantity()">
+              <select class="form-control input-lg" [(ngModel)]="qtyBox" name="qtyBox"
+                (change)="confirmAddToBox(qtyBox)">
+                <option style="display:none" disabled value="null">Selecciona caja a empacar</option>
+                <option value="0">Nueva caja</option>
+                <ng-container *ngFor="let usedBox of usedBoxesList">
+                  <option value="{{usedBox.boxNumber}}">{{usedBox.boxDisplayName}}</option>
+                </ng-container>
+              </select>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary btn-lg" (click)="validateItemQuantity()">Confirmar</button>
+      </div>
     </div>
+  </div>
 </div>
 <!--Modal notificación error-->
 <div id="clean_confirmation" class="modal slide" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-body">
-                <p>
-                    <b>Ha ocurrido un error en el proceso de packing y Wali debe cancelarlo.</b>
-                    Será necesario que los procesos de empaque, impresión de etiquetas, impresión de packing list,
-                    creación de entrega y factura en SAP se realicen de manera manual
-                </p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary btn-lg" (click)="cleanPacking()">Aceptar</button>
-            </div>
-        </div>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <p>
+          <b>Ha ocurrido un error en el proceso de packing y Wali debe cancelarlo.</b>
+          Será necesario que los procesos de empaque, impresión de etiquetas, impresión de packing list,
+          creación de entrega y factura en SAP se realicen de manera manual
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary btn-lg" (click)="cleanPacking()">Aceptar</button>
+      </div>
     </div>
+  </div>
 </div>
 <!--Modal confirmar cajas expressPack-->
 <div id="caja" class="modal slide" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-sm" role="document">
-        <div class="modal-content">
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-xs-12">
-                        <form (submit)="expressPack()">
-                            <input id="qtyBox" type="number" class="form-control input-lg" name="box" [(ngModel)]="qtyBox"
-                                autocomplete="off" placeholder="Ingrese # cajas" autofocus>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" (click)="cleanItemTable()">Cerrar</button>
-                <button type="button" class="btn btn-primary btn-lg" (click)="expressPack()">Ok</button>
-            </div>
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-xs-12">
+            <form (submit)="expressPack()">
+              <input id="qtyBox" type="number" class="form-control input-lg" name="box" [(ngModel)]="qtyBox"
+                autocomplete="off" placeholder="Ingrese # cajas" autofocus>
+            </form>
+          </div>
         </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal"
+          (click)="cleanItemTable()">Cerrar</button>
+        <button type="button" class="btn btn-primary btn-lg" (click)="expressPack()">Ok</button>
+      </div>
     </div>
+  </div>
 </div>
 <!--Modal reimprimir etiqueta-->
 <div id="reimprimir" class="modal slide" tabindex="-1" role="dialog" data-backdrop="static">
-    <div class="modal-dialog modal-sm" role="document">
-        <div class="modal-content">
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-xs-12">
-                        <form (submit)="reprintOrder()">
-                            <input id="orderNumber" type="text" class="form-control input-lg" name="box" [(ngModel)]="orderNumber"
-                                autocomplete="off" placeholder="Ingrese # orden">
-                            <br />
-                            <input id="qtyBox" type="number" class="form-control input-lg" name="box" [(ngModel)]="qtyBox"
-                                autocomplete="off" placeholder="Ingrese # cajas">
-                            <br />
-                            <select id="printer" class="form-control input-lg" [(ngModel)]="selectedPrinter" name="selectedPrinter">
-                                <option style="display:none" disabled value="">Selecciona una impresora</option>
-                                <option *ngFor="let printer of printersList" value="{{printer.printServiceName}}">
-                                    {{printer.printerName}}</option>
-                            </select>
-                            <br />
-                            <div *ngIf="disabledAutoBox" class="mascarar text-center">
-                                <input type="checkbox" id="autoBox" name="autoBox" [(ngModel)]="autoBox" checked>
-                                <label for="autoBox" style="font-size: 15px; color: #474B4E;"><span></span>Asignar #
-                                    caja a la factura</label>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary btn-lg" (click)="reprintOrder()">Imprimir</button>
-            </div>
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-xs-12">
+            <form (submit)="reprintOrder()">
+              <input id="orderNumber" type="text" class="form-control input-lg" name="box" [(ngModel)]="orderNumber"
+                autocomplete="off" placeholder="Ingrese # orden">
+              <br />
+              <input id="qtyBox" type="number" class="form-control input-lg" name="box" [(ngModel)]="qtyBox"
+                autocomplete="off" placeholder="Ingrese # cajas">
+              <br />
+              <select id="printer" class="form-control input-lg" [(ngModel)]="selectedPrinter" name="selectedPrinter">
+                <option style="display:none" disabled value="">Selecciona una impresora</option>
+                <option *ngFor="let printer of printersList" value="{{printer.printServiceName}}">
+                  {{printer.printerName}}</option>
+              </select>
+              <br />
+              <div *ngIf="disabledAutoBox" class="mascarar text-center">
+                <input type="checkbox" id="autoBox" name="autoBox" [(ngModel)]="autoBox" checked>
+                <label for="autoBox" style="font-size: 15px; color: #474B4E;"><span></span>Asignar #
+                  caja a la factura</label>
+              </div>
+            </form>
+          </div>
         </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary btn-lg" (click)="reprintOrder()">Imprimir</button>
+      </div>
     </div>
+  </div>
 </div>
 <!--Modal ver documentos-->
 <div id="verDoc" class="modal slide" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-sm" role="document">
-        <div class="modal-content">
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-xs-12">
-                        <input id="orderNumber" type="text" class="form-control input-lg" name="box" [(ngModel)]="orderNumber"
-                            autocomplete="off" placeholder="Ingrese # orden">
-                    </div>
-                </div>
-                <br />
-                <div class="row">
-                    <div class="col-xs-6" style="text-align:  center; font-size:  35px; cursor:  pointer; color:  #da0611;">
-                        <span class="icon-packing-list" title="Lista Empaque" data-toggle="modal" data-target="#verDoc"
-                            (click)="openReport('packingList','W')"></span>
-                    </div>
-                    <div class="col-xs-6" style="text-align:  center; font-size:  35px; cursor:  pointer; color:  #da0611;">
-                        <span class="icon-delivery-list" title="Entrega" data-toggle="modal" data-target="#verDoc" (click)="openReport('delivery','S')"></span>
-                    </div>
-                </div>
-            </div>
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-xs-12">
+            <input id="orderNumber" type="text" class="form-control input-lg" name="box" [(ngModel)]="orderNumber"
+              autocomplete="off" placeholder="Ingrese # orden">
+          </div>
         </div>
+        <br />
+        <div class="row">
+          <div class="col-xs-6" style="text-align:  center; font-size:  35px; cursor:  pointer; color:  #da0611;">
+            <span class="icon-packing-list" title="Lista Empaque" data-toggle="modal" data-target="#verDoc"
+              (click)="openReport('packingList','W')"></span>
+          </div>
+          <div class="col-xs-6" style="text-align:  center; font-size:  35px; cursor:  pointer; color:  #da0611;">
+            <span class="icon-delivery-list" title="Entrega" data-toggle="modal" data-target="#verDoc"
+              (click)="openReport('delivery','S')"></span>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 <!--Modal ver entregas pendientes por facturar-->
 <div id="modal_delivery_pending" class="modal slide" tabindex="-1" role="dialog" data-backdrop="static">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 class="modal-title">Entregas pendientes por facturar</h4>
-            </div>
-            <br />
-            <div class="modal-body" style="max-height: 600px;overflow-y: scroll;">
-                <div class="row">
-                    <div class="col-xs-12">
-                        <div class="row" *ngIf="warnMessageOrdersByInvoice">
-                            <div class="col-xs-12">
-                                <div class="alert alert-warning text-center">
-                                    {{warnMessageOrdersByInvoice}}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Entregas pendientes por facturar</h4>
+      </div>
+      <br />
+      <div class="modal-body" style="max-height: 600px;overflow-y: scroll;">
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="row" *ngIf="warnMessageOrdersByInvoice">
+              <div class="col-xs-12">
+                <div class="alert alert-warning text-center">
+                  {{warnMessageOrdersByInvoice}}
                 </div>
-                <div class="row">
-                    <div class="col-xs-12 col-md-6" *ngFor="let order of ordersByInvoice; let i = index">
-                        <div class="order">
-                            <div class="row">
-                                <div class="col-sm-6 text-center">
-                                    <h4>Orden</h4>
-                                </div>
-                                <div class="col-sm-6 text-center">
-                                    <h4>Entrega</h4>
-                                </div>
-                            </div>
-                            <hr />
-                            <div class="row">
-                                <div class="col-sm-6 text-center">
-                                    {{order[1]}}
-                                </div>
-                                <div class="col-sm-6 text-center">
-                                    {{order[0]}}
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-6 text-center">
-                                    {{order[3]}}
-                                </div>
-                                <div class="col-sm-6 text-center">
-                                    {{order[2]}}
-                                </div>
-                            </div>
-                            <hr />
-                            <div class="row">
-                                <div class="col-sm-6 text-center">
-                                    <b>Bodega: {{order[5]}}</b>
-                                </div>
-                                <div class="col-sm-6 text-center">
-                                    <b>${{order[4] | number}}</b>
-                                </div>
-                            </div>
-                            <hr />
-                            <div class="row">
-                                <div class="col-sm-12 text-center">
-                                    <button type="button" class="btn btn-danger btn-lg" style="width: 100%; border-radius: 0px;"
-                                        data-dismiss="modal" (click)="createInvoiceByDelivery(i)">Facturar</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+              </div>
             </div>
+          </div>
         </div>
+        <div class="row">
+          <div class="col-xs-12 col-md-6" *ngFor="let order of ordersByInvoice; let i = index">
+            <div class="order">
+              <div class="row">
+                <div class="col-sm-6 text-center">
+                  <h4>Orden</h4>
+                </div>
+                <div class="col-sm-6 text-center">
+                  <h4>Entrega</h4>
+                </div>
+              </div>
+              <hr />
+              <div class="row">
+                <div class="col-sm-6 text-center">
+                  {{order[1]}}
+                </div>
+                <div class="col-sm-6 text-center">
+                  {{order[0]}}
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-6 text-center">
+                  {{order[3]}}
+                </div>
+                <div class="col-sm-6 text-center">
+                  {{order[2]}}
+                </div>
+              </div>
+              <hr />
+              <div class="row">
+                <div class="col-sm-6 text-center">
+                  <b>Bodega: {{order[5]}}</b>
+                </div>
+                <div class="col-sm-6 text-center">
+                  <b>${{order[4] | number}}</b>
+                </div>
+              </div>
+              <hr />
+              <div class="row">
+                <div class="col-sm-12 text-center">
+                  <button type="button" class="btn btn-danger btn-lg" style="width: 100%; border-radius: 0px;"
+                    data-dismiss="modal" (click)="createInvoiceByDelivery(i)">Facturar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
-<button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span class="icon-chevron-up"></span></button>
+<button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span
+    class="icon-chevron-up"></span></button>
 <div class="container content">
-    <div class="row">
-        <div class="col-xs-4">
-            <div class="option" *ngIf="selectedOrder > 0">
-                <span class="icon-package" (click)="expressPack()" title="Express-Pack"></span>
-            </div>
-        </div>
-        <div class="col-xs-2">
-            <div class="option">
-                <span class="icon-eye" (click)="checkOut()" title="Check-out"></span>
-            </div>
-        </div>
-        <div class="col-xs-2">
-            <div class="option">
-                <span class="icon-printer" (click)="getReprintOrder()" title="Reimprimir Etiqueta"></span>
-            </div>
-        </div>
-        <div class="col-xs-2">
-            <div class="option">
-                <span class="icon-search-stock" title="Entregas para facturar" (click)="listOrdersPendingByInvoice()"></span>
-            </div>
-        </div>
-        <div class="col-xs-2">
-            <div class="option">
-                <span class="icon-layers" title="Ver Documentos" data-toggle="modal" data-target="#verDoc"></span>
-            </div>
-        </div>
+  <div class="row">
+    <div class="col-xs-4">
+      <h3>Packing</h3>
     </div>
-    <div class="row">
+    <div class="col-xs-2">
+      <div class="option" *ngIf="selectedOrder > 0">
+        <span class="icon-package" (click)="expressPack()" title="Express-Pack"></span>
+      </div>
+    </div>
+    <!--<div class="col-xs-2">
+          <div class="option">
+              <span class="icon-eye" (click)="checkOut()" title="Check-out"></span>
+          </div>
+        </div>-->
+    <div class="col-xs-2">
+      <div class="option">
+        <span class="icon-printer" (click)="getReprintOrder()" title="Reimprimir Etiqueta"></span>
+      </div>
+    </div>
+    <div class="col-xs-2">
+      <div class="option">
+        <span class="icon-search-stock" title="Entregas para facturar" (click)="listOrdersPendingByInvoice()"></span>
+      </div>
+    </div>
+    <div class="col-xs-2">
+      <div class="option">
+        <span class="icon-layers" title="Ver Documentos" data-toggle="modal" data-target="#verDoc"></span>
+      </div>
+    </div>
+  </div>
+  <div class="row" *ngIf="errorMessage != null && errorMessage.length > 0">
+    <div class="col-xs-12">
+      <div class="alert alert-danger" role="alert">
+        <p>{{errorMessage}}</p>
+      </div>
+    </div>
+  </div>
+  <div class="row" *ngIf="exitMessage">
+    <div class="col-xs-12">
+      <div class="alert alert-success">
+        {{exitMessage}}
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <select id="cliente" class="form-control input-lg" [(ngModel)]="selectedCustomer" name="selectedCustomer"
+        (change)="loadCustomerOrders()">
+        <option style="display:none" disabled value="">Selecciona un cliente</option>
+        <option *ngFor="let customer of customersList" value="{{customer[0]}}">({{customer[2]}}) -
+          {{customer[1]}}</option>
+      </select>
+    </div>
+  </div>
+  <br />
+  <div class="row" *ngIf="ordersList && ordersList.length > 0">
+    <div class="col-xs-12">
+      <select id="orderNumber" class="form-control input-lg" [(ngModel)]="selectedOrder" name="selectedOrder"
+        (change)="setIdPackingOrder()">
+        <option style="display:none" disabled value="0">Selecciona una orden</option>
+        <option *ngFor="let order of ordersList" value="{{order[1]}}">{{order[1]}}</option>
+      </select>
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <div class="col-xs-12 col-md-3" *ngFor="let row of orderItemsList">
+      <div class="packing-box nnew-box" (click)="selectItem(row)" [class.unauthorized]="row[5] > 0">
+        <div class="col-xs-6">
+          <div class="row">
+            <img class="photo" src="{{urlShared}}images/mtz/{{row[3]}}.jpg">
+          </div>
+        </div>
+        <div class="col-xs-6">
+          <div class="row">
+            <span>{{row[3]}}</span>
+          </div>
+          <div class="row">
+            <span class="qty" [class.unauthorized]="row[5] > 0">Picked<span
+                class="icon-chevrons-right"></span>{{row[2]}}</span>
+          </div>
+          <div class="row">
+            <span>{{row[1]}}</span>
+          </div>
+          <div class="row">
+            <span class="bin">{{row[0]}}</span>
+          </div>
+        </div>
         <div class="col-xs-12">
-            <h3>Packing </h3>
+          <div class="row">
+            <!--<span class="itemname">({{row[7]}})<br />{{row[8]}}</span>-->
+          </div>
         </div>
-    </div>
-    <div class="row" *ngIf="errorMessage != null && errorMessage.length > 0">
+      </div>
+      <!--Desktop-->
+      <div class="overlay visible-lg">
         <div class="col-xs-12">
-            <div class="alert alert-danger" role="alert">
-                <p>{{errorMessage}}</p>
-            </div>
+          <div class="row" *ngIf="row[5] > 0" [class.box-unauthorized-desktop]="row[5] > 0">
+            <span>Caja #{{row[6]}}</span>
+          </div>
         </div>
-    </div>
-    <div class="row" *ngIf="exitMessage">
+      </div>
+      <!--tablet-->
+      <div class="overlay visible-md">
         <div class="col-xs-12">
-            <div class="alert alert-success">
-                {{exitMessage}}
-            </div>
+          <div class="row" *ngIf="row[5] > 0" [class.box-unauthorized-tablet]="row[5] > 0">
+            <span>Caja #{{row[6]}}</span>
+          </div>
         </div>
-    </div>
-    <div class="row">
+      </div>
+      <!--mobile-->
+      <div class="overlay visible-xs visible-sm">
         <div class="col-xs-12">
-            <select id="cliente" class="form-control input-lg" [(ngModel)]="selectedCustomer" name="selectedCustomer"
-                (change)="loadCustomerOrders()">
-                <option style="display:none" disabled value="">Selecciona un cliente</option>
-                <option *ngFor="let customer of customersList" value="{{customer[0]}}">({{customer[2]}}) -
-                    {{customer[1]}}</option>
-            </select>
+          <div class="row" *ngIf="row[5] > 0" [class.box-unauthorized-mobile]="row[5] > 0">
+            <span>Caja #{{row[6]}}</span>
+          </div>
         </div>
+      </div>
     </div>
-    <br />
-    <div class="row" *ngIf="ordersList && ordersList.length > 0">
-        <div class="col-xs-12">
-            <select id="orderNumber" class="form-control input-lg" [(ngModel)]="selectedOrder" name="selectedOrder"
-                (change)="setIdPackingOrder()">
-                <option style="display:none" disabled value="0">Selecciona una orden</option>
-                <option *ngFor="let order of ordersList" value="{{order[1]}}">{{order[1]}}</option>
-            </select>
-        </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <button type="button" *ngIf="selectedOrder > 0" class="btn btn-danger btn-lg" (click)="nextOrden()">
+        Actualizar Orden <span class="icon-refresh"></span>
+      </button>
+      <button type="button" class="btn btn-danger btn-lg" (click)="resetSesionId()">Reset Id</button>
     </div>
-    <br>
-    <div class="row">
-        <div class="col-xs-12 col-md-3" *ngFor="let row of orderItemsList">
-            <div class="packing-box nnew-box" (click)="selectItem(row)" [class.unauthorized]="row[5] > 0">
-                <div class="col-xs-6">
-                    <div class="row">
-                        <img class="photo" src="{{urlShared}}images/mtz/{{row[3]}}.jpg">
-                    </div>
-                </div>
-                <div class="col-xs-6">
-                    <div class="row">
-                        <span>{{row[3]}}</span>
-                    </div>
-                    <div class="row">
-                        <span class="qty" [class.unauthorized]="row[5] > 0">Picked<span class="icon-chevrons-right"></span>{{row[2]}}</span>
-                    </div>
-                    <div class="row">
-                        <span>{{row[1]}}</span>
-                    </div>
-                    <div class="row">
-                        <span class="bin">{{row[0]}}</span>
-                    </div>
-                </div>
-                <div class="col-xs-12">
-                    <div class="row">
-                        <!--<span class="itemname">({{row[7]}})<br />{{row[8]}}</span>-->
-                    </div>
-                </div>
-            </div>
-            <!--Desktop-->
-            <div class="overlay visible-lg">
-                <div class="col-xs-12">
-                    <div class="row" *ngIf="row[5] > 0" [class.box-unauthorized-desktop]="row[5] > 0">
-                        <span>Caja #{{row[6]}}</span>
-                    </div>
-                </div>
-            </div>
-            <!--tablet-->
-            <div class="overlay visible-md">
-                <div class="col-xs-12">
-                    <div class="row" *ngIf="row[5] > 0" [class.box-unauthorized-tablet]="row[5] > 0">
-                        <span>Caja #{{row[6]}}</span>
-                    </div>
-                </div>
-            </div>
-            <!--mobile-->
-            <div class="overlay visible-xs visible-sm">
-                <div class="col-xs-12">
-                    <div class="row" *ngIf="row[5] > 0" [class.box-unauthorized-mobile]="row[5] > 0">
-                        <span>Caja #{{row[6]}}</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-12">
-            <button type="button" *ngIf="selectedOrder > 0" class="btn btn-danger btn-lg" (click)="nextOrden()">
-                Actualizar Orden <span class="icon-refresh"></span>
-            </button>
-            <button type="button" class="btn btn-danger btn-lg" (click)="resetSesionId()">Reset Id</button>
-        </div>
-    </div>
+  </div>
 </div>
