@@ -251,13 +251,13 @@
       <form>
         <div class="input-group">
           <span class="input-group-btn" *ngIf="selectedOrders && selectedOrders.size > 0">
-            <button type="button" class="btn btn-default btn-lg" (click)="listAssignableEmployees()">
+            <button type="button" class="btn btn-default btn-lg" (click)="listAssignableEmployees()" style="left: 1px;">
               <span class="badge">{{selectedOrders.size}}</span>
               <span class="icon-user"></span>
             </button>
           </span>
           <input type="text" class="form-control input-lg" id="filter" name="filter" placeholder="Escribe para filtrar"
-            [(ngModel)]="filter" (keyup)="filterOrders(false)" autocomplete="off" />
+            [(ngModel)]="filter" (keyup)="filterOrders(false)" autocomplete="off" style="left: 1px;"/>
           <span class="input-group-btn">
             <button type="button" class="btn btn-default btn-lg" (click)="toggleEye()" style="border-radius: 0px;">
               <span class="icon-eye" [ngClass]="{'icon-eye': !showApprovedOnly, 'icon-eye-off': showApprovedOnly}"
