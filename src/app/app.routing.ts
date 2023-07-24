@@ -1,6 +1,5 @@
 import { ModuleWithProviders } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-
 import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
 import { PurchaseOrdersComponent } from './components/purchase-orders/purchase-orders.component';
@@ -27,13 +26,15 @@ import { WithholdingTaxesComponent } from './components/withholding-taxes/withho
 import { TicketTIComponent } from './components/ticket-TI/ticket-TI.component';
 import { SoulStockComponent } from './components/inventory/soul/soul-stock.component';
 import { ModulaComponent } from './components/inventory/modula/modula.component';
-import { from } from 'rxjs/observable/from';
 import { StockTransferModulaComponent } from './components/stock-transfer/modula-transfer/stock-transfer-modula.component';
 import { ReportComexComponent } from './components/report/comex/report.comex.component';
 import { OrdersMagnumComponent } from './components/sales-orders/orders-magnum/orders-magnum.component';
 import { ClientRedplasComponent } from './components/event-feria/client-redplas/client-redplas.component';
 import { CollectionComponent } from './components/collection/collection.component';
 import { ApproveComponent } from './components/collection/approve/approve.component';
+import { EmployeeComponent } from './components/employee/employee.component';
+import { EmployeeCustodyComponent } from './components/employee/custody/employee-custody.component';
+import { from } from 'rxjs/observable/from';
 
 const appRoutes: Routes = [
   { path: '', component: LoginComponent },
@@ -67,7 +68,9 @@ const appRoutes: Routes = [
   { path: 'modula-stock', component: ModulaComponent },
   { path: 'report/comex/tracking', component: ReportComexComponent },
   { path: 'collection', component: CollectionComponent },
-  { path: 'approve', component: ApproveComponent }
+  { path: 'approve', component: ApproveComponent },
+  { path: 'employee', component: EmployeeComponent },
+  { path: 'employee-custody', component: EmployeeCustodyComponent }
 ];
 
 export const appRoutingProviders: any[] = [];

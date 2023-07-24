@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { ChartsModule } from 'ng2-charts';
-
 import { AppComponent } from './app.component';
 import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
@@ -38,7 +37,8 @@ import { ModulaComponent } from './components/inventory/modula/modula.component'
 import { ReportComexComponent } from './components/report/comex/report.comex.component';
 import { CollectionComponent } from './components/collection/collection.component';
 import { ApproveComponent } from './components/collection/approve/approve.component';
-
+import { EmployeeComponent } from './components/employee/employee.component';
+import { EmployeeCustodyComponent } from './components/employee/custody/employee-custody.component';
 import { routing, appRoutingProviders } from './app.routing';
 import { from } from 'rxjs/observable/from';
 import { ClientRedplasComponent } from './components/event-feria/client-redplas/client-redplas.component';
@@ -79,7 +79,9 @@ import { ClientRedplasComponent } from './components/event-feria/client-redplas/
     ModulaComponent,
     ReportComexComponent,
     CollectionComponent,
-    ApproveComponent
+    ApproveComponent,
+    EmployeeComponent,
+    EmployeeCustodyComponent
   ],
   imports: [
     BrowserModule,
