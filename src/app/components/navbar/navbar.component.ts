@@ -24,6 +24,7 @@ export class NavBarComponent implements OnInit {
   public pickingExpressModuleAccesible: boolean = false;
   public compraTrackingModuleAccesible: boolean = false;
   public collectionModuleAccesible: boolean = false;
+  public custodyEmployeeModuleAccesible: boolean = false;
 
   constructor(private _userService: UserService, private _route: ActivatedRoute, private _router: Router) { }
 
@@ -73,6 +74,7 @@ export class NavBarComponent implements OnInit {
       this.pickingExpressModuleAccesible = userAccess.pickingExpressModuleAccesible;
       this.compraTrackingModuleAccesible = userAccess.compraTrackingModuleAccesible;
       this.collectionModuleAccesible = userAccess.collectionModuleAccesible;
+      this.custodyEmployeeModuleAccesible = userAccess.custodyEmployeeModuleAccesible;
       return;
     }
 
@@ -88,7 +90,8 @@ export class NavBarComponent implements OnInit {
       ticketTIModuleAccesible: false,
       pickingExpressModuleAccesible: false,
       compraTrackingModuleAccesible: false,
-      collectionModuleAccesible: false
+      collectionModuleAccesible: false,
+      custodyEmployeeModuleAccesible: false
     };
 
     localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
@@ -229,6 +232,20 @@ export class NavBarComponent implements OnInit {
           localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
         } else {
           this.pickingExpressModuleAccesible = false;
+        }
+      }, error => { console.error(error); }
+    );
+
+    //validar si el usuario puede acceder a la opción de custody
+    this._userService.canAccess(this.identity.username, 'custody').subscribe(
+      response => {
+        if (response.code == 0) {
+          this.custodyEmployeeModuleAccesible = true;
+          userAccess = JSON.parse(localStorage.getItem('igb.user.access'));
+          userAccess.custodyEmployeeModuleAccesible = true;
+          localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
+        } else {
+          this.custodyEmployeeModuleAccesible = false;
         }
       }, error => { console.error(error); }
     );
