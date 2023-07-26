@@ -186,7 +186,7 @@ export class ShippingComponent implements OnInit {
   }
 
   public addShipping() {
-    let ShippingDTO = { 'invoice_number': this.selectInvoice, 'box_sum_shipping': this.qtyPack, 'send_To_Cedi': this.checkSede }
+    let ShippingDTO = { 'invoice_number': this.selectInvoice, 'box_sum_shipping': this.qtyPack, 'send_to_cedi': this.checkSede }
 
     this._shippingService.addShipping(ShippingDTO).subscribe(
       response => {
