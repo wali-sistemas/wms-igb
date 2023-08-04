@@ -61,6 +61,8 @@ export class EmployeeCustodyComponent {
   public validSelectIdEmployee: boolean = true;
   public bottonAction: string = 'Crear';
   public messageNewAsset: string = '';
+  public datePurchase: string;
+  public companyPurchase: string;
 
   constructor(private _router: Router, private _userService: UserService, private _employeeService: EmployeeService, private _binLocationService: BinLocationService) {
   }
@@ -290,10 +292,30 @@ export class EmployeeCustodyComponent {
   }
 
   public showModalInfo(custody) {
-    console.log(custody.idAsset);
     this.idAsset = custody.idAsset;
     this.userAssign = custody.userAssign;
+    this.datePurchase = custody.datePurchase == null ? "SIN DEFINIR" : custody.datePurchase;
+    this.companyPurchase = custody.companyPurchase;
     $('#modal_info_custody').modal('show');
+  }
+
+  public editModalAsset(custody) {
+    console.log(custody);
+    this.idAsset = custody.idAsset;
+    this.typeAsset = custody.type;
+    this.brandAsset = custody.brand;
+    this.refAsset = custody.referencia;
+    this.serialAsset = custody.serial;
+    this.selectedCompanyAsset = custody.company;
+    this.datePurchaseAsset = custody.datePurchase;
+    this.ccostoAsset = custody.ccAsset;
+    this.selectedStatusAsset = custody.statusAsset;
+    this.noteAsset = custody.comment;
+    this.urlAsset = custody.pictureAssetUrl;
+    this.selectedIdEmployee = custody.cardCode;
+    this.urlAsset = custody.pictAsset;
+    this.bottonAction = 'Actualizar';
+    $('#modal_new_asset').modal('show');
   }
 
   public getScrollTop() {
