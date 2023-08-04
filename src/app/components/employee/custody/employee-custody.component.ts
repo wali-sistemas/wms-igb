@@ -300,7 +300,6 @@ export class EmployeeCustodyComponent {
   }
 
   public editModalAsset(custody) {
-    console.log(custody);
     this.idAsset = custody.idAsset;
     this.typeAsset = custody.type;
     this.brandAsset = custody.brand;
