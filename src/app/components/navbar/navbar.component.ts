@@ -265,22 +265,18 @@ export class NavBarComponent implements OnInit {
     );
 
     //validar si el usuario puede acceder al modulo de cartera, solo si es IGB
-    if (this.identity.selectedCompany == 'IGB') {
-      this._userService.canAccess(this.identity.username, 'collection').subscribe(
-        response => {
-          if (response.code == 0) {
-            this.collectionModuleAccesible = true;
-            userAccess = JSON.parse(localStorage.getItem('igb.user.access'));
-            userAccess.collectionModuleAccesible = true;
-            localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
-          } else {
-            this.collectionModuleAccesible = false;
-          }
-        }, error => { console.error(error); }
-      );
-    } else {
-      this.collectionModuleAccesible = false;
-    }
+    this._userService.canAccess(this.identity.username, 'collection').subscribe(
+      response => {
+        if (response.code == 0) {
+          this.collectionModuleAccesible = true;
+          userAccess = JSON.parse(localStorage.getItem('igb.user.access'));
+          userAccess.collectionModuleAccesible = true;
+          localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
+        } else {
+          this.collectionModuleAccesible = false;
+        }
+      }, error => { console.error(error); }
+    );
 
     localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
   }

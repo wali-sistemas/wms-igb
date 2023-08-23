@@ -83,4 +83,16 @@ export class SalesOrdersService {
     return this._http.get(this.url + 'salesorder/validate-order/' + orderNumber, { headers: igbHeaders })
       .map(res => res.json());
   }
+
+  public listOrdersAuthorized() {
+    let igbHeaders = new IGBHeaders().loadHeaders();
+    return this._http.get(this.url + 'salesorder/order-enlistment', { headers: igbHeaders })
+      .map(res => res.json());
+  }
+
+  public updateOrders(action: string, selects: string[]) {
+    let igbHeaders = new IGBHeaders().loadHeaders();
+    return this._http.post(this.url + 'salesorder/update-status-order?status=' + action, selects, { headers: igbHeaders })
+      .map(res => res.json());
+  }
 }

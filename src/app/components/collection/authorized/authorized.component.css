@@ -1,0 +1,232 @@
+.content {
+  margin-top: 60px;
+}
+
+.modal-content .modal-footer .btn.btn-danger {
+  background-color: #da0611;
+  border-color: #da0611;
+  color: white;
+}
+
+.modalDocs-container {
+  align-items: left;
+  margin-bottom: 5px;
+}
+
+.modalDocs-number {
+  text-align: left;
+}
+
+.modalDocs-value {
+  text-align: left;
+}
+
+.scrollTop {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 30px;
+  z-index: 99;
+  font-size: 25px;
+  border: none;
+  outline: none;
+  background-color: #da0611;
+  color: white;
+  cursor: pointer;
+  padding: 15px;
+  border-radius: 4px;
+}
+
+.scrollTop:hover {
+  background-color: #333;
+}
+
+.reload {
+  text-align: right;
+  font-size: 35px;
+  cursor: pointer;
+  color: black;
+  position: relative;
+  top: 8px;
+}
+
+.switch {
+  display: inline-block;
+  height: 2em;
+  position: relative;
+  vertical-align: middle;
+  width: 3.5em;
+}
+
+.switch input {
+  display: none;
+  margin: 0;
+}
+
+.slider {
+  background-color: #ccc;
+  border-radius: 1em;
+  bottom: 0;
+  cursor: pointer;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: all 0.4s ease 0s;
+}
+
+.slider::before {
+  background-color: white;
+  border-radius: 0.7em;
+  bottom: 4px;
+  content: "";
+  height: 1.4em;
+  left: 4px;
+  position: absolute;
+  transition: all 0.4s ease 0s;
+  width: 1.4em;
+  padding-left: 3px;
+}
+
+input:checked+.slider {
+  background-color: #da0611;
+}
+
+input:checked+.slider:before {
+  -webkit-transform: translateX(1.5em);
+  -ms-transform: translateX(1.5em);
+  transform: translateX(1.5em);
+}
+
+.bullet {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 10px;
+  border-radius: 50%;
+}
+
+.bulletRed {
+  background-color: #da0611;
+}
+
+.bulletBlack {
+  background-color: black;
+}
+
+.bulletGray {
+  background-color: #909497;
+}
+
+.bullectsClient {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-bottom: 12px;
+}
+
+.check {
+  text-align: right;
+}
+
+.order {
+  min-height: 200px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+  padding: 10px;
+}
+
+.order p {
+  font-size: 12px;
+  margin-bottom: 0;
+}
+
+.order hr {
+  margin: 5px 0px;
+}
+
+.orderStatus {
+  padding-bottom: 50px;
+}
+
+.orderTitle {
+  padding-top: 10px;
+}
+
+.salesValue {
+  text-align: center;
+}
+
+.salesNumber {
+  text-align: left;
+}
+
+.statusClient {
+  background-color: #ececec;
+  border-radius: 5px;
+  border: 0.3px solid black;
+  color: #333;
+  text-align: center;
+  padding: 2px;
+  margin-top: 8px;
+}
+
+.clientName {
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+  max-height: 60px;
+  overflow: hidden;
+  word-wrap: break-word;
+
+  @media (max-width: 800px) {
+    max-height: none;
+    white-space: normal;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}
+
+.clientAdviser {
+  padding-top: 8px;
+  padding-bottom: 12px;
+}
+
+.chargeBar {
+  width: 100%;
+  max-width: 100%;
+  height: 20px;
+  background-color: #ccc;
+  border-radius: 10px;
+}
+
+.valueBar {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  background-color: #da0611;
+  text-align: center;
+  color: #ffffff;
+  font-weight: bold;
+  border-radius: 10px;
+  transition: width 0.5s ease-in-out;
+}
+
+.balanceBarMax {
+  color: #da0611;
+}
+
+.balanceBarMin {
+  color: #333;
+}
+
+.notSeeTransferBar {
+  visibility: hidden;
+  padding-bottom: 5px;
+}
+
+.seeTransferBar {
+  padding-top: 5px;
+  text-align: center;
+}

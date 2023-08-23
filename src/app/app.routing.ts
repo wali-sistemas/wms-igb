@@ -32,6 +32,7 @@ import { OrdersMagnumComponent } from './components/sales-orders/orders-magnum/o
 import { ClientRedplasComponent } from './components/event-feria/client-redplas/client-redplas.component';
 import { CollectionComponent } from './components/collection/collection.component';
 import { ApproveComponent } from './components/collection/approve/approve.component';
+import { AuthorizedComponent } from './components/collection/authorized/authorized.component';
 import { EmployeeComponent } from './components/employee/employee.component';
 import { EmployeeCustodyComponent } from './components/employee/custody/employee-custody.component';
 import { from } from 'rxjs/observable/from';
@@ -69,6 +70,7 @@ const appRoutes: Routes = [
   { path: 'report/comex/tracking', component: ReportComexComponent },
   { path: 'collection', component: CollectionComponent },
   { path: 'approve', component: ApproveComponent },
+  { path: 'authorized', component: AuthorizedComponent },
   { path: 'employee', component: EmployeeComponent },
   { path: 'employee-custody', component: EmployeeCustodyComponent }
 ];
