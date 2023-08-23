@@ -1,0 +1,344 @@
+<igb-navbar></igb-navbar>
+
+<!--Modal procesando-->
+<div id="modal_transfer_process" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="progress">
+          <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100"
+            aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+            <span class="sr-only">Procesando transferencia</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal cambiar estado aprobado -->
+<div id="confirmed_Modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body text-center">
+        <p>
+          <b>¿Estás seguro que deseas autorizar la orden?</b><br />Al hacerlo, se cambiará el estado de la orden a
+          'Aprobado' para ser procesada por el área de logística.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" (click)="listOrdersAuthorized()"
+          style="float: left;">No</button>
+        <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal"
+          (click)="updateOrder('approved')">Sí</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal cambiar estado no autorizar-->
+<div id="change_Modal_Credit" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false"
+  data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body text-center">
+        <p>
+          <b>¿Está seguro que desea actualizar el estado de la orden?</b><br />Se cambiará el estado de la
+          orden a 'Cartera' para ser procesada por el área de cartera.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" (click)="listOrdersAuthorized()"
+          style="float: left;">No</button>
+        <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal"
+          (click)="updateOrder('collect')">Sí</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal cambiar estado prepago -->
+<div id="change_Modal_Counted" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false"
+  data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body text-center">
+        <p>
+          <b>¿Está seguro que desea actualizar el estado de la orden?</b><br />Se cambiará el estado de la
+          orden a 'Prepago' para ser procesada por el área comercial.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" (click)="listOrdersAuthorized()"
+          style="float: left;">No</button>
+        <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal"
+          (click)="updateOrder('prepaid')">Sí</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--Modal ver documentos-->
+<div id="ver_Docs" class="modal slide" tabindex="-1" role="dialog" data-backdrop="static">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="modal-title"><b>Pedidos</b></h5>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-sm-12 col-xs-12" *ngIf="selectedGroup">
+            <div class="text-left" style="margin-bottom: 10px;">
+              <b>
+                <span class="icon-user" style="font-size: 18px;"></span>
+              </b>
+              {{selectedGroup.client.cardName}}
+            </div>
+            <div *ngFor="let order of selectedGroup.orders" class="modalDocs-container">
+              <div class="col-sm-6 col-xs-6 col-6 modalDocs-number">
+                <span class="icon-invoice" style="font-size: 18px;"></span>
+                {{order.docNumSAP}}
+              </div>
+              <div class="col-sm-6 col-xs-6 col-6 modalDocs-value">
+                <span class="icon-cuenta_bancaria" style="font-size: 18px;"></span>
+                <span class="ml-2">{{order.docTotal | number}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <br>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Boton subir pagina -->
+<button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba">
+  <span class="icon-chevron-up"></span>
+</button>
+<!-- Titulo - icono -->
+<div class="container content">
+  <div class="row">
+    <div class="col-xs-10">
+      <h3>Pedidos para alistamiento</h3>
+    </div>
+    <div class="col-xs-2">
+      <div class="reload">
+        <span class="icon-refresh" (click)="listOrdersAuthorized()" title="Recargar Facturas"></span>
+      </div>
+    </div>
+  </div>
+  <!-- Filtro cuadro texto -->
+  <div class="row">
+    <div class="col-xs-12 col-md-3">
+      <input type="text" class="form-control input-lg" id="filter" name="filter" placeholder="Buscar cliente"
+        autocomplete="off" [(ngModel)]="filter" (keyup)="filterOrders()" style="margin-top: 5px;" />
+    </div>
+    <!-- Filtros region - condicion - estado -->
+    <div class="col-xs-12 col-md-3">
+      <select class="form-control input-lg" (change)="applyFilters()" [(ngModel)]="region" style="margin-top: 5px;">
+        <option value="" disabled>Región</option>
+        <option *ngFor="let region of filteredRegions" [value]="region">{{region}}</option>
+      </select>
+    </div>
+    <div class="col-xs-12 col-md-3">
+      <select class="form-control input-lg" (change)="applyFilters()" [(ngModel)]="condition" style="margin-top: 5px;">
+        <option value="" disabled>Condición</option>
+        <option *ngFor="let condition of filteredConditions" [value]="condition">{{condition}}</option>
+      </select>
+    </div>
+    <div class="col-xs-12 col-md-3">
+      <select class="form-control input-lg" (change)="applyFilters()" [(ngModel)]="stade" style="margin-top: 5px;">
+        <option value="" disabled>Estado</option>
+        <option *ngFor="let stade of filteredStades" [value]="stade">{{stade}}</option>
+      </select>
+    </div>
+  </div>
+  <br />
+  <!--Alerta error-->
+  <div class="row" *ngIf="changeOrderErrorMessage" role="alert">
+    <div class="col-xs-12">
+      <div class="alert alert-danger">
+        {{changeOrderErrorMessage}}
+      </div>
+    </div>
+  </div>
+  <!--Alerta aprobación-->
+  <div class="row" *ngIf="changeOrderMessage" role="alert">
+    <div class="col-xs-12">
+      <div class="alert alert-success">
+        {{changeOrderMessage}}
+      </div>
+    </div>
+  </div>
+  <!-- Contenedores-->
+  <div class="row">
+    <div class="col-xs-12 col-md-6" *ngFor="let group of groupedData">
+      <div class="order">
+        <!-- Detalles deL cliente -->
+        <div class="orderStatus">
+          <div class="col-sm-12 col-xs-12">
+            <div class="statusClient">{{group.client.status}}</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6 col-xs-6 text-left">
+            <p><b><span class="icon-user" style="font-size: 18px;"></span> Cliente:</b> {{group.client.cardCode}}</p>
+          </div>
+          <div class="col-sm-6 col-xs-6 text-right" *ngIf="group.client.discOrder > 0">
+            <p style="color: #da0611;"><b><span class="icon-alert-triangle" style="font-size: 18px;">
+                </span>Descuento</b>
+            </p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12 col-xs-12 clientName">
+            <p>{{group.client.cardName}}</p>
+            <hr>
+          </div>
+          <div class="col-sm-12 col-xs-12 clientAdviser">
+            <p>
+              <b>
+                <span class="icon-dos-cuatro"
+                  style="font-size: 20px; position: relative; top: 4px; margin-left: -3px;"></span>
+                Asesor:
+              </b>
+              {{group.client.slpName}}
+            </p>
+          </div>
+        </div>
+        <div class="bullectsClient">
+          <div class="row">
+            <div class="col-sm-6 col-xs-6">
+              <p>
+                <span class="bullet bulletGray"></span>
+                <b>% Dcto pie factura:</b>
+                <ng-container *ngIf="group.client.discClient; else noDiscount">
+                  {{group.client.discClient}}
+                </ng-container>
+              </p>
+              <ng-template #noDiscount>
+                No
+              </ng-template>
+            </div>
+            <div class="col-sm-6 col-xs-6">
+              <p>
+                <span class="bullet bulletGray"></span>
+                <b>Días mora:</b> {{group.client.dayVenc}}
+              </p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-6 col-xs-6">
+              <p>
+                <span class="bullet bulletBlack"></span>
+                <b>Promedio de pago:</b> {{group.client.promDay}} días
+              </p>
+            </div>
+            <div class="col-sm-6 col-xs-6">
+              <p>
+                <span class="bullet bulletBlack"></span>
+                <b>Condición:</b> {{group.client.payCond}}
+              </p>
+            </div>
+          </div>
+          <div class="row">
+            <div
+              [ngClass]="{'balanceBarMax': group.client.balance !== 0 && group.client.payCond !== 'CRÉDITO', 'balanceBarMin': group.client.balance === 0}">
+              <div class="col-sm-6 col-xs-6">
+                <p>
+                  <span class="bullet bulletRed"></span>
+                  <b>Saldo de cuenta: </b>{{group.client.balance | number}}
+                </p>
+              </div>
+            </div>
+            <div class="col-sm-6 col-xs-6">
+              <p>
+                <span class="bullet bulletGray"></span>
+                <b>Cupo:</b> {{group.client.cupo | number}}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div
+          [ngClass]="{'seeTransferBar': group.client.payCond === 'CRÉDITO' && (group.client.cupo > 0 || group.client.balance > 0),'notSeeTransferBar': group.client.payCond !== 'CRÉDITO' || (group.client.cupo === 0 && group.client.balance === 0)}">
+          <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="chargeBar">
+              <div class="valueBar" [style.width.%]="(group.client.balance / group.client.cupo) * 100">
+                {{((group.client.balance / group.client.cupo) * 100).toFixed(2)}}%
+              </div>
+            </div>
+          </div>
+          <br>
+        </div>
+        <div class="col-sm-12 col-xs-12 orderTitle">
+          <div class="row">
+            <p>
+              <b>
+                <span class="icon-layers" style="font-size: 18px;"></span>
+                Pedidos
+              </b>
+            </p>
+            <hr>
+          </div>
+        </div>
+        <!-- Detalles de los pedidos -->
+        <div class="row">
+          <div class="col-sm-6 col-xs-6">
+            <div class="salesValue">
+              <p>
+                <b>
+                  <span class="icon-cuenta_bancaria" style="font-size: 18px; position: relative; top: 3px;"></span>
+                  Valor:
+                </b>
+                {{getTotalOrderValue(group.orders) | number }}
+              </p>
+            </div><br>
+          </div>
+          <div class="col-sm-6 col-xs-6">
+            <div class="salesNumber" (click)="showOrderNumbers(group)">
+              <p>
+                <b>
+                  <span class="icon-delivery-list" style="font-size: 18px; position: relative; top: 2.1px;"></span>
+                  # Pedidos:
+                </b>
+                {{group.client.nroOrder}}
+                <span class="icon-eye" style="font-size: 14px; position: relative; top: 1px;"
+                  title="Ver Documentos"></span>
+              </p>
+              <br>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-5 col-xs-5">
+            <div class="check">
+              <label class="switch">
+                <input type="checkbox" [disabled]="group.client.payCond !== 'CRÉDITO'"
+                  (click)="handleCheckedForAutorized(group)">
+                <div class="slider"></div>
+              </label>
+              <span [ngStyle]="{ 'color': group.client.payCond !== 'CRÉDITO' ? '#999999' : 'inherit' }">Autorizar</span>
+            </div>
+          </div>
+          <div class="col-sm-5 col-xs-6" *ngIf="group.client.payCond !== 'CRÉDITO'">
+            <div class="check">
+              <label class="switch">
+                <input type="checkbox" (click)="handleCheckedForCounted(group)">
+                <div class="slider"></div>
+              </label>
+              <span>Prepago</span>
+            </div>
+          </div>
+          <div class="col-sm-5 col-xs-6" *ngIf="group.client.payCond === 'CRÉDITO'">
+            <div class="check">
+              <label class="switch">
+                <input type="checkbox" (click)="handleCheckedForNotAutorized(group)">
+                <div class="slider"></div>
+              </label>
+              <span>No autorizar</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

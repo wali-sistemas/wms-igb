@@ -37,6 +37,7 @@ import { ModulaComponent } from './components/inventory/modula/modula.component'
 import { ReportComexComponent } from './components/report/comex/report.comex.component';
 import { CollectionComponent } from './components/collection/collection.component';
 import { ApproveComponent } from './components/collection/approve/approve.component';
+import { AuthorizedComponent } from './components/collection/authorized/authorized.component';
 import { EmployeeComponent } from './components/employee/employee.component';
 import { EmployeeCustodyComponent } from './components/employee/custody/employee-custody.component';
 import { routing, appRoutingProviders } from './app.routing';
@@ -80,6 +81,7 @@ import { ClientRedplasComponent } from './components/event-feria/client-redplas/
     ReportComexComponent,
     CollectionComponent,
     ApproveComponent,
+    AuthorizedComponent,
     EmployeeComponent,
     EmployeeCustodyComponent
   ],
