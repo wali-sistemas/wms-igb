@@ -32,7 +32,7 @@ export class AuthorizedComponent implements OnInit {
   public selectedGroup: { client: AuthorizedOrder, orders: AuthorizedOrder[] } = null;
   public selectedDocNumSAPs: number[] = [];
 
-  constructor(private _SalesOrdersService: SalesOrdersService, private _router: Router) {
+  constructor(private _salesOrdersService: SalesOrdersService, private _router: Router) {
   }
 
   ngOnInit() {
@@ -50,7 +50,8 @@ export class AuthorizedComponent implements OnInit {
       keyboard: false,
       show: true
     });
-    this._SalesOrdersService.listOrdersAuthorized().subscribe(
+
+    this._salesOrdersService.listOrdersAuthorized().subscribe(
       response => {
         this.sales = response.content;
         this.filteredOrders = response.content;
@@ -96,32 +97,28 @@ export class AuthorizedComponent implements OnInit {
 
     switch (action) {
       case 'approved':
-        updateMethod = this._SalesOrdersService.updateOrders('APROBADO', this.selects);
+        updateMethod = this._salesOrdersService.updateOrders('APROBADO', this.selects);
         successMessage = 'Ordenes autorizadas exitosamente.';
         break;
       case 'prepaid':
-        updateMethod = this._SalesOrdersService.updateOrders('PREPAGO', this.selects);
+        updateMethod = this._salesOrdersService.updateOrders('PREPAGO', this.selects);
         successMessage = 'Ordenes actualizadas a prepago exitosamente.';
         break;
       case 'collect':
-        updateMethod = this._SalesOrdersService.updateOrders('CARTERA', this.selects);
+        updateMethod = this._salesOrdersService.updateOrders('CARTERA', this.selects);
         successMessage = 'Ordenes actualizadas a cartera exitosamente.';
         break;
       default:
         return;
     }
 
-    $('#modal_transfer_process').modal({
-      backdrop: 'static',
-      keyboard: false,
-      show: true
-    });
+    $('#modal_transfer_process').modal('show');
 
     updateMethod.subscribe(
       response => {
-        $('#modal_transfer_process').modal('hide');
         this.listOrdersAuthorized();
         this.changeOrderMessage = response.code === 0 ? successMessage : response.content;
+        $('#modal_transfer_process').modal('close');
       },
       error => {
         $('#modal_transfer_process').modal('hide');
