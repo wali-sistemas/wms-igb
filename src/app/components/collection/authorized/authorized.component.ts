@@ -50,6 +50,7 @@ export class AuthorizedComponent implements OnInit {
       keyboard: false,
       show: true
     });
+
     this._salesOrdersService.listOrdersAuthorized().subscribe(
       response => {
         this.sales = response.content;
