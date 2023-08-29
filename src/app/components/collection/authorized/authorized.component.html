@@ -309,17 +309,18 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-sm-5 col-xs-5">
+          <!-- IGB contado para autorizar -->
+          <div class="col-sm-5 col-xs-5" *ngIf="group.client.payCond !== 'CRÉDITO' && selectedCompany === 'IGB'">
             <div class="check">
               <label class="switch">
-                <input type="checkbox" [disabled]="group.client.payCond !== 'CRÉDITO'"
-                  (click)="handleCheckedForAutorized(group)">
+                <input type="checkbox" [disabled]="true">
                 <div class="slider"></div>
               </label>
-              <span [ngStyle]="{ 'color': group.client.payCond !== 'CRÉDITO' ? '#999999' : 'inherit' }">Autorizar</span>
+              <span [ngStyle]="{ 'color': '#999999' }">Autorizar</span>
             </div>
           </div>
-          <div class="col-sm-5 col-xs-6" *ngIf="group.client.payCond !== 'CRÉDITO'">
+          <!-- IGB contado para cambiar a prepago -->
+          <div class="col-sm-5 col-xs-6" *ngIf="group.client.payCond !== 'CRÉDITO' && selectedCompany === 'IGB'">
             <div class="check">
               <label class="switch">
                 <input type="checkbox" (click)="handleCheckedForCounted(group)">
@@ -328,6 +329,37 @@
               <span>Prepago</span>
             </div>
           </div>
+          <!-- MTZ contado para prepago -->
+          <div class="col-sm-5 col-xs-5" *ngIf="group.client.payCond !== 'CRÉDITO' && selectedCompany === 'VARROC'">
+            <div class="check">
+              <label class="switch">
+                <input type="checkbox" [disabled]="true">
+                <div class="slider"></div>
+              </label>
+              <span [ngStyle]="{ 'color': '#999999' }">Prepago</span>
+            </div>
+          </div>
+          <!-- MTZ contado para autorizar -->
+          <div class="col-sm-5 col-xs-6" *ngIf="group.client.payCond !== 'CRÉDITO' && selectedCompany === 'VARROC'">
+            <div class="check">
+              <label class="switch">
+                <input type="checkbox" (click)="handleCheckedForAutorized(group)">
+                <div class="slider"></div>
+              </label>
+              <span>Autorizar</span>
+            </div>
+          </div>
+          <!-- IGB credito para autorizar -->
+          <div class="col-sm-5 col-xs-5" *ngIf="group.client.payCond === 'CRÉDITO'">
+            <div class="check">
+              <label class="switch">
+                <input type="checkbox" (click)="handleCheckedForAutorized(group)">
+                <div class="slider"></div>
+              </label>
+              <span>Autorizar</span>
+            </div>
+          </div>
+          <!-- IGB credito para cartera -->
           <div class="col-sm-5 col-xs-6" *ngIf="group.client.payCond === 'CRÉDITO'">
             <div class="check">
               <label class="switch">
