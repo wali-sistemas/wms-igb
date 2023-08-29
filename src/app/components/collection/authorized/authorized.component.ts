@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { SalesOrdersService } from '../../../services/sales-orders.service';
+import { UserService } from '../../../services/user.service';
 import { AuthorizedOrder } from '../../../models/authorized-order';
 import { Observable } from 'rxjs';
 
@@ -9,7 +10,7 @@ declare var $: any;
 @Component({
   templateUrl: './authorized.component.html',
   styleUrls: ['./authorized.component.css'],
-  providers: [SalesOrdersService]
+  providers: [SalesOrdersService, UserService]
 })
 export class AuthorizedComponent implements OnInit {
   public filter: string = '';
@@ -31,11 +32,15 @@ export class AuthorizedComponent implements OnInit {
   public groupedData: { client: AuthorizedOrder, orders: AuthorizedOrder[] }[] = [];
   public selectedGroup: { client: AuthorizedOrder, orders: AuthorizedOrder[] } = null;
   public selectedDocNumSAPs: number[] = [];
+  public selectedCompany: string;
 
-  constructor(private _salesOrdersService: SalesOrdersService, private _router: Router) {
-  }
+  constructor(private _salesOrdersService: SalesOrdersService, private _router: Router, private _userService: UserService) { }
 
   ngOnInit() {
+    const identity = this._userService.getItentity();
+    if (identity) {
+      this.selectedCompany = identity.selectedCompany;
+    }
     this.listOrdersAuthorized();
   }
 
