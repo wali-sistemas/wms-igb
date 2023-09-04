@@ -57,8 +57,6 @@ export class ModulaComponent implements OnInit {
                     for (let i = 0; i < response.length; i++) {
                         if (response[i].qtyMDL != response[i].qtySAP) {
                             this.itemsDifferences = response;
-                        } else { 
-                            this.msgWarning = "Inventario consiliado en su totalidad.";
                         }
                     }
                 }
