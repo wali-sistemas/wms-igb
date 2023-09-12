@@ -66,15 +66,16 @@ export class ApproveComponent {
   }
 
   public filterInvoices() {
-    this.searchInvoice = this.filter;
+    this.searchInvoice = this.filter.toLowerCase();
+
     if (this.filter.length > 0) {
       this.filteredInvoices = new Array<Counted>();
       for (let i = 0; i < this.invoices.length; i++) {
         const inv = this.invoices[i];
-        if (inv.docNum.toString().includes(this.searchInvoice)
-          || inv.cardCode.toString().includes(this.searchInvoice)
-          || inv.cardName.toLocaleLowerCase().includes(this.searchInvoice)
-          || inv.location.toString().includes(this.searchInvoice)
+        if (
+          inv.docNum.toString().includes(this.searchInvoice) ||
+          inv.cardCode.toString().toLowerCase().includes(this.searchInvoice) ||
+          inv.cardName.toLowerCase().includes(this.searchInvoice)
         ) {
           this.filteredInvoices.push(inv);
         }
