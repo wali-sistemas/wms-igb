@@ -292,7 +292,7 @@
             <select id="idEmployee" class="form-control input-lg" [(ngModel)]="selectedIdEmployee"
               name="selectedIdEmployee" [class.required-field]="!validSelectIdEmployee" required>
               <option value="" disabled>Seleccione uno</option>
-              <option value="">SIN ASIGNAR</option>
+              <option value="811011909">SIN ASIGNAR</option>
               <option *ngFor="let employee of employees" value="{{employee.cardCode}}">{{employee.cardName}}</option>
             </select>
           </div>
