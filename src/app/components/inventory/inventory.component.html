@@ -3,31 +3,31 @@
 <div class="container content">
     <div class="row">
         <div class="col-xs-12 col-md-6">
-            <div class="box" [routerLink]="['/inventory-random']">
-                <span class="icon-shuffle" style="font-size: 154px;"></span>
+            <div class="box" [routerLink]="['/inventory/inventory-random']">
+                <span class="icon-shuffle" style="font-size: 154px; position: relative; top: 10px;"></span>
                 <h4 class="title">
                     Aleatorio
                 </h4>
             </div>
         </div>
         <div class="col-xs-12 col-md-6">
-            <div class="box" [routerLink]="['/stock-item']">
-                <span class="icon-search-stock" style="font-size: 154px;"></span>
+            <div class="box" [routerLink]="['/inventory/stock-item']">
+                <span class="icon-search-stock" style="font-size: 154px; position: relative; top: 10px;"></span>
                 <h4 class="title">
                     Consultar
                 </h4>
             </div>
         </div>
         <div *ngIf="resupplyModuleAccesible" class="col-xs-12 col-md-6">
-            <div class="box" [routerLink]="['/resupply']">
-                <span class="icon-shelving" style="font-size: 154px;"></span>
+            <div class="box" [routerLink]="['/inventory/resupply']">
+                <span class="icon-shelving" style="font-size: 154px; position: relative; top: 10px;"></span>
                 <h4 class="title">
                     Reabastecer
                 </h4>
             </div>
         </div>
         <div *ngIf="selectedCompany == 'IGB'" class="col-xs-12 col-md-6">
-            <div class="box" [routerLink]="['/stock-soul']">
+            <div class="box" [routerLink]="['/inventory/stock-soul']">
                 <span class="icon-soul" style="font-size: 154px;"></span>
                 <h4 class="title">
                     Stock
@@ -35,7 +35,7 @@
             </div>
         </div>
         <div *ngIf="selectedCompany == 'IGB'" class="col-xs-12 col-md-6">
-            <div class="box" [routerLink]="['/modula-stock']">
+            <div class="box" [routerLink]="['/inventory/modula-stock']">
                 <span class="icon-modula" style="font-size: 154px;"></span>
                 <h4 class="title">
                     Sap vs Modula

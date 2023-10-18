@@ -3,17 +3,17 @@
 <div class="container content">
     <div class="row">
         <div class="col-xs-12 col-md-6">
-            <div class="box" [routerLink]="['/orders-sap']">
+            <div class="box" [routerLink]="['/sales-orders/orders-sap']">
                 <span class="icon-sap"></span>
             </div>
         </div>
         <div *ngIf="selectedCompany == 'IGB'" class="col-xs-12 col-md-6">
-            <div class="box" [routerLink]="['/orders-modula']">
+            <div class="box" [routerLink]="['/sales-orders/orders-modula']">
                 <span class="icon-modula"></span>
             </div>
         </div>
         <div *ngIf="selectedCompany == 'IGB'" class="col-xs-12 col-md-6">
-            <div class="box" [routerLink]="['/orders-magnum']">
+            <div class="box" [routerLink]="['/sales-orders/orders-magnum']">
                 <span class="icon-soul"></span>
                 <h4 class="title" style="position: absolute;top: 130px;left: 227px;">
                     Cali & Cartagena

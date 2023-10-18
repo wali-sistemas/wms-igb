@@ -3,7 +3,7 @@
 <div class="container content">
   <div class="row">
     <div class="col-xs-12 col-md-6">
-      <div class="box" [routerLink]="['/transfer-location']">
+      <div class="box" [routerLink]="['/transfer/transfer-location']">
         <span class="icon-location-all" style="font-size: 154px;"></span>
         <h3 class="title">
           Entre Ubicaciones
@@ -11,7 +11,7 @@
       </div>
     </div>
     <div class="col-xs-12 col-md-6">
-      <div class="box" [routerLink]="['/transfer-warehouse']">
+      <div class="box" [routerLink]="['/transfer/transfer-warehouse']">
         <span class="icon-warehouse-all" style="font-size: 154px;"></span>
         <h3 class="title">
           Entre Almacenes
@@ -19,7 +19,7 @@
       </div>
     </div>
     <div *ngIf="selectedCompany == 'IGB'" class="col-xs-12 col-md-6">
-      <div class="box" [routerLink]="['/transfer-modula']">
+      <div class="box" [routerLink]="['/transfer/transfer-modula']">
         <span class="icon-modula" style="font-size: 154px;"></span>
         <h3 class="title">
           A Modula

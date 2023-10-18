@@ -15,6 +15,8 @@ import { OrdersSapComponent } from './components/sales-orders/orders-sap/orders-
 import { OrdersModulaComponent } from './components/sales-orders/orders-modula/orders-modula.component';
 import { OrdersMagnumComponent } from './components/sales-orders/orders-magnum/orders-magnum.component';
 import { PickingComponent } from './components/picking/picking.component';
+import { PickOrderComponent } from './components/picking/pick-order/pick-order.component';
+import { PickExpressComponent } from './components/picking/pick-express/pick-express.component';
 import { PackingComponent } from './components/packing/packing.component';
 import { InventoryRandomComponent } from './components/inventory/random/inventory-Random.component';
 import { InventoryComponent } from './components/inventory/inventory.component';
@@ -58,6 +60,8 @@ import { ClientRedplasComponent } from './components/event-feria/client-redplas/
     OrdersModulaComponent,
     OrdersMagnumComponent,
     PickingComponent,
+    PickExpressComponent,
+    PickOrderComponent,
     PackingComponent,
     InventoryComponent,
     InventoryRandomComponent,
