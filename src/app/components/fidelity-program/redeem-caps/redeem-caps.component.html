@@ -1,0 +1,120 @@
+<igb-navbar></igb-navbar>
+
+<!--Modal procesando-->
+<div id="modal_transfer_process" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="progress">
+          <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100"
+            aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+            <span class="sr-only">Procesando transferencia</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal Aprobacion -->
+<div id="confirmedModal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body text-center">
+        <p>
+          <b>¿Está seguro que desea redimir estos puntos?</b><br />Al hacerlo, se cargaran {{ redeemPoint.point }}
+          puntos al cliente {{ redeemPoint.cardCode }}.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" style="float: left;">No</button>
+        <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal" (click)="sendPoints()">Sí</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Canje -->
+<div class="container content">
+  <div class="exchange-container">
+    <div id="exchange-checkout">
+      <h3>Datos del canje</h3>
+      <div class="exchange-form">
+        <div class="row">
+          <div class="col-md-4 col-xs-12">
+            <div class="seccion">
+              <label>Número Documento</label>
+              <input class="form-control input-lg" type="text" id="cardCode" placeholder="1001618260"
+                [(ngModel)]="redeemPoint.cardCode" (ngModelChange)="validateForm()"
+                oninput="this.value = this.value.replace(/\D/g, '')" maxlength="18">
+            </div>
+          </div>
+          <div class="col-md-4 col-xs-12">
+            <div class="seccion">
+              <label>Cantidad Tapas</label>
+              <input class="form-control input-lg" type="number" placeholder="100" maxlength="5" [(ngModel)]="amount"
+                (input)="calculatevalue()">
+            </div>
+          </div>
+          <div class="col-md-4 col-xs-12">
+            <div class="seccion">
+              <label>Valor puntos/dinero</label>
+              <input class="form-control input-lg" type="number" [value]="redeemPoint.point" readonly
+                placeholder="Valor Convertido">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6 col-xs-12">
+            <div class="seccion">
+              <label>Programa</label>
+              <select class="form-control input-lg" [(ngModel)]="redeemPoint.concept">
+                <option value="" disabled>Selecciona un programa</option>
+                <option value="DISTRIBUIDOR">Distribuidor</option>
+                <option value="MECANICO">Mecánico</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-6 col-xs-12">
+            <div class="seccion">
+              <label>Fecha Canje</label>
+              <input class="form-control input-lg" type="date" [(ngModel)]="redeemPoint.transferDate"
+                (ngModelChange)="validateForm()">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-10 col-xs-9">
+            <div class="seccion">
+              <button type="button" class="btn btn-block input-lg custom-button" (click)='handleChecked()'
+                [disabled]="!isFormValid">
+                <span class="icon-send" aria-hidden="true" style="position: relative; top: 3px;"></span> Registrar datos
+              </button>
+            </div>
+          </div>
+          <div class="col-md-2 col-xs-3">
+            <div class="seccion">
+              <span title="Vaciar formulario" class="icon-refresh reload" staria-hidden="true" (click)="clear()"></span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <!--Alerta Error-->
+          <div *ngIf="changeInvoiceErrorMessage" role="alert">
+            <div class="col-xs-12 col-md-12">
+              <div class="alert alert-danger">
+                {{changeInvoiceErrorMessage}}
+              </div>
+            </div>
+          </div>
+          <!--Alerta Aprobación-->
+          <div *ngIf="changeInvoiceMessage" role="alert">
+            <div class="col-xs-12 col-md-12">
+              <div class="alert alert-success">
+                {{changeInvoiceMessage}}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

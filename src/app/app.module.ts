@@ -43,8 +43,10 @@ import { AuthorizedComponent } from './components/collection/authorized/authoriz
 import { EmployeeComponent } from './components/employee/employee.component';
 import { EmployeeCustodyComponent } from './components/employee/custody/employee-custody.component';
 import { routing, appRoutingProviders } from './app.routing';
-import { from } from 'rxjs/observable/from';
 import { ClientRedplasComponent } from './components/event-feria/client-redplas/client-redplas.component';
+import { FidelityProgramComponent } from './components/fidelity-program/fidelity-program.component';
+import { RedeemCapsComponent } from './components/fidelity-program/redeem-caps/redeem-caps.component';
+import { from } from 'rxjs/observable/from';
 
 @NgModule({
   declarations: [
@@ -87,7 +89,9 @@ import { ClientRedplasComponent } from './components/event-feria/client-redplas/
     ApproveComponent,
     AuthorizedComponent,
     EmployeeComponent,
-    EmployeeCustodyComponent
+    EmployeeCustodyComponent,
+    FidelityProgramComponent,
+    RedeemCapsComponent
   ],
   imports: [
     BrowserModule,

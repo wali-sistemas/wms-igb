@@ -25,6 +25,7 @@ export class NavBarComponent implements OnInit {
   public compraTrackingModuleAccesible: boolean = false;
   public collectionModuleAccesible: boolean = false;
   public custodyEmployeeModuleAccesible: boolean = false;
+  public fidelityProgramModuleAccesible: boolean = false;
 
   constructor(private _userService: UserService, private _route: ActivatedRoute, private _router: Router) { }
 
@@ -277,6 +278,24 @@ export class NavBarComponent implements OnInit {
         }
       }, error => { console.error(error); }
     );
+
+    //validar si el usuario puede acceder al modulo de fidelización, solo si es MOTOZONE
+    if (this.getSelectedCompany() == "VARROC") {
+      this._userService.canAccess(this.identity.username, 'fidelityProgram').subscribe(
+        response => {
+          if (response.code == 0) {
+            this.fidelityProgramModuleAccesible = true;
+            userAccess = JSON.parse(localStorage.getItem('igb.user.access'));
+            userAccess.fidelityProgramModuleAccesible = true;
+            localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
+          } else {
+            this.fidelityProgramModuleAccesible = false;
+          }
+        }, error => { console.error(error); }
+      );
+    } else {
+      this.fidelityProgramModuleAccesible = false;
+    }
 
     localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
   }

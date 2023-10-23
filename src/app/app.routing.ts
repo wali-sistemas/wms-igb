@@ -37,6 +37,8 @@ import { ApproveComponent } from './components/collection/approve/approve.compon
 import { AuthorizedComponent } from './components/collection/authorized/authorized.component';
 import { EmployeeComponent } from './components/employee/employee.component';
 import { EmployeeCustodyComponent } from './components/employee/custody/employee-custody.component';
+import { FidelityProgramComponent } from './components/fidelity-program/fidelity-program.component';
+import { RedeemCapsComponent } from './components/fidelity-program/redeem-caps/redeem-caps.component';
 import { from } from 'rxjs/observable/from';
 
 const appRoutes: Routes = [
@@ -76,7 +78,9 @@ const appRoutes: Routes = [
   { path: 'collection/approve', component: ApproveComponent },
   { path: 'collection/authorized', component: AuthorizedComponent },
   { path: 'employee', component: EmployeeComponent },
-  { path: 'employee/employee-custody', component: EmployeeCustodyComponent }
+  { path: 'employee/employee-custody', component: EmployeeCustodyComponent },
+  { path: 'program-fidelity', component: FidelityProgramComponent },
+  { path: 'program-fidelity/redeem-caps', component: RedeemCapsComponent }
 ];
 
 export const appRoutingProviders: any[] = [];
