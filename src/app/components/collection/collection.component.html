@@ -3,7 +3,7 @@
 <div class="container content">
   <div class="row">
     <div *ngIf="selectedCompany=='IGB'" class="col-xs-12 col-md-6">
-      <div class="box" [routerLink]="['/approve']">
+      <div class="box" [routerLink]="['/collection/approve']">
         <span class="icon-cartera" style="font-size: 154px;"></span>
         <h4 class="title">
           Facturas de contado
@@ -11,7 +11,7 @@
       </div>
     </div>
     <div class="col-xs-12 col-md-6">
-      <div class="box" [routerLink]="['/authorized']">
+      <div class="box" [routerLink]="['/collection/authorized']">
         <span class="icon-sticky-note" style="font-size: 154px;"></span>
         <h4 class="title">
           Pedidos para alistamiento

@@ -1,0 +1,91 @@
+.exchange-container {
+  padding-top: 50px;
+  margin-top: 40px;
+  margin: 20px auto;
+}
+
+#exchange-checkout {
+  z-index: 100001;
+  width: 700px;
+  height: 100%;
+  min-height: 100%;
+  background: 0 0 #ffffff;
+  border-radius: 8px;
+  border: 1px solid #dedede;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+#exchange-checkout>h3 {
+  margin: 0;
+  padding: 20px;
+  text-align: center;
+  background: #EEF2F4;
+  color: #5D6F78;
+  font-size: 24px;
+  font-weight: 300;
+  border-bottom: 1px solid #DEDEDE;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  border: 1px solid #dedede;
+}
+
+.exchange-form {
+  padding: 1.4em;
+  margin: 0 25px 25px;
+}
+
+.exchange-form label {
+  margin-bottom: 2px;
+  display: block;
+  font-size: 14px;
+}
+
+.exchange-form input,
+select {
+  box-shadow: none !important;
+  margin: 0;
+  padding: 0;
+  border-radius: 0.25em;
+  padding-left: 5px;
+}
+
+.exchange-form input:focus,
+select:focus {
+  border-color: #da0611;
+}
+
+.custom-button {
+  background-color: #EEF2F4;
+  border: 1px solid #dedede;
+}
+
+.reload {
+  position: relative;
+  font-size: 32px;
+  cursor: pointer;
+  top: 5px;
+  padding-left: 10px;
+}
+
+.seccion {
+  padding-bottom: 15px;
+}
+
+/*****MEDIA QUERYS******/
+@media screen and (max-width: 680px) {
+  #exchange-checkout {
+    width: 95%;
+  }
+
+  .exchange-form {
+    margin: 0;
+  }
+}
+
+@media screen and (min-width: 681px) and (max-width: 1200px) {
+  #exchange-checkout {
+    width: 600px;
+  }
+}

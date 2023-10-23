@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?suryif');
-  src:  url('fonts/icomoon.eot?suryif#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?suryif') format('truetype'),
-    url('fonts/icomoon.woff?suryif') format('woff'),
-    url('fonts/icomoon.svg?suryif#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?80bz8z');
+  src:  url('fonts/icomoon.eot?80bz8z#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?80bz8z') format('truetype'),
+    url('fonts/icomoon.woff?80bz8z') format('woff'),
+    url('fonts/icomoon.svg?80bz8z#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -30,6 +30,15 @@
 }
 .icon-DIADEMAS:before {
   content: "\e993";
+}
+.icon-canje-tapas:before {
+  content: "\e99c";
+}
+.icon-pick-express:before {
+  content: "\e99a";
+}
+.icon-pick-order:before {
+  content: "\e99b";
 }
 .icon-PARLANTES:before {
   content: "\e999";

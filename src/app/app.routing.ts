@@ -8,6 +8,8 @@ import { SalesOrdersComponent } from './components/sales-orders/sales-orders.com
 import { OrdersSapComponent } from './components/sales-orders/orders-sap/orders-sap.component';
 import { OrdersModulaComponent } from './components/sales-orders/orders-modula/orders-modula.component';
 import { PickingComponent } from './components/picking/picking.component';
+import { PickOrderComponent } from './components/picking/pick-order/pick-order.component';
+import { PickExpressComponent } from './components/picking/pick-express/pick-express.component';
 import { PackingComponent } from './components/packing/packing.component';
 import { InventoryRandomComponent } from './components/inventory/random/inventory-Random.component';
 import { InventoryComponent } from './components/inventory/inventory.component';
@@ -35,6 +37,8 @@ import { ApproveComponent } from './components/collection/approve/approve.compon
 import { AuthorizedComponent } from './components/collection/authorized/authorized.component';
 import { EmployeeComponent } from './components/employee/employee.component';
 import { EmployeeCustodyComponent } from './components/employee/custody/employee-custody.component';
+import { FidelityProgramComponent } from './components/fidelity-program/fidelity-program.component';
+import { RedeemCapsComponent } from './components/fidelity-program/redeem-caps/redeem-caps.component';
 import { from } from 'rxjs/observable/from';
 
 const appRoutes: Routes = [
@@ -43,19 +47,23 @@ const appRoutes: Routes = [
   { path: 'purchase-orders', component: PurchaseOrdersComponent },
   { path: 'purchase-order/:docNum', component: PurchaseOrderComponent },
   { path: 'sales-orders', component: SalesOrdersComponent },
-  { path: 'orders-modula', component: OrdersModulaComponent },
-  { path: 'orders-sap', component: OrdersSapComponent },
-  { path: 'orders-magnum', component: OrdersMagnumComponent },
+  { path: 'sales-orders/orders-modula', component: OrdersModulaComponent },
+  { path: 'sales-orders/orders-sap', component: OrdersSapComponent },
+  { path: 'sales-orders/orders-magnum', component: OrdersMagnumComponent },
   { path: 'picking', component: PickingComponent },
+  { path: 'picking/pick-order', component: PickOrderComponent },
+  { path: 'picking/pick-express', component: PickExpressComponent },
   { path: 'packing', component: PackingComponent },
   { path: 'inventory', component: InventoryComponent },
-  { path: 'inventory-random', component: InventoryRandomComponent },
-  { path: 'transfer-location', component: StockTransferLocationComponent },
-  { path: 'transfer-warehouse', component: StockTransferWarehouseComponent },
-  { path: 'transfer-modula', component: StockTransferModulaComponent },
+  { path: 'inventory/inventory-random', component: InventoryRandomComponent },
+  { path: 'inventory/stock-item', component: StockItemComponent },
+  { path: 'inventory/resupply', component: ResupplyComponent },
+  { path: 'inventory/stock-soul', component: SoulStockComponent },
+  { path: 'inventory/modula-stock', component: ModulaComponent },
   { path: 'transfer', component: TransferComponent },
-  { path: 'stock-item', component: StockItemComponent },
-  { path: 'resupply', component: ResupplyComponent },
+  { path: 'transfer/transfer-location', component: StockTransferLocationComponent },
+  { path: 'transfer/transfer-warehouse', component: StockTransferWarehouseComponent },
+  { path: 'transfer/transfer-modula', component: StockTransferModulaComponent },
   { path: 'report', component: ReportComponent },
   { path: 'report/manager', component: ReportManagerComponent },
   { path: 'feria/igb', component: ClientIgbComponent },
@@ -65,14 +73,14 @@ const appRoutes: Routes = [
   { path: 'shipping', component: ShippingComponent },
   { path: 'withholding', component: WithholdingTaxesComponent },
   { path: 'ticket-TI', component: TicketTIComponent },
-  { path: 'stock-soul', component: SoulStockComponent },
-  { path: 'modula-stock', component: ModulaComponent },
   { path: 'report/comex/tracking', component: ReportComexComponent },
   { path: 'collection', component: CollectionComponent },
-  { path: 'approve', component: ApproveComponent },
-  { path: 'authorized', component: AuthorizedComponent },
+  { path: 'collection/approve', component: ApproveComponent },
+  { path: 'collection/authorized', component: AuthorizedComponent },
   { path: 'employee', component: EmployeeComponent },
-  { path: 'employee-custody', component: EmployeeCustodyComponent }
+  { path: 'employee/employee-custody', component: EmployeeCustodyComponent },
+  { path: 'program-fidelity', component: FidelityProgramComponent },
+  { path: 'program-fidelity/redeem-caps', component: RedeemCapsComponent }
 ];
 
 export const appRoutingProviders: any[] = [];

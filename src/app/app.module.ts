@@ -15,6 +15,8 @@ import { OrdersSapComponent } from './components/sales-orders/orders-sap/orders-
 import { OrdersModulaComponent } from './components/sales-orders/orders-modula/orders-modula.component';
 import { OrdersMagnumComponent } from './components/sales-orders/orders-magnum/orders-magnum.component';
 import { PickingComponent } from './components/picking/picking.component';
+import { PickOrderComponent } from './components/picking/pick-order/pick-order.component';
+import { PickExpressComponent } from './components/picking/pick-express/pick-express.component';
 import { PackingComponent } from './components/packing/packing.component';
 import { InventoryRandomComponent } from './components/inventory/random/inventory-Random.component';
 import { InventoryComponent } from './components/inventory/inventory.component';
@@ -41,8 +43,10 @@ import { AuthorizedComponent } from './components/collection/authorized/authoriz
 import { EmployeeComponent } from './components/employee/employee.component';
 import { EmployeeCustodyComponent } from './components/employee/custody/employee-custody.component';
 import { routing, appRoutingProviders } from './app.routing';
-import { from } from 'rxjs/observable/from';
 import { ClientRedplasComponent } from './components/event-feria/client-redplas/client-redplas.component';
+import { FidelityProgramComponent } from './components/fidelity-program/fidelity-program.component';
+import { RedeemCapsComponent } from './components/fidelity-program/redeem-caps/redeem-caps.component';
+import { from } from 'rxjs/observable/from';
 
 @NgModule({
   declarations: [
@@ -58,6 +62,8 @@ import { ClientRedplasComponent } from './components/event-feria/client-redplas/
     OrdersModulaComponent,
     OrdersMagnumComponent,
     PickingComponent,
+    PickExpressComponent,
+    PickOrderComponent,
     PackingComponent,
     InventoryComponent,
     InventoryRandomComponent,
@@ -83,7 +89,9 @@ import { ClientRedplasComponent } from './components/event-feria/client-redplas/
     ApproveComponent,
     AuthorizedComponent,
     EmployeeComponent,
-    EmployeeCustodyComponent
+    EmployeeCustodyComponent,
+    FidelityProgramComponent,
+    RedeemCapsComponent
   ],
   imports: [
     BrowserModule,
