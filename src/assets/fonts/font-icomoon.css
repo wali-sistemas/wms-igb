@@ -31,12 +31,14 @@
 .icon-DIADEMAS:before {
   content: "\e993";
 }
+
 .icon-file:before {
   content: "\e99d";
 }
 .icon-carta:before {
   content: "\e99e";
 }
+
 .icon-canje-tapas:before {
   content: "\e99c";
 }
