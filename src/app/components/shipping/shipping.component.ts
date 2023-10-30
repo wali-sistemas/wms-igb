@@ -379,7 +379,7 @@ export class ShippingComponent implements OnInit {
       }
       break;
     }
-    this.getCitiesDestinationsOla(this.cityReceive);
+    //this.getCitiesDestinationsOla(this.cityReceive);
     $('#modal_crear_guia').modal('show');
   }
 
