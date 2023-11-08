@@ -158,8 +158,19 @@
   border-color: #87CEFA;
 }
 
+.order.identity-rkj {
+  border-color: #95D5B2;
+}
+
 .order-num-xcelink {
   background-color: #6495ED;
+  border-radius: 10px;
+  color: #333;
+  text-align: center;
+}
+
+.order-num-rkj {
+  background-color: #03BB85;
   border-radius: 10px;
   color: #333;
   text-align: center;

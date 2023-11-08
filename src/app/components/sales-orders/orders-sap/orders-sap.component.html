@@ -257,7 +257,7 @@
             </button>
           </span>
           <input type="text" class="form-control input-lg" id="filter" name="filter" placeholder="Escribe para filtrar"
-            [(ngModel)]="filter" (keyup)="filterOrders(false)" autocomplete="off" style="left: 1px;"/>
+            [(ngModel)]="filter" (keyup)="filterOrders(false)" autocomplete="off" style="left: 1px;" />
           <span class="input-group-btn">
             <button type="button" class="btn btn-default btn-lg" (click)="toggleEye()" style="border-radius: 0px;">
               <span class="icon-eye" [ngClass]="{'icon-eye': !showApprovedOnly, 'icon-eye-off': showApprovedOnly}"
@@ -279,7 +279,7 @@
     <div class="col-xs-12 col-md-6" *ngFor="let order of filteredOrders">
       <div class="order" [class.warning]="order.status == 'warning'" [class.identity]="order.cardCode == 'C900998242'"
         [class.identity-2]="order.cardCode == 'C900640419'" [class.identity-motoSport]="order.marca == 'MTZ MOTOSPORT'"
-        [class.identity-xcelink]="order.marca == 'XCELINK'"
+        [class.identity-xcelink]="order.marca == 'XCELINK'" [class.identity-rkj]="order.marca == 'RKJ'"
         [class.unauthorized]="order.confirmed === 'N' || order.address.length === 0 || order.transp.length === 0"
         [class.selected]="selectedOrders.has(order.docNum)" (click)="selectOrder(order)">
         <div class="row">
@@ -291,7 +291,7 @@
           </div>
           <div class="col-sm-3" style="min-height: 24px;">
             <div class="order-num" [class.order-num-motoSport]="order.marca == 'MTZ MOTOSPORT'"
-              [class.order-num-xcelink]="order.marca == 'XCELINK'"><b>SAP
+              [class.order-num-rkj]="order.marca == 'RKJ'" [class.order-num-xcelink]="order.marca == 'XCELINK'"><b>SAP
                 {{order.docNum}}</b></div>
           </div>
           <div class="col-sm-3"><span *ngIf="order.status == 'warning'"
