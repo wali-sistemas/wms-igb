@@ -39,4 +39,9 @@ export class EmployeeService {
     return this._http.post(this.urlManager + 'employee/add-refresh-asset?bottonAction=' + bottonAction, assetMasterDTO, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
+
+  public validateEmployeeExistence(idEmployee: string, birthdate: string) {
+    return this._http.get(this.urlManager + 'employee/validate-employee-existence?id=' + idEmployee + '&birthdate=' + birthdate, { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
 }

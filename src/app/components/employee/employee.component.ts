@@ -13,6 +13,7 @@ declare var $: any;
 export class EmployeeComponent {
   public identity;
   public selectedCompany: string;
+  public custodyEmployeeModuleAccesible: boolean = false;
 
   constructor(private _router: Router, private _userService: UserService) {
   }
@@ -23,5 +24,13 @@ export class EmployeeComponent {
       this._router.navigate(['/']);
     }
     this.selectedCompany = this.identity.selectedCompany;
+
+    //TODO: Se debe definir que usuarios pueden asignar y cambiar la prioridad.
+    if (this.identity.username !== "rmoncada" && this.identity.username !== "jguisao" && this.identity.username !== "rzapata" && this.identity.username !== "jlondonoc") {
+      this.custodyEmployeeModuleAccesible = false;
+    } else {
+      //Autorizados para ver modulo de custodias
+      this.custodyEmployeeModuleAccesible = true;
+    }
   }
 }

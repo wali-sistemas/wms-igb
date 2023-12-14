@@ -2,7 +2,7 @@
 
 <div class="container content">
   <div class="row">
-    <div class="col-xs-12 col-md-6">
+    <div *ngIf="custodyEmployeeModuleAccesible" class="col-xs-12 col-md-6">
       <div class="box" [routerLink]="['/employee/employee-custody']">
         <span class="icon-contract" style="font-size: 154px;"></span>
         <h4 class="title">
@@ -10,5 +10,19 @@
         </h4>
       </div>
     </div>
-  </div>
-</div>
+    <div class="col-xs-12 col-md-6">
+      <div class="box" [routerLink]="['/employee/employee-paystub']">
+        <span class="icon-custody" style="font-size: 154px;"></span>
+        <h4 class="title">
+          Desprendible de nómina
+        </h4>
+      </div>
+    </div>
+    <div class="col-xs-12 col-md-6">
+      <div class="box" [routerLink]="['/employee/employee-jobcertify']">
+        <span class="icon-carta" style="font-size: 154px;"></span>
+        <h4 class="title">
+          Carta laboral
+        </h4>
+      </div>
+    </div>

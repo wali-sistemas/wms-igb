@@ -42,6 +42,8 @@ import { ApproveComponent } from './components/collection/approve/approve.compon
 import { AuthorizedComponent } from './components/collection/authorized/authorized.component';
 import { EmployeeComponent } from './components/employee/employee.component';
 import { EmployeeCustodyComponent } from './components/employee/custody/employee-custody.component';
+import { EmployeeJobCertifyComponent } from './components/employee/jobcertify/jobcertify.component';
+import { EmployeePaystubComponent } from './components/employee/paystub/paystub.component';
 import { routing, appRoutingProviders } from './app.routing';
 import { ClientRedplasComponent } from './components/event-feria/client-redplas/client-redplas.component';
 import { FidelityProgramComponent } from './components/fidelity-program/fidelity-program.component';
@@ -90,6 +92,8 @@ import { from } from 'rxjs/observable/from';
     AuthorizedComponent,
     EmployeeComponent,
     EmployeeCustodyComponent,
+    EmployeeJobCertifyComponent,
+    EmployeePaystubComponent,
     FidelityProgramComponent,
     RedeemCapsComponent
   ],
