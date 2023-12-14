@@ -24,7 +24,7 @@ export class NavBarComponent implements OnInit {
   public pickingExpressModuleAccesible: boolean = false;
   public compraTrackingModuleAccesible: boolean = false;
   public collectionModuleAccesible: boolean = false;
-  public custodyEmployeeModuleAccesible: boolean = false;
+  public employeeModuleAccesible: boolean = false;
   public fidelityProgramModuleAccesible: boolean = false;
 
   constructor(private _userService: UserService, private _route: ActivatedRoute, private _router: Router) { }
@@ -75,7 +75,8 @@ export class NavBarComponent implements OnInit {
       this.pickingExpressModuleAccesible = userAccess.pickingExpressModuleAccesible;
       this.compraTrackingModuleAccesible = userAccess.compraTrackingModuleAccesible;
       this.collectionModuleAccesible = userAccess.collectionModuleAccesible;
-      this.custodyEmployeeModuleAccesible = userAccess.custodyEmployeeModuleAccesible;
+      this.fidelityProgramModuleAccesible = userAccess.fidelityProgramModuleAccesible;
+      this.employeeModuleAccesible = userAccess.employeeModuleAccesible;
       return;
     }
 
@@ -92,7 +93,8 @@ export class NavBarComponent implements OnInit {
       pickingExpressModuleAccesible: false,
       compraTrackingModuleAccesible: false,
       collectionModuleAccesible: false,
-      custodyEmployeeModuleAccesible: false
+      fidelityProgramModuleAccesible: false,
+      employeeModuleAccesible: false
     };
 
     localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
@@ -237,16 +239,16 @@ export class NavBarComponent implements OnInit {
       }, error => { console.error(error); }
     );
 
-    //validar si el usuario puede acceder a la opción de custody
-    this._userService.canAccess(this.identity.username, 'custody').subscribe(
+    //validar si el usuario puede acceder a la opción de employee
+    this._userService.canAccess(this.identity.username, 'employee').subscribe(
       response => {
         if (response.code == 0) {
-          this.custodyEmployeeModuleAccesible = true;
+          this.employeeModuleAccesible = true;
           userAccess = JSON.parse(localStorage.getItem('igb.user.access'));
-          userAccess.custodyEmployeeModuleAccesible = true;
+          userAccess.employeeModuleAccesible = true;
           localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
         } else {
-          this.custodyEmployeeModuleAccesible = false;
+          this.employeeModuleAccesible = false;
         }
       }, error => { console.error(error); }
     );
