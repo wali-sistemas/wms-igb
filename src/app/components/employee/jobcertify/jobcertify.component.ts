@@ -94,7 +94,6 @@ export class EmployeeJobCertifyComponent {
     };
 
     const pdfUrl = this.getUrlVerification();
-    console.log(dataToSave);
 
     // Almacena el resultado de validateEmployee en una variable
     let employeeValidationResult = false;

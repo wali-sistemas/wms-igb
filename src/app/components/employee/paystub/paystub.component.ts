@@ -34,7 +34,7 @@ export class EmployeePaystubComponent {
 
   public getUrlPaystub() {
     if (this.cedula) {
-      return this.url + 'IGB/employee/paystub/' + this.cedula + '.pdf';
+      return this.url + this.identity.selectedCompany + '/employee/paystub/' + this.cedula + '.pdf';
     }
     return '';
   }
