@@ -21,6 +21,7 @@ export class EmployeeJobCertifyComponent {
   public url: string;
   public showErrorModal = false;
   public dirigidoA: string;
+  public contenidoPersonalizado: string;
 
   constructor(private _reportService: ReportService, private _userService: UserService, private _router: Router, private _employeeService: EmployeeService) {
     this.url = GLOBAL.urlShared;
@@ -49,7 +50,7 @@ export class EmployeeJobCertifyComponent {
         "documento": "jobCertify",
         "companyName": this.identity.selectedCompany,
         "origen": 'N',
-        "filtro": this.dirigidoA,
+        "filtro": this.dirigidoA == '0' ? "A quién pueda interesar" : this.contenidoPersonalizado,
         "imprimir": false,
         "year": this.selectedYear,
         "month": this.selectedMonth,
