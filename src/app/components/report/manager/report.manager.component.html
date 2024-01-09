@@ -743,10 +743,10 @@
             <select id="year" class="form-control input-lg" [(ngModel)]="selectedYear" name="selectedYear"
                 (change)="getFactorCompra()">
                 <option value="0" disabled>Seleccione uno</option>
-                <option>2020</option>
                 <option>2021</option>
                 <option>2022</option>
                 <option>2023</option>
+                <option>2024</option>
             </select>
         </div>
         <br />
@@ -838,16 +838,16 @@
                         <h4>Mes</h4>
                     </td>
                     <td style="border: solid 1px; border-color: #333; width: 15%; background-color: #333; color: #fff;">
-                        <h4>2020</h4>
-                    </td>
-                    <td style="border: solid 1px; border-color: #333; width: 30%; background-color: #333; color: #fff;">
                         <h4>2021</h4>
                     </td>
                     <td style="border: solid 1px; border-color: #333; width: 30%; background-color: #333; color: #fff;">
                         <h4>2022</h4>
                     </td>
-                    <td style="border: solid 1px; border-color: #333; width: 20%; background-color: #333; color: #fff;">
+                    <td style="border: solid 1px; border-color: #333; width: 30%; background-color: #333; color: #fff;">
                         <h4>2023</h4>
+                    </td>
+                    <td style="border: solid 1px; border-color: #333; width: 20%; background-color: #333; color: #fff;">
+                        <h4>2024</h4>
                     </td>
                 </tr>
                 <tr *ngFor="let cimport of costosImports;let i=index;">
@@ -1062,10 +1062,10 @@
             <select id="year" class="form-control input-lg" [(ngModel)]="selectedYearTimeOper"
                 name="selectedYearTimeOper" (change)="getTimeOperations()">
                 <option value="0" disabled>Seleccione uno</option>
-                <option>2020</option>
                 <option>2021</option>
                 <option>2022</option>
                 <option>2023</option>
+                <option>2024</option>
             </select>
         </div>
         <br />
@@ -1136,10 +1136,10 @@
             <select id="year" class="form-control input-lg" [(ngModel)]="selectedYearTimeOper"
                 name="selectedYearTimeOper" (change)="getTimeLiquid()">
                 <option value="0" disabled>Seleccione uno</option>
-                <option>2020</option>
                 <option>2021</option>
                 <option>2022</option>
                 <option>2023</option>
+                <option>2024</option>
             </select>
         </div>
         <br />
@@ -1210,10 +1210,10 @@
             <select id="year" class="form-control input-lg" [(ngModel)]="selectedYearTimeOper"
                 name="selectedYearTimeOper" (change)="getBooking()">
                 <option value="0" disabled>Seleccione uno</option>
-                <option>2020</option>
                 <option>2021</option>
                 <option>2022</option>
                 <option>2023</option>
+                <option>2024</option>
             </select>
         </div>
         <br />
