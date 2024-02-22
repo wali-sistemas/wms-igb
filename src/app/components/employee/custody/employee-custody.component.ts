@@ -6,17 +6,19 @@ import { BinLocationService } from '../../../services/bin-locations.service';
 import { CustodyEmployee } from '../../../models/custody-employee';
 import { GLOBAL } from '../../../services/global';
 import { Employee } from 'app/models/employee';
+import { ReportService } from '../../../services/report.service';
 
 declare var $: any;
 
 @Component({
   templateUrl: './employee-custody.component.html',
   styleUrls: ['./employee-custody.component.css'],
-  providers: [UserService, EmployeeService, BinLocationService]
+  providers: [UserService, EmployeeService, BinLocationService, ReportService]
 })
 
 export class EmployeeCustodyComponent {
   public identity;
+  public url: string;
   public selectedCompany: string;
   public filter: string;
   public custodys: Array<CustodyEmployee>;
@@ -63,8 +65,9 @@ export class EmployeeCustodyComponent {
   public messageNewAsset: string = '';
   public datePurchase: string;
   public companyPurchase: string;
+  public messageCustodyPrint: string;
 
-  constructor(private _router: Router, private _userService: UserService, private _employeeService: EmployeeService, private _binLocationService: BinLocationService) {
+  constructor(private _router: Router, private _userService: UserService, private _employeeService: EmployeeService, private _binLocationService: BinLocationService, private _reportService: ReportService) {
   }
 
   ngOnInit() {
@@ -261,6 +264,62 @@ export class EmployeeCustodyComponent {
     );
   }
 
+  public validateEmployeeExistence() {
+    this.messageCustodyPrint = '';
+
+    $('#modal_process').modal({
+      backdrop: 'static',
+      keyboard: false,
+      show: true
+    });
+
+    this._employeeService.validateEmployeeExistence(this.document.toString(), null).subscribe(
+      response => {
+        if (response.content == false) {
+          this.messageCustodyPrint = "Los datos ingresados son incorrectos.";
+          $('#modal_process').modal('hide');
+        } else {
+          this.generateCustodyPrint();
+        }
+      },
+      error => {
+        this.redirectIfSessionInvalid(error);
+        console.error(error);
+        $('#modal_process').modal('hide');
+      }
+    );
+  }
+
+  public generateCustodyPrint() {
+    let printReportDTO = {
+      "id": this.document,
+      "copias": 0,
+      "documento": "custodyPrint",
+      "companyName": this.identity.selectedCompany,
+      "origen": 'W',
+      "imprimir": false,
+    };
+
+    this._reportService.generateReport(printReportDTO).subscribe(
+      response => {
+        if (response.code == 0) {
+          window.open(this.url + this.identity.selectedCompany + '/employee/employee-custody/' + this.document + '.pdf');
+          this.clean();
+          $('#modal_print').modal('hide');
+          $('#modal_process').modal('hide');
+        } else {
+          this.messageCustodyPrint = response.content;
+          $('#modal_process').modal('hide');
+        }
+      },
+      error => {
+        this.redirectIfSessionInvalid(error);
+        console.error(error);
+        $('#modal_process').modal('hide');
+      }
+    );
+  }
+
   public clean() {
     this.messageEmployee = '';
     this.messageNewEmployee = '';
@@ -285,6 +344,8 @@ export class EmployeeCustodyComponent {
     this.selectedIdEmployee = '';
     this.bottonAction = 'Crear';
     this.filter = '';
+    this.document = '';
+    this.messageCustodyPrint = '';
   }
 
   public getUrlShowCustody(url: string) {
@@ -320,5 +381,14 @@ export class EmployeeCustodyComponent {
   public getScrollTop() {
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0;
+  }
+
+  public focusInput() {
+    $('#document').focus();
+    //data-toggle="modal" data-target="#modal_print"
+    $('#modal_print').modal('show');
+
+
+
   }
 }

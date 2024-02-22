@@ -57,6 +57,15 @@
   width: 100px;
 }
 
+.option {
+  text-align: right;
+  font-size: 35px;
+  cursor: pointer;
+  color: #da0611;
+  position: relative;
+  top: -117px;
+}
+
 .scrollTop {
   display: none;
   position: fixed;

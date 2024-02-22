@@ -32,44 +32,41 @@ export class EmployeePaystubComponent {
     }
   }
 
-  public getUrlPaystub() {
-    if (this.cedula) {
-      return this.url + this.identity.selectedCompany + '/employee/paystub/' + this.cedula + '.pdf';
+  private redirectIfSessionInvalid(error) {
+    if (error && error.status && error.status == 401) {
+      localStorage.removeItem('igb.identity');
+      localStorage.removeItem('igb.selectedCompany');
+      this._router.navigate(['/']);
     }
-    return '';
   }
 
   public generatePaystub() {
-    const paystubUrl = this.getUrlPaystub();
-    if (paystubUrl) {
-      let printReportDTO = {
-        "id": this.cedula,
-        "copias": 0,
-        "documento": "paystub",
-        "companyName": this.identity.selectedCompany,
-        "origen": 'N',
-        "imprimir": false,
-        "year": this.selectedYear,
-        "month": this.selectedMonth,
-        "day": this.selectedPeriodo
-      };
+    let printReportDTO = {
+      "id": this.cedula,
+      "copias": 0,
+      "documento": "paystub",
+      "companyName": this.identity.selectedCompany,
+      "origen": 'N',
+      "imprimir": false,
+      "year": this.selectedYear,
+      "month": this.selectedMonth,
+      "day": this.selectedPeriodo
+    };
 
-      this._reportService.generateReport(printReportDTO).subscribe(
-        response => {
-          if (response.content === true) {
-            window.open(paystubUrl, '_blank');
-          } else {
-            // Mostrar alerta solo si response.content es false
-            if (response.content === false) {
-              alert('La generación de la colilla de pago no fue exitosa.');
-            }
-            // Retorno anticipado para evitar abrir la ventana
-            return;
-          }
-        },
-        error => { console.error(error); }
-      );
-    }
+    this._reportService.generateReport(printReportDTO).subscribe(
+      response => {
+        if (response.content === true) {
+          window.open(this.url + this.identity.selectedCompany + '/employee/paystub/' + this.cedula + '.pdf', '_blank');
+          this.cancelForm();
+        } else {
+          alert('La generación de la colilla de pago no fue exitosa.');
+        }
+      },
+      error => {
+        this.redirectIfSessionInvalid(error);
+        console.error(error);
+      }
+    );
   }
 
   public cancelForm() {
@@ -81,54 +78,18 @@ export class EmployeePaystubComponent {
   }
 
   public confirmGenerate() {
-    //TODO: Validando la existencia del empleado
-    this.validateEmployee(this.cedula.toString(), this.fechaNacimiento);
-
-    const dataToSave = {
-      cedula: this.cedula,
-      year: this.selectedYear,
-      month: this.selectedMonth,
-      periodo: this.selectedPeriodo,
-      fechaNacimiento: this.fechaNacimiento
-    };
-
-    const pdfUrl = this.getUrlPaystub();
-
-    let employeeValidationResult = false;
-
     this._employeeService.validateEmployeeExistence(this.cedula.toString(), this.fechaNacimiento).subscribe(
       response => {
-        if (response.code >= 0 && response.content === false) {
+        if (response.content === false) {
           alert('Los datos ingresados son incorrectos.');
-        } else if (response.code >= 0 && response.content === true) {
-          employeeValidationResult = true;
         } else {
-          console.error('Los datos ingresados son incorrectos.');
-        }
-
-        // Verifica el resultado y abre la ventana solo si es válido
-        if (pdfUrl && employeeValidationResult) {
-          window.open(pdfUrl, '_blank');
-        } else {
-          console.error('La URL del PDF no es válida o la validación del empleado falló.');
-        }
-      },
-      error => { console.error(error); }
-    );
-  }
-
-  public validateEmployee(idEmployee: string, birthdate: string) {
-    this._employeeService.validateEmployeeExistence(idEmployee, birthdate).subscribe(
-      response => {
-        if (response.code >= 0 && response.content === false) {
-          alert('Los datos ingresados son incorrectos.');
-        } else if (response.code >= 0 && response.content === true) {
           this.generatePaystub();
-        } else {
-          console.error('Los datos ingresados son incorrectos.');
         }
       },
-      error => { console.error(error); }
+      error => {
+        this.redirectIfSessionInvalid(error);
+        console.error(error);
+      }
     );
   }
 }

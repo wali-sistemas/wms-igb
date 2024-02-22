@@ -4,24 +4,44 @@ import { GLOBAL, IGBHeaders } from './global';
 
 @Injectable()
 export class DeliveryService {
-    public url: string;
+  public url: string;
 
-    constructor(private _http: Http) {
-        this.url = GLOBAL.url;
-    }
+  constructor(private _http: Http) {
+    this.url = GLOBAL.url;
+  }
 
-    public createPickingExpress(pickingExpressOrderDTO) {
-        return this._http.post(this.url + 'delivery/express', pickingExpressOrderDTO, { headers: new IGBHeaders().loadHeaders() })
-            .map(res => res.json());
-    }
+  public listOpenDelivery() {
+    return this._http.get(this.url + 'delivery/list-open-delivery', { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
 
-    public createDeliveryModula(orderMDL: String) {
-        return this._http.post(this.url + 'delivery/modula', orderMDL, { headers: new IGBHeaders().loadHeaders() })
-            .map(res => res.json());
-    }
+  public getNextPickingItem(usernamaset: string, deliveryNumber: string) {
+    return this._http.get(this.url + 'delivery/nextitem-pick-list-express/' + usernamaset + '?deliveryNumber=' + deliveryNumber, { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
 
-    public createDeliveryMagnum(deliveryNoteMagnumDTO) {
-        return this._http.post(this.url + 'delivery/magnum', deliveryNoteMagnumDTO, { headers: new IGBHeaders().loadHeaders() })
-            .map(res => res.json());
-    }
+  public getAssignEmployeePickListExpress(usernamaset: string, deliveryNumber: string) {
+    return this._http.get(this.url + 'delivery/assign-employee-pick-list-express/' + deliveryNumber + '/' + usernamaset, { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
+
+  public createPickingExpress(pickingExpressOrderDTO) {
+    return this._http.post(this.url + 'delivery/express', pickingExpressOrderDTO, { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
+
+  public createDeliveryModula(orderMDL: string) {
+    return this._http.post(this.url + 'delivery/modula', orderMDL, { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
+
+  public createDeliveryMagnum(deliveryNoteMagnumDTO) {
+    return this._http.post(this.url + 'delivery/magnum', deliveryNoteMagnumDTO, { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
+
+  public checkItemPickListExpress(pickingListExpressDTO) {
+    return this._http.post(this.url + 'delivery/checkitem-pick-list-express', pickingListExpressDTO, { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
 }

@@ -24,3 +24,11 @@
 .radioLoc {
   border-radius: 6px 0px 0px 6px;
 }
+
+.ng-valid[required], .ng-valid.required {
+  border-color: #6D9197
+}
+
+.ng-touched.ng-invalid[required], .ng-untouched.ng-pristine.ng-invalid[required].required-field {
+  border-color: #da0611;
+}
