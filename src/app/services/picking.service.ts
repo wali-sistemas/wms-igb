@@ -18,8 +18,6 @@ export class PickingService {
             orderNumberFilter = '?orderNumber=' + orderNumber;
         }
 
-        console.log(this.url + 'picking/v2/nextitem/' + username + orderNumberFilter);
-        
         return this._http.get(this.url + 'picking/v2/nextitem/' + username + orderNumberFilter, { headers: igbHeaders })
             .map(res => res.json());
     }

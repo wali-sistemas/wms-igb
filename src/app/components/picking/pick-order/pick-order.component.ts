@@ -23,7 +23,7 @@ export class PickOrderComponent implements OnInit {
   public selectedCart: number = 0;
   public selectedOrder: string = '';
 
-  private nextOrderNumber: number;
+  public nextOrderNumber: number;
   public nextBinLocationCode: string;
   public nextItemCode: string = '';
   public nextItemName: string = '';

@@ -55,7 +55,7 @@
     <br>
     <div class="row">
       <div class="col-xs-12">
-        <label for="fechaNacimiento">Fecha de Nacimiento</label>
+        <label for="fechaNacimiento">Fecha de nacimiento</label>
         <input type="date" id="fechaNacimiento" class="form-control input-lg" [(ngModel)]="fechaNacimiento"
           name="fechaNacimiento" required [class.required-field]="!fechaNacimiento" required>
       </div>
@@ -67,15 +67,15 @@
         <select id="dirigido" class="form-control input-lg" [(ngModel)]="dirigidoA" name="dirigidoA" required
           [class.required-field]="!dirigidoA" required>
           <option value="" selected disabled>Seleccione uno</option>
-          <option value="0">A quien pueda interesar</option>
+          <option value="0">A quién pueda interesar</option>
           <option value="1">Personalizado</option>
         </select>
       </div>
     </div>
     <br />
-    <div class="row" *ngIf="dirigidoA === 'personalizado'">
+    <div class="row" *ngIf="dirigidoA == '1'">
       <div class="col-xs-12">
-        <label for="contenidoPersonalizado">Contenido Personalizado</label>
+        <label for="contenidoPersonalizado">Contenido personalizado</label>
         <textarea id="contenidoPersonalizado" class="form-control" [(ngModel)]="contenidoPersonalizado"
           name="contenidoPersonalizado"></textarea>
       </div>
@@ -91,7 +91,6 @@
     </div>
   </form>
 </div>
-
 <!-- Modal para generar carta laboral -->
 <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel"
   aria-hidden="true">

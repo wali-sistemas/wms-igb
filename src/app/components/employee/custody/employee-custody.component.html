@@ -45,7 +45,8 @@
         <div class="row">
           <div class="text-center">
             <div class="col-xs-12">
-              <p class="box-note-user">Activo pertenece a la compañía ({{companyPurchase}}), se compro en ({{datePurchase}})</p>
+              <p class="box-note-user">Activo pertenece a la compañía ({{companyPurchase}}), se compro en
+                ({{datePurchase}})</p>
             </div>
           </div>
         </div>
@@ -305,6 +306,38 @@
     </div>
   </div>
 </div>
+<!-- Modal para la impresión -->
+<div id="modal_print" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="clean()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Generar Acta de Entrega</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="alert alert-danger" role="alert" *ngIf="messageCustodyPrint">
+              {{messageCustodyPrint}}
+            </div>
+          </div>
+        </div>
+        <form (submit)="validateEmployeeExistence()">
+          <div class="form-group">
+            <input type="number" class="form-control" id="document" placeholder="Ingrese el número de cédula"
+              [(ngModel)]="document" name="document" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="validateEmployeeExistence()"><span class="icon-download">
+          </span>Generar</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span
     class="icon-chevron-up"></span></button>
@@ -322,8 +355,8 @@
           </button>
         </span>
         <form (submit)="getCustodyByEmployeeOrAsset(filter)">
-          <input type="text" class="form-control input-lg" id="filter" name="filter" placeholder="Buscar custodia (id, cc o sin asignar)"
-            [(ngModel)]="filter" autocomplete="off" />
+          <input type="text" class="form-control input-lg" id="filter" name="filter"
+            placeholder="Buscar custodia (id, cc o sin asignar)" [(ngModel)]="filter" autocomplete="off" />
         </form>
         <span class="input-group-btn">
           <button type="button" class="box" class="btn btn-default btn-lg" data-toggle="modal"
@@ -335,6 +368,13 @@
     </div>
   </div>
   <br />
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="option">
+        <span class="icon-printer" data-toggle="modal" data-target="#modal_print" title="Generar Acta"></span>
+      </div>
+    </div>
+  </div>
   <div class="row">
     <div class="col-xs-12">
       <div class="alert alert-warning" role="alert" *ngIf="messageEmployee">
