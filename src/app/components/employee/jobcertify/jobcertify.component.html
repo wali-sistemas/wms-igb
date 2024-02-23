@@ -1,8 +1,32 @@
 <igb-navbar></igb-navbar>
-
+<!-- Modal para generar carta laboral -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center" id="confirmModalLabel" style="font-size: 18px;">Carta laboral con la
+          siguiente información:</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Cédula:</strong> {{cedula}}</p>
+        <p><strong>Fecha de Nacimiento:</strong> {{fechaNacimiento}}</p>
+        <p><strong>Fecha carta laboral:</strong> {{selectedYear}}-{{selectedMonth }}-{{selectedPeriodo}}</p>
+        <p><strong>Dirigido a: </strong> {{dirigidoA}}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="generateJobCertify()">Aceptar</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="container content">
   <h3>Generar Carta Laboral</h3>
-  <form (submit)="generateJobCertify()">
+  <form (submit)="confirmGenerate()">
     <div class="row">
       <div class="col-xs-12">
         <label for="cedula">Cédula</label>
@@ -67,13 +91,13 @@
         <select id="dirigido" class="form-control input-lg" [(ngModel)]="dirigidoA" name="dirigidoA" required
           [class.required-field]="!dirigidoA" required>
           <option value="" selected disabled>Seleccione uno</option>
-          <option value="0">A quién pueda interesar</option>
-          <option value="1">Personalizado</option>
+          <option value="A quién pueda interesar">A quién pueda interesar</option>
+          <option value="Personalizado">Personalizado</option>
         </select>
       </div>
     </div>
     <br />
-    <div class="row" *ngIf="dirigidoA == '1'">
+    <div class="row" *ngIf="dirigidoA == 'Personalizado'">
       <div class="col-xs-12">
         <label for="contenidoPersonalizado">Contenido personalizado</label>
         <textarea id="contenidoPersonalizado" class="form-control" [(ngModel)]="contenidoPersonalizado"
@@ -83,36 +107,10 @@
     <br>
     <div class="row">
       <div class="col-xs-12">
-        <button type="button" class="btn btn-danger btn-lg" (click)="generateJobCertify()" data-toggle="modal"
-          data-target="#confirmModal"
+        <button type="button" class="btn btn-danger btn-lg" (click)="confirmGenerate()"
           [disabled]="!cedula || !selectedYear || !selectedMonth || !selectedPeriodo || !fechaNacimiento || !dirigidoA">Generar</button>
         <button type="button" class="btn btn-secondary btn-lg" (click)="cancelForm()">Cancelar</button>
       </div>
     </div>
   </form>
-</div>
-<!-- Modal para generar carta laboral -->
-<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel"
-  aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title text-center" id="confirmModalLabel" style="font-size: 18px;">Carta laboral con la
-          siguiente información:</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p><strong>Cédula:</strong> {{ cedula }}</p>
-        <p><strong>Fecha de Nacimiento:</strong> {{ fechaNacimiento }}</p>
-        <p><strong>Fecha carta laboral:</strong> {{ selectedYear }}-{{ selectedMonth }}-{{ selectedPeriodo }}</p>
-        <p><strong>Dirigido a: </strong> {{ dirigidoA }}</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" (click)="confirmGenerate()">Aceptar</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-      </div>
-    </div>
-  </div>
 </div>

@@ -5,6 +5,8 @@ import { UserService } from '../../../services/user.service';
 import { EmployeeService } from '../../../services/employee.service';
 import { GLOBAL } from 'app/services/global';
 
+declare var $: any;
+
 @Component({
   templateUrl: './jobcertify.component.html',
   styleUrls: ['./jobcertify.component.css'],
@@ -18,13 +20,12 @@ export class EmployeeJobCertifyComponent {
   public selectedPeriodo: string = '';
   public cedula: number;
   public fechaNacimiento: string;
-  public url: string;
+  public urlShared: string = GLOBAL.urlShared;
   public showErrorModal = false;
   public dirigidoA: string = '';
   public contenidoPersonalizado: string;
 
   constructor(private _reportService: ReportService, private _userService: UserService, private _router: Router, private _employeeService: EmployeeService) {
-    this.url = GLOBAL.urlShared;
   }
 
   ngOnInit() {
@@ -49,7 +50,7 @@ export class EmployeeJobCertifyComponent {
       "documento": "jobCertify",
       "companyName": this.identity.selectedCompany,
       "origen": 'N',
-      "filtro": this.dirigidoA == '0' ? "A quién pueda interesar" : this.contenidoPersonalizado,
+      "filtro": this.dirigidoA == 'Personalizado' ? this.contenidoPersonalizado : this.dirigidoA,
       "imprimir": false,
       "year": this.selectedYear,
       "month": this.selectedMonth,
@@ -58,8 +59,8 @@ export class EmployeeJobCertifyComponent {
 
     this._reportService.generateReport(printReportDTO).subscribe(
       response => {
-        if (response.content === true) {
-          window.open(this.url + this.identity.selectedCompany + '/employee/jobCertify/' + this.cedula + '.pdf', '_blank');
+        if (response.code >= 0) {
+          window.open(this.urlShared + this.identity.selectedCompany + '/employee/jobCertify/' + this.cedula + '.pdf', '_blank');
           this.cancelForm();
         } else {
           alert('La generación de la carta laboral no fue exitosa.');
@@ -86,7 +87,7 @@ export class EmployeeJobCertifyComponent {
         if (response.content === false) {
           alert('Error al validar datos.');
         } else {
-          this.generateJobCertify();
+          $('#confirmModal').modal('show');
         }
       },
       error => {

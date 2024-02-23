@@ -18,7 +18,6 @@ declare var $: any;
 
 export class EmployeeCustodyComponent {
   public identity;
-  public url: string;
   public selectedCompany: string;
   public filter: string;
   public custodys: Array<CustodyEmployee>;
@@ -303,7 +302,7 @@ export class EmployeeCustodyComponent {
     this._reportService.generateReport(printReportDTO).subscribe(
       response => {
         if (response.code == 0) {
-          window.open(this.url + this.identity.selectedCompany + '/employee/employee-custody/' + this.document + '.pdf');
+          window.open(this.urlShared + this.identity.selectedCompany + '/employee/employee-custody/' + this.document + '.pdf');
           this.clean();
           $('#modal_print').modal('hide');
           $('#modal_process').modal('hide');
@@ -381,14 +380,5 @@ export class EmployeeCustodyComponent {
   public getScrollTop() {
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0;
-  }
-
-  public focusInput() {
-    $('#document').focus();
-    //data-toggle="modal" data-target="#modal_print"
-    $('#modal_print').modal('show');
-
-
-
   }
 }

@@ -1,9 +1,11 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { ReportService } from '../../../services/report.service';
 import { UserService } from '../../../services/user.service';
 import { EmployeeService } from '../../../services/employee.service';
 import { GLOBAL } from 'app/services/global';
+
+declare var $: any;
 
 @Component({
   templateUrl: './paystub.component.html',
@@ -55,8 +57,9 @@ export class EmployeePaystubComponent {
 
     this._reportService.generateReport(printReportDTO).subscribe(
       response => {
-        if (response.content === true) {
+        if (response.code >= 0) {
           window.open(this.url + this.identity.selectedCompany + '/employee/paystub/' + this.cedula + '.pdf', '_blank');
+          $('#confirmModal').modal('hide');
           this.cancelForm();
         } else {
           alert('La generación de la colilla de pago no fue exitosa.');
@@ -83,7 +86,7 @@ export class EmployeePaystubComponent {
         if (response.content === false) {
           alert('Los datos ingresados son incorrectos.');
         } else {
-          this.generatePaystub();
+          $('#confirmModal').modal('show');
         }
       },
       error => {
