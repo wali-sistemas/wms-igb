@@ -48,6 +48,7 @@ import { routing, appRoutingProviders } from './app.routing';
 import { ClientRedplasComponent } from './components/event-feria/client-redplas/client-redplas.component';
 import { FidelityProgramComponent } from './components/fidelity-program/fidelity-program.component';
 import { RedeemCapsComponent } from './components/fidelity-program/redeem-caps/redeem-caps.component';
+import { CustomerComponent } from './components/collection/customer/customer.component';
 import { from } from 'rxjs/observable/from';
 
 @NgModule({
@@ -95,7 +96,8 @@ import { from } from 'rxjs/observable/from';
     EmployeeJobCertifyComponent,
     EmployeePaystubComponent,
     FidelityProgramComponent,
-    RedeemCapsComponent
+    RedeemCapsComponent,
+    CustomerComponent
   ],
   imports: [
     BrowserModule,

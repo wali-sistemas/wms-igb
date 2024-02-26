@@ -1,0 +1,322 @@
+.container {
+  margin-top: 30px;
+  padding-bottom: 30px;
+}
+
+.custom-btn {
+  background-color: #f5f5f5;
+  color: #333;
+  border: 2px solid #333;
+  margin-right: 5px;
+}
+
+.custom-btn.active {
+  background-color: #515A5A;
+  color: #fff;
+  border-color: #333;
+}
+
+.btn-default.active {
+  background-color: #f5f5f5;
+  border-color: #ccc;
+}
+
+.btn[disabled],
+.btn[disabled]:hover,
+.btn[disabled]:focus,
+.btn[disabled]:active {
+  background-color: #ccc;
+  border-color: #ccc;
+}
+
+h1,
+h2,
+h4,
+h5,
+h6 {
+  font-weight: 700;
+}
+
+.fancyTab {
+  text-align: center;
+  padding: 15px 0;
+  background-color: #eee;
+  box-shadow: 0 0 0 1px #ddd;
+  top: 15px;
+  transition: top .2s;
+}
+
+.fancyTab.active {
+  top: 0;
+  transition: top .2s;
+}
+
+.whiteBlock {
+  display: none;
+}
+
+.fancyTab.active .whiteBlock {
+  display: block;
+  height: 2px;
+  bottom: -2px;
+  background-color: #fff;
+  width: 99%;
+  position: absolute;
+  z-index: 1;
+}
+
+.fancyTab a {
+  font-family: 'Source Sans Pro';
+  font-size: 1.65em;
+  font-weight: 300;
+  transition: .2s;
+  color: #333;
+}
+
+.fancyTabs {
+  border-bottom: 2px solid #ddd;
+  margin: 15px 0 0;
+}
+
+li.fancyTab a {
+  padding-top: 15px;
+  top: -15px;
+  padding-bottom: 0;
+}
+
+li.fancyTab.active a {
+  padding-top: inherit;
+}
+
+.fancyTab .fa {
+  font-size: 25px;
+  width: 100%;
+  padding: 15px 0 5px;
+  color: red;
+}
+
+.fancyTab.active .fa {
+  color: #cfb87c;
+}
+
+.fancyTab a:focus {
+  outline: none;
+}
+
+.fancyTabContent {
+  border-color: transparent;
+  box-shadow: 0 -2px 0 -1px #fff, 0 0 0 1px #ddd;
+  padding: 30px 15px 15px;
+  position: relative;
+  background-color: #fff;
+  padding-left: 35px;
+  padding-right: 35px;
+}
+
+.nav-tabs>li.fancyTab.active>a,
+.nav-tabs>li.fancyTab.active>a:focus,
+.nav-tabs>li.fancyTab.active>a:hover {
+  border-width: 0;
+}
+
+.nav-tabs>li.fancyTab:hover {
+  background-color: #f9f9f9;
+  box-shadow: 0 0 0 1px #ddd;
+}
+
+.nav-tabs>li.fancyTab.active:hover {
+  background-color: #fff;
+  box-shadow: 1px 1px 0 1px #fff, 0 0px 0 1px #ddd, -1px 1px 0 0px #ddd inset;
+}
+
+.nav-tabs>li.fancyTab:hover a {
+  border-color: transparent;
+}
+
+.nav.nav-tabs .fancyTab a[data-toggle="tab"] {
+  background-color: transparent;
+  border-bottom: 0;
+}
+
+.nav-tabs>li.fancyTab:hover a {
+  border-right: 1px solid transparent;
+}
+
+.nav-tabs>li.fancyTab>a {
+  margin-right: 0;
+  border-top: 0;
+  padding-bottom: 20px;
+  margin-bottom: -20px;
+}
+
+.nav-tabs>li.fancyTab {
+  margin-right: 0;
+  margin-bottom: 0;
+}
+
+.nav-tabs>li.fancyTab:last-child a {
+  border-right: 1px solid transparent;
+}
+
+.nav-tabs>li.fancyTab.active:last-child {
+  border-right: 0px solid #ddd;
+  box-shadow: 0px 2px 0 0px #fff, 0px 0px 0 1px #ddd;
+}
+
+.fancyTab:last-child {
+  box-shadow: 0 0 0 1px #ddd;
+}
+
+.tabs .nav-tabs li.fancyTab.active a {
+  box-shadow: none;
+  top: 0;
+}
+
+.fancyTab.active {
+  background: #fff;
+  box-shadow: 1px 1px 0 1px #fff, 0 0px 0 1px #ddd, -1px 1px 0 0px #ddd inset;
+  padding-bottom: 30px;
+}
+
+.arrow-down {
+  display: none;
+  width: 0;
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 22px solid #ddd;
+  position: absolute;
+  top: -1px;
+  left: calc(50% - 20px);
+}
+
+.arrow-down-inner {
+  width: 0;
+  height: 0;
+  border-left: 18px solid transparent;
+  border-right: 18px solid transparent;
+  border-top: 12px solid #fff;
+  position: absolute;
+  top: -22px;
+  left: -18px;
+}
+
+.fancyTab.active .arrow-down {
+  display: block;
+}
+
+@media (max-width: 1200px) {
+  .fancyTab .fa {
+    font-size: 36px;
+  }
+
+  .fancyTab .hidden-xs {
+    font-size: 22px;
+  }
+
+  .fancyTab>a {
+    font-size: 18px;
+  }
+
+  .nav>li.fancyTab>a {
+    padding: 15px 0;
+    margin-bottom: inherit;
+  }
+
+  .fancyTab .fa {
+    font-size: 30px;
+  }
+
+  .nav-tabs>li.fancyTab>a {
+    border-right: 1px solid transparent;
+    padding-bottom: 0;
+  }
+
+  .fancyTab.active .fa {
+    color: #333;
+  }
+}
+
+@media (max-width: 992px) and (min-width: 767px) {
+  .fancyTab .hidden-xs {
+    display: none;
+  }
+}
+
+.customer {
+  margin-bottom: 10px;
+  color: black;
+  font-size: 100px;
+  text-align: center;
+}
+
+.customer:hover {
+  color: #da0611;
+  cursor: pointer;
+}
+
+.disabled-icon {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.line {
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.head {
+  padding-top: 30px;
+  padding-bottom: 20px;
+}
+
+.seccion {
+  padding-bottom: 15px;
+}
+
+.notes {
+  text-align: right;
+}
+
+.location-Icon {
+  text-align: right;
+}
+
+.custom-icon {
+  font-size: 60px;
+  position: relative;
+  top: 18px;
+  padding-right: 22px;
+  cursor: pointer;
+}
+
+.custom-icon:hover {
+  color: #FF0000;
+}
+
+
+#barra {
+  width: 100%;
+  background-color: gray;
+}
+
+#barra::-webkit-slider-thumb {
+  background-color: darkgray;
+}
+
+#barra::-moz-range-thumb {
+  background-color: darkgray;
+}
+
+.bar {
+  padding-bottom: 12px;
+  padding-top: 30px;
+}
+
+.red-progress {
+  background: linear-gradient(to right, #f3b4b7, #EC8288, #E55058, #DA0611);
+}
+
+.green-progress {
+  background-color: #01DF3A;
+}

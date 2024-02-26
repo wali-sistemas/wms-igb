@@ -41,6 +41,7 @@ import { EmployeeJobCertifyComponent } from './components/employee/jobcertify/jo
 import { EmployeePaystubComponent } from './components/employee/paystub/paystub.component';
 import { FidelityProgramComponent } from './components/fidelity-program/fidelity-program.component';
 import { RedeemCapsComponent } from './components/fidelity-program/redeem-caps/redeem-caps.component';
+import { CustomerComponent } from './components/collection/customer/customer.component';
 import { from } from 'rxjs/observable/from';
 
 const appRoutes: Routes = [
@@ -79,6 +80,7 @@ const appRoutes: Routes = [
   { path: 'collection', component: CollectionComponent },
   { path: 'collection/approve', component: ApproveComponent },
   { path: 'collection/authorized', component: AuthorizedComponent },
+  { path: 'collection/customer', component: CustomerComponent },
   { path: 'employee', component: EmployeeComponent },
   { path: 'employee/employee-custody', component: EmployeeCustodyComponent },
   { path: 'employee/employee-jobcertify', component: EmployeeJobCertifyComponent },
