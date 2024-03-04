@@ -343,7 +343,16 @@
     class="icon-chevron-up"></span></button>
 
 <div class="container content">
-  <h3>Custodias por empleado</h3>
+  <div class="row">
+    <div class="col-xs-10">
+      <h3>Custodias por empleado</h3>
+    </div>
+    <div class="col-xs-2">
+      <div class="option">
+        <span class="icon-printer" data-toggle="modal" data-target="#modal_print" title="Generar Acta"></span>
+      </div>
+    </div>
+  </div>
   <div class="row">
     <div class="col-xs-12">
       <div class="input-group">
@@ -368,13 +377,6 @@
     </div>
   </div>
   <br />
-  <div class="row">
-    <div class="col-xs-12">
-      <div class="option">
-        <span class="icon-printer" data-toggle="modal" data-target="#modal_print" title="Generar Acta"></span>
-      </div>
-    </div>
-  </div>
   <div class="row">
     <div class="col-xs-12">
       <div class="alert alert-warning" role="alert" *ngIf="messageEmployee">
