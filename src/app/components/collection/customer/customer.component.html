@@ -1094,8 +1094,8 @@
                 <label>Correo de facturación electrónica (FE)*</label>
                 <input type="email" class="form-control input-lg" autocomplete="off" id="emailFE"
                   oninput="this.value = this.value.replace(/[^a-zA-Z0-9\-_@.]/g, '')" maxlength="40"
-                  placeholder="Ej: JAPONESA@HOTMAIL.COM" [readonly]="isSearchMode"
-                  [(ngModel)]="client.emailFE" (ngModelChange)="emailFEValidation()">
+                  placeholder="Ej: JAPONESA@HOTMAIL.COM" [readonly]="isSearchMode" [(ngModel)]="client.emailFE"
+                  (ngModelChange)="emailFEValidation()">
               </div>
             </div>
             <div class="col-xs-12 col-md-6" *ngIf="selectedCompany=='IGB'">
@@ -1112,6 +1112,7 @@
                   <option value="REGION NORTE">REGION NORTE</option>
                   <option value="REGION COSTA">REGION COSTA</option>
                   <option value="REGION CUNDINAMARCA">REGION CUNDINAMARCA</option>
+                  <option value="REGION OCCIDENTE">REGION OCCIDENTE</option>
                   <option value="EMPLEADOS">EMPLEADOS</option>
                 </select>
               </div>
@@ -1163,7 +1164,30 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-xs-12 col-md-4">
+            <div class="col-xs-12 col-md-4" *ngIf="selectedCompany=='VARROC'">
+              <div class="seccion">
+                <label>Condiciones de pago*</label>
+                <select class="form-control input-lg" [disabled]="isSearchMode"
+                  [(ngModel)]="client.selectedPaymentCondition" (ngModelChange)="updateProgress()">
+                  <option value="" disabled>Seleccione</option>
+                  <option value="-1">C: Contado</option>
+                  <option value="20">C: 90 DIAS</option>
+                  <option value="17">C: 8 DIAS</option>
+                  <option value="28">C: 60 DIAS</option>
+                  <option value="38">C: 5 DIAS</option>
+                  <option value="19">C: 45 DIAS</option>
+                  <option value="30">C: 40 DIAS</option>
+                  <option value="33">C: 35 DIAS</option>
+                  <option value="18">C: 30 DIAS</option>
+                  <option value="31">C: 3 DIAS</option>
+                  <option value="27">C: 20 DIAS</option>
+                  <option value="26">C: 15 DIAS</option>
+                  <option value="21">C: 120 DIAS</option>
+                  <option value="29">C : 10 DIAS</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-xs-12 col-md-4" *ngIf="selectedCompany=='IGB'">
               <div class="seccion">
                 <label>Condiciones de pago*</label>
                 <select class="form-control input-lg" [disabled]="isSearchMode"
@@ -1275,8 +1299,7 @@
               <div class="seccion">
                 <p style="text-align: center; border: 1px solid #D7DBDD;"><b>% Completado</b></p>
                 <canvas baseChart [data]="[camposCompletados.toFixed(0), (100 - camposCompletados).toFixed(0)]"
-                  [labels]="pieChartLabels" [chartType]="pieChartType"
-                  style="width: 80%; height: 80%;">
+                  [labels]="pieChartLabels" [chartType]="pieChartType" style="width: 80%; height: 80%;">
                 </canvas>
               </div>
             </div>
