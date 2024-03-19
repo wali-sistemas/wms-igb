@@ -21,7 +21,6 @@ export class PickExpressComponent implements OnInit {
   public errorMessageBinLocation: string = '';
   public errorMessageNextItem: string = '';
   public confirmBinCode: string = '';
-  public nextBinLocationCode: string;
   public assignableUsers: Array<any>;
   public selectedUser: string = '';
   public validSelectedDelivery: boolean = true;
@@ -30,16 +29,19 @@ export class PickExpressComponent implements OnInit {
   public confirmingItemQuantity: boolean = false;
   public confirmingItem: boolean = true;
   public detailItemsDelivery: Array<PickingListExpress>;
+  public pickedItemCode: string = '';
+  public pickedItemQuantity: number;
+  public activeBtnConfig: boolean = true;
   public nextBinType: string;
   public nextItemQuantity: number;
   public nextItemCode: string;
   public nextIdPickingExpress: number;
-  public nextOrderNumber: string;
+  public nextOrderDelivery: string;
   public nextItemName: string;
   public nextLineNum: number;
-  public pickedItemCode: string = '';
-  public nextBinStock: number;
-  public pickedItemQuantity: number;
+  public nextOrderNumber: string;
+  public nextTypeOrderNumber: string;
+  public nextBinLocationCode: string;
 
   constructor(private _userService: UserService, private _router: Router, private _deliveryService: DeliveryService) {
   }
@@ -62,27 +64,35 @@ export class PickExpressComponent implements OnInit {
   }
 
   public nextItemToPickListExpress(empIdSet: string, deliveryOrder: string) {
+    this.warningMessageNoOrders = '';
     this._deliveryService.getNextPickingItem(empIdSet, deliveryOrder).subscribe(
       response => {
-        this.detailItemsDelivery = response.content;
+        if (response.code == 1) {
+          this.warningMessageNoOrders = response.content;
+          this.resetForm();
+          this.activeBtnConfig = true;
+          this.selectedDelivery = '';
+          this.selectedUser = '';
+        } else if (response.code == 0) {
+          this.detailItemsDelivery = response.content;
+          this.nextBinLocationCode = this.detailItemsDelivery[0].binCode;
+          this.nextItemQuantity = this.detailItemsDelivery[0].qty;
+          this.nextItemCode = this.detailItemsDelivery[0].itemCode;
+          this.nextItemName = this.detailItemsDelivery[0].itemName;
+          this.nextOrderDelivery = this.detailItemsDelivery[0].docNum;
+          this.nextBinType = this.detailItemsDelivery[0].binType;
+          this.nextIdPickingExpress = this.detailItemsDelivery[0].idPickingExpress;
+          this.nextLineNum = this.detailItemsDelivery[0].lineNum;
+          this.nextOrderNumber = this.detailItemsDelivery[0].orderNum;
+          this.nextTypeOrderNumber = this.detailItemsDelivery[0].whsCode == '30' ? 'MODULA' : 'CEDI';
 
-        console.log("***********************");
-        console.log(this.detailItemsDelivery);
-        console.log("***********************");
-
-        this.nextBinLocationCode = this.detailItemsDelivery[0].binCode;
-        this.nextItemQuantity = this.detailItemsDelivery[0].qty;
-        this.nextItemCode = this.detailItemsDelivery[0].itemCode;
-        this.nextItemName = this.detailItemsDelivery[0].itemName;
-        this.nextOrderNumber = this.detailItemsDelivery[0].docNum;
-        this.nextBinType = this.detailItemsDelivery[0].binType;
-        this.nextIdPickingExpress = this.detailItemsDelivery[0].idPickingExpress;
-        this.nextLineNum = this.detailItemsDelivery[0].lineNum;
-        this.confirmingItemQuantity = true;
-
-        document.getElementById("loc").style.display = "hidden";
+          this.confirmingItemQuantity = true;
+        } else {
+          this.errorMessagePickingCarts = response.content;
+        }
       },
       error => {
+        this.errorMessagePickingCarts = "Lo sentimos. Se produjo un error interno."
         this.redirectIfSessionInvalid(error);
         console.error(error);
       }
@@ -94,7 +104,6 @@ export class PickExpressComponent implements OnInit {
     this._deliveryService.listOpenDelivery().subscribe(
       response => {
         this.deliveries = response.content;
-        console.log(this.deliveries);
       },
       error => {
         this.redirectIfSessionInvalid(error);
@@ -104,34 +113,36 @@ export class PickExpressComponent implements OnInit {
   }
 
   public startPickingListExprees() {
-    if (this.selectedDelivery == null || this.selectedDelivery.length <= 0) {
-      this.validSelectedDelivery = false;
-      return;
-    } else if (this.selectedUser == null || this.selectedUser.length <= 0) {
-      this.validSelectedUser = false;
-      return;
-    }
+    this.errorMessageBinLocation = '';
+    this.errorMessageNextItem = '';
+    this.errorMessagePickingCarts = '';
 
+    $('#modal_assign_delivery').modal('hide');
     $('#modal_transfer_process').modal({
       backdrop: 'static',
       keyboard: false,
       show: true
     });
+    if (this.selectedDelivery == null || this.selectedDelivery.length <= 0) {
+      this.validSelectedDelivery = false;
+      return;
+    }
+    if (this.selectedUser == null || this.selectedUser.length <= 0) {
+      this.validSelectedUser = false;
+      return;
+    }
 
     this._deliveryService.getAssignEmployeePickListExpress(this.selectedDelivery, this.selectedUser).subscribe(
       response => {
-        console.log("***********************");
-        console.log(response);
-        console.log("***********************");
         if (response.content == true) {
           this.nextItemToPickListExpress(this.selectedUser, this.selectedDelivery);
-          $('#modal_assign_delivery').modal('hide');
-          //$('#binLoc').focus();
-          $('#modal_transfer_process').modal('hide');
+          this.activeBtnConfig = false;
+          document.getElementById("location").style.display = "block";
+          $('#binLoc').focus();
         } else {
-          $('#modal_transfer_process').modal('hide');
-          console.log('Error al asignar entrega');
+          this.errorMessageNextItem = 'Ocurrio un error al asignar entrega';
         }
+        $('#modal_transfer_process').modal('hide');
       },
       error => {
         $('#modal_transfer_process').modal('hide');
@@ -142,7 +153,6 @@ export class PickExpressComponent implements OnInit {
   }
 
   public scanBinLocation() {
-    console.log("Entro al metodo");
     this.errorMessageBinLocation = '';
     this.confirmingItemQuantity = false;
     this.confirmBinCode = this.confirmBinCode.trim();
@@ -150,13 +160,8 @@ export class PickExpressComponent implements OnInit {
       this.errorMessageBinLocation = 'No estás en la ubicación correcta. Revisa el número e intenta de nuevo.';
       return;
     }
-    this.confirmingItemQuantity = true;
-    this.confirmingItem = false;
-    document.getElementById("binLoc").style.display = "none";
+    document.getElementById("item").style.display = "block";
     $('#input_pickedItem').focus();
-
-    console.log(this.confirmingItemQuantity);
-
   }
 
   public getBinDetail(fieldName: string) {
@@ -190,6 +195,7 @@ export class PickExpressComponent implements OnInit {
     this._userService.listUsersByGroup('WMS').subscribe(
       response => {
         this.assignableUsers = response;
+        this.warningMessageNoOrders = "No se encontraron entregas asignadas para picking list express.";
       }, error => {
         console.error(error);
         this.redirectIfSessionInvalid(error);
@@ -218,21 +224,13 @@ export class PickExpressComponent implements OnInit {
     this.pickedItemCode = this.pickedItemCode.replace(/\s/g, '');
     if (this.pickedItemCode === this.nextItemCode) {
       this.pickedItemCodeValidated = true;
-      //document.getElementById("qty").style.display = "inline";
+      document.getElementById("qty").style.display = "block";
       $('#input_pickedQuantity').focus();
     }
   }
 
-  public getQuantityToPick() {
-    /*if (this.nextItemQuantity > this.nextBinStock) {
-      return this.nextBinStock;
-    }*/
-    return this.nextItemQuantity;
-  }
-
   public validatePickedQuantity() {
-    if (this.getQuantityToPick() != this.pickedItemQuantity) {
-      //show different quantity confirmation
+    if (this.nextItemQuantity != this.pickedItemQuantity) {
       $('#modal_confirm_quantity_diff').modal({
         backdrop: 'static',
         keyboard: false,
@@ -244,6 +242,7 @@ export class PickExpressComponent implements OnInit {
   }
 
   public confirmItemQuantity() {
+    $('#modal_confirm_quantity_diff').modal('hide');
     $('#modal_transfer_process').modal({
       backdrop: 'static',
       keyboard: false,
@@ -252,24 +251,24 @@ export class PickExpressComponent implements OnInit {
 
     const pickingListExpressDTO = {
       "idPickingExpress": this.nextIdPickingExpress,
-      "docNum": this.nextOrderNumber,
+      "docNum": this.nextOrderDelivery,
       "lineNum": this.nextLineNum,
       "itemCode": this.nextItemCode,
       "qtyConfirm": this.pickedItemQuantity,
-      "observation": "Prueba sistemas"
+      "observation": "Prueba sistemas",
+      "orderNum": this.nextOrderNumber,
+      "typeOrderNum": this.nextTypeOrderNumber
     }
 
     this._deliveryService.checkItemPickListExpress(pickingListExpressDTO).subscribe(
       response => {
         if (response.code === 0) {
-          //Clears bin location, item code and quantity fields; then loads cart inventory and next item
           this.resetForm();
           this.startPickingListExprees();
           $('#modal_transfer_process').modal('hide');
         } else {
           $('#modal_transfer_process').modal('hide');
-          //this.errorMessageBinTransfer = response.content;
-          //$('#modal_error').modal('show');
+          this.errorMessagePickingCarts = response.content;
         }
       },
       error => {
@@ -281,41 +280,19 @@ export class PickExpressComponent implements OnInit {
   }
 
   public resetForm() {
-    this.validSelectedDelivery = true;
-    this.validSelectedUser = true;
     this.pickedItemCodeValidated = false;
     this.confirmingItemQuantity = false;
     this.confirmingItem = true;
-
-    //clean picked quantity
     this.pickedItemQuantity = null;
-    //this.pickedItemQuantityValidated = false;
-
-    //clean pickedItem
     this.pickedItemCode = '';
-
-    //clean next item/location
     this.nextBinLocationCode = null;
-    this.nextBinStock = null;
     this.nextItemCode = '';
     this.nextItemName = '';
     this.nextItemQuantity = null;
     this.nextBinType = '';
-
-    //clean selected location
     this.confirmBinCode = '';
-
-    //reload carts and inventory
-    //this.loadAvailablePickingCarts();
-
-    //document.getElementById("qty").style.display = "none";
-    //document.getElementById("item").style.display = "none";
-    //document.getElementById("loc").style.display = "none";
-
-    //reload next item
-    //this.position = 0;
-    //if (this.selectedCart <= 0) {
-    //  this.loadNextItem();
-    //}
+    document.getElementById("qty").style.display = "none";
+    document.getElementById("item").style.display = "none";
+    document.getElementById("location").style.display = "none";
   }
 }
