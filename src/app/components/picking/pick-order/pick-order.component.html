@@ -10,8 +10,7 @@
           ¿Deseas continuar?</p>
         <p *ngIf="pickedItemQuantity < nextItemQuantity">Si continúas, se reportara como inconsistencia en el
           inventario.</p>
-        <p *ngIf="pickedItemQuantity > nextItemQuantity">Si continúas, se modificará la cantidad en
-          en la orden de venta.</p>
+        <p *ngIf="pickedItemQuantity > nextItemQuantity">Si continúas, se modificará la cantidad en la orden de venta.</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary btn-lg" (click)="confirmItemQuantity()">Sí, continuar</button>
@@ -104,7 +103,7 @@
     <div class="modal-content">
       <form>
         <div class="modal-body">
-          <h4>Detalle Ubicación {{nextBinLocationCode}}</h4>
+          <h4>Detalle ubicación {{nextBinLocationCode}}</h4>
           <table class="table table-striped">
             <tr>
               <td>Almacén</td>
@@ -199,20 +198,34 @@
     {{errorMessagePickingCarts}}
   </div>
 </div>
+
 <div class="container content" *ngIf="!errorMessagePickingCarts">
-  <div class="alert alert-warning" role="alert" *ngIf="warningMessageNoOrders">
-    {{warningMessageNoOrders}}
+  <div class="row" *ngIf="warningMessageNoOrders">
+    <div class="col-xs-12">
+      <div class="alert alert-warning" role="alert">
+        {{warningMessageNoOrders}}
+      </div>
+    </div>
   </div>
-  <h3 *ngIf="!warningMessageNoOrders">Picking
-    <span *ngIf="pickingMethod === 'multiple' && assignedOrders.length > 0"> ({{assignedOrders.length}} ordenes)</span>
-    <span class="grayed-order" *ngIf="pickingMethod === 'multiple' && assignedOrders.length > 0"> -
-      {{nextOrderNumber}}</span>
-    <span *ngIf="pickingMethod === 'single'"> (orden #{{selectedOrder}})</span>
-    <span class="icon-settings pull-right cursor-pointer" data-toggle="modal" data-target="#modal_config"
-      title="Seleccionar Orden"></span>
-  </h3>
-  <div class="alert alert-danger" role="alert" *ngIf="errorMessageNextItem">
-    {{errorMessageNextItem}}
+  <div class="row" *ngIf="errorMessageNextItem">
+    <div class="clo-xs-12">
+      <div class="alert alert-danger" role="alert">
+        {{errorMessageNextItem}}
+      </div>
+    </div>
+  </div>
+  <div class="row" *ngIf="!warningMessageNoOrders">
+    <div class="col-xs-12">
+      <h3>Picking
+        <span *ngIf="pickingMethod === 'multiple' && assignedOrders.length > 0"> ({{assignedOrders.length}}
+          ordenes)</span>
+        <span class="grayed-order" *ngIf="pickingMethod === 'multiple' && assignedOrders.length > 0"> -
+          {{nextOrderNumber}}</span>
+        <span *ngIf="pickingMethod === 'single'"> (#{{selectedOrder}})</span>
+        <span class="icon-settings pull-right cursor-pointer" data-toggle="modal" data-target="#modal_config"
+          title="Seleccionar Orden"></span>
+      </h3>
+    </div>
   </div>
   <div class="row" *ngIf="availableCarts.length > 0 && !warningMessageNoOrders">
     <div class="col-xs-12">
@@ -236,15 +249,14 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-xs-6">
-            <label *ngIf="!confirmingItemQuantity && nextBinLocationCode" for="binLocation">Escanea la
-              ubicación
+          <div class="col-xs-10">
+            <label *ngIf="!confirmingItemQuantity && nextBinLocationCode" for="binLocation">Escanea la ubicación
               <span (click)="getBinLocation(nextBinLocationCode)">{{nextBinLocationCode}}</span>
               <span class="icon-info" data-toggle="modal" data-target="#modal_bin_detail"></span>
               [{{nextBinType}}]
             </label>
           </div>
-          <div class="col-xs-6">
+          <div class="col-xs-2">
             <button *ngIf="!confirmingItemQuantity && nextBinLocationCode" class="btn btn-default btn-lg" type="button"
               data-toggle="modal" data-target="#modal_confirmar" [disabled]="nextBinType === 'STORAGE'"
               style="float: right!important;" title="Saltar Picking">

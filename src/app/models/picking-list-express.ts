@@ -20,6 +20,7 @@ export class PickingListExpress {
   public qtyConfirm: number;
   public docDateConfirm: Date;
   public observation: string;
+  public orderNum: string;
 
   constructor() { }
 }
