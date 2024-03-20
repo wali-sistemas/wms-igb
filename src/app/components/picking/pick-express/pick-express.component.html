@@ -172,7 +172,7 @@
               [ngClass]="{ 'radioLoc': confirmingItemQuantity }" type="text" [(ngModel)]="confirmBinCode"
               placeholder="Escanea aquí" autocomplete="off" [disabled]="confirmingItemQuantity">
             <span class="input-group-btn">
-              <button class="btn btn-danger btn-lg danger" type="button" (click)="resetForm()" *ngIf="!confirmingItem">
+              <button class="btn btn-danger btn-lg danger" type="button" (click)="deleteBinCode()" *ngIf="!confirmingItem">
                 <span class="glyphicon glyphicon-erase"></span>
               </button>
             </span>

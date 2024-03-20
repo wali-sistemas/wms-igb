@@ -138,11 +138,15 @@ export class PickExpressComponent implements OnInit {
           this.nextItemToPickListExpress(this.selectedUser, this.selectedDelivery);
           this.activeBtnConfig = false;
           document.getElementById("location").style.display = "block";
-          $('#binLoc').focus();
         } else {
-          this.errorMessageNextItem = 'Ocurrio un error al asignar entrega';
+          this.selectedDelivery = '';
+          this.selectedUser = '';
+          this.errorMessagePickingCarts = '';
+          this.warningMessageNoOrders = '';
+          this.errorMessageNextItem = 'Lo sentimos. Se produjo un error interno.';
         }
         $('#modal_transfer_process').modal('hide');
+        $('#binLoc').focus();
       },
       error => {
         $('#modal_transfer_process').modal('hide');
@@ -154,12 +158,13 @@ export class PickExpressComponent implements OnInit {
 
   public scanBinLocation() {
     this.errorMessageBinLocation = '';
-    this.confirmingItemQuantity = false;
     this.confirmBinCode = this.confirmBinCode.trim();
     if (this.confirmBinCode !== this.nextBinLocationCode) {
       this.errorMessageBinLocation = 'No estás en la ubicación correcta. Revisa el número e intenta de nuevo.';
       return;
     }
+    this.confirmingItem = false;
+    document.getElementById("location").style.display = "none";
     document.getElementById("item").style.display = "block";
     $('#input_pickedItem').focus();
   }
@@ -294,5 +299,24 @@ export class PickExpressComponent implements OnInit {
     document.getElementById("qty").style.display = "none";
     document.getElementById("item").style.display = "none";
     document.getElementById("location").style.display = "none";
+  }
+
+  public deleteBinCode() {
+    this.pickedItemCodeValidated = false;
+    this.confirmingItemQuantity = false;
+    this.confirmingItem = true;
+    this.pickedItemQuantity = null;
+    this.pickedItemCode = '';
+    this.nextBinLocationCode = null;
+    this.nextItemCode = '';
+    this.nextItemName = '';
+    this.nextItemQuantity = null;
+    this.nextBinType = '';
+    this.confirmBinCode = '';
+    document.getElementById("qty").style.display = "none";
+    document.getElementById("item").style.display = "none";
+    document.getElementById("location").style.display = "block";
+    this.nextItemToPickListExpress(this.selectedUser, this.selectedDelivery);
+    $('#binLoc').focus();
   }
 }
