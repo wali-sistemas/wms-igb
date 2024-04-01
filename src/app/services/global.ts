@@ -2,9 +2,9 @@ import { Headers } from '@angular/http';
 
 export let GLOBAL = {
     //HTPP
-    /*url: 'http://192.168.10.8:8080/igb/res/',
-    urlShared: 'http://192.168.10.8:8080/shared/',
-    urlManager: 'http://192.168.10.8:8080/manager/res/'*/
+    /*url: 'http://192.168.10.218:8080/igb/res/',
+    urlShared: 'http://192.168.10.218:8080/shared/',
+    urlManager: 'http://192.168.10.218:8080/manager/res/'*/
     //HTTPS
     url: 'https://wali.igbcolombia.com/api/igb/res/',
     urlShared: 'https://wali.igbcolombia.com/api/shared/',
