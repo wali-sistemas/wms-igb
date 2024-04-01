@@ -15,8 +15,8 @@ export class DeliveryService {
       .map(res => res.json());
   }
 
-  public getNextPickingItem(usernamaset: string, deliveryNumber: string) {
-    return this._http.get(this.url + 'delivery/nextitem-pick-list-express/' + usernamaset + '?deliveryNumber=' + deliveryNumber, { headers: new IGBHeaders().loadHeaders() })
+  public getNextPickingItem(usernamaset: string, deliveryNumber: string, position: number) {
+    return this._http.get(this.url + 'delivery/nextitem-pick-list-express/' + usernamaset + '?deliveryNumber=' + deliveryNumber + '&position=' + position, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 
