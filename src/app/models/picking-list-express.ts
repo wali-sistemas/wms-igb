@@ -21,6 +21,8 @@ export class PickingListExpress {
   public docDateConfirm: Date;
   public observation: string;
   public orderNum: string;
+  public row: number;
+  public countRow: number;
 
   constructor() { }
 }

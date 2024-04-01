@@ -42,6 +42,10 @@ export class PickExpressComponent implements OnInit {
   public nextOrderNumber: string;
   public nextTypeOrderNumber: string;
   public nextBinLocationCode: string;
+  public nextObservation: string;
+  public nextCountRow: number;
+  public validNextObservation: boolean = true;
+  public position: number = 1;
 
   constructor(private _userService: UserService, private _router: Router, private _deliveryService: DeliveryService) {
   }
@@ -63,9 +67,9 @@ export class PickExpressComponent implements OnInit {
     }
   }
 
-  public nextItemToPickListExpress(empIdSet: string, deliveryOrder: string) {
+  public nextItemToPickListExpress(empIdSet: string, deliveryOrder: string, position: number) {
     this.warningMessageNoOrders = '';
-    this._deliveryService.getNextPickingItem(empIdSet, deliveryOrder).subscribe(
+    this._deliveryService.getNextPickingItem(empIdSet, deliveryOrder, position).subscribe(
       response => {
         if (response.code == 1) {
           this.warningMessageNoOrders = response.content;
@@ -85,6 +89,7 @@ export class PickExpressComponent implements OnInit {
           this.nextLineNum = this.detailItemsDelivery[0].lineNum;
           this.nextOrderNumber = this.detailItemsDelivery[0].orderNum;
           this.nextTypeOrderNumber = this.detailItemsDelivery[0].whsCode == '30' ? 'MODULA' : 'CEDI';
+          this.nextCountRow = this.detailItemsDelivery[0].countRow;
 
           this.confirmingItemQuantity = true;
         } else {
@@ -135,7 +140,7 @@ export class PickExpressComponent implements OnInit {
     this._deliveryService.getAssignEmployeePickListExpress(this.selectedDelivery, this.selectedUser).subscribe(
       response => {
         if (response.content == true) {
-          this.nextItemToPickListExpress(this.selectedUser, this.selectedDelivery);
+          this.nextItemToPickListExpress(this.selectedUser, this.selectedDelivery, 1);
           this.activeBtnConfig = false;
           document.getElementById("location").style.display = "block";
         } else {
@@ -200,7 +205,7 @@ export class PickExpressComponent implements OnInit {
     this._userService.listUsersByGroup('WMS').subscribe(
       response => {
         this.assignableUsers = response;
-        this.warningMessageNoOrders = "No se encontraron entregas asignadas para picking list express.";
+        this.warningMessageNoOrders = "No se encontraron entregas asignadas.";
       }, error => {
         console.error(error);
         this.redirectIfSessionInvalid(error);
@@ -242,11 +247,17 @@ export class PickExpressComponent implements OnInit {
         show: true
       });
     } else {
+      this.nextObservation = 'OK';
       this.confirmItemQuantity();
     }
   }
 
   public confirmItemQuantity() {
+    if (this.nextObservation == null || this.nextObservation.length <= 0) {
+      this.validNextObservation = false;
+      return;
+    }
+
     $('#modal_confirm_quantity_diff').modal('hide');
     $('#modal_transfer_process').modal({
       backdrop: 'static',
@@ -260,7 +271,7 @@ export class PickExpressComponent implements OnInit {
       "lineNum": this.nextLineNum,
       "itemCode": this.nextItemCode,
       "qtyConfirm": this.pickedItemQuantity,
-      "observation": "Prueba sistemas",
+      "observation": this.nextObservation,
       "orderNum": this.nextOrderNumber,
       "typeOrderNum": this.nextTypeOrderNumber
     }
@@ -282,6 +293,26 @@ export class PickExpressComponent implements OnInit {
         this.redirectIfSessionInvalid(error);
       }
     );
+  }
+
+  public getBackItem() {
+    if (this.position > 1) {
+      this.position--;
+    } else if (this.position <= 1) {
+      this.position = 1;
+    }
+    console.log("Posición " + this.position + " de " + this.nextCountRow + " para picking");
+    this.nextItemToPickListExpress(this.selectedUser, this.selectedDelivery, this.position);
+  }
+
+  public getNextItem() {
+    if (this.position < this.nextCountRow - 1) {
+      this.position++;
+    } else {
+      this.position = 1;
+    }
+    console.log("Posición " + this.position + " de " + this.nextCountRow + " para picking");
+    this.nextItemToPickListExpress(this.selectedUser, this.selectedDelivery, this.position);
   }
 
   public resetForm() {
@@ -316,7 +347,7 @@ export class PickExpressComponent implements OnInit {
     document.getElementById("qty").style.display = "none";
     document.getElementById("item").style.display = "none";
     document.getElementById("location").style.display = "block";
-    this.nextItemToPickListExpress(this.selectedUser, this.selectedDelivery);
+    this.nextItemToPickListExpress(this.selectedUser, this.selectedDelivery, 1);
     $('#binLoc').focus();
   }
 }
