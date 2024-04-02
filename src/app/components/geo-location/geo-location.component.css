@@ -1,0 +1,89 @@
+.content {
+  margin-top: 60px;
+}
+
+.seccion {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.seccionIMG {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.reload {
+  text-align: right;
+  font-size: 35px;
+  cursor: pointer;
+  color: black;
+  position: relative;
+  top: 8px;
+}
+
+.image-zone-country {
+  width: 100%;
+  height: auto;
+  max-width: 250px;
+  max-height: 250px;
+  display: block;
+  margin: auto;
+}
+
+.image-advisor {
+  width: 25%;
+  display: block;
+  padding-top: 30px;
+  position: relative;
+  top: -15px;
+}
+
+.input-lg-title p {
+  font-size: 18px;
+  padding: 8px 0;
+  border: 1px solid #D7DBDD;
+  text-align: center;
+  border-radius: 10px;
+}
+
+.info-personal-left {
+  flex: 1;
+  text-align: left;
+  padding-left: 15px;
+}
+
+.info-personal-right {
+  flex: 1;
+  text-align: left;
+}
+
+.report {
+  display: flex;
+  align-items: center;
+  border: 1px solid #D7DBDD;
+  border-radius: 5px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.report .col-md-6 {
+  width: auto !important;
+}
+
+@media screen and (max-width: 720px) {
+  .report {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .image-advisor {
+    width: 50%;
+    margin-bottom: 15px;
+  }
+
+  .info-personal-left,
+  .info-personal-right {
+    padding-left: 0;
+  }
+}

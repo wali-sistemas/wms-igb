@@ -26,6 +26,7 @@ export class NavBarComponent implements OnInit {
   public collectionModuleAccesible: boolean = false;
   public employeeModuleAccesible: boolean = false;
   public fidelityProgramModuleAccesible: boolean = false;
+  public geoLocationModuleAccesible: boolean = false;
 
   constructor(private _userService: UserService, private _route: ActivatedRoute, private _router: Router) { }
 
@@ -77,6 +78,7 @@ export class NavBarComponent implements OnInit {
       this.collectionModuleAccesible = userAccess.collectionModuleAccesible;
       this.fidelityProgramModuleAccesible = userAccess.fidelityProgramModuleAccesible;
       this.employeeModuleAccesible = userAccess.employeeModuleAccesible;
+      this.geoLocationModuleAccesible = userAccess.geoLocationModuleAccesible;
       return;
     }
 
@@ -94,7 +96,8 @@ export class NavBarComponent implements OnInit {
       compraTrackingModuleAccesible: false,
       collectionModuleAccesible: false,
       fidelityProgramModuleAccesible: false,
-      employeeModuleAccesible: false
+      employeeModuleAccesible: false,
+      geoLocationModuleAccesible: false
     };
 
     localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
@@ -298,6 +301,20 @@ export class NavBarComponent implements OnInit {
     } else {
       this.fidelityProgramModuleAccesible = false;
     }
+
+    //validar si el usuario puede acceder al modulo de geolocalizador
+    this._userService.canAccess(this.identity.username, 'geolocation').subscribe(
+      response => {
+        if (response.code == 0) {
+          this.geoLocationModuleAccesible = true;
+          userAccess = JSON.parse(localStorage.getItem('igb.user.access'));
+          userAccess.geoLocationModuleAccesible = true;
+          localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
+        } else {
+          this.geoLocationModuleAccesible = false;
+        }
+      }, error => { console.error(error); }
+    );
 
     localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
   }
