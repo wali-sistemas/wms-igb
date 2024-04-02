@@ -150,12 +150,12 @@ export class CustomerComponent implements OnInit {
     }
   }
 
-  // Método para obtener la lista de asesores
+  // Método para obtener la lista de todos los asesores "*"
   public getListOfAdvisors() {
-    this._businessPartnerService.listAdvisors().subscribe(
+    this._businessPartnerService.listAdvisors("*").subscribe(
       response => {
         this.advisors = response.map((item, index) => {
-          return new Advisor(item[0], item[1], item[2], item[3]);
+          return new Advisor(item[0], item[1], item[2], item[3], item[4]);
         });
       },
       error => {

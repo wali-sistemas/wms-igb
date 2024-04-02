@@ -42,6 +42,7 @@ import { EmployeePaystubComponent } from './components/employee/paystub/paystub.
 import { FidelityProgramComponent } from './components/fidelity-program/fidelity-program.component';
 import { RedeemCapsComponent } from './components/fidelity-program/redeem-caps/redeem-caps.component';
 import { CustomerComponent } from './components/collection/customer/customer.component';
+import { GeoLocationComponent } from './components/geo-location/geo-location.component';
 import { from } from 'rxjs/observable/from';
 
 const appRoutes: Routes = [
@@ -86,7 +87,8 @@ const appRoutes: Routes = [
   { path: 'employee/employee-jobcertify', component: EmployeeJobCertifyComponent },
   { path: 'employee/employee-paystub', component: EmployeePaystubComponent },
   { path: 'program-fidelity', component: FidelityProgramComponent },
-  { path: 'program-fidelity/redeem-caps', component: RedeemCapsComponent }
+  { path: 'program-fidelity/redeem-caps', component: RedeemCapsComponent },
+  { path: 'geo-location', component: GeoLocationComponent }
 ];
 
 export const appRoutingProviders: any[] = [];

@@ -12,8 +12,8 @@ export class BusinessPartnerService {
     this.urlmanager = GLOBAL.urlManager
   }
 
-  public listAdvisors() {
-    return this._http.get(this.url + 'businesspartners/sales-person', { headers: new IGBHeaders().loadHeaders() })
+  public listAdvisors(email: string) {
+    return this._http.get(email != '*' ? this.url + 'businesspartners/sales-person?email=' + email : this.url + 'businesspartners/sales-person/', { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 
@@ -34,6 +34,11 @@ export class BusinessPartnerService {
 
   public searchClient(company: string, customer: string) {
     return this._http.get(this.urlmanager + 'pedbox/customer-data/' + company + '?cardcode=' + customer, { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
+
+  public getGeoLocation(selectedCompany: string, selectedAdvisor: string, year: string, month: string, day: string) {
+    return this._http.get(this.urlmanager + 'app/get-geo-location/' + selectedCompany + '?slpcode=' + selectedAdvisor + '&year=' + year + '&month=' + month + '&day=' + day, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 }
