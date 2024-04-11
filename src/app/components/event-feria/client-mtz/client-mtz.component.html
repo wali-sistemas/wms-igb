@@ -119,48 +119,49 @@
         <select id="asesor" class="form-control input-lg" [(ngModel)]="selectedAsesor" name="selectedAsesor"
           [class.required-field]="!validSelectAsesor" [disabled]="!authorizeData" required>
           <option style="display:none" disabled selected value="">Selecciona un asesor</option>
-          <option value="ANNET RESTREPO">ANNET RESTREPO</option>
+          <option value="ADRIÁN MONCADA">ADRIÁN MONCADA</option>
+          <option value="ANGIE PEÑA">ANGIE PEÑA</option>
+          <option value="ALEJANDRA MONSALVE">ALEJANDRA MONSALVE</option>
           <option value="CLAUDIA FERNANDEZ">CLAUDIA FERNANDEZ</option>
+          <option value="DIANA LONDOÑO">DIANA LONDOÑO</option>
           <option value="FERNEY DIAZ">FERNEY DIAZ</option>
-          <option value="LAURA USME">LAURA USME</option>
-          <option value="VALENTINA ESCOBAR">VALENTINA ESCOBAR</option>
-          <option value="VANESSA FLOREZ">VANESSA FLOREZ</option>
-          <option value="LUISA MORENO">LUISA MORENO</option>
-          <option value="DIANA BUITRAGO">DIANA BUITRAGO</option>
-          <option value="SANDRA GONZALES">SANDRA GONZALES</option>
-          <option value="TATIANA SUAREZ">TATIANA SUAREZ</option>
-          <option value="MICHELLE CARVAJAL">MICHELLE CARVAJAL</option>
-          <option value="NESTOR GIRALDO">NESTOR GIRALDO</option>
-          <option value="LUIS CASTAÑO">LUIS CASTAÑO</option>
           <option value="HORACIO OROZCO">HORACIO OROZCO</option>
-          <option value="WENDY VELAZQUES">WENDY VELAZQUES</option>
-          <option value="ESTEFANIA SANCHEZ">ESTEFANIA SANCHEZ</option>
+          <option value="JULIAN ESTRADA">JULIAN ESTRADA</option>
+          <option value="LAURA USME">LAURA USME</option>
           <option value="LAURA APARICIO">LAURA APARICIO</option>
+          <option value="NESTOR GIRALDO">NESTOR GIRALDO</option>
+          <option value="OSCAR CARVAJAL">OSCAR CARVAJAL</option>
+          <option value="ORNELLA OJEDA">ORNELLA OJEDA</option>
+          <option value="SANTIAGO AGUILAR">SANTIAGO AGUILAR</option>
+          <option value="SEBASTIAN USUGA">SEBASTIAN USUGA</option>
+          <option value="VALENTINA SANCHEZ">VALENTINA SANCHEZ</option>
+          <option value="VALENTINA ESCOBAR">VALENTINA ESCOBAR</option>
+          <option value="WENDY VELAZQUES">WENDY VELAZQUES</option>
         </select>
       </div>
     </div>
     <br />
     <label for="interes">Interesado en lubricantes para:</label>
     <div class="row">
-      <div class="col-xs-6 col-md-3">
-        <div class="interes" [class.selected]="selected.has(0)" (click)="selectedInteres(0,'Lubricantes')">
-          <span class="icon-lubricante" style="font-size: 100px"></span>
-          <h3 class="title">Lubricantes</h3>
+      <div class="col-xs-6 col-md-4">
+        <div class="interes" [class.selected]="selected.has(0)" (click)="selectedInteres(0,'Partes Plásticas')">
+          <span class="icon-guardabarro2" style="font-size: 100px"></span>
+          <h3 class="title">Partes Plásticas</h3>
         </div>
       </div>
-      <div class="col-xs-6 col-md-3">
+      <!--<div class="col-xs-6 col-md-3">
         <div class="interes" [class.selected]="selected.has(1)" (click)="selectedInteres(1,'Lubricante Industrial')">
           <span class="icon-indrustry" style="font-size: 100px"></span>
           <h3 class="title">Industrial</h3>
         </div>
-      </div>
-      <div class="col-xs-6 col-md-3">
+      </div>-->
+      <div class="col-xs-6 col-md-4">
         <div class="interes" [class.selected]="selected.has(2)" (click)="selectedInteres(2,'Repuestos')">
           <span class="icon-repuestos" style="font-size: 100px"></span>
           <h3 class="title">Repuestos</h3>
         </div>
       </div>
-      <div class="col-xs-6 col-md-3">
+      <div class="col-xs-6 col-md-4">
         <div class="interes" [class.selected]="selected.has(3)" (click)="selectedInteres(3,'Llantas')">
           <span class="icon-llanta" style="font-size: 100px"></span>
           <h3 class="title">Llantas</h3>
