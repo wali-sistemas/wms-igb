@@ -197,7 +197,6 @@ export class GeoLocationComponent implements OnInit {
       optimizeWaypoints: true,
       travelMode: 'DRIVING'
     };
-
     this.directionsService.route(request, (result, status) => {
       if (status === 'OK') {
         this.directionsRenderer.setDirections(result);
@@ -206,15 +205,15 @@ export class GeoLocationComponent implements OnInit {
           map: this.googleMap,
           icon: {
             url: 'assets/images/inicio.png',
-            scaledSize: new google.maps.Size(35, 35)
+            scaledSize: new google.maps.Size(50, 50)
           }
         });
         const endMarker = new google.maps.Marker({
           position: end,
           map: this.googleMap,
           icon: {
-            url: 'assets/images//fin.png',
-            scaledSize: new google.maps.Size(35, 35)
+            url: 'assets/images/fin.png',
+            scaledSize: new google.maps.Size(50, 50)
           }
         });
         markers.forEach((marcador, index) => {
@@ -223,13 +222,14 @@ export class GeoLocationComponent implements OnInit {
               position: marcador,
               map: this.googleMap,
               icon: {
-                url: 'https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld=' + (index + 1) + '|DA0611|000000',
-                labelOrigin: new google.maps.Point(10, 10),
-                label: {
-                  text: (index + 1).toString(),
-                  color: 'black',
-                  fontWeight: 'bold'
-                }
+                url: 'assets/images/marker.png',
+                scaledSize: new google.maps.Size(30, 30)
+              },
+              label: {
+                text: (index + 1).toString(),
+                color: 'white',
+                fontWeight: 'bold',
+                offset: new google.maps.Size(-5, 10)
               }
             });
           }
