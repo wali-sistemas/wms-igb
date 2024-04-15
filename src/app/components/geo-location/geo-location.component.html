@@ -69,6 +69,14 @@
         </select>
       </div>
     </div>
+    <div class="col-xs-12 col-md-7" *ngIf="selectedCompany=='REDPLAS'">
+      <div class="seccion">
+        <select class="form-control input-lg" [(ngModel)]="selectedAdvisor" [disabled]="!enabledbutton">
+          <option value="" disabled>Selecciona un asesor</option>
+          <option *ngFor="let adviser of advisors" [value]="adviser.id">{{adviser.name}}</option>
+        </select>
+      </div>
+    </div>
     <div class="col-xs-12 col-md-3">
       <div class="seccion">
         <input class="form-control input-lg" type="date" [(ngModel)]="dateValue" (ngModelChange)="getDateFormat()"
@@ -143,6 +151,12 @@
       <div class="seccionIMG">
         <p style="text-align: center; border: 1px solid #D7DBDD; border-radius: 5px;"><b>Región</b></p>
         <img [src]="'assets/images/' + selectedZone + '.png'" alt="Zone Country" class="image-zone-country">
+      </div>
+    </div>
+    <div class="col-md-4 col-xs-12" *ngIf="locations && locations.length > 0 && selectedCompany=='REDPLAS'">
+      <div class="seccionIMG">
+        <p style="text-align: center; border: 1px solid #D7DBDD; border-radius: 5px;"><b>Región</b></p>
+        <img [src]="'assets/images/REGION ANTIOQUIA.png'" alt="Zone Country" class="image-zone-country">
       </div>
     </div>
   </div>
