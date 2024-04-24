@@ -14,6 +14,7 @@ export class AuthorizedOrder {
   public nroOrder: number;
   public discOrder: number;
   public discClient: number;
+  public comments: string;
 
   constructor() { }
 }
