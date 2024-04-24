@@ -27,6 +27,11 @@ export class BusinessPartnerService {
       .map(res => res.json());
   };
 
+  public listDailyMarks(selectedCompany: string) {
+    return this._http.get(this.urlmanager + 'app/list-activity-report/' + selectedCompany, { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
+
   public createClient(clientData) {
     return this._http.post(this.urlmanager + 'pedbox/create-customer', clientData, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());

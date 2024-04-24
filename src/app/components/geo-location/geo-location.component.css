@@ -70,6 +70,27 @@
   width: auto !important;
 }
 
+.avatar {
+  width: 50px;
+  border-radius: 25px;
+}
+
+.tabgroup {
+  padding-bottom: 49px;
+}
+
+.person-name {
+  padding-left: 6px;
+}
+
+.modal-body {
+  padding: 0;
+  position: relative;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 15px;
+}
+
 @media screen and (max-width: 720px) {
   .report {
     flex-direction: column;

@@ -75,8 +75,8 @@
   </div>
 </div>
 <!--Modal ver documentos-->
-<div id="ver_Docs" class="modal slide" tabindex="-1" role="dialog" data-backdrop="static">
-  <div class="modal-dialog modal-sm" role="document">
+<div id="ver_Docs" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
+  <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -93,14 +93,23 @@
               </b>
               {{selectedGroup.client.cardName}}
             </div>
-            <div *ngFor="let order of selectedGroup.orders" class="modalDocs-container">
-              <div class="col-sm-6 col-xs-6 col-6 modalDocs-number">
-                <span class="icon-invoice" style="font-size: 18px;"></span>
-                {{order.docNumSAP}}
+            <div class="modalDocs-container" *ngFor="let order of selectedGroup.orders">
+              <div class="row">
+                <div class="col-md-6 col-xs-6 modalDocs-number">
+                  <span class="icon-invoice" style="font-size: 18px; position: relative; top: 3px;"></span>
+                  {{order.docNumSAP}}
+                </div>
+                <div class="col-md-6 col-xs-6 modalDocs-value">
+                  <span class="icon-cuenta_bancaria" style="font-size: 18px; position: relative; top: 3px;"></span>
+                  <span class="ml-2">{{order.docTotal | number}}</span>
+                </div>
               </div>
-              <div class="col-sm-6 col-xs-6 col-6 modalDocs-value">
-                <span class="icon-cuenta_bancaria" style="font-size: 18px;"></span>
-                <span class="ml-2">{{order.docTotal | number}}</span>
+              <hr class="separator">
+              <div class="row">
+                <div class="col-md-12 col-xs-12 modalDocs-comment">
+                  <span class="icon-sms custom-icon" style="font-size: 18px;position: relative;top: 4px;"></span>
+                  {{order.comments}}
+                </div>
               </div>
             </div>
           </div>
@@ -141,13 +150,13 @@
     </div>
     <div class="col-xs-12 col-md-3">
       <select class="form-control input-lg" (change)="applyFilters()" [(ngModel)]="condition" style="margin-top: 5px;">
-        <option value="" disabled>Condición</option>
+        <option value="" disabled>Asesor</option>
         <option *ngFor="let condition of filteredConditions" [value]="condition">{{condition}}</option>
       </select>
     </div>
     <div class="col-xs-12 col-md-3">
       <select class="form-control input-lg" (change)="applyFilters()" [(ngModel)]="stade" style="margin-top: 5px;">
-        <option value="" disabled>Estado</option>
+        <option value="" disabled>Fecha</option>
         <option *ngFor="let stade of filteredStades" [value]="stade">{{stade}}</option>
       </select>
     </div>
@@ -184,7 +193,8 @@
             <p><b><span class="icon-user" style="font-size: 18px;"></span> Cliente:</b> {{group.client.cardCode}}</p>
           </div>
           <div class="col-sm-6 col-xs-6 text-right" *ngIf="group.client.discOrder > 0">
-            <p style="color: #da0611;"><b><span class="icon-alert-triangle" style="font-size: 18px;">
+            <p style="color: #da0611;"><b><span class="icon-alert-triangle"
+                  style="font-size: 18px; position: relative; top: 4px;">
                 </span>Descuento</b>
             </p>
           </div>

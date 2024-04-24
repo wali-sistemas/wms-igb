@@ -14,14 +14,57 @@
     </div>
   </div>
 </div>
+<!-- Modal registro diario -->
+<div class="modal fade" id="modalActive" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+            aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="exampleModalLabel">Reporte de actividad diaria</h4>
+      </div>
+      <div class="modal-body">
+        <div class="tabgroup">
+          <button class="btn btn-default col-md-6 col-xs-6" [class.btn-danger]="tabActive"
+            (click)="setInactives()">Inactivos ({{markersWithQuantityZero.length}})</button>
+          <button class="btn btn-default col-md-6 col-xs-6" [class.btn-danger]="tabInactive"
+            (click)="setAssets()">Activos ({{markersWithQuantityGreaterThanZero.length}})</button>
+        </div>
+        <ul class="list-group">
+          <li class="list-group-item" *ngFor="let marker of activeList">
+            <img class="avatar"
+              [src]="'https://wali.igbcolombia.com/api/shared/images/users/seller/' + marker.card + '.jpg'" />
+            <span class="person-name">{{marker.name}}</span>
+          </li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Titulo - icono -->
 <div class="container content">
   <div class="row">
-    <div class="col-xs-10">
-      <h3>Geolocalizador</h3>
+    <div class="col-md-8 col-xs-8">
+      <h3>Geolocalización</h3>
     </div>
-    <div class="col-xs-2">
+    <div class="col-md-2 col-xs-2" *ngIf="!email">
       <div class="reload">
-        <span class="icon-refresh" (click)="clear()" title="Recargar Facturas"></span>
+        <span class="glyphicon glyphicon-phone" (click)="openModal()" style="font-size: 32px;"
+          title="Ver marcación diaria"></span>
+      </div>
+    </div>
+    <div class="col-md-2 col-xs-2" *ngIf="!email">
+      <div class="reload">
+        <span class="icon-refresh" (click)="clear()" title="Refrescar busqueda"></span>
+      </div>
+    </div>
+    <div class="col-md-4 col-xs-4" *ngIf="email">
+      <div class="reload">
+        <span class="glyphicon glyphicon-phone" (click)="openModal()" style="font-size: 32px;"
+          title="Refrescar busqueda"></span>
       </div>
     </div>
   </div>

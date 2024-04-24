@@ -4,6 +4,7 @@ import { UserService } from '../../services/user.service';
 import { BusinessPartnerService } from '../../services/business-partner.service';
 import { Advisor } from '../../models/customer/client-advisor';
 import { GeoLocation } from '../../models/geo-location';
+import { DailyMarkers } from '../../models/daily-markers-advisor';
 
 declare var $: any;
 declare var google: any;
@@ -19,6 +20,9 @@ export class GeoLocationComponent implements OnInit {
   private googleMap: any;
   private directionsService: any;
   private directionsRenderer: any;
+  public markers: DailyMarkers[] = [];
+  public markersWithQuantityZero: DailyMarkers[] = [];
+  public markersWithQuantityGreaterThanZero: DailyMarkers[] = [];
   public advisors: Advisor[] = [];
   public filteredAdvisors: Advisor[] = [];
   public locations: GeoLocation[] = [];
@@ -42,6 +46,10 @@ export class GeoLocationComponent implements OnInit {
   public adviserCard: number = 0;
   public dateValue: Date;
   public enabledbutton: boolean = true;
+  public tabActive: boolean = true;
+  public tabInactive: boolean = false;
+  public email: string;
+  public activeList = this.markersWithQuantityZero;
 
   constructor(private _router: Router, private _userService: UserService, private _businessPartnerService: BusinessPartnerService) { }
 
@@ -52,8 +60,9 @@ export class GeoLocationComponent implements OnInit {
     }
     this.selectedCompany = this.identity.selectedCompany;
     this.initializeMap();
-    let email = this.identity.email.includes('telemer') ? this.identity.email : '*';
-    this.getListOfAdvisors(email);
+    this.email = this.identity.email.includes('telemer') ? this.identity.email : '*';
+    this.getListOfAdvisors(this.email);
+    this.getDailyMarks(this.selectedCompany);
   }
 
   private redirectIfSessionInvalid(error) {
@@ -62,6 +71,22 @@ export class GeoLocationComponent implements OnInit {
       localStorage.removeItem('igb.selectedCompany');
       this._router.navigate(['/']);
     }
+  }
+
+  public openModal() {
+    $('#modalActive').modal('show');
+  }
+
+  public setInactives() {
+    this.activeList = this.markersWithQuantityZero;
+    this.tabActive = true;
+    this.tabInactive = false;
+  }
+
+  public setAssets() {
+    this.activeList = this.markersWithQuantityGreaterThanZero;
+    this.tabActive = false;
+    this.tabInactive = true;
   }
 
   private initializeMap() {
@@ -120,6 +145,27 @@ export class GeoLocationComponent implements OnInit {
       }
     );
     $('#modal_transfer_process').modal('hide');
+  }
+
+  getDailyMarks(selectedCompany: string) {
+    this._businessPartnerService.listDailyMarks(selectedCompany).subscribe(
+      response => {
+        response.forEach(item => {
+          const marker = new DailyMarkers(item[0], item[1], item[2], item[3]);
+          const quantity = parseInt(marker.quantity);
+          if (quantity === 0) {
+            this.markersWithQuantityZero.push(marker);
+          } else {
+            this.markersWithQuantityGreaterThanZero.push(marker);
+          }
+        });
+      },
+      error => {
+        console.error('Error al obtener la ubicación:', error);
+        this.changeLocationErrorMessage = 'Error al obtener la lista de asesores';
+        this.redirectIfSessionInvalid(error);
+      }
+    );
   }
 
   public getListOfAdvisors(email: string) {
