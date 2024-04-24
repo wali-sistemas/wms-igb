@@ -50,21 +50,15 @@
     <div class="col-md-8 col-xs-8">
       <h3>Geolocalización</h3>
     </div>
-    <div class="col-md-2 col-xs-2" *ngIf="!email">
+    <div class="col-md-2 col-xs-2">
       <div class="reload">
         <span class="glyphicon glyphicon-phone" (click)="openModal()" style="font-size: 32px;"
           title="Ver marcación diaria"></span>
       </div>
     </div>
-    <div class="col-md-2 col-xs-2" *ngIf="!email">
+    <div class="col-md-2 col-xs-2">
       <div class="reload">
         <span class="icon-refresh" (click)="clear()" title="Refrescar busqueda"></span>
-      </div>
-    </div>
-    <div class="col-md-4 col-xs-4" *ngIf="email">
-      <div class="reload">
-        <span class="glyphicon glyphicon-phone" (click)="openModal()" style="font-size: 32px;"
-          title="Refrescar busqueda"></span>
       </div>
     </div>
   </div>
