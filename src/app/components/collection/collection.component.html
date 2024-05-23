@@ -18,11 +18,19 @@
         </h4>
       </div>
     </div>
-    <div class="col-xs-12 col-md-6">
+    <div *ngIf="selectedCompany!=='VELEZ'" class=" col-xs-12 col-md-6">
       <div class="box" [routerLink]="['/collection/customer']">
         <span class="icon-add-employee" style="font-size: 154px; position: relative; top: 12px;"></span>
         <h4 class="title">
           Módulo de clientes
+        </h4>
+      </div>
+    </div>
+    <div *ngIf="selectedCompany=='VELEZ'" class="col-xs-12 col-md-6">
+      <div class="box" [routerLink]="['/collection/customer-pn']">
+        <span class="icon-add-employee" style="font-size: 154px; position: relative; top: 12px;"></span>
+        <h4 class="title">
+          Módulo de Persona Natural
         </h4>
       </div>
     </div>

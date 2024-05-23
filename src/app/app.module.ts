@@ -49,6 +49,7 @@ import { ClientRedplasComponent } from './components/event-feria/client-redplas/
 import { FidelityProgramComponent } from './components/fidelity-program/fidelity-program.component';
 import { RedeemCapsComponent } from './components/fidelity-program/redeem-caps/redeem-caps.component';
 import { CustomerComponent } from './components/collection/customer/customer.component';
+import { CustomerPnComponent } from './components/collection/customer/customer-pn.component';
 import { GeoLocationComponent } from './components/geo-location/geo-location.component';
 import { from } from 'rxjs/observable/from';
 
@@ -99,6 +100,7 @@ import { from } from 'rxjs/observable/from';
     FidelityProgramComponent,
     RedeemCapsComponent,
     CustomerComponent,
+    CustomerPnComponent,
     GeoLocationComponent
   ],
   imports: [
