@@ -37,6 +37,11 @@ export class BusinessPartnerService {
       .map(res => res.json());
   }
 
+  public createClientPn(clientData) {
+    return this._http.post(this.urlmanager + 'motorepuesto/create-customer', clientData, { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
+
   public searchClient(company: string, customer: string) {
     return this._http.get(this.urlmanager + 'pedbox/customer-data/' + company + '?cardcode=' + customer, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());

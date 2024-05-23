@@ -150,13 +150,13 @@
     </div>
     <div class="col-xs-12 col-md-3">
       <select class="form-control input-lg" (change)="applyFilters()" [(ngModel)]="condition" style="margin-top: 5px;">
-        <option value="" disabled>Asesor</option>
+        <option value="" disabled>Condición</option>
         <option *ngFor="let condition of filteredConditions" [value]="condition">{{condition}}</option>
       </select>
     </div>
     <div class="col-xs-12 col-md-3">
       <select class="form-control input-lg" (change)="applyFilters()" [(ngModel)]="stade" style="margin-top: 5px;">
-        <option value="" disabled>Fecha</option>
+        <option value="" disabled>Estado</option>
         <option *ngFor="let stade of filteredStades" [value]="stade">{{stade}}</option>
       </select>
     </div>
