@@ -30,7 +30,6 @@ export class CustomerPnComponent {
   public changeCustomerPNMessage: string;
   public changeCustomerPNErrorMessage: string;
   public clientPn: PersonNatural = new PersonNatural();
-  private initialClient: PersonNatural;
   public municipalities: Municipality[] = [];
   public departments: Department[] = [];
   public filteredMunicipalities: Municipality[] = [];
@@ -75,6 +74,7 @@ export class CustomerPnComponent {
       },
       error => {
         console.error('Error al obtener la lista de municipios:', error);
+        this.redirectIfSessionInvalid(error);
       }
     );
   }
@@ -87,6 +87,7 @@ export class CustomerPnComponent {
       },
       error => {
         console.error('Error al obtener la lista de municipios:', error);
+        this.redirectIfSessionInvalid(error);
       }
     );
   }
@@ -171,7 +172,19 @@ export class CustomerPnComponent {
 
   // Vaciar formulario y reiniciar objeto cliente
   public clear() {
-    this.clientPn = new PersonNatural;
+    this.clientPn.codDepartamento = '';
+    this.clientPn.codMunicipio = '';
+    this.clientPn.firstname = '';
+    this.clientPn.lastname1 = '';
+    this.clientPn.lastname2 = '';
+    this.clientPn.document = '';
+    this.clientPn.mail = '';
+    this.clientPn.phone = '';
+    this.clientPn.cellular = '';
+    this.clientPn.codDepartamento = '';
+    this.clientPn.codMunicipio = '';
+    this.clientPn.address = '';
+    this.clientPn.priceList = '';
     this.camposCompletados = 0;
     this.changeCustomerPNErrorMessage = '';
     this.changeCustomerPNMessage = '';
