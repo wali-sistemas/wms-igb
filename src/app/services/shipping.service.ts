@@ -21,8 +21,8 @@ export class ShippingService {
       .map(res => res.json());
   }
 
-  public createGuiaSaferbo(ApiSaferboDTO) {
-    return this._http.post(this.url + 'shipping/add-guia-saferbo', ApiSaferboDTO, { headers: new IGBHeaders().loadHeaders() })
+  public createGuiaSaferbo(ApiSaferboDTO, invoices) {
+    return this._http.post(this.url + 'shipping/add-guia-saferbo/' + invoices, ApiSaferboDTO, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 
