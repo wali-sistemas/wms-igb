@@ -414,7 +414,7 @@ export class ShippingComponent implements OnInit {
 
     switch (this.selectInvoicesPack[0].transport) {
       case 'RAPIDO OCHOA':
-        const rapidoochoaDTO = {
+        const GuiaRapidoochoaDTO = {
           "cdPoblacionOrigen": "5001000",//Medellin
           "cdPoblacionDestino": poblacionDestino,
           "nmPesoDeclarado": this.pesoPack,
@@ -433,7 +433,7 @@ export class ShippingComponent implements OnInit {
           "nmFormaDePago": "CRÉDITO"
         }
 
-        this._shippingService.createGuiaRapidoochoa(rapidoochoaDTO, invoices).subscribe(
+        this._shippingService.createGuiaRapidoochoa(GuiaRapidoochoaDTO, invoices).subscribe(
           response => {
             if (response.code == 0) {
               //Registramos shipping en tablas temporales
@@ -617,6 +617,46 @@ export class ShippingComponent implements OnInit {
         }
 
         this._shippingService.createGuiaGoPack(ApiGoPackDTO, invoices).subscribe(
+          response => {
+            if (response.code == 0) {
+              //Registramos shipping en tablas temporales
+              this.addShipping();
+
+              this.urlGuia = response.content[0];
+              this.urlRotulo = response.content[1];
+
+              $('#modal_transfer_process').modal('hide');
+              $('#print_document').modal('show');
+            } else {
+              this.warningMessage = response.content;
+              $('#modal_transfer_process').modal('hide');
+            }
+          }, error => {
+            console.error(error);
+            this.redirectIfSessionInvalid(error);
+          }
+        );
+        break;
+      case 'SAFERBO':
+        const ApiSaferboDTO = {
+          "observacion": "Tipo Empaque: " + this.selectedTypePack,
+          "factura": invoices,
+          "peso": this.pesoPack,
+          "volumen": 16,
+          "vlrDecl": this.valorDeclPack,
+          "codProducto": "",
+          "cant": this.qtyPack,
+          "descripcion": this.selectedTypePack,
+          //Destino
+          "tipoDocumentod": "1",
+          "documentod": this.selectInvoicesPack[0].cardCode.replace('C', ''),
+          "nombred": this.selectInvoicesPack[0].cardName,
+          "direcciond": this.addressReceive,
+          "telefonod": "4442025",
+          "codCiudadd": this.cityReceive + '-' + this.departamentReceive + '-' + this.selectInvoicesPack[0].codCity + "000"
+        }
+
+        this._shippingService.createGuiaSaferbo(ApiSaferboDTO, invoices).subscribe(
           response => {
             if (response.code == 0) {
               //Registramos shipping en tablas temporales
