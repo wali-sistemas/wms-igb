@@ -462,7 +462,7 @@ export class ShippingComponent implements OnInit {
           "destino": this.selectedCityDest,
           "unidades": this.qtyPack,
           "kilos": this.pesoPack,
-          "volumen": localStorage.getItem('igb.selectedCompany') == 'IGB' ? 16 : 10,
+          "volumen": localStorage.getItem('igb.selectedCompany') == 'IGB' ? 13 : 10,
           "vlrmcia": this.valorDeclPack,
           "obs": "Tipo Empaque: " + this.selectedTypePack,
           "nitr": localStorage.getItem('igb.selectedCompany') == 'IGB' ? "811011909" : "900255414",
