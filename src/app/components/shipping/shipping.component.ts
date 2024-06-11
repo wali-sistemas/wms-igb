@@ -652,7 +652,7 @@ export class ShippingComponent implements OnInit {
           "documentod": this.selectInvoicesPack[0].cardCode.replace('C', ''),
           "nombred": this.selectInvoicesPack[0].cardName,
           "direcciond": this.addressReceive,
-          "telefonod": "4442025",
+          "telefonod": this.selectInvoicesPack[0].phone,
           "codCiudadd": this.cityReceive + '-' + this.departamentReceive + '-' + this.selectInvoicesPack[0].codCity + "000"
         }
 
