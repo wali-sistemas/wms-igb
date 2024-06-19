@@ -54,18 +54,17 @@
         <h4>Pendientes por picking list express</h4>
       </div>
       <div class="modal-body">
-        <select class="form-control input-lg" [(ngModel)]="selectedDelivery" name="selectedDelivery"
+        <select id="selectOrders" class="form-control" multiple data-selected-text-format="count > 1"
+          data-live-search="true" [(ngModel)]="selectedDelivery" name="selectedDelivery"
           [class.required-field]="!validSelectedDelivery" required>
           <option style="display:none" disabled value="">Selecciona una entrega</option>
-          <option *ngFor="let delivery of deliveries" value="{{delivery[0]}}">Ent({{delivery[0]}}) Ord({{delivery[1]}})
-            {{delivery[2]}}
-          </option>
         </select>
         <br />
-        <select name="selectedUser" class="form-control input-lg" [(ngModel)]="selectedUser" name="selectedUser"
+        <br />
+        <select name="selectedUser" class="form-control" [(ngModel)]="selectedUser" name="selectedUser"
           [class.required-field]="!validSelectedUser" required>
           <option style="display:none" disabled value="">Seleccione un empleado</option>
-          <option *ngFor="let employee of assignableUsers" [value]="employee.username">{{employee.completeName}}
+          <option *ngFor="let employee of assignableUsersCedi" [value]="employee.username">{{employee.completeName}}
           </option>
         </select>
       </div>
@@ -133,10 +132,11 @@
 <div class="container content" *ngIf="!errorMessagePickingCarts">
   <div class="row">
     <div class="col-xs-12">
-      <h3>Picking List Express
-        <span *ngIf="selectedDelivery!=''">({{selectedDelivery}})</span>
+      <h3>Picking List Express <br />
+        <span *ngIf="selectedDelivery!=''" style="font-size: 16px;">({{selectedDelivery}})</span>
         <span *ngIf="activeBtnConfig" class="icon-settings pull-right cursor-pointer" (click)="listOpenDelivery()"
-          data-toggle="modal" data-target="#modal_assign_delivery" title="Seleccionar Entrega"></span>
+          data-toggle="modal" data-target="#modal_assign_delivery" title="Seleccionar Entrega"
+          style="position: relative;top: -23px;"></span>
       </h3>
     </div>
     <div class="col-xs-12" *ngIf="!activeBtnConfig">
@@ -214,7 +214,6 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
   <br />
