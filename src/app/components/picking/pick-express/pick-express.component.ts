@@ -21,7 +21,7 @@ export class PickExpressComponent implements OnInit {
   public errorMessageBinLocation: string = '';
   public errorMessageNextItem: string = '';
   public confirmBinCode: string = '';
-  public assignableUsers: Array<any>;
+  public assignableUsersCedi: Array<any>;
   public selectedUser: string = '';
   public validSelectedDelivery: boolean = true;
   public validSelectedUser: boolean = true;
@@ -46,11 +46,13 @@ export class PickExpressComponent implements OnInit {
   public nextCountRow: number;
   public validNextObservation: boolean = true;
   public position: number = 1;
+  public selectedDeliveryMultiple: string = '';
 
   constructor(private _userService: UserService, private _router: Router, private _deliveryService: DeliveryService) {
   }
 
   ngOnInit() {
+    $('#selectOrders').selectpicker();
     this.identity = this._userService.getItentity();
     if (this.identity === null) {
       this._router.navigate(['/']);
@@ -72,11 +74,7 @@ export class PickExpressComponent implements OnInit {
     this._deliveryService.getNextPickingItem(empIdSet, deliveryOrder, position).subscribe(
       response => {
         if (response.code == 1) {
-          this.warningMessageNoOrders = response.content;
-          this.resetForm();
-          this.activeBtnConfig = true;
-          this.selectedDelivery = '';
-          this.selectedUser = '';
+          window.location.reload();
         } else if (response.code == 0) {
           this.detailItemsDelivery = response.content;
           this.nextBinLocationCode = this.detailItemsDelivery[0].binCode;
@@ -109,6 +107,20 @@ export class PickExpressComponent implements OnInit {
     this._deliveryService.listOpenDelivery().subscribe(
       response => {
         this.deliveries = response.content;
+
+        this.deliveries.forEach((opt: string, index: number) => {
+          const truncatedText = opt.toString().length > 30 ? opt.toString().substring(0, 30) + '...|' : opt.toString();
+          $('#selectOrders').append($('<option>', {
+            value: opt.toString().substring(0, 6),
+            text: truncatedText.toString().replace(',', ' ').replace(',', ' ')
+          }));
+        });
+        $('#selectOrders').selectpicker('refresh');
+
+        $('#selectOrders').on('change', () => {
+          const obj = $("#selectOrders option:selected").text().replace(',', ' ').split('|');
+          this.selectedDeliveryMultiple = obj.filter(item => item.trim() !== '');
+        });
       },
       error => {
         this.redirectIfSessionInvalid(error);
@@ -121,6 +133,7 @@ export class PickExpressComponent implements OnInit {
     this.errorMessageBinLocation = '';
     this.errorMessageNextItem = '';
     this.errorMessagePickingCarts = '';
+    this.selectedDelivery = this.selectedDeliveryMultiple;
 
     $('#modal_assign_delivery').modal('hide');
     $('#modal_transfer_process').modal({
@@ -137,12 +150,17 @@ export class PickExpressComponent implements OnInit {
       return;
     }
 
-    this._deliveryService.getAssignEmployeePickListExpress(this.selectedDelivery, this.selectedUser).subscribe(
+    this._deliveryService.getAssignEmployeePickListExpress(this.selectedUser, this.selectedDelivery).subscribe(
       response => {
         if (response.content == true) {
-          this.nextItemToPickListExpress(this.selectedUser, this.selectedDelivery, 1);
-          this.activeBtnConfig = false;
-          document.getElementById("location").style.display = "block";
+          if (this.identity.username == this.selectedUser) {
+            this.nextItemToPickListExpress(this.selectedUser, this.selectedDelivery, 1);
+            this.activeBtnConfig = false;
+            document.getElementById("location").style.display = "block";
+          } else {
+            this.warningMessageNoOrders = "El usuario es diferente al que se le asignó la operación.";
+            this.selectedDelivery = '';
+          }
         } else {
           this.selectedDelivery = '';
           this.selectedUser = '';
@@ -201,10 +219,14 @@ export class PickExpressComponent implements OnInit {
   }
 
   public listAssignableEmployees() {
-    this.assignableUsers = new Array<any>();
+    this.assignableUsersCedi = new Array<any>();
     this._userService.listUsersByGroup('WMS').subscribe(
       response => {
-        this.assignableUsers = response;
+        for (let user of response) {
+          if (user.organization.includes("Cedi")) {
+            this.assignableUsersCedi.push(user);
+          }
+        }
         this.warningMessageNoOrders = "No se encontraron entregas asignadas.";
       }, error => {
         console.error(error);
@@ -215,9 +237,13 @@ export class PickExpressComponent implements OnInit {
 
   public cleanDataDelivery() {
     this.selectedDelivery = '';
+    this.selectedDeliveryMultiple = '';
     this.selectedUser = '';
     this.validSelectedDelivery = true;
     this.validSelectedUser = true;
+    this.errorMessagePickingCarts = '';
+    this.warningMessageNoOrders = '';
+    this.errorMessageNextItem = '';
   }
 
   public getBinLocation(bin) {
@@ -247,7 +273,7 @@ export class PickExpressComponent implements OnInit {
         show: true
       });
     } else {
-      this.nextObservation = 'OK';
+      this.nextObservation = '';
       this.confirmItemQuantity();
     }
   }
