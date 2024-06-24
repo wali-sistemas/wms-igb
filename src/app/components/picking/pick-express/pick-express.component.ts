@@ -274,7 +274,7 @@ export class PickExpressComponent implements OnInit {
         show: true
       });
     } else {
-      this.nextObservation = '';
+      this.nextObservation = 'OK';
       this.confirmItemQuantity();
     }
   }
