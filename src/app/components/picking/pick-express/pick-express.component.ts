@@ -267,13 +267,14 @@ export class PickExpressComponent implements OnInit {
 
   public validatePickedQuantity() {
     if (this.nextItemQuantity != this.pickedItemQuantity) {
+      this.nextObservation = '';
       $('#modal_confirm_quantity_diff').modal({
         backdrop: 'static',
         keyboard: false,
         show: true
       });
     } else {
-      this.nextObservation = '';
+      this.nextObservation = 'OK';
       this.confirmItemQuantity();
     }
   }
