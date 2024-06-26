@@ -36,7 +36,8 @@ export class OrdersSapComponent implements OnInit {
   public selectedOrder: number;
   public processDeliveryStatus: string = 'none';
   public processPrintLabelsStatus: string = 'none';
-  public docEntryDelivery: number;
+  public processPrintDeliveryStatus: string = 'none';
+  public docNumDelivery: number;
   public orderPickingExpress: string = '';
   public orderPickingExpressMDL: string = '';
   public deliveryErrorMessage: string = '';
@@ -131,7 +132,10 @@ export class OrdersSapComponent implements OnInit {
         } else {
           console.error('No se encontraron empleados en el directorio activo para asignar la orden');
         }
-      }, error => { console.error(error); this.redirectIfSessionInvalid(error); }
+      }, error => {
+        console.error(error);
+        this.redirectIfSessionInvalid(error);
+      }
     );
   }
 
@@ -152,7 +156,7 @@ export class OrdersSapComponent implements OnInit {
     };
 
     this._salesOrdersService.assignOrders(assignment).subscribe(
-      result => {
+      response => {
         $('#modal_users').modal('hide');
         this.listOpenOrders();
         this.selectedUser = '';
@@ -172,7 +176,10 @@ export class OrdersSapComponent implements OnInit {
           this.listOpenOrders();
           this.selectedUser = '';
         },
-        error => { console.error(error); }
+        error => {
+          console.error(error);
+          this.redirectIfSessionInvalid(error);
+        }
       );
     }
   }
@@ -215,19 +222,20 @@ export class OrdersSapComponent implements OnInit {
     this.availableStock = new Array<any>();
     $('#order_status').modal('show');
     this._salesOrdersService.listAvailableStock(orderNumber).subscribe(
-      result => {
+      response => {
         this.loadingAvailableStock = false;
-        for (let i = 0; i < result.content.length; i++) {
-          if (result.content[i][6] < result.content[i][1]) {
+        for (let i = 0; i < response.content.length; i++) {
+          if (response.content[i][6] < response.content[i][1]) {
             this.allStockAvailable = false;
             break;
           }
         }
-        this.availableStock = result.content;
+        this.availableStock = response.content;
       },
       error => {
         this.loadingAvailableStock = false;
         console.error(error);
+        this.redirectIfSessionInvalid(error);
       }
     );
   }
@@ -239,16 +247,19 @@ export class OrdersSapComponent implements OnInit {
         this.listOpenOrders();
         this.selectedOrder = null;
       },
-      error => { console.error(error); }
+      error => {
+        console.error(error);
+        this.redirectIfSessionInvalid(error);
+      }
     );
   }
 
-  public printerPick(isGroup) {
+  public printPickingExpressDocument(isGroup: boolean) {
     this.multiPickingErrorMessage = '';
     this.processPrintLabelsStatus = 'inprogress';
 
     let printReportDTO = {
-      "id": isGroup ? 0 : this.docEntryDelivery,
+      "id": isGroup ? 0 : this.docNumDelivery,
       "copias": 1,
       "documento": isGroup ? "pickingExpressGroup" : "pickingExpress",
       "companyName": this.identity.selectedCompany,
@@ -267,6 +278,7 @@ export class OrdersSapComponent implements OnInit {
         } else {
           this.processPrintLabelsStatus = 'error';
         }
+        this.printDeliveryDocument(this.docNumDelivery);
         $('#modal_transfer_process').modal('hide');
       },
       error => {
@@ -274,6 +286,36 @@ export class OrdersSapComponent implements OnInit {
         console.error('Ocurrio un error al generar el doc de pickinExpress.', error);
         this.redirectIfSessionInvalid(error);
         $('#modal_transfer_process').modal('hide');
+      }
+    );
+  }
+
+  public printDeliveryDocument(docNum: number) {
+    let printReportDTO = {
+      "id": docNum,
+      "copias": 0,
+      "documento": "delivery",
+      "companyName": this.identity.selectedCompany,
+      "origen": "S",
+      "imprimir": true,
+      "filtro": "Entrega"
+    }
+    this._reportService.generateReport(printReportDTO).subscribe(
+      response => {
+        if (response.code == 0) {
+          this.processPrintLabelsStatus = 'done';
+        } else if (response.code == -2) {
+          this.multiPickingErrorMessage = response.content;
+          this.processPrintLabelsStatus = 'error';
+        } else {
+          this.processPrintLabelsStatus = 'error';
+        }
+        $('#modal_transfer_process').modal('hide');
+      },
+      error => {
+        console.error('Ocurrio un error al guardar el documento de entrega.', error);
+        $('#modal_transfer_process').modal('hide');
+        this.redirectIfSessionInvalid(error);
       }
     );
   }
@@ -296,10 +338,6 @@ export class OrdersSapComponent implements OnInit {
       if (Array.from(this.selectedOrders.entries())[0][1].includes("-")) {
         this.orderPickingExpressMDL = Array.from(this.selectedOrders.entries())[0][1].slice(-6);
       }
-
-      console.log('Orden de SAP=', this.orderPickingExpress);
-      console.log('Orden de MDL=', this.orderPickingExpressMDL);
-
       //Validar si la orden de modula esta aprobada y autorizada por el area administrativa.
       if (this.orderPickingExpressMDL.length > 0) {
         this._salesOrdersService.validateOrderAuthorized(this.orderPickingExpressMDL).subscribe(
@@ -351,13 +389,10 @@ export class OrdersSapComponent implements OnInit {
       "orderMDL": this.orderPickingExpressMDL
     }
 
-    console.log('DTO para crear Entrega=', pickingExpressOrderDTO);
-
-
     this._deliveryService.createPickingExpress(pickingExpressOrderDTO).subscribe(
       response => {
         if (response.code == 0) {
-          this.docEntryDelivery = response.content;
+          this.docNumDelivery = response.content;
           this.processDeliveryStatus = 'done';
         } else {
           this.processDeliveryStatus = 'error';
@@ -384,7 +419,7 @@ export class OrdersSapComponent implements OnInit {
     this.allStockAvailable = true;
     this.loadingAvailableStock = false;
     this.selectedOrder = 0;
-    this.docEntryDelivery = 0;
+    this.docNumDelivery = 0;
     this.orderPickingExpress = '';
     this.orderPickingExpressMDL = '';
     this.deliveryErrorMessage = '';
@@ -410,6 +445,7 @@ export class OrdersSapComponent implements OnInit {
         $('#modal_transfer_process').modal('hide');
         console.error("Ocurrio un error al reiniciar los sesion Id", error);
         this.deliveryErrorMessage = "Ocurrio un error al reiniciar los sesion Id";
+        this.redirectIfSessionInvalid(error);
       }
     );
   }

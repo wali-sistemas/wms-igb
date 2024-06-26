@@ -501,7 +501,7 @@ export class PackingComponent implements OnInit {
     });
     if (this.orderNumber != null) {
       let printReportDTO = {
-        "id": this.orderNumber, "copias": 0, "documento": documento, "companyName": this.identity.selectedCompany, "origen": origen, "imprimir": false
+        "id": this.orderNumber, "copias": 0, "documento": documento, "companyName": this.identity.selectedCompany, "origen": origen, "imprimir": false, "filtro": "Orden"
       }
       this._reportService.generateReport(printReportDTO).subscribe(
         response => {

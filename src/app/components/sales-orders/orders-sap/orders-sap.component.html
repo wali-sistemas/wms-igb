@@ -126,7 +126,7 @@
             <span *ngIf="processDeliveryStatus === 'done'" class="glyphicon glyphicon-ok"></span>
             <span *ngIf="processDeliveryStatus === 'error'" class="glyphicon glyphicon-exclamation-sign"></span>
             <span class="status-text">Creando entrega express </span><i *ngIf="processDeliveryStatus === 'done'"
-              style="font-size: 12px; color: #da0611;">({{docEntryDelivery}})</i>
+              style="font-size: 12px; color: #da0611;">({{docNumDelivery}})</i>
           </div>
         </div>
         <div class="row">
@@ -136,15 +136,25 @@
             <span *ngIf="processPrintLabelsStatus === 'done'" class="glyphicon glyphicon-ok"></span>
             <span *ngIf="processPrintLabelsStatus === 'warn'" class="glyphicon glyphicon-warning-sign"></span>
             <span *ngIf="processPrintLabelsStatus === 'error'" class="glyphicon glyphicon-exclamation-sign"></span>
-            <span class="status-text">Impresión de documento</span>
+            <span class="status-text">Impresión picking express</span>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12 text-center">
+            <span *ngIf="processPrintDeliveryStatus === 'none'" class="glyphicon glyphicon-minus-sign"></span>
+            <img *ngIf="processPrintDeliveryStatus === 'inprogress'" height="22" src="/assets/images/loading.gif">
+            <span *ngIf="processPrintDeliveryStatus === 'done'" class="glyphicon glyphicon-ok"></span>
+            <span *ngIf="processPrintDeliveryStatus === 'warn'" class="glyphicon glyphicon-warning-sign"></span>
+            <span *ngIf="processPrintDeliveryStatus === 'error'" class="glyphicon glyphicon-exclamation-sign"></span>
+            <span class="status-text">Impresión entrega</span>
           </div>
         </div>
         <div class="modal-body">
           <div class="row">
             <div class="col-xs-12 text-center">
-              <div *ngIf="processDeliveryStatus === 'done'" class="box-printer" (click)="printerPick(false)">
+              <div *ngIf="processDeliveryStatus === 'done'" class="box-printer" (click)="printPickingExpressDocument(false)">
                 <span class="icon-printer" style="font-size: 140px"></span>
-                <h4 class="title">Picking</h4>
+                <h4 class="title">Documentos</h4>
               </div>
             </div>
           </div>
@@ -219,15 +229,12 @@
     </div>
   </div>
 </div>
-
 <button *ngIf="selectedOrders.size == 1 && pickingExpressModuleAccesible" type="button" class="express-picking"
   id="btnExpressPicking" data-toggle="modal" data-target="#confirmation_picking" title="Picking Express">
   <span class="icon-express" style="font-size: 40px;"></span>
 </button>
-
 <button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span
     class="icon-chevron-up"></span></button>
-
 <div class="container content">
   <div class="row">
     <div class="col-xs-10">
