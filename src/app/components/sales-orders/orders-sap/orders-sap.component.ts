@@ -43,7 +43,6 @@ export class OrdersSapComponent implements OnInit {
   public deliveryErrorMessage: string = '';
   public pickExpressErrorMessage: string = '';
   public multiPickingErrorMessage: string = '';
-  public orderNumber: string = '';
   public selectedCompany: string;
 
   constructor(private _userService: UserService,
@@ -264,7 +263,7 @@ export class OrdersSapComponent implements OnInit {
       "documento": isGroup ? "pickingExpressGroup" : "pickingExpress",
       "companyName": this.identity.selectedCompany,
       "origen": "S",
-      "filtro": isGroup ? this.orderNumber : null,
+      "filtro": isGroup ? this.docNumDelivery : null,
       "imprimir": true
     }
 
@@ -409,7 +408,6 @@ export class OrdersSapComponent implements OnInit {
 
   public clearOrder() {
     this.filter = '';
-    this.orderNumber = '';
     this.processDeliveryStatus = 'none';
     this.processPrintLabelsStatus = 'none';
     this.pickExpressErrorMessage = '';
@@ -425,7 +423,6 @@ export class OrdersSapComponent implements OnInit {
     this.orderPickingExpressMDL = '';
     this.deliveryErrorMessage = '';
     this.multiPickingErrorMessage = '';
-    this.orderNumber = '';
     this.listOpenOrders();
   }
 
