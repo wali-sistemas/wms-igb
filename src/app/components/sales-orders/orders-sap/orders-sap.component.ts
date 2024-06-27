@@ -291,6 +291,7 @@ export class OrdersSapComponent implements OnInit {
   }
 
   public printDeliveryDocument(docNum: number) {
+    this.processPrintDeliveryStatus = 'inprogress';
     let printReportDTO = {
       "id": docNum,
       "copias": 0,
@@ -303,12 +304,12 @@ export class OrdersSapComponent implements OnInit {
     this._reportService.generateReport(printReportDTO).subscribe(
       response => {
         if (response.code == 0) {
-          this.processPrintLabelsStatus = 'done';
+          this.processPrintDeliveryStatus = 'done';
         } else if (response.code == -2) {
           this.multiPickingErrorMessage = response.content;
-          this.processPrintLabelsStatus = 'error';
+          this.processPrintDeliveryStatus = 'error';
         } else {
-          this.processPrintLabelsStatus = 'error';
+          this.processPrintDeliveryStatus = 'error';
         }
         $('#modal_transfer_process').modal('hide');
       },
