@@ -181,7 +181,8 @@ export class OrdersMagnumComponent implements OnInit {
         if (ord.docNum.toLowerCase().includes(this.searchFilter)
           || ord.cardCode.toLowerCase().includes(this.searchFilter)
           || ord.cardName.toLowerCase().includes(this.searchFilter)
-          || (ord.assignedPickingEmployee && ord.assignedPickingEmployee.toLowerCase().includes(this.searchFilter))) {
+          || (ord.assignedPickingEmployee && ord.assignedPickingEmployee.toLowerCase().includes(this.searchFilter))
+          || ord.address.toLocaleLowerCase().includes(this.searchFilter)) {
           this.filteredOrders.push(ord);
         }
       }
