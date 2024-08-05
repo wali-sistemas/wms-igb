@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?qtpm1p');
-  src:  url('fonts/icomoon.eot?qtpm1p#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?qtpm1p') format('truetype'),
-    url('fonts/icomoon.woff?qtpm1p') format('woff'),
-    url('fonts/icomoon.svg?qtpm1p#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?834x1r');
+  src:  url('fonts/icomoon.eot?834x1r#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?834x1r') format('truetype'),
+    url('fonts/icomoon.woff?834x1r') format('woff'),
+    url('fonts/icomoon.svg?834x1r#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -42,6 +42,12 @@
 }
 .icon-DIADEMAS:before {
   content: "\e993";
+}
+.icon-holidays:before {
+  content: "\e9a3";
+}
+.icon-summer:before {
+  content: "\e9a4";
 }
 .icon-file:before {
   content: "\e99d";

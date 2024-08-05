@@ -39,6 +39,7 @@ import { EmployeeComponent } from './components/employee/employee.component';
 import { EmployeeCustodyComponent } from './components/employee/custody/employee-custody.component';
 import { EmployeeJobCertifyComponent } from './components/employee/jobcertify/jobcertify.component';
 import { EmployeePaystubComponent } from './components/employee/paystub/paystub.component';
+import { EmployeeVacationComponent } from './components/employee/vacation/vacation.component';
 import { FidelityProgramComponent } from './components/fidelity-program/fidelity-program.component';
 import { RedeemCapsComponent } from './components/fidelity-program/redeem-caps/redeem-caps.component';
 import { CustomerComponent } from './components/collection/customer/customer.component';
@@ -88,6 +89,7 @@ const appRoutes: Routes = [
   { path: 'employee/employee-custody', component: EmployeeCustodyComponent },
   { path: 'employee/employee-jobcertify', component: EmployeeJobCertifyComponent },
   { path: 'employee/employee-paystub', component: EmployeePaystubComponent },
+  { path: 'employee/employee-vacation', component: EmployeeVacationComponent },
   { path: 'program-fidelity', component: FidelityProgramComponent },
   { path: 'program-fidelity/redeem-caps', component: RedeemCapsComponent },
   { path: 'geo-location', component: GeoLocationComponent }
