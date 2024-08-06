@@ -18,8 +18,6 @@ import { PickingComponent } from './components/picking/picking.component';
 import { PickOrderComponent } from './components/picking/pick-order/pick-order.component';
 import { PickExpressComponent } from './components/picking/pick-express/pick-express.component';
 import { PackingComponent } from './components/packing/packing.component';
-import { InventoryRandomComponent } from './components/inventory/random/inventory-Random.component';
-import { InventoryComponent } from './components/inventory/inventory.component';
 import { ResupplyComponent } from './components/resupply/resupply.component';
 import { ReportComponent } from './components/report/report.component';
 import { ReportManagerComponent } from './components/report/manager/report.manager.component';
@@ -27,15 +25,18 @@ import { StockTransferLocationComponent } from './components/stock-transfer/loca
 import { StockTransferWarehouseComponent } from './components/stock-transfer/warehouse-transfer/stock-transfer-warehouse.component';
 import { StockTransferModulaComponent } from './components/stock-transfer/modula-transfer/stock-transfer-modula.component';
 import { TransferComponent } from './components/stock-transfer/transfer.component';
+import { InventoryRandomComponent } from './components/inventory/random/inventory-Random.component';
+import { InventoryComponent } from './components/inventory/inventory.component';
 import { StockItemComponent } from './components/inventory/stock/stock-item.component';
+import { SoulStockComponent } from './components/inventory/soul/soul-stock.component';
+import { ModulaComponent } from './components/inventory/modula/modula.component';
+import { ProductionLabelsComponent } from './components/inventory/production/production-labels.component';
 import { ClientIgbComponent } from './components/event-feria/client-igb/client-igb.component';
 import { ClientMtzComponent } from './components/event-feria/client-mtz/client-mtz.component';
 import { CheckOutComponent } from './components/packing/check-out/check-out.component';
 import { ShippingComponent } from './components/shipping/shipping.component';
 import { WithholdingTaxesComponent } from './components/withholding-taxes/withholding-taxes.component';
 import { TicketTIComponent } from './components/ticket-TI/ticket-TI.component';
-import { SoulStockComponent } from './components/inventory/soul/soul-stock.component';
-import { ModulaComponent } from './components/inventory/modula/modula.component';
 import { ReportComexComponent } from './components/report/comex/report.comex.component';
 import { CollectionComponent } from './components/collection/collection.component';
 import { ApproveComponent } from './components/collection/approve/approve.component';
@@ -90,6 +91,7 @@ import { from } from 'rxjs/observable/from';
     TicketTIComponent,
     SoulStockComponent,
     ModulaComponent,
+    ProductionLabelsComponent,
     ReportComexComponent,
     CollectionComponent,
     ApproveComponent,

@@ -51,9 +51,6 @@
   padding-right: 9px;
 }
 
-
-/* Responsive overlay */
-
 .overlay {
   height: 100%;
   width: 0;
@@ -62,15 +59,9 @@
   left: 0;
   top: 52px;
   background-color: #666;
-  /*rgb(0, 0, 0);*/
   overflow-x: hidden;
-  /* Disable horizontal scroll */
   transition: 0.5s;
-  /* 0.5 second transition effect to slide in or slide down the overlay (height or width, depending on reveal) */
 }
-
-
-/* Position the content inside the overlay */
 
 .overlay-content {
   text-align: center;
@@ -78,18 +69,13 @@
   width: 100%;
 }
 
-
-/* The navigation links inside the overlay */
-
 .overlay a {
   padding: 8px;
   text-decoration: none;
   font-size: 20px;
   color: #ddd;
   display: block;
-  /* Display block instead of inline */
   transition: 0.3s;
-  /* Transition effects on hover (color) */
 }
 
 .overlay a.active {
@@ -115,10 +101,8 @@
   font-size: 20px;
 }
 
-
-/* When you mouse over the navigation links, change their color */
-
-.overlay a:hover, .overlay a:focus {
+.overlay a:hover,
+.overlay a:focus {
   color: #da0611;
 }
 
@@ -156,11 +140,29 @@
   top: 7px;
 }
 
+#desktopNav {
+  display: none;
+}
 
-/* When the height of the screen is less than 450 pixels, change the font-size of the links and position the close button again, so they don't overlap */
+@media screen and (min-width: 1565px) {
+  #desktopNav {
+    display: block;
+  }
 
-@media screen and (max-height: 450px) {
-  .overlay a {
-    font-size: 20px
+  #mobileNav,
+  #myNav {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 1564px) {
+
+  #mobileNav,
+  #myNav {
+    display: block;
+  }
+
+  #desktopNav {
+    display: none;
   }
 }
