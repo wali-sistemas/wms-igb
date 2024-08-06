@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?qtpm1p');
-  src:  url('fonts/icomoon.eot?qtpm1p#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?qtpm1p') format('truetype'),
-    url('fonts/icomoon.woff?qtpm1p') format('woff'),
-    url('fonts/icomoon.svg?qtpm1p#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?albxxk');
+  src:  url('fonts/icomoon.eot?albxxk#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?albxxk') format('truetype'),
+    url('fonts/icomoon.woff?albxxk') format('woff'),
+    url('fonts/icomoon.svg?albxxk#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -42,6 +42,24 @@
 }
 .icon-DIADEMAS:before {
   content: "\e993";
+}
+.icon-reel:before {
+  content: "\e9a5";
+}
+.icon-toilet-roll:before {
+  content: "\e9a6";
+}
+.icon-printing:before {
+  content: "\e9a7";
+}
+.icon-paper-roll:before {
+  content: "\e9a8";
+}
+.icon-holidays:before {
+  content: "\e9a3";
+}
+.icon-summer:before {
+  content: "\e9a4";
 }
 .icon-file:before {
   content: "\e99d";

@@ -1,0 +1,142 @@
+<igb-navbar></igb-navbar>
+
+<div class="container content">
+  <h3>Generar Solicitud de Vacaciones</h3>
+  <div style="margin-top: 20px;"></div>
+  <form (submit)="generateVacation()">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card order">
+          <div class="card-body">
+            <!-- Datos del solicitante -->
+            <h4 class="section-title">Datos del Solicitante</h4>
+            <div class="form-group">
+              <label for="cedula">Cédula</label>
+              <input type="number" id="cedula" class="form-control input-lg" [(ngModel)]="cedula" name="cedula"
+                autocomplete="off" required placeholder="Ingrese su cédula" [class.required-field]="!cedula" required>
+            </div>
+            <div class="form-group">
+              <label for="empresa">Seleccione su Empresa</label>
+              <select id="empresa" class="form-control input-lg" [(ngModel)]="logo" name="empresa"
+                (ngModelChange)="onCompanyChange()" required>
+                <option value="" disabled selected>Seleccione su empresa</option>
+                <option value="1">DIGITAL</option>
+                <option value="2">INVERSUR</option>
+                <option value="3">IGB</option>
+                <option value="4">MOTOREPUESTOS</option>
+                <option value="5">MOTOZONE</option>
+                <option value="6">REDPLAS</option>
+                <option value="7">WALI</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="jefe">Seleccione su Jefe</label>
+              <select id="jefe" class="form-control input-lg" [(ngModel)]="jefeInmediato" name="jefe" required>
+                <option value="" disabled selected>Seleccione su jefe</option>
+                <option value="PAOLA COLORADO">PAOLA COLORADO</option>
+                <option value="DAVID URIBE">DAVID URIBE</option>
+                <option value="SIOMARA ARBOLEDA">SIOMARA ARBOLEDA</option>
+                <option value="EDINSON JARAMILLO">EDINSON JARAMILLO</option>
+                <option value="SANDRA CUADROS">SANDRA CUADROS</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <br>
+        <div class="card order">
+          <div class="card-body">
+            <!-- Solicitud vacaciones en dinero -->
+            <h4 class="section-title">Solicitud Vacaciones (Dinero)</h4>
+            <div class="form-group">
+              <label for="vacacionesDinero">Cantidad en Dinero</label>
+              <input type="number" id="vacacionesDinero" class="form-control input-lg" [(ngModel)]="vacacionesDinero"
+                name="vacacionesDinero" required placeholder="Ingrese el número de días solicitados en dinero"
+                [class.required-field]="!vacacionesDinero" required>
+            </div>
+          </div>
+        </div>
+        <br>
+        <div class="card order">
+          <div class="card-body">
+            <!-- Comentarios -->
+            <h4 class="section-title">Comentarios</h4>
+            <div class="form-group">
+              <textarea id="comentarios" class="form-control input-lg" [(ngModel)]="comentarios" name="comentarios"
+                placeholder="Ingrese sus comentarios" rows="4"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card order">
+          <div class="card-body">
+            <!-- Solicitud vacaciones en tiempo -->
+            <h4 class="section-title">Solicitud Vacaciones (Tiempo)</h4>
+            <div class="form-group row">
+              <div class="col-md-6">
+                <label for="fechaInicio">Fecha Inicio</label>
+                <input type="date" id="fechaInicio" class="form-control input-lg" [(ngModel)]="fechaInicio"
+                  name="fechaInicio" required [class.required-field]="!fechaInicio" required>
+              </div>
+              <div class="col-md-6">
+                <label for="fechaFin">Fecha Fin</label>
+                <input type="date" id="fechaFin" class="form-control input-lg" [(ngModel)]="fechaFin" name="fechaFin"
+                  required [class.required-field]="!fechaFin" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="fechaReintegro">Fecha Reintegro</label>
+              <input type="date" id="fechaReintegro" class="form-control input-lg" [(ngModel)]="fechaReintegro"
+                name="fechaReintegro" required [class.required-field]="!fechaReintegro" required>
+            </div>
+            <div class="form-group">
+              <label for="diasSolicitados">Cantidad en Tiempo</label>
+              <input type="number" id="diasSolicitados" class="form-control input-lg" [(ngModel)]="diasSolicitados"
+                name="diasSolicitados" required placeholder="Ingrese el número de días solicitados en tiempo"
+                [class.required-field]="!diasSolicitados" required>
+            </div>
+          </div>
+        </div>
+        <br>
+        <div class="card order">
+          <div class="card-body">
+            <!-- Uso exclusivo de gestión humana -->
+            <h4 class="section-title">Uso Exclusivo de Gestión Humana</h4>
+            <div class="form-group row">
+              <div class="col-md-6">
+                <label for="fecha1">Fecha 1</label>
+                <input type="date" id="fecha1" class="form-control input-lg" [(ngModel)]="fecha1" name="fecha1" required
+                  [class.required-field]="!fecha1" required>
+              </div>
+              <div class="col-md-6">
+                <label for="fecha2">Fecha 2</label>
+                <input type="date" id="fecha2" class="form-control input-lg" [(ngModel)]="fecha2" name="fecha2" required
+                  [class.required-field]="!fecha2" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="diasDisfrutados">Días Disfrutados de Este Periodo a la Fecha</label>
+              <input type="number" id="diasDisfrutados" class="form-control input-lg" [(ngModel)]="diasDisfrutados"
+                name="diasDisfrutados" required placeholder="Ingrese el número de días"
+                [class.required-field]="!diasDisfrutados" required>
+            </div>
+            <div class="form-group">
+              <label for="diasPendientes">Días de Vacaciones Pendientes por Disfrutar</label>
+              <input type="number" id="diasPendientes" class="form-control input-lg" [(ngModel)]="diasPendientes"
+                name="diasPendientes" required placeholder="Ingrese el número de días"
+                [class.required-field]="!diasPendientes" required>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <button type="button" class="btn btn-danger btn-lg" (click)="generateVacation()" data-toggle="modal"
+              data-target="#confirmModal">Generar</button>
+            <button type="button" class="btn btn-secondary btn-lg" (click)="cancelForm()">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+  </form>
+</div>

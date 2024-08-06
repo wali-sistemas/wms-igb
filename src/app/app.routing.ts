@@ -11,23 +11,24 @@ import { PickingComponent } from './components/picking/picking.component';
 import { PickOrderComponent } from './components/picking/pick-order/pick-order.component';
 import { PickExpressComponent } from './components/picking/pick-express/pick-express.component';
 import { PackingComponent } from './components/packing/packing.component';
-import { InventoryRandomComponent } from './components/inventory/random/inventory-Random.component';
-import { InventoryComponent } from './components/inventory/inventory.component';
 import { ResupplyComponent } from './components/resupply/resupply.component';
 import { ReportComponent } from './components/report/report.component';
 import { ReportManagerComponent } from './components/report/manager/report.manager.component';
 import { StockTransferLocationComponent } from './components/stock-transfer/location-transfer/stock-transfer-location.component';
 import { StockTransferWarehouseComponent } from './components/stock-transfer/warehouse-transfer/stock-transfer-warehouse.component';
 import { TransferComponent } from './components/stock-transfer/transfer.component';
-import { StockItemComponent } from './components/inventory/stock/stock-item.component';
 import { ClientIgbComponent } from './components/event-feria/client-igb/client-igb.component';
 import { ClientMtzComponent } from './components/event-feria/client-mtz/client-mtz.component';
 import { CheckOutComponent } from './components/packing/check-out/check-out.component';
 import { ShippingComponent } from './components/shipping/shipping.component';
 import { WithholdingTaxesComponent } from './components/withholding-taxes/withholding-taxes.component';
 import { TicketTIComponent } from './components/ticket-TI/ticket-TI.component';
+import { InventoryRandomComponent } from './components/inventory/random/inventory-Random.component';
+import { InventoryComponent } from './components/inventory/inventory.component';
+import { StockItemComponent } from './components/inventory/stock/stock-item.component';
 import { SoulStockComponent } from './components/inventory/soul/soul-stock.component';
 import { ModulaComponent } from './components/inventory/modula/modula.component';
+import { ProductionLabelsComponent } from './components/inventory/production/production-labels.component';
 import { StockTransferModulaComponent } from './components/stock-transfer/modula-transfer/stock-transfer-modula.component';
 import { ReportComexComponent } from './components/report/comex/report.comex.component';
 import { OrdersMagnumComponent } from './components/sales-orders/orders-magnum/orders-magnum.component';
@@ -39,6 +40,7 @@ import { EmployeeComponent } from './components/employee/employee.component';
 import { EmployeeCustodyComponent } from './components/employee/custody/employee-custody.component';
 import { EmployeeJobCertifyComponent } from './components/employee/jobcertify/jobcertify.component';
 import { EmployeePaystubComponent } from './components/employee/paystub/paystub.component';
+import { EmployeeVacationComponent } from './components/employee/vacation/vacation.component';
 import { FidelityProgramComponent } from './components/fidelity-program/fidelity-program.component';
 import { RedeemCapsComponent } from './components/fidelity-program/redeem-caps/redeem-caps.component';
 import { CustomerComponent } from './components/collection/customer/customer.component';
@@ -65,6 +67,7 @@ const appRoutes: Routes = [
   { path: 'inventory/resupply', component: ResupplyComponent },
   { path: 'inventory/stock-soul', component: SoulStockComponent },
   { path: 'inventory/modula-stock', component: ModulaComponent },
+  { path: 'inventory/production-labels', component: ProductionLabelsComponent },
   { path: 'transfer', component: TransferComponent },
   { path: 'transfer/transfer-location', component: StockTransferLocationComponent },
   { path: 'transfer/transfer-warehouse', component: StockTransferWarehouseComponent },
@@ -88,6 +91,7 @@ const appRoutes: Routes = [
   { path: 'employee/employee-custody', component: EmployeeCustodyComponent },
   { path: 'employee/employee-jobcertify', component: EmployeeJobCertifyComponent },
   { path: 'employee/employee-paystub', component: EmployeePaystubComponent },
+  { path: 'employee/employee-vacation', component: EmployeeVacationComponent },
   { path: 'program-fidelity', component: FidelityProgramComponent },
   { path: 'program-fidelity/redeem-caps', component: RedeemCapsComponent },
   { path: 'geo-location', component: GeoLocationComponent }

@@ -1,0 +1,105 @@
+.content {
+  margin-top: 60px;
+}
+
+.modal-header {
+  background-color: white;
+  color: black;
+}
+
+.modal-body {
+  background-color: white;
+}
+
+.modal-footer {
+  background-color: white;
+}
+
+.modal-footer .btn-secondary {
+  background-color: #ececec;
+  color: black;
+}
+
+.modal-footer .btn-primary {
+  background-color: #d9534f;
+  color: white;
+  border: 1px solid #d43f3a;
+}
+
+.modal-content {
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+}
+
+#confirmModal {
+  margin-top: center;
+}
+
+.invalid-field {
+  border-color: red;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-dialog {
+  max-width: 150%;
+}
+
+.modal-content {
+  padding: 20px;
+}
+
+.modal-title {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.modal-body {
+  font-size: 16px;
+}
+
+.modal-header .close {
+  display: none;
+}
+
+#confirmModal .modal-dialog {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+}
+
+#confirmModal .modal-content {
+  height: 100%;
+  max-height: 100%;
+}
+
+.order {
+  min-height: 200px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  padding: 10px;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.order:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  border-color: #838383;
+  border-radius: 10px;
+}
+
+.card.order {
+  min-height: 145px;
+}
