@@ -1,14 +1,16 @@
 import { Headers } from '@angular/http';
 
 export let GLOBAL = {
-    //HTPP
+    //HTTP
     /*url: 'http://192.168.10.218:8080/igb/res/',
     urlShared: 'http://192.168.10.218:8080/shared/',
-    urlManager: 'http://192.168.10.218:8080/manager/res/'*/
+    urlManager: 'http://192.168.10.218:8080/manager/res/',
+    urlSpring: 'http://192.168.10.8:8080/apiRest/wali/'*/
     //HTTPS
     url: 'https://wali.igbcolombia.com/api/igb/res/',
     urlShared: 'https://wali.igbcolombia.com/api/shared/',
-    urlManager: 'https://wali.igbcolombia.com/api/manager/res/'
+    urlManager: 'https://wali.igbcolombia.com/api/manager/res/',
+    urlSpring: 'https://wali.igbcolombia.com/api/apiRest/wali/'
 };
 
 export class IGBHeaders {
