@@ -417,6 +417,7 @@ export class ShippingComponent implements OnInit {
         const GuiaRapidoochoaDTO = {
           "cdPoblacionOrigen": "5001000",//Medellin
           "cdPoblacionDestino": poblacionDestino,
+          "cdTipoDniCliente": "NI",
           "nmPesoDeclarado": this.pesoPack,
           "nmUnidPorEmbalaje": this.qtyPack,
           "vmValorDeclarado": this.valorDeclPack,

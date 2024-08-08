@@ -32,6 +32,8 @@ export class EmployeeVacationComponent {
   public comentarios: string = '';
   public url: string;
   public showErrorModal = false;
+  public errorMessage: string;
+  public confirmacionMessage: string;
 
   constructor(
     private _reportService: ReportService,
@@ -60,36 +62,39 @@ export class EmployeeVacationComponent {
     const vacationUrl = this.getUrlVacation();
     if (vacationUrl) {
       let printReportDTO = {
-        cedula: this.cedula,
-        jefeInmediato: this.jefeInmediato,
-        logo: this.logo,
-        fechaInicio: this.fechaInicio,
-        fechaFin: this.fechaFin,
-        fechaReintegro: this.fechaReintegro,
-        diasSolicitados: this.diasSolicitados,
-        vacacionesDinero: this.vacacionesDinero,
-        fecha1: this.fecha1,
-        fecha2: this.fecha2,
-        diasDisfrutados: this.diasDisfrutados,
-        diasPendientes: this.diasPendientes,
-        comentarios: this.comentarios,
-        empresa: this.selectedCompany
+        id: this.cedula,
+        jefeInmediato: this.jefeInmediato.toString(),
+        logo: this.logo.toString(),
+        fechaInicio: this.fechaInicio.toString(),
+        fechaFin: this.fechaFin.toString(),
+        fechaReintegro: this.fechaReintegro.toString(),
+        diasSolicitados: this.diasSolicitados.toString(),
+        numDiasSolicitadosDinero: this.vacacionesDinero.toString(),
+        fechaInicioPeriodo: this.fecha1.toString(),
+        fechaFinPeriodo: this.fecha2.toString(),
+        diasDisfrutados: this.diasDisfrutados.toString(),
+        diasPendientes: this.diasPendientes.toString(),
+        comentarios: this.comentarios.toString()
       };
 
       this._reportService.generateVacation(printReportDTO, this.selectedCompany).subscribe(
         response => {
-          if (response.content === true) {
+          if (response.code === 0) {
+            this.errorMessage = '';
+            this.confirmacionMessage = response.content
             window.open(vacationUrl, '_blank');
-          } else {
-            alert('La generación de la solicitud de vacaciones no fue exitosa.');
+            this.cancelForm();
+          } else if (response.code === -1) {
+            this.errorMessage = 'La generación de la solicitud de vacaciones no fue exitosa';
           }
         },
         error => {
           console.error('Error al generar el reporte:', error);
+          this.errorMessage = 'La generación de la solicitud de vacaciones no fue exitosa';
         }
       );
     } else {
-      alert('Falta información necesaria para generar la solicitud.');
+      this.errorMessage = 'La generación de la solicitud de vacaciones no fue exitosa';
     }
   }
 
@@ -109,6 +114,7 @@ export class EmployeeVacationComponent {
     this.diasPendientes = null;
     this.comentarios = '';
     this.selectedCompany = '';
+    this.errorMessage = '';
   }
 
   public onCompanyChange(): void {

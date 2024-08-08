@@ -2,6 +2,22 @@
 
 <div class="container content">
   <h3>Generar Solicitud de Vacaciones</h3>
+  <!--Alerta error-->
+  <div class="row" *ngIf="errorMessage" role="alert">
+    <div class="col-xs-12">
+      <div class="alert alert-danger">
+        {{errorMessage}}
+      </div>
+    </div>
+  </div>
+  <!--Alerta aprobación-->
+  <div class="row" *ngIf="confirmacionMessage" role="alert">
+    <div class="col-xs-12">
+      <div class="alert alert-success">
+        {{confirmacionMessage}}
+      </div>
+    </div>
+  </div>
   <div style="margin-top: 20px;"></div>
   <form (submit)="generateVacation()">
     <div class="row">

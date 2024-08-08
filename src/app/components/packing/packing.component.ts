@@ -756,28 +756,33 @@ export class PackingComponent implements OnInit {
       $('#modal_transfer_process').modal('hide');
       this.errorMessage = 'Debe ingresar todos los datos obligatorios.'
     } else {
-      let RePrintDTO = {
-        "orderNumber": this.orderNumber,
-        "boxNumber": this.qtyBox,
-        "printerName": this.selectedPrinter,
-        "assigBoxInvoice": this.autoBox
-      }
-      this._printService.reprintOrder(RePrintDTO).subscribe(
-        response => {
-          if (response.code == 0) {
-            $('#modal_transfer_process').modal('hide');
-            this.exitMessage = 'Reimprimiendo las etiquetas exitosamente.';
-          } else {
-            $('#modal_transfer_process').modal('hide');
-            this.errorMessage = response.content;
-          }
-        },
-        error => {
-          $('#modal_transfer_process').modal('hide');
-          this.errorMessage = "Lo sentimos. Se produjo un error interno."
-          console.error("Ocurrio un error re-imprimiendo las etiquetas de empaque.", error);
+      if (this.qtyBox.toString().length >= 3) {
+        this.errorMessage = "Demasiadas etiquetas para imprimir."
+        $('#modal_transfer_process').modal('hide');
+      } else {
+        let RePrintDTO = {
+          "orderNumber": this.orderNumber,
+          "boxNumber": this.qtyBox,
+          "printerName": this.selectedPrinter,
+          "assigBoxInvoice": this.autoBox
         }
-      );
+        this._printService.reprintOrder(RePrintDTO).subscribe(
+          response => {
+            if (response.code == 0) {
+              $('#modal_transfer_process').modal('hide');
+              this.exitMessage = 'Reimprimiendo las etiquetas exitosamente.';
+            } else {
+              $('#modal_transfer_process').modal('hide');
+              this.errorMessage = response.content;
+            }
+          },
+          error => {
+            $('#modal_transfer_process').modal('hide');
+            this.errorMessage = "Lo sentimos. Se produjo un error interno."
+            console.error("Ocurrio un error re-imprimiendo las etiquetas de empaque.", error);
+          }
+        );
+      }
     }
   }
 
