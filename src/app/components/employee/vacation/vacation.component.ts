@@ -5,6 +5,8 @@ import { UserService } from '../../../services/user.service';
 import { EmployeeService } from '../../../services/employee.service';
 import { GLOBAL } from 'app/services/global';
 
+declare var $: any;
+
 @Component({
   templateUrl: './vacation.component.html',
   styleUrls: ['./vacation.component.css'],
