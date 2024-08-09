@@ -29,13 +29,13 @@
             <div class="form-group">
               <label for="cedula">Cédula</label>
               <input type="number" id="cedula" class="form-control input-lg" [(ngModel)]="cedula" name="cedula"
-                autocomplete="off" required placeholder="Ingrese su cédula" [class.required-field]="!cedula" required>
+                autocomplete="off" required placeholder="Ingrese cédula" [class.required-field]="!cedula" required>
             </div>
             <div class="form-group">
-              <label for="empresa">Seleccione su Empresa</label>
+              <label for="empresa">Seleccione empresa</label>
               <select id="empresa" class="form-control input-lg" [(ngModel)]="logo" name="empresa"
                 (ngModelChange)="onCompanyChange()" required>
-                <option value="" disabled selected>Seleccione su empresa</option>
+                <option value="" disabled selected>Seleccione empresa</option>
                 <option value="1">DIGITAL</option>
                 <option value="2">INVERSUR</option>
                 <option value="3">IGB</option>
@@ -46,9 +46,9 @@
               </select>
             </div>
             <div class="form-group">
-              <label for="jefe">Seleccione su Jefe</label>
+              <label for="jefe">Seleccione Jefe</label>
               <select id="jefe" class="form-control input-lg" [(ngModel)]="jefeInmediato" name="jefe" required>
-                <option value="" disabled selected>Seleccione su jefe</option>
+                <option value="" disabled selected>Seleccione jefe</option>
                 <option value="PAOLA COLORADO">PAOLA COLORADO</option>
                 <option value="DAVID URIBE">DAVID URIBE</option>
                 <option value="SIOMARA ARBOLEDA">SIOMARA ARBOLEDA</option>
@@ -78,7 +78,7 @@
             <h4 class="section-title">Comentarios</h4>
             <div class="form-group">
               <textarea id="comentarios" class="form-control input-lg" [(ngModel)]="comentarios" name="comentarios"
-                placeholder="Ingrese sus comentarios" rows="4"></textarea>
+                placeholder="Ingrese comentarios" rows="4"></textarea>
             </div>
           </div>
         </div>
@@ -120,12 +120,12 @@
             <h4 class="section-title">Uso Exclusivo de Gestión Humana</h4>
             <div class="form-group row">
               <div class="col-md-6">
-                <label for="fecha1">Fecha 1</label>
+                <label for="fecha1">Fecha Inicio</label>
                 <input type="date" id="fecha1" class="form-control input-lg" [(ngModel)]="fecha1" name="fecha1" required
                   [class.required-field]="!fecha1" required>
               </div>
               <div class="col-md-6">
-                <label for="fecha2">Fecha 2</label>
+                <label for="fecha2">Fecha Fin</label>
                 <input type="date" id="fecha2" class="form-control input-lg" [(ngModel)]="fecha2" name="fecha2" required
                   [class.required-field]="!fecha2" required>
               </div>

@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ReportService } from '../../../services/report.service';
 import { UserService } from '../../../services/user.service';
@@ -35,12 +35,7 @@ export class EmployeeVacationComponent {
   public errorMessage: string;
   public confirmacionMessage: string;
 
-  constructor(
-    private _reportService: ReportService,
-    private _userService: UserService,
-    private _router: Router,
-    private _employeeService: EmployeeService
-  ) {
+  constructor(private _reportService: ReportService, private _userService: UserService, private _router: Router, private _employeeService: EmployeeService) {
     this.url = GLOBAL.urlShared;
   }
 
@@ -51,14 +46,23 @@ export class EmployeeVacationComponent {
     }
   }
 
-  public getUrlVacation(): string {
-    if (this.cedula) {
-      return `${this.url}${this.selectedCompany}/employee/vacation/${this.cedula}.pdf`;
+  private redirectIfSessionInvalid(error) {
+    if (error && error.status && error.status == 401) {
+      localStorage.removeItem('igb.identity');
+      localStorage.removeItem('igb.selectedCompany');
+      this._router.navigate(['/']);
     }
-    return '';
   }
 
-  public generateVacation(): void {
+  public getUrlVacation() {
+    if (this.cedula) {
+      return `${this.url}${this.selectedCompany}/employee/vacation/${this.cedula}.pdf`;
+    } else {
+      return '';
+    }
+  }
+
+  public generateVacation() {
     const vacationUrl = this.getUrlVacation();
     if (vacationUrl) {
       let printReportDTO = {
@@ -91,6 +95,7 @@ export class EmployeeVacationComponent {
         error => {
           console.error('Error al generar el reporte:', error);
           this.errorMessage = 'La generación de la solicitud de vacaciones no fue exitosa';
+          this.redirectIfSessionInvalid(error);
         }
       );
     } else {
@@ -117,12 +122,10 @@ export class EmployeeVacationComponent {
     this.errorMessage = '';
   }
 
-  public onCompanyChange(): void {
-    console.log(this.logo);
-    console.log(this.selectedCompany);
+  public onCompanyChange() {
     switch (this.logo) {
       case '1':
-        this.selectedCompany = 'DIGITAL_NOVAWEB';
+        this.selectedCompany = 'DSM_NOVAWEB';
         break;
       case '2':
         this.selectedCompany = 'INVERSUR_NOVAWEB';
@@ -134,7 +137,7 @@ export class EmployeeVacationComponent {
         this.selectedCompany = 'MOTOREPUESTOS_NOVAWEB';
         break;
       case '5':
-        this.selectedCompany = 'MOTOZONE_NOVAWEB';
+        this.selectedCompany = 'MTZ_NOVAWEB';
         break;
       case '6':
         this.selectedCompany = 'REDPLAS_NOVAWEB';

@@ -29,9 +29,26 @@
   <form (submit)="confirmGenerate()">
     <div class="row">
       <div class="col-xs-12">
+        <label for="empresa">Seleccione empresa</label>
+        <select id="empresa" class="form-control input-lg" [(ngModel)]="selectedCompany" name="selectedCompany"
+          (ngModelChange)="onCompanyChange()" required [class.required-field]="!selectedCompany">
+          <option value="" disabled>Seleccione empresa</option>
+          <option value="IGB_NOVAWEB">IGB</option>
+          <option value="MTZ_NOVAWEB">MOTOZONE</option>
+          <!--<option value="VILNA_NOVAWEB">REDPLAS</option>
+          <option value="WALI_NOVAWEB">WALI</option>
+          <option value="DSM_NOVAWEB">DIGITAL</option>
+          <option value="INVERSUR_NOVAWEB">INVERSUR</option>
+          <option value="MOTOREPUESTOS_NOVAWEB">MOTOREPUESTOS</option>-->
+        </select>
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col-xs-12">
         <label for="cedula">Cédula</label>
         <input type="number" id="cedula" class="form-control input-lg" [(ngModel)]="cedula" name="cedula"
-          autocomplete="off" required placeholder="Ingrese su cédula" [class.required-field]="!cedula" required>
+          autocomplete="off" required placeholder="Ingrese cédula" [class.required-field]="!cedula" required>
       </div>
     </div>
     <br>
@@ -40,7 +57,7 @@
         <label for="year">Año</label>
         <select id="year" class="form-control input-lg" [(ngModel)]="selectedYear" name="selectedYear" required
           [class.required-field]="!selectedYear" required>
-          <option value="" disabled>Seleccione el año</option>
+          <option value="" disabled>Seleccione año</option>
           <option value="2021">2021</option>
           <option value="2022">2022</option>
           <option value="2023">2023</option>
@@ -51,7 +68,7 @@
         <label for="month">Mes</label>
         <select id="month" class="form-control input-lg" [(ngModel)]="selectedMonth" name="selectedMonth" required
           [class.required-field]="!selectedMonth" required>
-          <option value="" disabled>Seleccione el mes</option>
+          <option value="" disabled>Seleccione mes</option>
           <option value="01">Enero</option>
           <option value="02">Febrero</option>
           <option value="03">Marzo</option>

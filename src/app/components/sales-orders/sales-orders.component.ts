@@ -147,7 +147,7 @@ export class SalesOrdersComponent implements OnInit {
   }
 
   public inventoryHistory() {
-    this.messageProgress = 'Procesando su petición.';
+    this.messageProgress = 'Procesando petición.';
     $('#modal_process').modal('show');
     if (this.history !== null && this.history.length > 0) {
       console.log('Cerrando historial');
