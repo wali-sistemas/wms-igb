@@ -15,15 +15,17 @@ declare var $: any;
 
 export class EmployeeJobCertifyComponent {
   public identity;
-  public selectedYear: string = '';
-  public selectedMonth: string = '';
-  public selectedPeriodo: string = '';
+  public selectedYear: string = "";
+  public selectedMonth: string = "";
+  public selectedPeriodo: string = "";
   public cedula: number;
   public fechaNacimiento: string;
   public urlShared: string = GLOBAL.urlShared;
   public showErrorModal = false;
-  public dirigidoA: string = '';
+  public dirigidoA: string = "";
   public contenidoPersonalizado: string;
+  public selectedCompany: string = "";
+  public logo: string;
 
   constructor(private _reportService: ReportService, private _userService: UserService, private _router: Router, private _employeeService: EmployeeService) {
   }
@@ -48,7 +50,7 @@ export class EmployeeJobCertifyComponent {
       "id": this.cedula,
       "copias": 0,
       "documento": "jobCertify",
-      "companyName": this.identity.selectedCompany,
+      "companyName": this.selectedCompany,
       "origen": 'N',
       "filtro": this.dirigidoA == 'Personalizado' ? this.contenidoPersonalizado : this.dirigidoA,
       "imprimir": false,
@@ -82,7 +84,7 @@ export class EmployeeJobCertifyComponent {
   }
 
   public confirmGenerate() {
-    this._employeeService.validateEmployeeExistence(this.cedula.toString(), this.fechaNacimiento).subscribe(
+    this._employeeService.validateEmployeeExistence(this.cedula.toString(), this.fechaNacimiento, this.selectedCompany).subscribe(
       response => {
         if (response.content === false) {
           alert('Error al validar datos.');
@@ -95,5 +97,33 @@ export class EmployeeJobCertifyComponent {
         console.error(error);
       }
     );
+  }
+
+  public onCompanyChange() {
+    switch (this.selectedCompany) {
+      case 'DSM_NOVAWEB':
+        this.logo = "1";
+        break;
+      case 'INVERSUR_NOVAWEB':
+        this.logo = "2";
+        break;
+      case 'IGB_NOVAWEB':
+        this.logo = "3";
+        break;
+      case 'MOTOREPUESTOS_NOVAWEB':
+        this.logo = "4";
+        break;
+      case 'MTZ_NOVAWEB':
+        this.logo = "5";
+        break;
+      case 'VILNA_NOVAWEB':
+        this.logo = "6";
+        break;
+      case 'WALI_NOVAWEB':
+        this.logo = "7";
+        break;
+      default:
+        this.selectedCompany = '';
+    }
   }
 }

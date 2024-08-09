@@ -272,7 +272,21 @@ export class EmployeeCustodyComponent {
       show: true
     });
 
-    this._employeeService.validateEmployeeExistence(this.document.toString(), null).subscribe(
+    let company = "";
+    switch (company) {
+      case "IGB":
+        company = "IGB_NOVAWEB";
+        break;
+      case "VARROC":
+        company = "MTZ_NOVAWEB";
+        break;
+        case "REDPLAS":
+          company = "VILNA_NOVAWEB";
+      default:
+        company = "";
+    }
+
+    this._employeeService.validateEmployeeExistence(this.document.toString(), null, company).subscribe(
       response => {
         if (response.content == false) {
           this.messageCustodyPrint = "Los datos ingresados son incorrectos.";

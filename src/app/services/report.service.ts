@@ -31,18 +31,6 @@ export class ReportService {
       .map(res => res.json());
   }
 
-  /*public listPickingProgress() {
-      let igbHeaders = new IGBHeaders().loadHeaders();
-      return this._http.get(this.url + 'report/reports-picking-progress', { headers: igbHeaders })
-          .map(res => res.json());
-  }
-
-  public listReportsOrdersClient() {
-      let igbHeaders = new IGBHeaders().loadHeaders();
-      return this._http.get(this.url + 'report/reports-orders-client', { headers: igbHeaders })
-          .map(res => res.json());
-  }*/
-
   public generateReport(printReportDTO) {
     let igbHeaders = new IGBHeaders().loadHeaders();
     return this._http.post(this.url + 'report/generate-report', printReportDTO, { headers: igbHeaders })
@@ -185,8 +173,12 @@ export class ReportService {
   }
 
   public generateVacation(vacationData, companyName) {
-    console.log(vacationData);
     return this._http.post(this.urlSpring + 'reports/vacation?schema=' + companyName, vacationData, { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
+
+  public generatePaystub(paystubData, companyName) {
+    return this._http.post(this.urlSpring + 'reports/paystub?schema=' + companyName, paystubData, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 }

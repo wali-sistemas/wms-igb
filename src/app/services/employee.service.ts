@@ -40,8 +40,8 @@ export class EmployeeService {
       .map(res => res.json());
   }
 
-  public validateEmployeeExistence(idEmployee: string, birthdate: string) {
-    return this._http.get(this.urlManager + 'employee/validate-employee-existence?id=' + idEmployee + '&birthdate=' + birthdate, { headers: new IGBHeaders().loadHeaders() })
+  public validateEmployeeExistence(idEmployee: string, birthdate: string, companyName: string) {
+    return this._http.get(this.urlManager + 'employee/validate-employee-existence/' + companyName + '?id=' + idEmployee + '&birthdate=' + birthdate, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 }
