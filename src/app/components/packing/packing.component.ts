@@ -749,7 +749,6 @@ export class PackingComponent implements OnInit {
       keyboard: false,
       show: true
     });
-
     if (this.orderNumber == null || this.orderNumber <= 0 || this.qtyBox == null || this.qtyBox <= 0 ||
       this.selectedPrinter == null || this.selectedPrinter.length <= 0) {
       $("#reimprimir").modal('hide');
@@ -757,7 +756,7 @@ export class PackingComponent implements OnInit {
       this.errorMessage = 'Debe ingresar todos los datos obligatorios.'
     } else {
       if (this.qtyBox.toString().length >= 3) {
-        this.errorMessage = "Demasiadas etiquetas para imprimir."
+        this.errorMessage = "Error, demasiadas etiquetas para imprimir."
         $('#modal_transfer_process').modal('hide');
       } else {
         let RePrintDTO = {
