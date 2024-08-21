@@ -11,18 +11,18 @@ export class ShippingService {
     this.url = GLOBAL.url;
   }
 
-  public addShipping(ShippingDTO) {
-    return this._http.post(this.url + 'shipping/add', ShippingDTO, { headers: new IGBHeaders().loadHeaders() })
+  public addShipping(shippingDTO) {
+    return this._http.post(this.url + 'shipping/add', shippingDTO, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 
-  public listInvoiceShipping(InvoiceDTO) {
-    return this._http.post(this.url + 'shipping/list-invoices', InvoiceDTO, { headers: new IGBHeaders().loadHeaders() })
+  public listInvoiceShipping(invoiceDTO) {
+    return this._http.post(this.url + 'shipping/list-invoices', invoiceDTO, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 
-  public createGuiaSaferbo(ApiSaferboDTO, invoices) {
-    return this._http.post(this.url + 'shipping/add-guia-saferbo/' + invoices, ApiSaferboDTO, { headers: new IGBHeaders().loadHeaders() })
+  public createGuiaSaferbo(apiSaferboDTO, invoices) {
+    return this._http.post(this.url + 'shipping/add-guia-saferbo/' + invoices, apiSaferboDTO, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 
@@ -41,13 +41,13 @@ export class ShippingService {
       .map(res => res.json());
   }
 
-  public createGuiaRapidoochoa(GuiaDTO, invoices) {
-    return this._http.post(this.url + 'shipping/add-guia-rapidoochoa/' + invoices, GuiaDTO, { headers: new IGBHeaders().loadHeaders() })
+  public createGuiaRapidoochoa(apiRapidoochoaDTO, invoices) {
+    return this._http.post(this.url + 'shipping/add-guia-rapidoochoa/' + invoices, apiRapidoochoaDTO, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 
-  public createGuiaOla(GuiaOlaDTO, invoices) {
-    return this._http.post(this.url + 'shipping/add-guia-ola/' + invoices, GuiaOlaDTO, { headers: new IGBHeaders().loadHeaders() })
+  public createGuiaOla(apiOlaDTO, invoices) {
+    return this._http.post(this.url + 'shipping/add-guia-ola/' + invoices, apiOlaDTO, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 
@@ -56,13 +56,13 @@ export class ShippingService {
       .map(res => res.json());
   }
 
-  public createGuiaCoordinadora(ApiCoordinadoraDTO, invoices) {
-    return this._http.post(this.url + 'shipping/add-guia-coordinadora/' + invoices, ApiCoordinadoraDTO, { headers: new IGBHeaders().loadHeaders() })
+  public createGuiaCoordinadora(apiCoordinadoraDTO, invoices) {
+    return this._http.post(this.url + 'shipping/add-guia-coordinadora/' + invoices, apiCoordinadoraDTO, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 
-  public createGuiaTransprensa(ApiTransprensaDTO, invoices) {
-    return this._http.post(this.url + 'shipping/add-guia-transprensa/' + invoices, ApiTransprensaDTO, { headers: new IGBHeaders().loadHeaders() })
+  public createGuiaTransprensa(apiTransprensaDTO, invoices) {
+    return this._http.post(this.url + 'shipping/add-guia-transprensa/' + invoices, apiTransprensaDTO, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 
@@ -71,8 +71,13 @@ export class ShippingService {
       .map(res => res.json());
   }
 
-  public createGuiaGoPack(GuiaDTO, invoices) {
-    return this._http.post(this.url + 'shipping/add-guia-gopack/' + invoices, GuiaDTO, { headers: new IGBHeaders().loadHeaders() })
+  public createGuiaGoPack(apiGoPackDTO, invoices) {
+    return this._http.post(this.url + 'shipping/add-guia-gopack/' + invoices, apiGoPackDTO, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
+  }
+
+  public createGuiaAldia(apiAldiaDTO, invoices) {
+    return this._http.post(this.url + 'shipping/add-guia-aldia/' + invoices, apiAldiaDTO, { headers: new IGBHeaders().loadHeaders() })
+    .map(res => res.json());
   }
 }

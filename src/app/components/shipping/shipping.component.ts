@@ -122,9 +122,9 @@ export class ShippingComponent implements OnInit {
       }
     }
 
-    let InvoiceDTO = { 'transport': this.selectedTransp.length <= 0 ? "*" : this.selectedTransp, 'docNum': invoice }
+    const invoiceDTO = { 'transport': this.selectedTransp.length <= 0 ? "*" : this.selectedTransp, 'docNum': invoice }
 
-    this._shippingService.listInvoiceShipping(InvoiceDTO).subscribe(
+    this._shippingService.listInvoiceShipping(invoiceDTO).subscribe(
       response => {
         if (response.code == 0) {
           this.invoicesShipping = response.content;
@@ -186,9 +186,9 @@ export class ShippingComponent implements OnInit {
   }
 
   public addShipping() {
-    let ShippingDTO = { 'invoice_number': this.selectInvoice, 'box_sum_shipping': this.qtyPack, 'send_to_cedi': this.checkSede }
+    const shippingDTO = { 'invoice_number': this.selectInvoice, 'box_sum_shipping': this.qtyPack, 'send_to_cedi': this.checkSede }
 
-    this._shippingService.addShipping(ShippingDTO).subscribe(
+    this._shippingService.addShipping(shippingDTO).subscribe(
       response => {
         if (response.code < 0) {
           this.warningMessage = response.content;
@@ -414,7 +414,7 @@ export class ShippingComponent implements OnInit {
 
     switch (this.selectInvoicesPack[0].transport) {
       case 'RAPIDO OCHOA':
-        const GuiaRapidoochoaDTO = {
+        const apiRapidoochoaDTO = {
           "cdPoblacionOrigen": "5001000",//Medellin
           "cdPoblacionDestino": poblacionDestino,
           "cdTipoDniCliente": "NI",
@@ -434,7 +434,7 @@ export class ShippingComponent implements OnInit {
           "nmFormaDePago": "CRÉDITO"
         }
 
-        this._shippingService.createGuiaRapidoochoa(GuiaRapidoochoaDTO, invoices).subscribe(
+        this._shippingService.createGuiaRapidoochoa(apiRapidoochoaDTO, invoices).subscribe(
           response => {
             if (response.code == 0) {
               //Registramos shipping en tablas temporales
@@ -457,7 +457,7 @@ export class ShippingComponent implements OnInit {
         );
         break;
       case 'OLA':
-        const GuiaOlaDTO = {
+        const apiOlaDTO = {
           "tipoflete": "credito",
           "origen": localStorage.getItem('igb.selectedCompany') == 'IGB' ? "MEDELLIN" : "CARTAGENA",
           "destino": this.selectedCityDest,
@@ -481,7 +481,7 @@ export class ShippingComponent implements OnInit {
           "tipoenvio": "1"
         }
 
-        this._shippingService.createGuiaOla(GuiaOlaDTO, invoices).subscribe(
+        this._shippingService.createGuiaOla(apiOlaDTO, invoices).subscribe(
           response => {
             if (response.code == 0) {
               //Registramos shipping en tablas temporales
@@ -504,7 +504,7 @@ export class ShippingComponent implements OnInit {
         );
         break;
       case 'COORDINADORA':
-        const ApiCoordinadoraDTO = {
+        const apiCoordinadoraDTO = {
           "nameDestination": this.selectInvoicesPack[0].cardName,
           "addressDestination": this.addressReceive,
           "cityDestination": this.selectInvoicesPack[0].codCity + "000",
@@ -522,7 +522,7 @@ export class ShippingComponent implements OnInit {
           "unidades": this.qtyPack
         }
 
-        this._shippingService.createGuiaCoordinadora(ApiCoordinadoraDTO, invoices).subscribe(
+        this._shippingService.createGuiaCoordinadora(apiCoordinadoraDTO, invoices).subscribe(
           response => {
             if (response.code == 0) {
               //Registramos shipping en tablas temporales
@@ -545,7 +545,7 @@ export class ShippingComponent implements OnInit {
         );
         break;
       case 'TRANSPRENSA':
-        const ApiTransprensaDTO = {
+        const apiTransprensaDTO = {
           "observacion": "Tipo Empaque: " + this.selectedTypePack,
           "factura": invoices,
           "peso": this.pesoPack,
@@ -569,7 +569,7 @@ export class ShippingComponent implements OnInit {
           "codCiudadd": this.selectInvoicesPack[0].codCity + "000"
         }
 
-        this._shippingService.createGuiaTransprensa(ApiTransprensaDTO, invoices).subscribe(
+        this._shippingService.createGuiaTransprensa(apiTransprensaDTO, invoices).subscribe(
           response => {
             if (response.code == 0) {
               //Registramos shipping en tablas temporales
@@ -593,7 +593,7 @@ export class ShippingComponent implements OnInit {
         );
         break;
       case 'GO PACK365':
-        const ApiGoPackDTO = {
+        const apiGoPackDTO = {
           "observacion": "Tipo Empaque: " + this.selectedTypePack,
           "factura": invoices,
           "peso": this.pesoPack,
@@ -617,7 +617,7 @@ export class ShippingComponent implements OnInit {
           "codCiudadd": this.selectInvoicesPack[0].codCity + "000"
         }
 
-        this._shippingService.createGuiaGoPack(ApiGoPackDTO, invoices).subscribe(
+        this._shippingService.createGuiaGoPack(apiGoPackDTO, invoices).subscribe(
           response => {
             if (response.code == 0) {
               //Registramos shipping en tablas temporales
@@ -639,7 +639,7 @@ export class ShippingComponent implements OnInit {
         );
         break;
       case 'SAFERBO':
-        const ApiSaferboDTO = {
+        const apiSaferboDTO = {
           "observacion": "Tipo Empaque: " + this.selectedTypePack,
           "factura": invoices,
           "peso": this.pesoPack,
@@ -657,7 +657,51 @@ export class ShippingComponent implements OnInit {
           "codCiudadd": this.cityReceive + '-' + this.departamentReceive + '-' + this.selectInvoicesPack[0].codCity + "000"
         }
 
-        this._shippingService.createGuiaSaferbo(ApiSaferboDTO, invoices).subscribe(
+        this._shippingService.createGuiaSaferbo(apiSaferboDTO, invoices).subscribe(
+          response => {
+            if (response.code == 0) {
+              //Registramos shipping en tablas temporales
+              this.addShipping();
+
+              this.urlGuia = response.content[0];
+              this.urlRotulo = response.content[1];
+
+              $('#modal_transfer_process').modal('hide');
+              $('#print_document').modal('show');
+            } else {
+              this.warningMessage = response.content;
+              $('#modal_transfer_process').modal('hide');
+            }
+          }, error => {
+            console.error(error);
+            this.redirectIfSessionInvalid(error);
+          }
+        );
+        break;
+      case "ALDIA":
+        const apiAldiaDTO = {
+          "observacion": "PRODUCTO DELICADO",
+          "factura": invoices,
+          "peso": this.pesoPack,
+          "volumen": 22,
+          "vlrDecl": this.valorDeclPack,
+          "codProducto": "",
+          "cant": this.qtyPack,
+          "descripcion": this.selectedTypeProduct,
+          //Remite
+          "documentor": localStorage.getItem('igb.selectedCompany') == 'IGB' ? "811011909" : "900255414",
+          "nombrer": localStorage.getItem('igb.selectedCompany') == 'IGB' ? "IGB MOTORCYCLE PARTS S.A.S" : "MOTOZONE S.A.S",
+          //Destino
+          "tipoDocumentod": "1",
+          "documentod": this.selectInvoicesPack[0].cardCode.replace('C', ''),
+          "nombred": this.selectInvoicesPack[0].cardName,
+          "direcciond": this.addressReceive,
+          "telefonod": this.selectInvoicesPack[0].phone,
+          "codCiudadd": this.selectInvoicesPack[0].codCity,
+          "tipoEmpaque": this.selectedTypePack
+        }
+
+        this._shippingService.createGuiaAldia(apiAldiaDTO, invoices).subscribe(
           response => {
             if (response.code == 0) {
               //Registramos shipping en tablas temporales
