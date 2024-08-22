@@ -4,7 +4,6 @@ import { UserService } from '../../services/user.service';
 import { PurchaseOrdersService } from '../../services/purchase-orders.service';
 import { PurchaseOrder } from '../../models/purchase-order';
 import { PurchaseOrderLine } from '../../models/purchase-order-line';
-import { PurchaseOrderUDF } from '../../models/purchase-order-udf';
 
 declare var $: any;
 
@@ -29,7 +28,8 @@ export class PurchaseOrderComponent implements OnInit {
   public creatingSAPDocument: boolean = false;
   public editingQuantity: boolean = false;
   private editingPosition: number = -1;
-  private received: Map<String, number>;
+  private received: Map<string, number>;
+  private checkDateArribPuert: boolean = false;
   //UDF
   private selectedTransport: string = '';
   private dateEmbarq: Date;
@@ -72,17 +72,15 @@ export class PurchaseOrderComponent implements OnInit {
   private precinto: string = '';
   private selectedEnvDatCond: string = '';
   private selectedAnalistComex: string = '';
+  private slpName: string = '';
 
-  constructor(private _userService: UserService,
-    private _purchaseOrdersService: PurchaseOrdersService,
-    private _route: ActivatedRoute, private _router: Router) {
+  constructor(private _userService: UserService, private _purchaseOrdersService: PurchaseOrdersService, private _route: ActivatedRoute, private _router: Router) {
     this.order = new PurchaseOrder(0, '', '', new Date(), 0, 0, '', '', 0, new Array<PurchaseOrderLine>());
     this.receivedItems = new Array<PurchaseOrderLine>();
-    this.received = new Map<String, number>();
+    this.received = new Map<string, number>();
   }
 
   ngOnInit() {
-    console.log('iniciando componente de orden de compra');
     //TODO: validar vigencia del token/identity
     this.identity = this._userService.getItentity();
     if (this.identity === null) {
@@ -103,13 +101,13 @@ export class PurchaseOrderComponent implements OnInit {
             this.order = response;
             //busca si hay ordenes en proceso en el localStorage
             let previousReception = JSON.parse(localStorage.getItem('igb.reception'));
-            console.log(previousReception);
             let itemsToRemove = [];
+
             if (previousReception) {
               this.receivedItems = previousReception;
               //inicializa el mapa con las referencias recibidas y sus posiciones en el arreglo
               for (let i = 0; i < this.receivedItems.length; i++) {
-                this.received.set(this.receivedItems[i].itemCode, i);
+                this.received.set(this.receivedItems[i].itemCode.toString(), i);
               }
               for (let i = 0; i < this.order.lines.length; i++) {
                 for (let j = 0; j < this.receivedItems.length; j++) {
@@ -137,6 +135,7 @@ export class PurchaseOrderComponent implements OnInit {
             if (errorResponse !== null) {
               console.error(errorResponse._body);
             }
+            this.redirectIfSessionInvalid(error);
           }
         );
         this.loadOrderUDF(params['docNum']);
@@ -188,6 +187,7 @@ export class PurchaseOrderComponent implements OnInit {
         this.precinto = response.precint;
         this.selectedEnvDatCond = response.enviarDatos;
         this.selectedAnalistComex = response.vendedor;
+        this.slpName = response.comprador;
       }, error => {
         this.redirectIfSessionInvalid(error);
         console.error(error);
@@ -204,7 +204,7 @@ export class PurchaseOrderComponent implements OnInit {
       show: true
     });
 
-    let UserFieldDTO = {
+    let userFieldDTO = {
       'transp': this.selectedTransport == null ? '' : this.selectedTransport,
       'fembarque': this.dateEmbarq == null ? '' : this.dateEmbarq,
       'termNeg': this.selectedTermNeg == null ? '' : this.selectedTermNeg,
@@ -212,17 +212,17 @@ export class PurchaseOrderComponent implements OnInit {
       'puertDes': this.selectedPuertoDest == null ? '' : this.selectedPuertoDest,
       'estOC': this.selectedStatusOC == null ? '' : this.selectedStatusOC,
       'embarc': this.selectedEmb == null ? '' : this.selectedEmb,
-      'docTras': this.docBL,
+      'docTras': this.docBL == null ? '' : this.docBL,
       'fdocTras': this.dateEntComex == null ? '' : this.dateEntComex,
       'farribPuert': this.dateArribPuert == null ? '' : this.dateArribPuert,
       'farribAlm': this.dateArribAlm == null ? '' : this.dateArribAlm,
       'tipoEmp': this.selectedEmp == null ? '' : this.selectedEmp,
-      'observ': this.newNotes,
+      'observ': this.newNotes == null ? '' : this.newNotes,
       'puertEmb': this.selectedPuertEmb == null ? '' : this.selectedPuertEmb,
-      'transpTerr': this.transpTerr,
+      'transpTerr': this.transpTerr == null ? '' : this.transpTerr,
       'farriboCed': this.dateArribCed == null ? '' : this.dateArribCed,
       'cantCont': this.cantCont,
-      'cbm': this.cbm,
+      'cbm': this.cbm == null ? '' : this.cbm,
       'fcargaList': this.dateCargList == null ? '' : this.dateCargList,
       'tiempTrans': this.tiempTrans,
       'fsalPuert': this.dateSalPuert == null ? '' : this.dateSalPuert,
@@ -232,28 +232,31 @@ export class PurchaseOrderComponent implements OnInit {
       'tiempEspBooking': this.tiempEspBooking,
       'festimEmb': this.dateEstEmb == null ? '' : this.dateEstEmb,
       'frecDocFin': this.dateRecDocFin == null ? '' : this.dateRecDocFin,
-      'emisBL': this.emisionBLDest,
+      'emisBL': this.emisionBLDest == null ? '' : this.emisionBLDest,
       'insp': this.selectedInspPuerto == null ? '' : this.selectedInspPuerto,
       'farribCedEst': this.dateEstArribCed == null ? '' : this.dateEstArribCed,
       'notifBL': this.selectedNotifBL == null ? '' : this.selectedNotifBL,
-      'liqComex': this.liqComex,
+      'liqComex': this.liqComex == null ? '' : this.liqComex,
       'fliq': this.dateLiq == null ? '' : this.dateLiq,
       'flibBL': this.dateLibBL == null ? '' : this.dateLibBL,
-      'conduct': this.conductor,
-      'cedulCond': this.cedCond,
-      'placa': this.placVeh,
-      'contened': this.contenedor,
-      'precint': this.precinto,
+      'conduct': this.conductor == null ? '' : this.conductor,
+      'cedulCond': this.cedCond == null ? '' : this.cedCond,
+      'placa': this.placVeh == null ? '' : this.placVeh,
+      'contened': this.contenedor == null ? '' : this.contenedor,
+      'precint': this.precinto == null ? '' : this.precinto,
       'enviarDatos': this.selectedEnvDatCond == null ? '' : this.selectedEnvDatCond,
       'vendedor': this.selectedAnalistComex == null ? '' : this.selectedAnalistComex,
       'docNum': this.order.docNum,
-      'docDate': this.order.docDate
+      'docDate': this.order.docDate,
+      'sendNotification': this.checkDateArribPuert,
+      'comprador': this.slpName == null ? '' : this.slpName
     }
 
-    this._purchaseOrdersService.updateOrderUDF(UserFieldDTO).subscribe(
+    this._purchaseOrdersService.updateOrderUDF(userFieldDTO).subscribe(
       response => {
         if (response.code === 0) {
           $('#modal_transfer_process').modal('hide');
+          this.checkDateArribPuert = false;
           this._router.navigate(['/purchase-orders']);
         } else {
           $('#modal_transfer_process').modal('hide');
@@ -271,7 +274,7 @@ export class PurchaseOrderComponent implements OnInit {
     this.editingQuantity = false;
     this.errorMessage = '';
     this.processingItem = null;
-    console.log('validando articulo ' + this.scannedText);
+
     if (this.scannedText == null || this.scannedText.trim().length == 0) {
       this.scannedText = '';
       return;
@@ -281,7 +284,6 @@ export class PurchaseOrderComponent implements OnInit {
       const line = this.order.lines[i];
       if (line.itemCode.toLowerCase() === this.scannedText.toLowerCase() && line.quantity > 0) {
         //mostrar modal de cantidad
-        console.log('el item existe, solicitando cantidad para validar');
         this.scannedText = '';
         this.processingItem = new PurchaseOrderLine(line.docNum, line.itemCode.trim(), line.itemName, line.quantity, line.lineNum);
         this.processingItem.partial = line.partial;
@@ -292,18 +294,17 @@ export class PurchaseOrderComponent implements OnInit {
     }
     //Si llega hasta aca, es porque la referencia no se encuentra en la orden de compra
     this.errorMessage = 'La referencia ingresada no se encuentra en la orden o no tiene cantidad pendiente por recibir';
-    console.log('la referencia ' + this.scannedText + ' no se encuentra en la orden o no tiene cantidad pendiente por recibir');
   }
 
   public confirmItem() {
     this.quantityErrorMessage = null;
-    console.log('validando cantidad para agregar item');
     this.errorMessage = '';
+
     if (this.quantity === this.processingItem.quantity) {
       $('#modal_quantity').modal('hide');
-      console.log('cantidad aceptada');
       this.processingItem.partial = false;
-      if (this.received.has(this.processingItem.itemCode)) {
+
+      if (this.received.has(this.processingItem.itemCode.toString())) {
         //Completar item recibido parcialmente
         this.receivedItems[this.received.get(this.processingItem.itemCode.trim())].quantity += this.processingItem.quantity;
         this.receivedItems[this.received.get(this.processingItem.itemCode.trim())].partial = false;
@@ -318,14 +319,12 @@ export class PurchaseOrderComponent implements OnInit {
       $('#modal_quantity').modal('hide');
       $('#modal_warning').modal('show');
     } else {
-      console.log('la cantidad ingresada es superior a la cantidad de la orden');
       this.quantityErrorMessage = 'La cantidad ingresada es superior a la cantidad de la orden. ';
     }
   }
 
   public confirmItemPartial() {
     $('#modal_warning').modal('hide');
-    console.log('cantidad PARCIAL aceptada');
     this.processingItem.quantity = this.quantity;
     this.processingItem.partial = true;
 
@@ -336,15 +335,14 @@ export class PurchaseOrderComponent implements OnInit {
       this.order.lines[this.processingItemIndex].partial = false;
     }
 
-    if (this.received.has(this.processingItem.itemCode)) {
+    if (this.received.has(this.processingItem.itemCode.toString())) {
       //el item ha sido recibido parcialmente
-      this.receivedItems[this.received.get(this.processingItem.itemCode)].quantity += this.processingItem.quantity;
+      this.receivedItems[this.received.get(this.processingItem.itemCode.toString())].quantity += this.processingItem.quantity;
     } else {
       //el item no se ha recibido
       this.receivedItems.push(this.processingItem);
       this.received.set(this.processingItem.itemCode.trim(), this.receivedItems.length - 1);
     }
-
     this.cleanAndSave();
   }
 
@@ -356,9 +354,9 @@ export class PurchaseOrderComponent implements OnInit {
 
   public confirmReception() {
     this.generalErrorMessage = null;
-    console.log('aqui se debe invocar el ws para crear la entrada');
     this.creatingSAPDocument = true;
     let documentLines = [];
+
     for (let i = 0; i < this.receivedItems.length; i++) {
       let line = {
         docLine: this.receivedItems[i].lineNum,
@@ -372,8 +370,7 @@ export class PurchaseOrderComponent implements OnInit {
       docEntry: this.order.docEntry,
       lines: documentLines
     };
-    console.log('enviando objeto para crear documento');
-    console.log(document);
+
     this._purchaseOrdersService.createDocument(document).subscribe(
       response => {
         this.creatingSAPDocument = false;
@@ -384,13 +381,16 @@ export class PurchaseOrderComponent implements OnInit {
         } else {
           this.generalErrorMessage = response.content;
         }
-      }, error => { console.error(error); }
+      }, error => {
+        this.redirectIfSessionInvalid(error);
+        console.error(error);
+      }
     );
   }
 
   public restart() {
     //TODO: solicitar confirmacion para reiniciar recepcion
-    this.received = new Map<String, number>();
+    this.received = new Map<string, number>();
     this.receivedItems = new Array<PurchaseOrderLine>();
     localStorage.removeItem('igb.reception');
     this.loadSelectedOrder();

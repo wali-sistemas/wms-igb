@@ -1,5 +1,4 @@
 <igb-navbar></igb-navbar>
-
 <!--Modal procesando-->
 <div id="modal_transfer_process" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
@@ -106,10 +105,8 @@
     </div>
   </div>
 </div>
-
-<button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span
+<button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop()" title="Arriba"><span
     class="icon-chevron-up"></span></button>
-
 <div class="container content" *ngIf="generalErrorMessage">
   <div class="alert alert-danger" role="alert">
     <p>{{generalErrorMessage}}</p>
@@ -376,7 +373,15 @@
                 <br />
                 <div class="row">
                   <div class="col-xs-12 margin-bottom-10">
-                    <label for="dateArribPuert">Fecha de Arribo a Puerto</label>
+                    <label for="dateArribPuert">
+                      Fecha de Arribo a Puerto
+                      <div class="mascarar text-center">
+                        <input type="checkbox" id="checkDateArribPuert" name="checkDateArribPuert"
+                          [(ngModel)]="checkDateArribPuert" checked>
+                        <label for="checkDateArribPuert" style="font-size: 12px; color: #474B4E;"><span></span>Notificar
+                          cambio</label>
+                      </div>
+                    </label>
                     <input type="date" id="dateArribPuert" class="form-control input-lg" [(ngModel)]="dateArribPuert"
                       name="dateArribPuert" min="2021-01-01" max="2050-12-31">
                   </div>
@@ -683,6 +688,15 @@
                       <option value="YAMILE SEPULVEDA">YAMILE SEPULVEDA</option>
                       <option value="ELIZABETH MAYA">ELIZABETH MAYA</option>
                     </select>
+                  </div>
+                </div>
+                <br />
+                <div class="row">
+                  <div class="col-xs-12 margin-bottom-10">
+                    <label for="analistComex">Comprador</label>
+                    <input type="text" id="slpName" class="form-control input-lg" [(ngModel)]="slpName"
+                      autocomplete="off" name="slpName" autocorrect="off" autocapitalize="none"
+                      placeholder="Comprador asignado">
                   </div>
                 </div>
                 <hr>
