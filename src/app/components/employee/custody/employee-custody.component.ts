@@ -303,7 +303,7 @@ export class EmployeeCustodyComponent {
     this._reportService.generateReport(printReportDTO).subscribe(
       response => {
         if (response.code == 0) {
-          window.open(this.urlShared + this.identity.selectedCompany + '/employee/custodyPrint/' + this.document + '.pdf');
+          window.open(this.urlShared + company + '/employee/custodyPrint/' + this.document + '.pdf');
           this.clean();
           $('#modal_print').modal('hide');
           $('#modal_process').modal('hide');
