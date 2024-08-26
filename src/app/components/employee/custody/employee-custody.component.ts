@@ -273,7 +273,7 @@ export class EmployeeCustodyComponent {
     });
 
     let company = "";
-    switch (company) {
+    switch (this.selectedCompany) {
       case "IGB":
         company = "IGB_NOVAWEB";
         break;
