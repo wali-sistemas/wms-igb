@@ -33,7 +33,6 @@ export class EmployeeVacationComponent {
   public url: string;
   public showErrorModal = false;
   public errorMessage: string;
-  public confirmacionMessage: string;
 
   constructor(private _reportService: ReportService, private _userService: UserService, private _router: Router, private _employeeService: EmployeeService) {
     this.url = GLOBAL.urlShared;
@@ -54,53 +53,39 @@ export class EmployeeVacationComponent {
     }
   }
 
-  public getUrlVacation() {
-    if (this.cedula) {
-      return `${this.url}${this.selectedCompany}/employee/vacation/${this.cedula}.pdf`;
-    } else {
-      return '';
-    }
-  }
-
   public generateVacation() {
-    const vacationUrl = this.getUrlVacation();
-    if (vacationUrl) {
-      let printReportDTO = {
-        id: this.cedula,
-        jefeInmediato: this.jefeInmediato.toString(),
-        logo: this.logo.toString(),
-        fechaInicio: this.fechaInicio.toString(),
-        fechaFin: this.fechaFin.toString(),
-        fechaReintegro: this.fechaReintegro.toString(),
-        diasSolicitados: this.diasSolicitados.toString(),
-        numDiasSolicitadosDinero: this.vacacionesDinero.toString(),
-        fechaInicioPeriodo: this.fecha1.toString(),
-        fechaFinPeriodo: this.fecha2.toString(),
-        diasDisfrutados: this.diasDisfrutados.toString(),
-        diasPendientes: this.diasPendientes.toString(),
-        comentarios: this.comentarios.toString()
-      };
+    let printReportDTO = {
+      id: this.cedula,
+      jefeInmediato: this.jefeInmediato.toString(),
+      logo: this.logo.toString(),
+      fechaInicio: this.fechaInicio.toString(),
+      fechaFin: this.fechaFin.toString(),
+      fechaReintegro: this.fechaReintegro.toString(),
+      diasSolicitados: this.diasSolicitados.toString(),
+      numDiasSolicitadosDinero: this.vacacionesDinero.toString(),
+      fechaInicioPeriodo: this.fecha1.toString(),
+      fechaFinPeriodo: this.fecha2.toString(),
+      diasDisfrutados: this.diasDisfrutados.toString(),
+      diasPendientes: this.diasPendientes.toString(),
+      comentarios: this.comentarios.toString()
+    };
 
-      this._reportService.generateVacation(printReportDTO, this.selectedCompany).subscribe(
-        response => {
-          if (response.code === 0) {
-            this.errorMessage = '';
-            this.confirmacionMessage = response.content
-            window.open(vacationUrl, '_blank');
-            this.cancelForm();
-          } else if (response.code === -1) {
-            this.errorMessage = 'La generación de la solicitud de vacaciones no fue exitosa';
-          }
-        },
-        error => {
-          console.error('Error al generar el reporte:', error);
+    this._reportService.generateVacation(printReportDTO, this.selectedCompany).subscribe(
+      response => {
+        if (response.code === 0) {
+          this.errorMessage = '';
+          window.open(response.content, '_blank');
+          this.cancelForm();
+        } else {
           this.errorMessage = 'La generación de la solicitud de vacaciones no fue exitosa';
-          this.redirectIfSessionInvalid(error);
         }
-      );
-    } else {
-      this.errorMessage = 'La generación de la solicitud de vacaciones no fue exitosa';
-    }
+      },
+      error => {
+        console.error('Error al generar el reporte:', error);
+        this.errorMessage = 'La generación de la solicitud de vacaciones no fue exitosa';
+        this.redirectIfSessionInvalid(error);
+      }
+    );
   }
 
   public cancelForm(): void {
@@ -123,27 +108,27 @@ export class EmployeeVacationComponent {
   }
 
   public onCompanyChange() {
-    switch (this.logo) {
-      case '1':
-        this.selectedCompany = 'DSM_NOVAWEB';
+    switch (this.selectedCompany) {
+      case 'DSM_NOVAWEB':
+        this.logo = "1";
         break;
-      case '2':
-        this.selectedCompany = 'INVERSUR_NOVAWEB';
+      case 'INVERSUR_NOVAWEB':
+        this.logo = "2";
         break;
-      case '3':
-        this.selectedCompany = 'IGB_NOVAWEB';
+      case 'IGB_NOVAWEB':
+        this.logo = "3";
         break;
-      case '4':
-        this.selectedCompany = 'MOTOREPUESTOS_NOVAWEB';
+      case 'MOTOREPUESTOS_NOVAWEB':
+        this.logo = "4";
         break;
-      case '5':
-        this.selectedCompany = 'MTZ_NOVAWEB';
+      case 'MTZ_NOVAWEB':
+        this.logo = "5";
         break;
-      case '6':
-        this.selectedCompany = 'REDPLAS_NOVAWEB';
+      case 'VILNA_NOVAWEB':
+        this.logo = "6";
         break;
-      case '7':
-        this.selectedCompany = 'WALI_NOVAWEB';
+      case 'WALI_NOVAWEB':
+        this.logo = "7";
         break;
       default:
         this.selectedCompany = '';

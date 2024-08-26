@@ -10,14 +10,6 @@
       </div>
     </div>
   </div>
-  <!--Alerta aprobación-->
-  <div class="row" *ngIf="confirmacionMessage" role="alert">
-    <div class="col-xs-12">
-      <div class="alert alert-success">
-        {{confirmacionMessage}}
-      </div>
-    </div>
-  </div>
   <div style="margin-top: 20px;"></div>
   <form (submit)="generateVacation()">
     <div class="row">
@@ -33,16 +25,16 @@
             </div>
             <div class="form-group">
               <label for="empresa">Seleccione empresa</label>
-              <select id="empresa" class="form-control input-lg" [(ngModel)]="logo" name="empresa"
+              <select id="empresa" class="form-control input-lg" [(ngModel)]="selectedCompany" name="empresa"
                 (ngModelChange)="onCompanyChange()" required>
                 <option value="" disabled selected>Seleccione empresa</option>
-                <option value="1">DIGITAL</option>
-                <option value="2">INVERSUR</option>
-                <option value="3">IGB</option>
-                <option value="4">MOTOREPUESTOS</option>
-                <option value="5">MOTOZONE</option>
-                <option value="6">REDPLAS</option>
-                <option value="7">WALI</option>
+                <option value="IGB_NOVAWEB">IGB</option>
+                <option value="MTZ_NOVAWEB">MOTOZONE</option>
+                <option value="VILNA_NOVAWEB">REDPLAS</option>
+                <option value="WALI_NOVAWEB">WALI</option>
+                <option value="DSM_NOVAWEB">DIGITAL</option>
+                <option value="INVERSUR_NOVAWEB">INVERSUR</option>
+                <option value="MOTOREPUESTOS_NOVAWEB">MOTOREPUESTOS</option>
               </select>
             </div>
             <div class="form-group">

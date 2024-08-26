@@ -1,108 +1,5 @@
 <igb-navbar></igb-navbar>
 
-<div class="container content">
-  <h3>Generar Colillas de Pago</h3>
-  <!--Alerta error-->
-  <div class="row" *ngIf="errorMessage" role="alert">
-    <div class="col-xs-12">
-      <div class="alert alert-danger">
-        {{errorMessage}}
-      </div>
-    </div>
-  </div>
-  <!--Alerta aprobación-->
-  <div class="row" *ngIf="confirmacionMessage" role="alert">
-    <div class="col-xs-12">
-      <div class="alert alert-success">
-        {{confirmacionMessage}}
-      </div>
-    </div>
-  </div>
-  <div style="margin-top: 20px;"></div>
-  <form (submit)="generatePaystub()">
-    <div class="row">
-      <div class="col-xs-12">
-        <label for="empresa">Seleccione empresa</label>
-        <select id="empresa" class="form-control input-lg" [(ngModel)]="selectedCompany" name="selectedCompany"
-          (ngModelChange)="onCompanyChange()" required [class.required-field]="!selectedCompany">
-          <option value="" disabled>Seleccione empresa</option>
-          <option value="IGB_NOVAWEB">IGB</option>
-          <option value="MTZ_NOVAWEB">MOTOZONE</option>
-          <option value="VILNA_NOVAWEB">REDPLAS</option>
-          <option value="WALI_NOVAWEB">WALI</option>
-          <option value="DSM_NOVAWEB">DIGITAL</option>
-          <option value="INVERSUR_NOVAWEB">INVERSUR</option>
-          <option value="MOTOREPUESTOS_NOVAWEB">MOTOREPUESTOS</option>
-        </select>
-      </div>
-    </div>
-    <br>
-    <div class="row">
-      <div class="col-xs-12">
-        <label for="cedula">Cédula</label>
-        <input type="number" id="cedula" class="form-control input-lg" [(ngModel)]="cedula" name="cedula"
-          autocomplete="off" required placeholder="Ingrese cédula" [class.required-field]="!cedula" required>
-      </div>
-    </div>
-    <br>
-    <div class="row">
-      <div class="col-xs-4">
-        <label for="year">Año</label>
-        <select id="year" class="form-control input-lg" [(ngModel)]="selectedYear" name="selectedYear" required
-          [class.required-field]="!selectedYear" required>
-          <option value="" disabled>Seleccione año</option>
-          <option value="2023">2023</option>
-          <option value="2024">2024</option>
-        </select>
-      </div>
-      <div class="col-xs-4">
-        <label for="month">Mes</label>
-        <select id="month" class="form-control input-lg" [(ngModel)]="selectedMonth" name="selectedMonth" required
-          [class.required-field]="!selectedMonth" required>
-          <option value="" disabled>Seleccione mes</option>
-          <option value="1">Enero</option>
-          <option value="2">Febrero</option>
-          <option value="3">Marzo</option>
-          <option value="4">Abril</option>
-          <option value="5">Mayo</option>
-          <option value="6">Junio</option>
-          <option value="7">Julio</option>
-          <option value="8">Agosto</option>
-          <option value="9">Septiembre</option>
-          <option value="10">Octubre</option>
-          <option value="11">Noviembre</option>
-          <option value="12">Diciembre</option>
-        </select>
-      </div>
-      <div class="col-xs-4">
-        <label for="periodo">Periodo</label>
-        <select id="periodo" class="form-control input-lg" [(ngModel)]="selectedPeriodo" name="selectedPeriodo" required
-          [class.required-field]="!selectedPeriodo" required>
-          <option value="" disabled>Seleccione el periodo</option>
-          <option value="15">De 1 a 15 días</option>
-          <option value="30">De 16 a 31 días</option>
-        </select>
-      </div>
-    </div>
-    <br>
-    <div class="row">
-      <div class="col-xs-12">
-        <label for="fechaNacimiento">Fecha de nacimiento</label>
-        <input type="date" id="fechaNacimiento" class="form-control input-lg" [(ngModel)]="fechaNacimiento"
-          name="fechaNacimiento" required [class.required-field]="!fechaNacimiento" required>
-      </div>
-    </div>
-    <br>
-    <div class="row">
-      <div class="col-xs-12">
-        <button type="button" class="btn btn-danger btn-lg" (click)="generatePaystub()" data-toggle="modal"
-          data-target="#confirmModal"
-          [disabled]="!selectedYear || !selectedMonth || !selectedPeriodo || !fechaNacimiento">Generar</button>
-        <button type="button" class="btn btn-secondary btn-lg" (click)="cancelForm()">Cancelar</button>
-      </div>
-    </div>
-  </form>
-</div>
 <!-- Modal para generar colilla de pago -->
 <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel"
   aria-hidden="true">
@@ -117,15 +14,107 @@
         </button>
       </div>
       <div class="modal-body">
-        <p><strong>Empresa:</strong> {{ selectedCompany }}</p>
-        <p><strong>Cédula:</strong> {{ cedula }}</p>
-        <p><strong>Fecha colilla de pago:</strong> {{ selectedYear }}-{{ selectedMonth }}-{{ selectedPeriodo }}</p>
-        <p><strong>Fecha nacimiento:</strong> {{ fechaNacimiento }}</p>
+        <p><strong>Empresa:</strong> {{selectedCompany}}</p>
+        <p><strong>Cédula:</strong> {{cedula}}</p>
+        <p><strong>Fecha colilla de pago:</strong> {{selectedYear}}-{{selectedMonth}}-{{selectedPeriodo}}</p>
+        <p><strong>Fecha nacimiento:</strong> {{fechaNacimiento}}</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" (click)="generatePaystub()">Aceptar</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
       </div>
+    </div>
+  </div>
+</div>
+<div class="container content">
+  <h3>Generar Colillas de Pago</h3>
+  <!--Alerta error-->
+  <div class="row" *ngIf="errorMessage" role="alert">
+    <div class="col-xs-12">
+      <div class="alert alert-danger">
+        {{errorMessage}}
+      </div>
+    </div>
+  </div>
+  <div style="margin-top: 20px;"></div>
+  <div class="row">
+    <div class="col-xs-12">
+      <label for="empresa">Seleccione empresa</label>
+      <select id="empresa" class="form-control input-lg" [(ngModel)]="selectedCompany" name="selectedCompany"
+        (ngModelChange)="onCompanyChange()" required [class.required-field]="!selectedCompany">
+        <option value="" disabled>Seleccione empresa</option>
+        <option value="IGB_NOVAWEB">IGB</option>
+        <option value="MTZ_NOVAWEB">MOTOZONE</option>
+        <option value="VILNA_NOVAWEB">REDPLAS</option>
+        <option value="WALI_NOVAWEB">WALI</option>
+        <option value="DSM_NOVAWEB">DIGITAL</option>
+        <option value="INVERSUR_NOVAWEB">INVERSUR</option>
+        <option value="MOTOREPUESTOS_NOVAWEB">MOTOREPUESTOS</option>
+      </select>
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <div class="col-xs-12">
+      <label for="cedula">Cédula</label>
+      <input type="number" id="cedula" class="form-control input-lg" [(ngModel)]="cedula" name="cedula"
+        autocomplete="off" required placeholder="Ingrese cédula" [class.required-field]="!cedula" required>
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <div class="col-xs-4">
+      <label for="year">Año</label>
+      <select id="year" class="form-control input-lg" [(ngModel)]="selectedYear" name="selectedYear" required
+        [class.required-field]="!selectedYear" required>
+        <option value="" disabled>Seleccione año</option>
+        <option value="2023">2023</option>
+        <option value="2024">2024</option>
+      </select>
+    </div>
+    <div class="col-xs-4">
+      <label for="month">Mes</label>
+      <select id="month" class="form-control input-lg" [(ngModel)]="selectedMonth" name="selectedMonth" required
+        [class.required-field]="!selectedMonth" required>
+        <option value="" disabled>Seleccione mes</option>
+        <option value="1">Enero</option>
+        <option value="2">Febrero</option>
+        <option value="3">Marzo</option>
+        <option value="4">Abril</option>
+        <option value="5">Mayo</option>
+        <option value="6">Junio</option>
+        <option value="7">Julio</option>
+        <option value="8">Agosto</option>
+        <option value="9">Septiembre</option>
+        <option value="10">Octubre</option>
+        <option value="11">Noviembre</option>
+        <option value="12">Diciembre</option>
+      </select>
+    </div>
+    <div class="col-xs-4">
+      <label for="periodo">Periodo</label>
+      <select id="periodo" class="form-control input-lg" [(ngModel)]="selectedPeriodo" name="selectedPeriodo" required
+        [class.required-field]="!selectedPeriodo" required>
+        <option value="" disabled>Seleccione el periodo</option>
+        <option value="15">De 1 a 15 días</option>
+        <option value="30">De 16 a 31 días</option>
+      </select>
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <div class="col-xs-12">
+      <label for="fechaNacimiento">Fecha de nacimiento</label>
+      <input type="date" id="fechaNacimiento" class="form-control input-lg" [(ngModel)]="fechaNacimiento"
+        name="fechaNacimiento" required [class.required-field]="!fechaNacimiento" required>
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <div class="col-xs-12">
+      <button type="button" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#confirmModal"
+        [disabled]="!selectedYear || !selectedMonth || !selectedPeriodo || !fechaNacimiento">Generar</button>
+      <button type="button" class="btn btn-secondary btn-lg" (click)="cancelForm()">Cancelar</button>
     </div>
   </div>
 </div>

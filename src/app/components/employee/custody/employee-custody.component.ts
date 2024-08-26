@@ -65,7 +65,6 @@ export class EmployeeCustodyComponent {
   public datePurchase: string;
   public companyPurchase: string;
   public messageCustodyPrint: string;
-  public selectedCompanyPrint: string = '';
 
   constructor(private _router: Router, private _userService: UserService, private _employeeService: EmployeeService, private _binLocationService: BinLocationService, private _reportService: ReportService) {
   }
@@ -264,38 +263,12 @@ export class EmployeeCustodyComponent {
     );
   }
 
-  public validateEmployeeExistence() {
-    this.messageCustodyPrint = '';
-
-    $('#modal_process').modal({
-      backdrop: 'static',
-      keyboard: false,
-      show: true
-    });
-
-    this._employeeService.validateEmployeeExistence(this.document.toString(), null, this.selectedCompanyPrint).subscribe(
-      response => {
-        if (response.content == false) {
-          this.messageCustodyPrint = "Los datos ingresados son incorrectos.";
-          $('#modal_process').modal('hide');
-        } else {
-          this.generateCustodyPrint(this.selectedCompanyPrint);
-        }
-      },
-      error => {
-        this.redirectIfSessionInvalid(error);
-        console.error(error);
-        $('#modal_process').modal('hide');
-      }
-    );
-  }
-
-  public generateCustodyPrint(company: string) {
+  public generateCustodyPrint() {
     let printReportDTO = {
       "id": this.document,
       "copias": 0,
       "documento": "custodyPrint",
-      "companyName": company,
+      "companyName": this.selectedCompany,
       "origen": 'W',
       "imprimir": false,
     };
@@ -303,7 +276,7 @@ export class EmployeeCustodyComponent {
     this._reportService.generateReport(printReportDTO).subscribe(
       response => {
         if (response.code == 0) {
-          window.open(this.urlShared + company + '/employee/custodyPrint/' + this.document + '.pdf');
+          window.open(this.urlShared + this.selectedCompany + '/employee/custodyPrint/' + this.document + '.pdf');
           this.clean();
           $('#modal_print').modal('hide');
           $('#modal_process').modal('hide');
@@ -346,10 +319,6 @@ export class EmployeeCustodyComponent {
     this.filter = '';
     this.document = '';
     this.messageCustodyPrint = '';
-  }
-
-  public getUrlShowCustody(url: string) {
-    window.open(url, "_blank");
   }
 
   public showModalInfo(custody) {
