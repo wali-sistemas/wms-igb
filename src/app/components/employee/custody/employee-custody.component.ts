@@ -273,27 +273,13 @@ export class EmployeeCustodyComponent {
       show: true
     });
 
-    let company = "";
-    switch (this.selectedCompanyPrint) {
-      case "IGB":
-        company = "IGB_NOVAWEB";
-        break;
-      case "VARROC":
-        company = "MTZ_NOVAWEB";
-        break;
-        case "REDPLAS":
-          company = "VILNA_NOVAWEB";
-      default:
-        company = "";
-    }
-
-    this._employeeService.validateEmployeeExistence(this.document.toString(), null, company).subscribe(
+    this._employeeService.validateEmployeeExistence(this.document.toString(), null, this.selectedCompanyPrint).subscribe(
       response => {
         if (response.content == false) {
           this.messageCustodyPrint = "Los datos ingresados son incorrectos.";
           $('#modal_process').modal('hide');
         } else {
-          this.generateCustodyPrint(company);
+          this.generateCustodyPrint(this.selectedCompanyPrint);
         }
       },
       error => {
