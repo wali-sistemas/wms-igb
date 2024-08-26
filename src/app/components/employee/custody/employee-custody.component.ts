@@ -65,6 +65,7 @@ export class EmployeeCustodyComponent {
   public datePurchase: string;
   public companyPurchase: string;
   public messageCustodyPrint: string;
+  public selectedCompanyPrint: string = '';
 
   constructor(private _router: Router, private _userService: UserService, private _employeeService: EmployeeService, private _binLocationService: BinLocationService, private _reportService: ReportService) {
   }
@@ -273,7 +274,7 @@ export class EmployeeCustodyComponent {
     });
 
     let company = "";
-    switch (this.selectedCompany) {
+    switch (this.selectedCompanyPrint) {
       case "IGB":
         company = "IGB_NOVAWEB";
         break;
@@ -292,7 +293,7 @@ export class EmployeeCustodyComponent {
           this.messageCustodyPrint = "Los datos ingresados son incorrectos.";
           $('#modal_process').modal('hide');
         } else {
-          this.generateCustodyPrint();
+          this.generateCustodyPrint(company);
         }
       },
       error => {
@@ -303,12 +304,12 @@ export class EmployeeCustodyComponent {
     );
   }
 
-  public generateCustodyPrint() {
+  public generateCustodyPrint(company: string) {
     let printReportDTO = {
       "id": this.document,
       "copias": 0,
       "documento": "custodyPrint",
-      "companyName": this.identity.selectedCompany,
+      "companyName": company,
       "origen": 'W',
       "imprimir": false,
     };
