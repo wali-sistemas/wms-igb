@@ -324,41 +324,24 @@
             </div>
           </div>
         </div>
-        <form (submit)="validateEmployeeExistence()">
+        <form (submit)="generateCustodyPrint()">
           <div class="row">
             <div class="col-xs-12">
               <input type="number" class="form-control input-lg" id="document" placeholder="Ingrese cédula"
                 [(ngModel)]="document" name="document" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
             </div>
           </div>
-          <br />
-          <div class="row">
-            <div class="col-xs-12">
-              <select id="empresa" class="form-control input-lg" [(ngModel)]="selectedCompanyPrint" name="selectedCompanyPrint">
-                <option value="" disabled>Seleccione empresa</option>
-                <option value="IGB_NOVAWEB">IGB</option>
-                <option value="MTZ_NOVAWEB">MOTOZONE</option>
-                <option value="VILNA_NOVAWEB">REDPLAS</option>
-                <option value="WALI_NOVAWEB">WALI</option>
-                <option value="DSM_NOVAWEB">DIGITAL</option>
-                <option value="INVERSUR_NOVAWEB">INVERSUR</option>
-                <option value="MOTOREPUESTOS_NOVAWEB">MOTOREPUESTOS</option>
-              </select>
-            </div>
-          </div>
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-danger" (click)="validateEmployeeExistence()"><span class="icon-download">
+        <button type="button" class="btn btn-danger" (click)="generateCustodyPrint()"><span class="icon-download">
           </span>Generar</button>
       </div>
     </div>
   </div>
 </div>
-
 <button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span
     class="icon-chevron-up"></span></button>
-
 <div class="container content">
   <div class="row">
     <div class="col-xs-10">

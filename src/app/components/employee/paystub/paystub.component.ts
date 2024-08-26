@@ -5,6 +5,8 @@ import { UserService } from '../../../services/user.service';
 import { EmployeeService } from '../../../services/employee.service';
 import { GLOBAL } from 'app/services/global';
 
+declare var $: any;
+
 @Component({
   templateUrl: './paystub.component.html',
   styleUrls: ['./paystub.component.css'],
@@ -22,7 +24,6 @@ export class EmployeePaystubComponent {
   public url: string;
   public showErrorModal = false;
   public errorMessage: string;
-  public confirmacionMessage: string;
 
   constructor(private _reportService: ReportService, private _userService: UserService, private _router: Router, private _employeeService: EmployeeService) {
     this.url = GLOBAL.urlShared;
@@ -43,45 +44,43 @@ export class EmployeePaystubComponent {
     }
   }
 
-  public getUrlPaystub() {
-    if (this.cedula) {
-      return `${this.url} /employee/paystub/${this.cedula}.pdf`;
-    } else {
-      return '';
-    }
-  }
-
   public generatePaystub() {
-    const paystubUrl = this.getUrlPaystub();
-    if (paystubUrl) {
-      let printReportDTO = {
-        id: this.cedula,
-        year: parseInt(this.selectedYear, 10),
-        month: parseInt(this.selectedMonth, 10),
-        day: parseInt(this.selectedPeriodo, 10),
-        logo: this.logo
-      };
-
-      this._reportService.generatePaystub(printReportDTO, this.selectedCompany).subscribe(
-        response => {
-          if (response.code === 0) {
-            this.errorMessage = '';
-            this.confirmacionMessage = response.content
-            window.open(paystubUrl, '_blank');
-            this.cancelForm();
-          } else if (response.code === -1) {
-            this.errorMessage = 'La generación de la colilla de pago no fue exitosa';
-          }
-        },
-        error => {
-          console.error('Error al generar el reporte:', error);
-          this.errorMessage = 'La generación de la colilla de pago no fue exitosa';
-          this.redirectIfSessionInvalid(error);
+    this._employeeService.validateEmployeeExistence(this.cedula.toString(), this.fechaNacimiento, this.selectedCompany).subscribe(
+      response => {
+        if (response.code >= 0 && response.content === false) {
+          this.errorMessage = 'Los datos ingresados son incorrectos.';
+          $('#confirmModal').modal('hide');
+        } else {
+          let printReportDTO = {
+            id: this.cedula,
+            year: parseInt(this.selectedYear, 10),
+            month: parseInt(this.selectedMonth, 10),
+            day: parseInt(this.selectedPeriodo, 10),
+            logo: this.logo
+          };
+          this._reportService.generatePaystub(printReportDTO, this.selectedCompany).subscribe(
+            response => {
+              if (response.code === 0) {
+                this.errorMessage = '';
+                window.open(response.content, '_blank');
+                this.cancelForm();
+              } else if (response.code === -1) {
+                this.errorMessage = 'La generación de la colilla de pago no fue exitosa';
+              }
+            },
+            error => {
+              console.error('Error al generar el reporte:', error);
+              this.errorMessage = 'La generación de la colilla de pago no fue exitosa';
+              this.redirectIfSessionInvalid(error);
+            }
+          );
         }
-      );
-    } else {
-      this.errorMessage = 'La generación de la colilla de pago no fue exitosa';
-    }
+      },
+      error => {
+        console.error(error);
+        this.redirectIfSessionInvalid(error);
+      }
+    );
   }
 
   public cancelForm() {
@@ -92,54 +91,6 @@ export class EmployeePaystubComponent {
     this.selectedPeriodo = "";
     this.fechaNacimiento = '';
     this.errorMessage = '';
-  }
-
-  public confirmGenerate() {
-    //TODO: Validando la existencia del empleado
-    this.validateEmployee(this.cedula.toString(), this.fechaNacimiento, this.selectedCompany);
-
-    const pdfUrl = this.getUrlPaystub();
-    let employeeValidationResult = false;
-
-    this._employeeService.validateEmployeeExistence(this.cedula.toString(), this.fechaNacimiento, this.selectedCompany).subscribe(
-      response => {
-        if (response.code >= 0 && response.content === false) {
-          alert('Los datos ingresados son incorrectos.');
-        } else if (response.code >= 0 && response.content === true) {
-          employeeValidationResult = true;
-        } else {
-          console.error('Los datos ingresados son incorrectos.');
-        }
-
-        if (pdfUrl && employeeValidationResult) {
-          window.open(pdfUrl, '_blank');
-        } else {
-          console.error('La URL del PDF no es válida o la validación del empleado falló.');
-        }
-      },
-      error => {
-        console.error(error);
-        this.redirectIfSessionInvalid(error);
-      }
-    );
-  }
-
-  public validateEmployee(idEmployee: string, birthdate: string, companyName: string) {
-    this._employeeService.validateEmployeeExistence(idEmployee, birthdate, companyName).subscribe(
-      response => {
-        if (response.code >= 0 && response.content === false) {
-          this.errorMessage = 'Los datos ingresados son incorrectos.';
-        } else if (response.code >= 0 && response.content === true) {
-          this.generatePaystub();
-        } else {
-          console.error('Los datos ingresados son incorrectos.');
-        }
-      },
-      error => {
-        console.error(error);
-        this.redirectIfSessionInvalid(error);
-      }
-    );
   }
 
   public onCompanyChange() {
