@@ -30,6 +30,7 @@ export class PurchaseOrderComponent implements OnInit {
   private editingPosition: number = -1;
   private received: Map<string, number>;
   private checkDateArribPuert: boolean = false;
+  private checkDateEmbarque: boolean = false;
   //UDF
   private selectedTransport: string = '';
   private dateEmbarq: Date;
@@ -73,6 +74,7 @@ export class PurchaseOrderComponent implements OnInit {
   private selectedEnvDatCond: string = '';
   private selectedAnalistComex: string = '';
   private slpName: string = '';
+  private emailComprador: string;
 
   constructor(private _userService: UserService, private _purchaseOrdersService: PurchaseOrdersService, private _route: ActivatedRoute, private _router: Router) {
     this.order = new PurchaseOrder(0, '', '', new Date(), 0, 0, '', '', 0, new Array<PurchaseOrderLine>());
@@ -188,6 +190,7 @@ export class PurchaseOrderComponent implements OnInit {
         this.selectedEnvDatCond = response.enviarDatos;
         this.selectedAnalistComex = response.vendedor;
         this.slpName = response.comprador;
+        this.emailComprador = response.emailComprador;
       }, error => {
         this.redirectIfSessionInvalid(error);
         console.error(error);
@@ -248,8 +251,10 @@ export class PurchaseOrderComponent implements OnInit {
       'vendedor': this.selectedAnalistComex == null ? '' : this.selectedAnalistComex,
       'docNum': this.order.docNum,
       'docDate': this.order.docDate,
-      'sendNotification': this.checkDateArribPuert,
-      'comprador': this.slpName == null ? '' : this.slpName
+      'sendNotificationFarribPuert': this.checkDateArribPuert,
+      'sendNotificationFembarque': this.checkDateEmbarque,
+      'comprador': this.slpName == null ? '' : this.slpName,
+      'emailComprador': this.emailComprador = null ? 'grupocomex@igbcolombia.com' : this.emailComprador
     }
 
     this._purchaseOrdersService.updateOrderUDF(userFieldDTO).subscribe(
