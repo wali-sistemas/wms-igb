@@ -261,7 +261,15 @@
                 <br />
                 <div class="row">
                   <div class="col-xs-12 margin-bottom-10">
-                    <label for="dateEmbarq">Fecha Embarque</label>
+                    <label for="dateEmbarq">
+                      Fecha Embarque
+                      <div class="mascarar text-center">
+                        <input type="checkbox" id="checkDateEmbarque" name="checkDateEmbarque"
+                          [(ngModel)]="checkDateEmbarque" checked>
+                        <label for="checkDateEmbarque" style="font-size: 12px; color: #474B4E;"><span></span>Notificar
+                          cambio</label>
+                      </div>
+                    </label>
                     <input type="date" id="dateEmbarq" class="form-control input-lg" [(ngModel)]="dateEmbarq"
                       name="dateEmbarq" min="2021-01-01" max="2050-12-31">
                   </div>
