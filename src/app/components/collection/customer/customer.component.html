@@ -567,7 +567,7 @@
               <div class="seccion">
                 <label>Código*</label>
                 <input type="text" class="form-control input-lg" autocomplete="off" placeholder="Ej: C93403038"
-                  [readonly]="isSearchMode" maxlength="20"
+                  [readonly]="isSearchMode" maxlength="12"
                   oninput="this.value = this.value.replace(/[^cC0-9]/g, '').toUpperCase()" [(ngModel)]="client.cardCode"
                   (ngModelChange)="onCardCodeChange()" id="cardCode">
               </div>
@@ -875,7 +875,7 @@
               <div class="col-xs-6 col-md-6 seccion">
                 <label>Municipio*</label>
                 <select class="form-control input-lg" [disabled]="isSearchMode" [(ngModel)]="client.codMunicipio"
-                  (ngModelChange)="updateProgress()">
+                  (ngModelChange)="onMunicipalityChange()">
                   <option value="" disabled>Selecciona un Municipio</option>
                   <option *ngFor="let municipality of filteredMunicipalities" [value]="municipality.code">
                     {{municipality.name}}</option>
@@ -923,27 +923,34 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-xs-6 col-md-5">
+            <div class="col-xs-6 col-md-4">
               <div class="seccion">
                 <label>Latitud*</label>
-                <input #latInput type="text" class="form-control input-lg" autocomplete="off"
-                  placeholder="Ej: 4.4477253" [readonly]="isSearchMode" [(ngModel)]="client.latitudeMap"
+                <input #latInput id="latInput" type="text" class="form-control input-lg" autocomplete="off"
+                  placeholder="Ej: 4.4477253" readonly="readonly" [(ngModel)]="client.latitudeMap"
                   (ngModelChange)="updateProgress()">
               </div>
             </div>
-            <div class="col-xs-6 col-md-5">
+            <div class="col-xs-6 col-md-4">
               <div class="seccion">
                 <label>Longitud*</label>
                 <input #lngInput type="text" class="form-control input-lg" autocomplete="off" placeholder="Ej: -10.214"
-                  [readonly]="isSearchMode" [(ngModel)]="client.lengthMap" (ngModelChange)="updateProgress()">
+                  readonly="readonly" [(ngModel)]="client.lengthMap" (ngModelChange)="updateProgress()">
               </div>
             </div>
-            <div class="col-xs-12 col-md-2">
+            <div class="col-xs-6 col-md-2">
               <div class="seccion">
-                <label>Mapa</label>
-                <button type="button" data-toggle="modal" data-target="#modal_new_asset" class="form-control input-lg"
-                  (click)="centerMap()">
+                <label>Centrar</label>
+                <button type="button" class="form-control input-lg" (click)="centerMap()">
                   <span class="glyphicon glyphicon-screenshot"></span> Ver
+                </button>
+              </div>
+            </div>
+            <div class="col-xs-6 col-md-2">
+              <div class="seccion">
+                <label>Coordenadas</label>
+                <button type="button" class="form-control input-lg" (click)="clearCoordinates()">
+                  <span class="glyphicon glyphicon-erase"></span> Vaciar
                 </button>
               </div>
             </div>
