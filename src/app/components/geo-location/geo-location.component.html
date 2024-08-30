@@ -157,6 +157,9 @@
                 <p><b><span class="glyphicon glyphicon-road"
                       style="font-size: 18px;position:relative; top: 4px;"></span>
                     Distancia recorrida: </b>{{distance | number:'1.2-2'}} Kms</p>
+                <p><b><span class="glyphicon glyphicon-align-left"
+                      style="font-size: 18px;position:relative; top: 3px;"></span> Pendientes facturar:
+                  </b>{{ salesData.totalOrders | number }}</p>
               </div>
             </div>
             <div class="col-md-6 col-xs-12">
@@ -171,6 +174,10 @@
                 <p><b><span class="glyphicon glyphicon-time"
                       style="font-size: 18px; position:relative; top: 3px;"></span>
                     Ultimo registro: </b>{{time}}</p>
+                <p><b><span class="glyphicon glyphicon-align-justify"
+                      style="font-size: 18px;position:relative; top: 4px;"></span> Total facturado:
+                  </b>{{ salesData.totalInvoiced | number }}
+                </p>
               </div>
             </div>
           </div>

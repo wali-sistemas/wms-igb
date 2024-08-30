@@ -136,6 +136,11 @@ export class CustomerComponent implements OnInit {
       mapOptions
     );
 
+    this.googleMap.addListener('click', (event) => {
+      $('#latInput').focus();
+      this.updateCoordinates(event.latLng.lat(), event.latLng.lng());
+    });
+
     this.getListOfAdvisors();
     this.getListOfMunicipalities();
     this.getListOfDepartments();
@@ -785,6 +790,51 @@ export class CustomerComponent implements OnInit {
     });
   }
 
+  public updateCoordinates(latitude: number, longitude: number) {
+    this.client.latitudeMap = latitude.toString(); // Convierte a string si es necesario
+    this.client.lengthMap = longitude.toString();
+    this.updateProgress();
+  }
+
+  // Obtener el nombre del municipio seleccionado
+  public centerMapOnCity() {
+    const selectedMunicipality = this.filteredMunicipalities.find(municipality => municipality.code === this.client.codMunicipio);
+    if (!selectedMunicipality) {
+      console.error('No se pudo encontrar el municipio seleccionado.');
+      return;
+    }
+    const cityName = selectedMunicipality.name;
+    const selectedDepartment = this.departments.find(department => department.code === this.client.codDepartamento);
+    if (!selectedDepartment) {
+      console.error('No se pudo encontrar el departamento seleccionado.');
+      return;
+    }
+    const departmentName = selectedDepartment.name;
+    const address = `${cityName}, ${departmentName}, Colombia`;
+    const geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ 'address': address }, (results, status) => {
+      if (status === 'OK' && results && results.length > 0) {
+        const location = results[0].geometry.location;
+        const latitude = location.lat();
+        const longitude = location.lng();
+
+        const mapOptions = {
+          center: { lat: latitude, lng: longitude },
+          zoom: 13
+        };
+        this.googleMap.setOptions(mapOptions);
+      } else {
+        console.error('No se pudo encontrar la ciudad en el mapa.');
+      }
+    });
+  }
+
+  // Ubicar el mapa en el municipio seleccionado
+  public onMunicipalityChange() {
+    this.centerMapOnCity();
+    this.updateProgress();
+  }
+
   // Concatenar campos de modal direccion
   public updateAddress() {
     this.client.address = `${this.tipoDi1} ${this.numDi1}${this.stDi1}${this.stDi1a}${this.cardiDi1} ${this.numDi2}${this.stDi2}${this.stDi2a}${this.cardiDi2} ${this.numDi3} ${this.tipoViv} ${this.undDi} ${this.numApto}`;
@@ -827,6 +877,13 @@ export class CustomerComponent implements OnInit {
     this.tipoVivMM = '';
     this.undDiMM = '';
     this.numAptoMM = '';
+  }
+
+  public clearCoordinates() {
+    this.client.latitudeMap = '';
+    this.client.lengthMap = '';
+    $('#latInput').focus();
+    this.updateProgress();
   }
 
   // Validar formulario

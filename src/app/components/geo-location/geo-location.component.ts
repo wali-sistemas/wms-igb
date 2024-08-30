@@ -3,7 +3,8 @@ import { Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { BusinessPartnerService } from '../../services/business-partner.service';
 import { Advisor } from '../../models/customer/client-advisor';
-import { GeoLocation } from '../../models/geo-location';
+import { GeoLocation } from '../../models/geoLocation/geo-location';
+import { GeoLocationSalesData } from '../../models/geoLocation/geo-location-salesData';
 import { DailyMarkers } from '../../models/daily-markers-advisor';
 
 declare var $: any;
@@ -26,6 +27,7 @@ export class GeoLocationComponent implements OnInit {
   public advisors: Advisor[] = [];
   public filteredAdvisors: Advisor[] = [];
   public locations: GeoLocation[] = [];
+  public salesData: GeoLocationSalesData = new GeoLocationSalesData();
   public filteredRegions: string[];
   public locationsToDraw: GeoLocation[] = [];
   public selectedCompany: string;
@@ -130,6 +132,7 @@ export class GeoLocationComponent implements OnInit {
             this.addMarkersForOrders(this.locations);
             this.adviserCard = this.locations[0].idCard;
             this.enabledbutton = false;
+            this.getOrderData();
             this.changeLocationErrorMessage = '';
           } else {
             this.changeLocationErrorMessage = 'No se encontraron registros';
@@ -374,6 +377,25 @@ export class GeoLocationComponent implements OnInit {
     return `${hour}:${minute}`;
   }
 
+  public getOrderData() {
+    this._businessPartnerService.getGeoLocationSalesData(this.selectedCompany, this.year, this.month, this.day, this.selectedAdvisor).subscribe(
+      response => {
+        if (response.code === 0) {
+          const data = response.content[0];
+          this.salesData.advisor = data.advisor;
+          this.salesData.totalInvoiced = data.totalInvoiced;
+          this.salesData.totalOrders = data.totalOrders;
+        } else {
+          this.changeLocationErrorMessage = "Error al obtener datos de la venta diaria";
+        }
+      }, error => {
+        console.error('Error al obtener la ubicación:', error);
+        this.changeLocationErrorMessage = 'Error al obtener datos de la venta diaria';
+        this.redirectIfSessionInvalid(error);
+      }
+    )
+  }
+
   public clear() {
     this.selectedRegion = '';
     this.selectedAdvisor = '';
@@ -382,6 +404,7 @@ export class GeoLocationComponent implements OnInit {
     this.locations = [];
     this.changeLocationErrorMessage = '';
     this.enabledbutton = true;
-    this.initializeMap()
+    this.salesData = new GeoLocationSalesData();
+    this.initializeMap();
   }
 }

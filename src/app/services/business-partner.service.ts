@@ -6,10 +6,12 @@ import { GLOBAL, IGBHeaders } from './global';
 export class BusinessPartnerService {
   public url: string;
   public urlmanager: string;
+  public urlSpring: string;
 
   constructor(private _http: Http) {
     this.url = GLOBAL.url;
-    this.urlmanager = GLOBAL.urlManager
+    this.urlmanager = GLOBAL.urlManager;
+    this.urlSpring = GLOBAL.urlSpring;
   }
 
   public listAdvisors(email: string) {
@@ -49,6 +51,11 @@ export class BusinessPartnerService {
 
   public getGeoLocation(selectedCompany: string, selectedAdvisor: string, year: string, month: string, day: string) {
     return this._http.get(this.urlmanager + 'app/get-geo-location/' + selectedCompany + '?slpcode=' + selectedAdvisor + '&year=' + year + '&month=' + month + '&day=' + day, { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
+
+  public getGeoLocationSalesData(selectedCompany: string, year: string, month: string, day: string, selectedAdvisor: string) {
+    return this._http.get(this.urlSpring + 'location/salesData?schema=' + selectedCompany + '&date=' + year + '/' + month + '/' + day + '&advisor=' + selectedAdvisor, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 }
