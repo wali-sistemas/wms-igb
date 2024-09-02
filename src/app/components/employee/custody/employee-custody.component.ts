@@ -99,7 +99,6 @@ export class EmployeeCustodyComponent {
       response => {
         if (response.code == 0) {
           $('#modal_process').modal('hide');
-          this.selectedCompany = this.identity.selectedCompany;
           $('#filter').focus();
         } else {
           this.messageEmployee = 'Lo sentimos. Se produjo un error interno.'
@@ -268,7 +267,7 @@ export class EmployeeCustodyComponent {
       "id": this.document,
       "copias": 0,
       "documento": "custodyPrint",
-      "companyName": this.selectedCompany,
+      "companyName": this.identity.selectedCompany,
       "origen": 'W',
       "imprimir": false,
     };
@@ -276,7 +275,7 @@ export class EmployeeCustodyComponent {
     this._reportService.generateReport(printReportDTO).subscribe(
       response => {
         if (response.code == 0) {
-          window.open(this.urlShared + this.selectedCompany + '/employee/custodyPrint/' + this.document + '.pdf');
+          window.open(this.urlShared + this.identity.selectedCompany + '/employee/custodyPrint/' + this.document + '.pdf');
           this.clean();
           $('#modal_print').modal('hide');
           $('#modal_process').modal('hide');
