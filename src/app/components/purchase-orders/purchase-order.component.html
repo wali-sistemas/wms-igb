@@ -220,41 +220,9 @@
                   <div class="col-xs-12 margin-bottom-10">
                     <label for="transportadora">Transportadora</label>
                     <select id="selectedTransport" class="form-control input-lg" [(ngModel)]="selectedTransport"
-                      name="selectedTransport">
-                      <option style="display:none" disabled selected value="">Seleccione uno</option>
-                      <option value="25">VANGUARD LOGISTICS</option>
-                      <option value="26">BLU LOGISTICS</option>
-                      <option value="29">COLTRANS</option>
-                      <option value="32">DHL</option>
-                      <option value="38">BEMEL</option>
-                      <option value="39">MSC</option>
-                      <option value="41">MAGNUM</option>
-                      <option value="54">MAERSK</option>
-                      <option value="58">HAMBURG SUD</option>
-                      <option value="59">FCL EXPRESS</option>
-                      <option value="62">MASTERLINE</option>
-                      <option value="64">EVERGREEN</option>
-                      <option value="72">KUENHE NAGEL</option>
-                      <option value="78">EUROPARTNERS</option>
-                      <option value="83">CMA CGM</option>
-                      <option value="84">ONE</option>
-                      <option value="85">SUPPLY LOGISTICS</option>
-                      <option value="86">NOATUM LOGISTICS</option>
-                      <option value="87">AGUNSA COLOMBIA SAS</option>
-                      <option value="88">SLI SOLUCIONES LOGISTICAS</option>
-                      <option value="89">COSCO SHIPPING</option>
-                      <option value="92">KARGORU</option>
-                      <option value="91">FLY OCEAN LOG</option>
-                      <option value="94">JAS FORWARDER</option>
-                      <option value="95">CARGO GROUP</option>
-                      <option value="96">MAREX CARGO</option>
-                      <option value="97">TIBA</option>
-                      <option value="98">LOGIMPEX</option>
-                      <option value="99">AyF CARGO</option>
-                      <option value="100">QINGDAO DSI LOGISTICS CO., LTD</option>
-                      <option value="101">WAN HAI</option>
-                      <option value="102">TRANSBORDER</option>
-                      <option value="103">PORTEX</option>
+                      name="selectedTransport" (click)="listTransport()">
+                      <option value="" disabled selected>Seleccione una</option>
+                      <option *ngFor="let transp of transports" value="{{transp[0]}}">{{transp[1]}}</option>
                     </select>
                   </div>
                 </div>

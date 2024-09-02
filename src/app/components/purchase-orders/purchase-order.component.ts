@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
+import { GenericService } from '../../services/generic';
 import { UserService } from '../../services/user.service';
 import { PurchaseOrdersService } from '../../services/purchase-orders.service';
 import { PurchaseOrder } from '../../models/purchase-order';
@@ -10,7 +11,7 @@ declare var $: any;
 @Component({
   templateUrl: './purchase-order.component.html',
   styleUrls: ['./purchase-order.component.css'],
-  providers: [UserService, PurchaseOrdersService]
+  providers: [GenericService, UserService, PurchaseOrdersService]
 })
 export class PurchaseOrderComponent implements OnInit {
   public identity;
@@ -32,6 +33,7 @@ export class PurchaseOrderComponent implements OnInit {
   private checkDateArribPuert: boolean = false;
   private checkDateEmbarque: boolean = false;
   //UDF
+  private transports: Array<any>;
   private selectedTransport: string = '';
   private dateEmbarq: Date;
   private selectedTermNeg: string = '';
@@ -76,7 +78,7 @@ export class PurchaseOrderComponent implements OnInit {
   private slpName: string = '';
   private emailComprador: string;
 
-  constructor(private _userService: UserService, private _purchaseOrdersService: PurchaseOrdersService, private _route: ActivatedRoute, private _router: Router) {
+  constructor(private _genericService: GenericService, private _userService: UserService, private _purchaseOrdersService: PurchaseOrdersService, private _route: ActivatedRoute, private _router: Router) {
     this.order = new PurchaseOrder(0, '', '', new Date(), 0, 0, '', '', 0, new Array<PurchaseOrderLine>());
     this.receivedItems = new Array<PurchaseOrderLine>();
     this.received = new Map<string, number>();
@@ -92,6 +94,18 @@ export class PurchaseOrderComponent implements OnInit {
       $('#quantity').focus();
     });
     this.loadSelectedOrder();
+  }
+
+  public listTransport() {
+    this._genericService.listActivesTransp().subscribe(
+      response => {
+        this.transports = response;
+      },
+      error => {
+        console.error('Ocurrio un error listando las transportadoras.', error);
+        this.redirectIfSessionInvalid(error);
+      }
+    );
   }
 
   private loadSelectedOrder() {
