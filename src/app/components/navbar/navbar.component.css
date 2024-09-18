@@ -140,29 +140,30 @@
   top: 7px;
 }
 
-#desktopNav {
-  display: none;
+.overlay-content {
+  max-height: calc(100vh - 52px);
+  overflow-y: auto;
+  padding-right: 15px;
+  padding-bottom: 20px;
 }
 
-@media screen and (min-width: 1565px) {
-  #desktopNav {
-    display: block;
-  }
-
-  #mobileNav,
-  #myNav {
-    display: none;
-  }
+.overlay-content::-webkit-scrollbar {
+  width: 10px;
 }
 
-@media screen and (max-width: 1564px) {
+.overlay-content::-webkit-scrollbar-track {
+  background-color: #333;
+}
 
-  #mobileNav,
-  #myNav {
-    display: block;
-  }
+.overlay-content::-webkit-scrollbar-thumb {
+  background-color: #bbb;
+  border-radius: 5px;
+}
 
-  #desktopNav {
-    display: none;
-  }
+.overlay-content::-webkit-scrollbar-thumb:hover {
+  background-color: #ddd;
+}
+
+.overlay-content a:last-child {
+  margin-bottom: 30px;
 }
