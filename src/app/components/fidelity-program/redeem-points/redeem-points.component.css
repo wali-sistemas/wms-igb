@@ -1,0 +1,156 @@
+body {
+  background-color: #f4f4f4;
+  color: #333333;
+}
+
+.container {
+  position: relative;
+  top: 90px;
+  width: 325px;
+  height: 550px;
+  box-shadow: 0px 39px 114px -35px rgba(0, 0, 0, 0.20);
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.info {
+  padding-top: 30px;
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.info__img {
+  background-color: #333333;
+  border: 5px solid #3e3f47;
+  border-radius: 50%;
+  width: 160px;
+  height: 160px;
+  margin: 0 auto;
+  overflow: hidden;
+  box-shadow: 0px 7px 21px -4px rgba(0, 0, 0, 0.75);
+  margin-bottom: 20px;
+}
+
+.info__img img {
+  width: 90%;
+}
+
+.info__desc {
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.counter {
+  text-align: center;
+  padding-bottom: 15px;
+}
+
+.counter__btn {
+  display: table-cell;
+  vertical-align: middle;
+  text-decoration: none;
+  font-size: 48px;
+  font-weight: 700;
+  color: #3e3f47;
+}
+
+.counter__btn:visited {
+  color: #3e3f47;
+}
+
+.counter__btn:hover {
+  opacity: 0.8;
+}
+
+.counter__value {
+  display: inline;
+  font-weight: 700;
+  font-size: 72px;
+}
+
+.items {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.counter__change {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 0 40px;
+}
+
+.counter__input {
+  width: 200px;
+  font-weight: 700;
+  font-size: 20px;
+  text-align: center;
+  border: 2px solid #3e3f47;
+  border-radius: 5px;
+  padding: 10px;
+  outline: none;
+}
+
+.counter__input:focus {
+  border-color: #3e3f47;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+}
+
+.counter__desc {
+  padding-bottom: 10px;
+}
+
+.confirm-btn {
+  display: block;
+  background-color: #333333;
+  border: 1px solid #3d3e46;
+  text-align: center;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 15px 0;
+  box-shadow: 0px 7px 21px -4px rgba(0, 0, 0, 0.75);
+}
+
+.confirm-btn button {
+  color: #fff;
+  /* Color de la letra blanco */
+  background-color: transparent;
+  border: none;
+  text-transform: uppercase;
+  font-size: 16px;
+  font-family: inherit;
+}
+
+.confirm-btn button:hover {
+  opacity: 0.95;
+}
+
+.seccion {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  cursor: pointer;
+}
+
+.seccion:hover {
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.seccionAlert {
+  padding-top: 15px;
+  text-align: center;
+}
+
+.glyphicon-trash {
+  cursor: pointer;
+  padding: 5px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.glyphicon-trash:hover {
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}

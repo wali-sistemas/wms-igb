@@ -320,6 +320,10 @@ export class EmployeeCustodyComponent {
     this.messageCustodyPrint = '';
   }
 
+  public getUrlShowCustody(url: string) {
+    window.open(url, "_blank");
+  }
+
   public showModalInfo(custody) {
     this.idAsset = custody.idAsset;
     this.userAssign = custody.userAssign;

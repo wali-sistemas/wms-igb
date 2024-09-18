@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { UserService } from '../../services/user.service';
 
@@ -10,8 +10,9 @@ import { UserService } from '../../services/user.service';
 })
 export class NavBarComponent implements OnInit {
   public identity;
-  public token;
   public logo;
+  public count: number;
+  public minWidth: number;
   public ordersModuleAccesible: boolean = false;
   public pickingModuleAccesible: boolean = false;
   public resupplyModuleAccesible: boolean = false;
@@ -28,7 +29,7 @@ export class NavBarComponent implements OnInit {
   public fidelityProgramModuleAccesible: boolean = false;
   public geoLocationModuleAccesible: boolean = false;
 
-  constructor(private _userService: UserService, private _route: ActivatedRoute, private _router: Router) { }
+  constructor(private _userService: UserService, private _route: ActivatedRoute, private _router: Router, private renderer: Renderer2) { }
 
   ngOnInit() {
     this.identity = this._userService.getItentity();
@@ -64,6 +65,38 @@ export class NavBarComponent implements OnInit {
     }
 
     this.initializeAccessParameters();
+    //Llamar a la función para contar los módulos accesibles
+    this.count = this.countAccessibleModules();
+    this.minWidth = this.count < 10 ? 1200 : 1550;
+    this.setDynamicMediaQuery();
+  }
+
+  public setDynamicMediaQuery() {
+    const styleEl = this.renderer.createElement('style');
+
+    // Crear los media queries dinámicos para cambiar la vista entre móvil y escritorio
+    const mediaQuery = `
+      @media screen and (min-width: ${this.minWidth}px) {
+        #desktopNav {
+          display: block;
+        }
+        #mobileNav, #myNav {
+          display: none;
+        }
+      }
+      @media screen and (max-width: ${this.minWidth - 1}px) {
+        #mobileNav, #myNav {
+          display: block;
+        }
+        #desktopNav {
+          display: none;
+        }
+      }
+    `;
+
+    const text = this.renderer.createText(mediaQuery);
+    this.renderer.appendChild(styleEl, text);
+    this.renderer.appendChild(document.head, styleEl);
   }
 
   private initializeAccessParameters() {
@@ -291,7 +324,7 @@ export class NavBarComponent implements OnInit {
     );
 
     //validar si el usuario puede acceder al modulo de fidelización, solo si es MOTOZONE
-    if (this.getSelectedCompany() == "VARROC") {
+    if (this.getSelectedCompany() == "VARROC" || this.getSelectedCompany() == "IGB") {
       this._userService.canAccess(this.identity.username, 'fidelityProgram').subscribe(
         response => {
           if (response.code == 0) {
@@ -351,5 +384,33 @@ export class NavBarComponent implements OnInit {
     localStorage.clear();
     this.identity = null;
     this._router.navigate(['/']);
+  }
+
+  public countAccessibleModules(): number {
+    let accessibleModulesCount = 0;
+
+    const modules = [
+      { name: 'ordersModuleAccesible', value: this.ordersModuleAccesible },
+      { name: 'pickingModuleAccesible', value: this.pickingModuleAccesible },
+      { name: 'resupplyModuleAccesible', value: this.resupplyModuleAccesible },
+      { name: 'transferModuleAccesible', value: this.transferModuleAccesible },
+      { name: 'receptionModuleAccesible', value: this.receptionModuleAccesible },
+      { name: 'packingModuleAccesible', value: this.packingModuleAccesible },
+      { name: 'inventoryModuleAccesible', value: this.inventoryModuleAccesible },
+      { name: 'shippingModuleAccesible', value: this.shippingModuleAccesible },
+      { name: 'ticketTIModuleAccesible', value: this.ticketTIModuleAccesible },
+      { name: 'pickingExpressModuleAccesible', value: this.pickingExpressModuleAccesible },
+      { name: 'compraTrackingModuleAccesible', value: this.compraTrackingModuleAccesible },
+      { name: 'collectionModuleAccesible', value: this.collectionModuleAccesible },
+      { name: 'employeeModuleAccesible', value: this.employeeModuleAccesible },
+      { name: 'fidelityProgramModuleAccesible', value: this.fidelityProgramModuleAccesible },
+      { name: 'geoLocationModuleAccesible', value: this.geoLocationModuleAccesible }
+    ];
+    modules.forEach(module => {
+      if (module.value) {
+        accessibleModulesCount++;
+      }
+    });
+    return accessibleModulesCount;
   }
 }
