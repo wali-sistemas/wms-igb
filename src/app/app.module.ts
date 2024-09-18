@@ -50,6 +50,7 @@ import { routing, appRoutingProviders } from './app.routing';
 import { ClientRedplasComponent } from './components/event-feria/client-redplas/client-redplas.component';
 import { FidelityProgramComponent } from './components/fidelity-program/fidelity-program.component';
 import { RedeemCapsComponent } from './components/fidelity-program/redeem-caps/redeem-caps.component';
+import { RedeemPointsComponent } from './components/fidelity-program/redeem-points/redeem-points.component';
 import { CustomerComponent } from './components/collection/customer/customer.component';
 import { CustomerPnComponent } from './components/collection/customer/customer-pn.component';
 import { GeoLocationComponent } from './components/geo-location/geo-location.component';
@@ -103,6 +104,7 @@ import { from } from 'rxjs/observable/from';
     EmployeeVacationComponent,
     FidelityProgramComponent,
     RedeemCapsComponent,
+    RedeemPointsComponent,
     CustomerComponent,
     CustomerPnComponent,
     GeoLocationComponent

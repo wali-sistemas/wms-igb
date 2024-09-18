@@ -291,7 +291,7 @@ export class NavBarComponent implements OnInit {
     );
 
     //validar si el usuario puede acceder al modulo de fidelización, solo si es MOTOZONE
-    if (this.getSelectedCompany() == "VARROC") {
+    if (this.getSelectedCompany() == "VARROC" || this.getSelectedCompany() == "IGB") {
       this._userService.canAccess(this.identity.username, 'fidelityProgram').subscribe(
         response => {
           if (response.code == 0) {

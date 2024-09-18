@@ -2,11 +2,19 @@
 
 <div class="container content">
   <div class="row">
-    <div class="col-xs-12 col-md-6">
+    <div *ngIf="selectedCompany == 'VARROC'" class="col-xs-12 col-md-6">
       <div class="box" [routerLink]="['/program-fidelity/redeem-caps']">
         <span class="icon-canje-tapas" style="font-size: 154px;"></span>
         <h4 class="title">
           Canjear tapas
+        </h4>
+      </div>
+    </div>
+    <div class="col-xs-12 col-md-6">
+      <div class="box" [routerLink]="['/program-fidelity/redeem-points']">
+        <span class="icon-find-gift" style="font-size: 154px; position: relative; top: 10px;"></span>
+        <h4 class="title">
+          Consultar puntos
         </h4>
       </div>
     </div>
