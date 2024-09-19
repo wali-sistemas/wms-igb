@@ -220,7 +220,7 @@
                   <div class="col-xs-12 margin-bottom-10">
                     <label for="transportadora">Transportadora</label>
                     <select id="selectedTransport" class="form-control input-lg" [(ngModel)]="selectedTransport"
-                      name="selectedTransport" (click)="listTransport()">
+                      name="selectedTransport" (click)="listTransportComex()">
                       <option value="" disabled selected>Seleccione una</option>
                       <option *ngFor="let transp of transports" value="{{transp[0]}}">{{transp[1]}}</option>
                     </select>

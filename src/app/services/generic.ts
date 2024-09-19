@@ -35,4 +35,9 @@ export class GenericService {
     return this._http.get(this.url + 'generic/companies/transports', { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
+
+  public listActivesTranspComex() {
+    return this._http.get(this.url + 'generic/companies/transports-comex', { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
 }

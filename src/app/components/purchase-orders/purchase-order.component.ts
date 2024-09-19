@@ -96,13 +96,13 @@ export class PurchaseOrderComponent implements OnInit {
     this.loadSelectedOrder();
   }
 
-  public listTransport() {
-    this._genericService.listActivesTransp().subscribe(
+  public listTransportComex() {
+    this._genericService.listActivesTranspComex().subscribe(
       response => {
         this.transports = response;
       },
       error => {
-        console.error('Ocurrio un error listando las transportadoras.', error);
+        console.error('Ocurrio un error listando las transportadoras para comex', error);
         this.redirectIfSessionInvalid(error);
       }
     );
