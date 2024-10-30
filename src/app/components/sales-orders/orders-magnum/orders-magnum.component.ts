@@ -156,7 +156,11 @@ export class OrdersMagnumComponent implements OnInit {
     this.comments = order.comments;
     this.selectedTransp = order.transp;
     this.qtyUnd = order.qty;
-    this.lio = Math.round(order.qty / 6);
+    if (this.qtyUnd <= 6) {
+      this.lio = 1;
+    } else {
+      this.lio = Math.round(order.qty / 6);
+    }
     this.flete = Math.round(order.subTotal * (order.porcFlet / 100));
 
     //Calculando peso y valor declarado
