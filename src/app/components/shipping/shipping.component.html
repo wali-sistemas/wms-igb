@@ -61,7 +61,7 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div *ngIf="selectedTransp != 'TRANSPRENSA' || selectedTransp != 'ALDIA'" class="col-xs-6 text-center">
+                    <div *ngIf="selectedTransp != 'TRANSPRENSA' && selectedTransp != 'ALDIA'" class="col-xs-6 text-center">
                         <div class="box-invoice" (click)="getUrlGuia()">
                             <span class="icon-post" style="font-size: 100px"></span>
                             <h3 class="title">
