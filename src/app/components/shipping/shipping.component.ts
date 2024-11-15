@@ -515,10 +515,10 @@ export class ShippingComponent implements OnInit {
           "mailDestination": "analistatransporte@igbcolombia.com",
           "nomEmpaque": this.selectedTypePack,
           "valorDeclarado": this.valorDeclPack,
-          "alto": this.selectedTypePack = 'CAJA PEQUEÑA' ? "50" : "52",
-          "ancho": this.selectedTypePack = 'CAJA PEQUEÑA' ? "50" : "66",
-          "largo": this.selectedTypePack = 'CAJA PEQUEÑA' ? "16" : "57",
-          "peso": this.selectedTypePack = 'CAJA PEQUEÑA' ? "16" : "57",
+          "alto": this.selectedTypePack == "CAJA PEQUEÑA" ? "50" : "52",
+          "ancho": this.selectedTypePack == "CAJA PEQUEÑA" ? "50" : "66",
+          "largo": this.selectedTypePack == "CAJA PEQUEÑA" ? "16" : "57",
+          "peso": this.selectedTypePack == "CAJA PEQUEÑA" ? "16" : "57",
           "unidades": this.qtyPack
         }
 
@@ -559,7 +559,7 @@ export class ShippingComponent implements OnInit {
           "nombrer": "IGB MOTORCYCLE PARTS S.A.S",
           "direccionr": "CALLE 98 SUR # 42-225 BOB 114",
           "telefonor": "4442025",
-          "codCiudadr": "05380000",//La Estrella
+          "codCiudadr": "05546800",//La Estrella
           //Destino
           "tipoDocumentod": "1",
           "documentod": this.selectInvoicesPack[0].cardCode.replace('C', ''),
@@ -607,7 +607,7 @@ export class ShippingComponent implements OnInit {
           "nombrer": "IGB MOTORCYCLE PARTS S.A.S",
           "direccionr": "CALLE 98 SUR # 42-225 BOB 114",
           "telefonor": "4442025",
-          "codCiudadr": "05380000",//La Estrella
+          "codCiudadr": "05546800",//La Estrella
           //Destino
           "tipoDocumentod": "1",
           "documentod": this.selectInvoicesPack[0].cardCode.replace('C', ''),
@@ -722,6 +722,54 @@ export class ShippingComponent implements OnInit {
           }
         );
         break;
+        case "EXXE":
+          const apiExxeDTO = {
+            "observacion": "PRODUCTO DELICADO",
+            "factura": invoices,
+            "peso": this.pesoPack,
+            "volumen": 22,
+            "vlrDecl": this.valorDeclPack,
+            "codProducto": "",
+            "cant": this.qtyPack,
+            "descripcion": this.selectedTypeProduct,
+            //Remite
+            "documentor": localStorage.getItem('igb.selectedCompany') == 'IGB' ? "811011909" : "900255414",
+            "nombrer": localStorage.getItem('igb.selectedCompany') == 'IGB' ? "IGB MOTORCYCLE PARTS S.A.S" : "MOTOZONE S.A.S",
+            //Destino
+            "tipoDocumentod": "1",
+            "documentod": this.selectInvoicesPack[0].cardCode.replace('C', ''),
+            "nombred": this.selectInvoicesPack[0].cardName,
+            "direcciond": this.addressReceive,
+            "telefonod": this.selectInvoicesPack[0].phone,
+            "codCiudadd": this.selectInvoicesPack[0].codCity,
+            "tipoEmpaque": this.selectedTypePack
+          }
+
+          this._shippingService.createGuiaExxe(apiExxeDTO, invoices).subscribe(
+            response => {
+              console.log("**************************");
+              console.log(response);
+              console.log("**************************");
+              if (response.code == 0) {
+
+                //Registramos shipping en tablas temporales
+                //this.addShipping();
+
+                //this.urlGuia = response.content[0];
+                //this.urlRotulo = response.content[1];
+
+                //$('#modal_transfer_process').modal('hide');
+                //$('#print_document').modal('show');
+              } else {
+                this.warningMessage = response.content;
+                $('#modal_transfer_process').modal('hide');
+              }
+            }, error => {
+              console.error(error);
+              this.redirectIfSessionInvalid(error);
+            }
+          );
+          break;
       default:
         this.clean();
         this.warningMessage = "Lo sentimos. Actualmente no esta integrada la transportadora.";

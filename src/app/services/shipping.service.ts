@@ -80,4 +80,9 @@ export class ShippingService {
     return this._http.post(this.url + 'shipping/add-guia-aldia/' + invoices, apiAldiaDTO, { headers: new IGBHeaders().loadHeaders() })
     .map(res => res.json());
   }
+
+  public createGuiaExxe(apiExxeDTO, invoices) {
+    return this._http.post(this.url + 'shipping/add-guia-exxe/' + invoices, apiExxeDTO, { headers: new IGBHeaders().loadHeaders() })
+    .map(res => res.json());
+  }
 }
