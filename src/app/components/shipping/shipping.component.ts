@@ -559,7 +559,7 @@ export class ShippingComponent implements OnInit {
           "nombrer": "IGB MOTORCYCLE PARTS S.A.S",
           "direccionr": "CALLE 98 SUR # 42-225 BOB 114",
           "telefonor": "4442025",
-          "codCiudadr": "0538000",//La Estrella
+          "codCiudadr": "05380000",//La Estrella
           //Destino
           "tipoDocumentod": "1",
           "documentod": this.selectInvoicesPack[0].cardCode.replace('C', ''),
@@ -607,7 +607,7 @@ export class ShippingComponent implements OnInit {
           "nombrer": "IGB MOTORCYCLE PARTS S.A.S",
           "direccionr": "CALLE 98 SUR # 42-225 BOB 114",
           "telefonor": "4442025",
-          "codCiudadr": "0538000",//La Estrella
+          "codCiudadr": "05380000",//La Estrella
           //Destino
           "tipoDocumentod": "1",
           "documentod": this.selectInvoicesPack[0].cardCode.replace('C', ''),
