@@ -622,10 +622,8 @@ export class ShippingComponent implements OnInit {
             if (response.code == 0) {
               //Registramos shipping en tablas temporales
               this.addShipping();
-
               this.urlGuia = response.content[0];
               this.urlRotulo = response.content[1];
-
               $('#modal_transfer_process').modal('hide');
               $('#print_document').modal('show');
             } else {
@@ -662,10 +660,8 @@ export class ShippingComponent implements OnInit {
             if (response.code == 0) {
               //Registramos shipping en tablas temporales
               this.addShipping();
-
               this.urlGuia = response.content[0];
               this.urlRotulo = response.content[1];
-
               $('#modal_transfer_process').modal('hide');
               $('#print_document').modal('show');
             } else {
