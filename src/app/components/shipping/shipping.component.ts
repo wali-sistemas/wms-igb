@@ -729,8 +729,9 @@ export class ShippingComponent implements OnInit {
             "cant": this.qtyPack,
             "descripcion": this.selectedTypeProduct,
             //Remite
-            "documentor": localStorage.getItem('igb.selectedCompany') == 'IGB' ? "811011909" : "900255414",
+            "documentor": localStorage.getItem('igb.selectedCompany') == 'IGB' ? "18483" : "",
             "nombrer": localStorage.getItem('igb.selectedCompany') == 'IGB' ? "IGB MOTORCYCLE PARTS S.A.S" : "MOTOZONE S.A.S",
+            "codCiudadr": "05380", //La Estrella
             //Destino
             "tipoDocumentod": "1",
             "documentod": this.selectInvoicesPack[0].cardCode.replace('C', ''),
@@ -743,19 +744,15 @@ export class ShippingComponent implements OnInit {
 
           this._shippingService.createGuiaExxe(apiExxeDTO, invoices).subscribe(
             response => {
-              console.log("**************************");
-              console.log(response);
-              console.log("**************************");
               if (response.code == 0) {
-
                 //Registramos shipping en tablas temporales
-                //this.addShipping();
+                this.addShipping();
 
-                //this.urlGuia = response.content[0];
-                //this.urlRotulo = response.content[1];
+                this.urlGuia = response.content[0];
+                this.urlRotulo = response.content[1];
 
-                //$('#modal_transfer_process').modal('hide');
-                //$('#print_document').modal('show');
+                $('#modal_transfer_process').modal('hide');
+                $('#print_document').modal('show');
               } else {
                 this.warningMessage = response.content;
                 $('#modal_transfer_process').modal('hide');
