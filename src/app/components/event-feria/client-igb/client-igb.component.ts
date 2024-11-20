@@ -62,7 +62,7 @@ export class ClientIgbComponent implements OnInit {
       $('#modal_transfer_process').modal('hide');
       return;
     }
-    if (this.document == null || this.document.length <= 0) {
+    /*if (this.document == null || this.document.length <= 0) {
       this.validDocument = false;
       this.getScrollTop();
       $('#modal_transfer_process').modal('hide');
@@ -73,7 +73,7 @@ export class ClientIgbComponent implements OnInit {
       this.getScrollTop();
       $('#modal_transfer_process').modal('hide');
       return;
-    }
+    }*/
     if (this.phone == null || this.phone.length <= 0) {
       this.validPhone = false;
       this.getScrollTop();
@@ -86,12 +86,12 @@ export class ClientIgbComponent implements OnInit {
       $('#modal_transfer_process').modal('hide');
       return;
     }
-    if (this.selectedAsesor == null || this.selectedAsesor.length <= 0) {
+    /*if (this.selectedAsesor == null || this.selectedAsesor.length <= 0) {
       this.validSelectAsesor = false;
       this.getScrollTop();
       $('#modal_transfer_process').modal('hide');
       return;
-    }
+    }*/
 
     for (let key of Array.from(this.selected.keys())) {
       interes += this.selected.get(key) + " ";
@@ -104,16 +104,16 @@ export class ClientIgbComponent implements OnInit {
     }
 
     let clientFeriaDTO = {
-      "documento": this.document,
+      "documento": this.phone,//this.document,
       "nombreCompleto": this.contact.toUpperCase(),
       "telefono": this.phone,
       "correo": this.mail.toUpperCase(),
       "almacen": this.whsName,
       "interes": interes.trim(),
-      "regional": this.selectedRegion,
+      "regional": "MEXICO",//this.selectedRegion,
       "ciudad": this.city.toUpperCase(),
       "companyName": "IGB",
-      "asesor": this.selectedAsesor
+      "asesor": "MERCADEO"//this.selectedAsesor
     }
 
     this._eventService.captureClient(clientFeriaDTO).subscribe(
