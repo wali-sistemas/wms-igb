@@ -232,7 +232,12 @@ export class OrdersMagnumComponent implements OnInit {
     this.deliveryErrorMessage = "";
     this.processInvoiceStatus = 'inprogress';
 
-    this._invoiceService.createInvoice(this.docEntryDelivery).subscribe(
+    const invoiceExpressDTO = {
+      'docNumDelivery': this.docEntryDelivery,
+      'slpCode': null
+    }
+
+    this._invoiceService.createInvoice(invoiceExpressDTO).subscribe(
       response => {
         if (response.code == 0) {
           this.processInvoiceStatus = 'done';

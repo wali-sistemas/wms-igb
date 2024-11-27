@@ -551,7 +551,12 @@ export class PackingComponent implements OnInit {
     this.processInvoiceStatus = 'inprogress';
     this.processOrderLinkStatus = 'none';
 
-    this._invoiceService.createInvoice(this.docEntryDelivery).subscribe(
+    const invoiceExpressDTO = {
+      'docNumDelivery': this.docEntryDelivery,
+      'slpCode': null
+    }
+
+    this._invoiceService.createInvoice(invoiceExpressDTO).subscribe(
       response => {
         if (response.code == 0) {
           this.processInvoiceStatus = 'done';
