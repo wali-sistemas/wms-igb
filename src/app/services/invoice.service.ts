@@ -10,9 +10,9 @@ export class InvoiceService {
     this.url = GLOBAL.url;
   }
 
-  public createInvoice(deliveryDocEntry) {
+  public createInvoice(invoiceExpressDTO) {
     let igbHeaders = new IGBHeaders().loadHeaders();
-    return this._http.post(this.url + 'invoice', deliveryDocEntry, { headers: igbHeaders })
+    return this._http.post(this.url + 'invoice', invoiceExpressDTO, { headers: igbHeaders })
       .map(res => res.json());
   }
 
