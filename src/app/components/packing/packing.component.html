@@ -381,6 +381,17 @@
                 </div>
               </div>
               <hr />
+              <div *ngIf="this.identity.selectedCompany == 'VELEZ'" class="row">
+                <div class="col-xs-12 text-center">
+                  <select id="asesor" class="form-control input-lg" [(ngModel)]="selectedSalesPerson"
+                    name="selectedSalesPerson">
+                    <option style="display:none" disabled value="">Selecciona un asesor</option>
+                    <option *ngFor="let salesPerson of salesPersonList" value="{{salesPerson[0]}}">({{salesPerson[0]}}) -
+                      {{salesPerson[1]}}</option>
+                  </select>
+                </div>
+              </div>
+              <hr *ngIf="this.identity.selectedCompany == 'VELEZ'" />
               <div class="row">
                 <div class="col-sm-12 text-center">
                   <button type="button" class="btn btn-danger btn-lg" style="width: 100%; border-radius: 0px;"

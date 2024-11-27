@@ -76,6 +76,8 @@ export class PackingComponent implements OnInit {
   public printersList: Array<Printer>;
   public selectedBox: PackingBox = new PackingBox();
   public selectedBoxItems: Map<string, number> = this.selectedBox.items;
+  public selectedSalesPerson: string;
+  public salesPersonList: Array<any>;
   public identity;
 
   constructor(private _userService: UserService, private _packingService: PackingService, private _invoiceService: InvoiceService, private _printService: PrintService, private _router: Router, private _generic: GenericService, private _reportService: ReportService, private _healthchekService: HealthchekService, private _cubicService: CubicService, private _motorepuestoService: MotorepuestoService) {
@@ -93,6 +95,8 @@ export class PackingComponent implements OnInit {
     this.selectedOrder = 0;
     this.specialPacking = new Array<any>();
     this.ordersByInvoice = new Array<any>();
+    this.salesPersonList = new Array<any>();
+    this.selectedSalesPerson = '';
   }
 
   ngOnInit() {
@@ -106,6 +110,17 @@ export class PackingComponent implements OnInit {
     this.loadCustomers();
     this.listOpenJobs();
     this.isPackingComplete();
+  }
+
+  private listSalesPersonActive() {
+    this._generic.listSalesPersonActive().subscribe(
+      response => {
+        this.salesPersonList = response;
+      }, error => {
+        console.error(error);
+        this.redirectIfSessionInvalid(error);
+      }
+    );
   }
 
   private listOpenJobs() {
@@ -817,6 +832,9 @@ export class PackingComponent implements OnInit {
       show: true
     });
 
+    this.selectedSalesPerson = '';
+    this.listSalesPersonActive();
+
     this.warnMessageOrdersByInvoice = '';
     this.errorMessage = '';
     this.exitMessage = '';
@@ -850,9 +868,12 @@ export class PackingComponent implements OnInit {
       show: true
     });
 
-    let docNum = this.ordersByInvoice[i][0];
+    const invoiceExpressDTO = {
+      'docNumDelivery': this.ordersByInvoice[i][0],
+      'slpCode': this.selectedSalesPerson
+    }
 
-    this._invoiceService.createInvoice(docNum).subscribe(
+    this._invoiceService.createInvoice(invoiceExpressDTO).subscribe(
       response => {
         if (response.code == 0) {
           this.exitMessage = "Factura #[" + response.content + "] creada éxitosamente.";
