@@ -18,7 +18,7 @@ declare var $: any;
 
 export class EmployeeCustodyComponent {
   public identity;
-  public selectedCompany: string;
+  public selectedCompany: string = '';
   public filter: string;
   public custodys: Array<CustodyEmployee>;
   public employees: Array<Employee>;
@@ -65,6 +65,9 @@ export class EmployeeCustodyComponent {
   public datePurchase: string;
   public companyPurchase: string;
   public messageCustodyPrint: string;
+  public messageAssetRegister: string;
+  public responsible: string;
+  public comments: string;
 
   constructor(private _router: Router, private _userService: UserService, private _employeeService: EmployeeService, private _binLocationService: BinLocationService, private _reportService: ReportService) {
   }
@@ -267,6 +270,38 @@ export class EmployeeCustodyComponent {
       "id": this.document,
       "copias": 0,
       "documento": "custodyPrint",
+      "companyName": this.selectedCompany,
+      "origen": 'W',
+      "imprimir": false,
+    };
+
+    this._reportService.generateReport(printReportDTO).subscribe(
+      response => {
+        if (response.code == 0) {
+          window.open(this.urlShared + this.selectedCompany + '/employee/custodyPrint/' + this.document + '.pdf');
+          this.clean();
+          $('#modal_custody_print').modal('hide');
+          $('#modal_process').modal('hide');
+        } else {
+          this.messageCustodyPrint = response.content;
+          $('#modal_process').modal('hide');
+        }
+      },
+      error => {
+        this.redirectIfSessionInvalid(error);
+        console.error(error);
+        $('#modal_process').modal('hide');
+      }
+    );
+  }
+
+  public generateAssetRegister() {
+    let printReportDTO = {
+      "id": this.idAsset,
+      "responsible": this.responsible,
+      "comments": this.comments,
+      "copias": 0,
+      "documento": "assetRegister",
       "companyName": this.identity.selectedCompany,
       "origen": 'W',
       "imprimir": false,
@@ -275,12 +310,12 @@ export class EmployeeCustodyComponent {
     this._reportService.generateReport(printReportDTO).subscribe(
       response => {
         if (response.code == 0) {
-          window.open(this.urlShared + this.identity.selectedCompany + '/employee/custodyPrint/' + this.document + '.pdf');
+          window.open(this.urlShared + this.identity.selectedCompany + '/employee/assetRegister/' + this.document + '.pdf');
           this.clean();
-          $('#modal_print').modal('hide');
+          $('#modal_asset_register').modal('hide');
           $('#modal_process').modal('hide');
         } else {
-          this.messageCustodyPrint = response.content;
+          this.messageAssetRegister = response.content;
           $('#modal_process').modal('hide');
         }
       },
@@ -318,6 +353,10 @@ export class EmployeeCustodyComponent {
     this.filter = '';
     this.document = '';
     this.messageCustodyPrint = '';
+    this.selectedCompany = '';
+    this.messageAssetRegister = '';
+    this.responsible = '';
+    this.comments = '';
   }
 
   public getUrlShowCustody(url: string) {
