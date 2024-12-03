@@ -18,7 +18,7 @@ declare var $: any;
 
 export class EmployeeCustodyComponent {
   public identity;
-  public selectedCompany: string;
+  public selectedCompany: string = '';
   public filter: string;
   public custodys: Array<CustodyEmployee>;
   public employees: Array<Employee>;
@@ -267,7 +267,7 @@ export class EmployeeCustodyComponent {
       "id": this.document,
       "copias": 0,
       "documento": "custodyPrint",
-      "companyName": this.identity.selectedCompany,
+      "companyName": this.selectedCompany,
       "origen": 'W',
       "imprimir": false,
     };
@@ -275,9 +275,9 @@ export class EmployeeCustodyComponent {
     this._reportService.generateReport(printReportDTO).subscribe(
       response => {
         if (response.code == 0) {
-          window.open(this.urlShared + this.identity.selectedCompany + '/employee/custodyPrint/' + this.document + '.pdf');
+          window.open(this.urlShared + this.selectedCompany + '/employee/custodyPrint/' + this.document + '.pdf');
           this.clean();
-          $('#modal_print').modal('hide');
+          $('#modal_custody_print').modal('hide');
           $('#modal_process').modal('hide');
         } else {
           this.messageCustodyPrint = response.content;
@@ -318,6 +318,7 @@ export class EmployeeCustodyComponent {
     this.filter = '';
     this.document = '';
     this.messageCustodyPrint = '';
+    this.selectedCompany = '';
   }
 
   public getUrlShowCustody(url: string) {

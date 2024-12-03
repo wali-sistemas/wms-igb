@@ -307,7 +307,7 @@
   </div>
 </div>
 <!-- Modal para la impresión -->
-<div id="modal_print" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
+<div id="modal_custody_print" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
   <div class="modal-dialog modal-sm" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -330,12 +330,26 @@
               <input type="number" class="form-control input-lg" id="document" placeholder="Ingrese cédula"
                 [(ngModel)]="document" name="document" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
             </div>
+            <div class="col-xs-12" style="margin-top: 10px;">
+              <select class="form-control input-lg" [(ngModel)]="selectedCompany" name="selectedCompany" required>
+                <option value="" disabled selected>Seleccione Empresa</option>
+                <option value="IGB">IGB</option>
+                <option value="VARROC">MOTOZONE</option>
+                <option value="VILNA">REDPLAS</option>
+                <option value="VELEZ">MOTOREPUESTOS</option>
+                <option value="WALI">WALI</option>
+                <option value="DMS">DIGITAL</option>
+                <option value="INVERSUR">INVERSUR</option>
+              </select>
+            </div>
           </div>
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-danger" (click)="generateCustodyPrint()"><span class="icon-download">
-          </span>Generar</button>
+        <button type="button" class="btn btn-danger" [disabled]="!document || !selectedCompany"
+          (click)="generateCustodyPrint()">
+          <span class="icon-download"></span> Generar
+        </button>
       </div>
     </div>
   </div>
@@ -349,7 +363,7 @@
     </div>
     <div class="col-xs-2">
       <div class="option">
-        <span class="icon-printer" data-toggle="modal" data-target="#modal_print" title="Generar Acta"></span>
+        <span class="icon-printer" data-toggle="modal" data-target="#modal_custody_print" title="Generar Acta"></span>
       </div>
     </div>
   </div>
