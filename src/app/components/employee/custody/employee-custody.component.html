@@ -15,6 +15,56 @@
     </div>
   </div>
 </div>
+<!-- Modal Ficha Activo -->
+<div id="modal_asset_register" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="clean()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Generar Ficha del Activo</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="alert alert-danger" role="alert" *ngIf="messageAssetRegister">
+              {{messageAssetRegister}}
+            </div>
+          </div>
+        </div>
+        <form (submit)="generateAssetRegister()">
+          <div class="row">
+            <div class="col-xs-12">
+              <input type="text" class="form-control input-lg" placeholder="Ingrese ID del Activo" [(ngModel)]="idAsset"
+                name="idAsset" required>
+            </div>
+          </div>
+          <br />
+          <div class="row">
+            <div class="col-xs-12">
+              <input type="text" class="form-control input-lg" placeholder="Ingrese Responsable"
+                [(ngModel)]="responsible" name="responsible" required>
+            </div>
+          </div>
+          <br />
+          <div class="row">
+            <div class="col-xs-12">
+              <textarea class="form-control input-lg" placeholder="Comentarios" [(ngModel)]="comments" name="comments"
+                rows="3">
+              </textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="generateAssetRegister()">
+          <span class="icon-download"></span> Generar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 <!--Modal info custodia-->
 <div id="modal_info_custody" class="modal slide" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
   aria-hidden="true">
@@ -425,14 +475,19 @@
         </div>
         <div class="col-xs-12">
           <div class="row">
-            <div class="col-sm-6">
+            <div class="col-xs-4">
               <div class="custody-info" (click)="showModalInfo(custody)">
                 <span class="icon-info" style="font-size: 30px;"></span>
               </div>
             </div>
-            <div class="col-sm-6">
+            <div class="col-xs-4">
               <div class="custody-edit" (click)="editModalAsset(custody)">
                 <span class="icon-edit-3" style="font-size: 30px;"></span>
+              </div>
+            </div>
+            <div class="col-xs-4">
+              <div class="custody-print" data-toggle="modal" data-target="#modal_asset_register">
+                <span class="icon-printer" style="font-size: 30px;"></span>
               </div>
             </div>
           </div>

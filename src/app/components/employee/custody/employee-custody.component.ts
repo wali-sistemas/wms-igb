@@ -65,6 +65,9 @@ export class EmployeeCustodyComponent {
   public datePurchase: string;
   public companyPurchase: string;
   public messageCustodyPrint: string;
+  public messageAssetRegister: string;
+  public responsible: string;
+  public comments: string;
 
   constructor(private _router: Router, private _userService: UserService, private _employeeService: EmployeeService, private _binLocationService: BinLocationService, private _reportService: ReportService) {
   }
@@ -292,6 +295,38 @@ export class EmployeeCustodyComponent {
     );
   }
 
+  public generateAssetRegister() {
+    let printReportDTO = {
+      "id": this.idAsset,
+      "responsible": this.responsible,
+      "comments": this.comments,
+      "copias": 0,
+      "documento": "assetRegister",
+      "companyName": this.identity.selectedCompany,
+      "origen": 'W',
+      "imprimir": false,
+    };
+
+    this._reportService.generateReport(printReportDTO).subscribe(
+      response => {
+        if (response.code == 0) {
+          window.open(this.urlShared + this.identity.selectedCompany + '/employee/assetRegister/' + this.document + '.pdf');
+          this.clean();
+          $('#modal_asset_register').modal('hide');
+          $('#modal_process').modal('hide');
+        } else {
+          this.messageAssetRegister = response.content;
+          $('#modal_process').modal('hide');
+        }
+      },
+      error => {
+        this.redirectIfSessionInvalid(error);
+        console.error(error);
+        $('#modal_process').modal('hide');
+      }
+    );
+  }
+
   public clean() {
     this.messageEmployee = '';
     this.messageNewEmployee = '';
@@ -319,6 +354,9 @@ export class EmployeeCustodyComponent {
     this.document = '';
     this.messageCustodyPrint = '';
     this.selectedCompany = '';
+    this.messageAssetRegister = '';
+    this.responsible = '';
+    this.comments = '';
   }
 
   public getUrlShowCustody(url: string) {

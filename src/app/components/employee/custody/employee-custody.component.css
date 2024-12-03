@@ -33,19 +33,27 @@
 .custody-edit {
   padding: 5px;
   position: absolute;
-  right: 9px;
+  right: -60px;
   top: -42px;
 }
 
 .custody-edit:hover,
-.custody-info:hover {
+.custody-info:hover,
+.custody-print:hover {
   color: #da0611;
 }
 
 .custody-info {
   padding: 5px;
   position: absolute;
-  right: -37px;
+  right: -140px;
+  top: -42px;
+}
+
+.custody-print {
+  padding: 5px;
+  position: absolute;
+  right: 20px;
   top: -42px;
 }
 
@@ -107,5 +115,9 @@
 
   .custody-info {
     left: 7px;
+  }
+
+  .custody-edit {
+    right: 60px;
   }
 }
