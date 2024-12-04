@@ -26,25 +26,21 @@
         <h4 class="modal-title">Generar Ficha del Activo</h4>
       </div>
       <div class="modal-body">
-        <div class="row">
-          <div class="col-xs-12">
-            <div class="alert alert-danger" role="alert" *ngIf="messageAssetRegister">
-              {{messageAssetRegister}}
-            </div>
-          </div>
-        </div>
         <form (submit)="generateAssetRegister()">
           <div class="row">
             <div class="col-xs-12">
-              <input type="text" class="form-control input-lg" placeholder="Ingrese ID del Activo" [(ngModel)]="idAsset"
-                name="idAsset" required>
+              <input type="text" class="form-control input-lg" id="idAsset" [(ngModel)]="idAsset" name="idAsset"
+                readonly>
             </div>
           </div>
           <br />
           <div class="row">
             <div class="col-xs-12">
-              <input type="text" class="form-control input-lg" placeholder="Ingrese Responsable"
-                [(ngModel)]="responsible" name="responsible" required>
+              <select class="form-control input-lg" [(ngModel)]="responsible" name="responsible" required>
+                <option value="" disabled selected>Responsable</option>
+                <option value="ADMINISTRACION">ADMINISTRACION</option>
+                <option value="LOGISTICA">LOGISTICA</option>
+              </select>
             </div>
           </div>
           <br />
@@ -486,7 +482,7 @@
               </div>
             </div>
             <div class="col-xs-4">
-              <div class="custody-print" data-toggle="modal" data-target="#modal_asset_register">
+              <div class="custody-print" (click)="openAssetRegisterModal(custody.idAsset)">
                 <span class="icon-printer" style="font-size: 30px;"></span>
               </div>
             </div>

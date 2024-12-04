@@ -295,11 +295,17 @@ export class EmployeeCustodyComponent {
     );
   }
 
+  public openAssetRegisterModal(id: string) {
+    this.idAsset = id;
+    $('#modal_asset_register').modal('show')
+  }
+
   public generateAssetRegister() {
     let printReportDTO = {
-      "id": this.idAsset,
-      "responsible": this.responsible,
-      "comments": this.comments,
+      "id": 0,
+      "filtro": this.idAsset,
+      "filtroSec": this.responsible || '',
+      "comments": this.comments || '',
       "copias": 0,
       "documento": "assetRegister",
       "companyName": this.identity.selectedCompany,
@@ -310,7 +316,7 @@ export class EmployeeCustodyComponent {
     this._reportService.generateReport(printReportDTO).subscribe(
       response => {
         if (response.code == 0) {
-          window.open(this.urlShared + this.identity.selectedCompany + '/employee/assetRegister/' + this.document + '.pdf');
+          window.open(this.urlShared + this.identity.selectedCompany + '/employee/assetRegister/' + this.idAsset + '.pdf');
           this.clean();
           $('#modal_asset_register').modal('hide');
           $('#modal_process').modal('hide');
