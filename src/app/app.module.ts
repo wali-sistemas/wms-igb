@@ -54,6 +54,7 @@ import { RedeemPointsComponent } from './components/fidelity-program/redeem-poin
 import { CustomerComponent } from './components/collection/customer/customer.component';
 import { CustomerPnComponent } from './components/collection/customer/customer-pn.component';
 import { GeoLocationComponent } from './components/geo-location/geo-location.component';
+import { WalletRedplas } from './components/payments-microsite/redplas/wallet-redplas.component';
 import { from } from 'rxjs/observable/from';
 
 @NgModule({
@@ -107,7 +108,8 @@ import { from } from 'rxjs/observable/from';
     RedeemPointsComponent,
     CustomerComponent,
     CustomerPnComponent,
-    GeoLocationComponent
+    GeoLocationComponent,
+    WalletRedplas
   ],
   imports: [
     BrowserModule,
