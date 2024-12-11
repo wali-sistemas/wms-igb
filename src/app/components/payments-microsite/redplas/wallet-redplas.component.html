@@ -1,0 +1,283 @@
+<!--Modal procesando-->
+<div id="modal_transfer_process" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="progress">
+          <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100"
+            aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+            <span class="sr-only">Procesando transferencia</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--Modal Inactividad-->
+<div *ngIf="showAlert" class="custom-alert">
+  <div class="alert-content">
+    <h3>Sesión expirada</h3>
+    <p>La sesión ha expirado debido a inactividad.</p>
+    <button class="alert-button" (click)="closeAlert()">Aceptar</button>
+  </div>
+</div>
+<!--Modal Pagos-->
+<div class="paymentModal">
+  <div id="paymentReceiptsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" (click)="closeModal()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title" id="modalLabel">Detalles del Recibo</h4>
+        </div>
+        <div class="table-container">
+          <table class="table-modern">
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Recibo</th>
+                <th>Tipo Doc.</th>
+                <th>Número Doc.</th>
+                <th>Fecha</th>
+                <th>Monto Pagado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let receipt of paymentsReceipts">
+                <td>{{ receipt.customerName }}</td>
+                <td>{{ receipt.receiptNumber }}</td>
+                <td>{{ receipt.documentType }}</td>
+                <td>{{ receipt.documentNumber }}</td>
+                <td>{{ receipt.date | date: 'dd/MM/yyyy' }}</td>
+                <td>{{ receipt.amountPaid | number }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" (click)="closeModal()">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Portada página y login-->
+<div class="container-fluid">
+  <!-- Header con el banner -->
+  <header class="text-center">
+    <img src="assets/images/banner-redplas.png" alt="Banner Empresa" class="responsive-img" />
+  </header>
+  <!-- Sección del cuerpo: dos columnas -->
+  <div class="row body-section" *ngIf="!walletInvoices || walletInvoices.length === 0">
+    <!-- Margen izquierdo -->
+    <div class="col-md-1 col-sm-0 col-xs-0"></div>
+    <!-- Columna izquierda: Texto de pagos electrónicos -->
+    <div class="col-md-5 col-sm-12 col-xs-12 text-left info-section">
+      <h2 class="title-style">Pagos electrónicos</h2>
+      <p>
+        Desde su casa, oficina o cualquier lugar, pague de forma segura; a
+        través de nuestro sistema de pago. Use nuestro servicio las 24 horas y
+        los 7 días de la semana.
+      </p>
+    </div>
+    <!-- Columna derecha: Formulario -->
+    <div class="col-md-5 col-sm-12 col-xs-12 text-left form-section">
+      <h2 class="title-style">Comience el proceso de pago</h2>
+      <p>Ingrese la siguiente información:</p>
+      <div class="document">
+        <!-- Input y Boton ingresar -->
+        <label for="document">Documento *</label>
+        <div class="input-container">
+          <input type="text" id="cardCode" name="cardCode" class="form-control input-lg" [(ngModel)]="cardCode"
+            (input)="checkInput()" (keydown.enter)="getDetailsInvoice()"
+            oninput="this.value = this.value.replace(/[^cC0-9]/g, '').toUpperCase()"
+            placeholder="Ingrese su código de cliente sin DV" />
+        </div>
+      </div>
+      <!-- Aceptar políticas -->
+      <div class="form-check">
+        <label class="form-check-label" for="terms">
+          Al continuar, acepto las políticas aplicables para el tratamiento de
+          mis datos personales según la jurisdicción local del responsable y de
+          WALI COLOMBIA en su calidad de encargado.
+        </label>
+      </div>
+      <!-- Mensaje de error, si existe -->
+      <div *ngIf="noInvoicesMessage">
+        <p>No se encontraron facturas para este documento.</p>
+      </div>
+      <!-- Boton ingresar -->
+      <div class="button-container">
+        <button type="button" class="btn-submit" [disabled]="!isButtonEnabled || isLoading"
+          (click)="getDetailsInvoice()">
+          <span *ngIf="!isLoading">Ingresar</span>
+          <img *ngIf="isLoading" src="assets/images/loading.gif" alt="Cargando..." class="loading-gif" />
+        </button>
+      </div>
+    </div>
+    <!-- Margen derecho -->
+    <div class="col-md-1 hidden-sm hidden-xs"></div>
+  </div>
+</div>
+<!-- Footer con imagen centrada -->
+<footer class="text-center">
+  <img src="assets/images/by-wali.png" alt="Footer Empresa" class="img-fluid footer-img" />
+</footer>
+<!-- Tabla con registros luego del login -->
+<div *ngIf="walletInvoices && walletInvoices.length > 0">
+  <div class="payments">
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <h2 class="section-title">
+          <!-- Botón izquierdo -->
+          <span class="receipcs-button" (click)="getPaymentsReceipt()">
+            <span class="icon-sticky-note"></span>
+            <span class="receipcs-text">Historial de pago</span>
+          </span>
+          <!-- Título central -->
+          <span class="main-title">Registros Relacionados</span>
+          <!-- Botón derecho -->
+          <span class="exit-button" (click)="clearInput()">
+            <span class="glyphicon glyphicon-log-out"></span>
+            <span class="exit-text">Salir</span>
+          </span>
+        </h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-9 col-sm-12 col-xs-12">
+        <div class="row">
+          <div class="col-md-10 col-sm-9 col-xs-12">
+            <div class="seeker">
+              <input type="text" class="form-control" id="filter" name="filter" placeholder="Buscar factura"
+                autocomplete="off" [(ngModel)]="filterDetail" (keyup)="filterOrdersDetail()" style="margin-top: 5px;" />
+            </div>
+          </div>
+          <div class="col-md-2 col-sm-3 col-xs-12 text-center crash" style="position: relative; top: 4px;">
+            <div class="clear-container">
+              <span class="clear">Vaciar selección</span>
+              <span class="glyphicon glyphicon-trash" (click)="clear()"></span>
+            </div>
+          </div>
+        </div>
+        <div class="table-container">
+          <!-- Tabla para pantallas grandes -->
+          <table class="invoice-table d-none d-md-table">
+            <thead>
+              <tr>
+                <th>Descripción</th>
+                <th>Link Documento</th>
+                <th>Fecha de Factura</th>
+                <th>Fecha de Vencimiento</th>
+                <th>Subtotal</th>
+                <th>IVA</th>
+                <th>Total</th>
+                <th>Vencido</th>
+                <th>Editar valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let invoice of filteredInvoices"
+                [ngClass]="{'invoice-selected': selectedInvoices.includes(invoice)}"
+                (click)="toggleInvoiceSelection(invoice)">
+                <td>{{ invoice.description }}</td>
+                <td>
+                  <a *ngIf="invoice.urlDoc" [href]="invoice.urlDoc" target="_blank" title="Abrir documento">
+                    <span class="glyphicon glyphicon-list-alt"
+                      style="font-size: 20px; color: #da0611; cursor: pointer;"></span>
+                  </a>
+                  <span *ngIf="!invoice.urlDoc" title="Sin documento disponible">
+                    <span class="icon-file-pdf" style="font-size: 20px; color: #ccc;"></span>
+                  </span>
+                </td>
+                <td>{{ invoice.createdAt | date:'dd/MM/yyyy' }}</td>
+                <td>{{ invoice.expirationDate | date:'dd/MM/yyyy' }}</td>
+                <td>{{ invoice.subtotal | number }}</td>
+                <td>{{ invoice.valueAddedTax | number }}</td>
+                <td>{{ invoice.total | number }}</td>
+                <td>{{ invoice.saldoDocumentoAdicional | number }}</td>
+                <td>
+                  <button (click)="togglePopover(invoice)" class="btn btn-link popover-btn">
+                    <span class="icon-edit-3" title="Editar" style="font-size: 19px;"></span>
+                  </button>
+                </td>
+                <!-- Popover para editar el total -->
+                <div class="popover" [ngClass]="{'show': invoice === selectedInvoice}"
+                  *ngIf="invoice === selectedInvoice">
+                  <form>
+                    <label for="newTotal">Modificar Valor</label>
+                    <input type="text" class="form-control" id="newTotal" [(ngModel)]="newTotal" name="newTotal">
+                    <div class="popover-actions">
+                      <button type="button" class="btn btn-primary" (click)="updateTotal()">Guardar</button>
+                      <button type="button" class="btn btn-secondary" (click)="closePopover()">Cancelar</button>
+                    </div>
+                  </form>
+                </div>
+              </tr>
+            </tbody>
+          </table>
+          <!-- Tarjetas para pantallas pequeñas -->
+          <div class="invoice-cards d-block d-md-none">
+            <div class="invoice-card" *ngFor="let invoice of filteredInvoices"
+              [ngClass]="{'invoice-selected': selectedInvoices.includes(invoice)}"
+              (click)="toggleInvoiceSelection(invoice)">
+              <div class="invoice-item"><strong>Descripción:</strong> {{ invoice.description }}</div>
+              <div class="invoice-item"><strong>Fecha de Factura:</strong> {{ invoice.createdAt |
+                date:'dd/MM/yyyy' }}</div>
+              <div class="invoice-item"><strong>Fecha de Vencimiento:</strong> {{ invoice.expirationDate |
+                date:'dd/MM/yyyy' }}</div>
+              <div class="invoice-item"><strong>Total:</strong> {{ invoice.total | number }}</div>
+              <div class="invoice-item"><strong>Vencido:</strong> {{ invoice.saldoDocumentoAdicional |
+                number }}</div>
+              <div class="invoice-item">
+                <strong>Total:</strong>
+                <span *ngIf="selectedInvoice !== invoice">{{ invoice.total | number }}</span>
+                <input *ngIf="selectedInvoice === invoice" type="number" class="form-control edit-input"
+                  [(ngModel)]="newTotal" (blur)="updateTotal(invoice)" />
+              </div>
+              <div class="invoice-item">
+                <button *ngIf="selectedInvoice !== invoice" (click)="togglePopover(invoice)"
+                  class="btn btn-link popover-btn">
+                  <span class="icon-edit-3" title="Editar" style="font-size: 19px;"></span> Editar
+                  valor
+                </button>
+                <button *ngIf="selectedInvoice === invoice" (click)="closePopover()" class="btn btn-link popover-btn">
+                  <span class="icon-check" title="Guardar" style="font-size: 19px;"></span> Guardar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Resumen de pago -->
+      <div class="col-md-3 col-sm-12 col-xs-12">
+        <div class="summary-container">
+          <h3>Resumen de Pagos</h3>
+          <div class="payment-summary">
+            <p><strong>Documentos a pagar:</strong></p>
+            <ul>
+              <li *ngFor="let selected of selectedInvoices">
+                Factura #{{ selected.id }} - {{ selected.saldoDocumentoAdicional | number }}
+              </li>
+            </ul>
+            <p><strong>Total a Pagar:</strong></p>
+            <p class="total-amount">{{ totalToPay | currency:'COP' }}</p>
+          </div>
+          <!-- Botón de pagar -->
+          <button (click)="loadWompiScript()" class="pay-button">Pagar</button>
+          <div class="wompi">
+            <div id="wompiForm" *ngIf="isWompiFormVisible">
+            </div>
+          </div>
+          <div *ngIf="walletInvoices && walletInvoices.length > 0" class="countdown-container">
+            <span class="glyphicon glyphicon-time"></span>
+            <p class="countdown-text">Tiempo restante: {{ formatTime(timeLeft) }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
