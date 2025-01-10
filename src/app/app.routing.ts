@@ -46,6 +46,7 @@ import { RedeemCapsComponent } from './components/fidelity-program/redeem-caps/r
 import { RedeemPointsComponent } from './components/fidelity-program/redeem-points/redeem-points.component';
 import { CustomerComponent } from './components/collection/customer/customer.component';
 import { CustomerPnComponent } from './components/collection/customer/customer-pn.component';
+import { CalculatorComponent } from './components/collection/calculator/calculator.component';
 import { GeoLocationComponent } from './components/geo-location/geo-location.component';
 import { WalletRedplas } from './components/payments-microsite/redplas/wallet-redplas.component';
 import { from } from 'rxjs/observable/from';
@@ -89,6 +90,7 @@ const appRoutes: Routes = [
   { path: 'collection/authorized', component: AuthorizedComponent },
   { path: 'collection/customer', component: CustomerComponent },
   { path: 'collection/customer-pn', component: CustomerPnComponent },
+  { path: 'collection/calculator', component: CalculatorComponent },
   { path: 'employee', component: EmployeeComponent },
   { path: 'employee/employee-custody', component: EmployeeCustodyComponent },
   { path: 'employee/employee-jobcertify', component: EmployeeJobCertifyComponent },

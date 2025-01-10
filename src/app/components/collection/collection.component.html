@@ -34,5 +34,13 @@
         </h4>
       </div>
     </div>
+    <div *ngIf="selectedCompany == 'VARROC' || selectedCompany == 'IGB'" class="col-xs-12 col-md-6">
+      <div class="box" [routerLink]="['/collection/calculator']">
+        <span class="icon-calculator" style="font-size: 154px;"></span>
+        <h4 class="title">
+          Descuentos financieros
+        </h4>
+      </div>
+    </div>
   </div>
 </div>
