@@ -1,0 +1,206 @@
+<igb-navbar></igb-navbar>
+<!--Modal procesando-->
+<div id="modal_transfer_process" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="progress">
+          <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100"
+            aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+            <span class="sr-only">Procesando transferencia</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal para el resumen -->
+<div id="summaryModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: #333; color: white; border-bottom: none;">
+        <h5 class="modal-title">Resumen de documentos seleccionados</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white;">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" style="padding: 20px;">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr style="background-color: #bbbbbb; color: white;">
+                <th>Factura</th>
+                <th>Total</th>
+                <th>Saldo final</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let invoice of selectedInvoices">
+                <td>
+                  <span class="icon-pdf"
+                    style="color: #da0611; font-size: 18px; margin-right: 5px;position: relative; top: 3px;"></span>{{invoice.id}}
+                </td>
+                <td>{{invoice.total | number}}</td>
+                <td>{{invoice.saldoDocumentoAdicional - (invoice.calculatedValue || 0) | number:'1.2-2'}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; border-top: none;">
+        <span class="glyphicon glyphicon-duplicate" style="font-size: 32px; color: #da0611; cursor: pointer;"
+          (click)="sendSelectedInvoices()" title="Generar Documento"></span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container content">
+  <!-- Barra buscar & selecionar region-->
+  <div class="head">
+    <div class="row">
+      <div class="col-xs-8">
+        <h3>Calculadora Descuentos Financieros</h3>
+      </div>
+      <!-- Botón para abrir el modal -->
+      <div class="col-xs-2">
+        <div class="text-right" *ngIf="selectedInvoices.length > 0">
+          <span class="icon-delivery-list"
+            style="font-size: 36px; color: #da0611; cursor: pointer; position: relative; top: 12px;"
+            (click)="openSummaryModal()" title="Ver Resumen"></span>
+        </div>
+      </div>
+      <div class="col-xs-2">
+        <div class="reload">
+          <span class="icon-refresh" (click)="clear()" title="Recargar Facturas"></span>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12 col-md-12">
+        <input type="text" class="form-control input-lg" id="filter" name="filter" placeholder="Digitar documento"
+          autocomplete="off" [(ngModel)]="cardCode" (keydown.enter)="getDetailsInvoice()" [disabled]="isInputDisabled"
+          style="margin-top: 5px;" />
+      </div>
+    </div>
+  </div>
+  <!--Alerta error-->
+  <div class="row" *ngIf="changeErrorMessage" role="alert">
+    <div class="col-xs-12">
+      <div class="alert alert-danger">
+        {{changeErrorMessage}}
+      </div>
+    </div>
+  </div>
+  <!--Alerta aprobación-->
+  <div class="row" *ngIf="changeMessage" role="alert">
+    <div class="col-xs-12">
+      <div class="alert alert-success">
+        {{changeMessage}}
+      </div>
+    </div>
+  </div>
+  <!-- Contenedor de información del cliente -->
+  <div *ngIf="customerInfo?.name" class="row customer-summary">
+    <div class="col-12">
+      <div class="summary-card">
+        <div class="summary-header">
+          <h3 class="summary-title">Información del Cliente</h3>
+        </div>
+        <div class="summary-details">
+          <div class="detail-item">
+            <span class="label">Nombre:</span>
+            <span class="value">{{customerInfo.name}}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">NIT/CC:</span>
+            <span class="value">{{customerInfo.nit}}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Dirección:</span>
+            <span class="value">{{customerInfo.address}}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Teléfono:</span>
+            <span class="value">{{customerInfo.phone}}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Email:</span>
+            <span class="value">{{customerInfo.email}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Tabla para pantallas medianas y grandes -->
+  <div *ngIf="walletInvoices && walletInvoices.length > 0" class="table-container d-none d-md-block">
+    <table class="invoice-table">
+      <thead>
+        <tr>
+          <th>Descripción</th>
+          <th>Link Documento</th>
+          <th>Fecha de Factura</th>
+          <th>Fecha de Vencimiento</th>
+          <th>Subtotal</th>
+          <th>IVA</th>
+          <th>Total</th>
+          <th>Vencido</th>
+          <th>Porcentaje</th>
+          <th>Valor Calculado</th>
+          <th>Saldo Final</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let invoice of walletInvoices" [ngClass]="{'selected-row': invoice.percentage > 0}">
+          <td>{{invoice.id}}</td>
+          <td>
+            <a *ngIf="invoice.urlDoc" [href]="invoice.urlDoc" target="_blank" title="Abrir documento">
+              <span class="icon-pdf" style="font-size: 20px; color: #da0611; cursor: pointer;"></span>
+            </a>
+            <span *ngIf="!invoice.urlDoc" title="Sin documento disponible">
+              <span class="icon-file-pdf" style="font-size: 20px; color: #ccc;"></span>
+            </span>
+          </td>
+          <td>{{invoice.createdAt | date: 'dd/MM/yyyy'}}</td>
+          <td>{{invoice.expirationDate | date: 'dd/MM/yyyy'}}</td>
+          <td>{{invoice.subtotal | number}}</td>
+          <td>{{invoice.valueAddedTax | number}}</td>
+          <td>{{invoice.total | number}}</td>
+          <td>{{invoice.saldoDocumentoAdicional | number}}</td>
+          <td>
+            <input type="number" class="form-control" [(ngModel)]="invoice.percentage"
+              (input)="handleSelection(invoice)" />
+          </td>
+          <td>{{invoice.calculatedValue | number: '1.2-2'}}</td>
+          <td>{{invoice.saldoDocumentoAdicional - (invoice.calculatedValue || 0) | number: '1.2-2'}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <!-- Contenedor para pantallas pequeñas -->
+  <div *ngFor="let invoice of walletInvoices" class="invoice-container">
+    <div class="invoice-header">
+      <span>Factura: {{invoice.id}}</span>
+      <span *ngIf="invoice.urlDoc" class="icon">
+        <a [href]="invoice.urlDoc" target="_blank" title="Abrir documento">
+          <span class="icon-pdf"></span>
+        </a>
+      </span>
+    </div>
+    <div class="invoice-details">
+      <div class="detail"><span>Fecha Factura:</span> <span>{{invoice.createdAt | date: 'dd/MM/yyyy'}}</span>
+      </div>
+      <div class="detail"><span>Fecha Vencimiento:</span> <span>{{invoice.expirationDate | date: 'dd/MM/yyyy'}}</span>
+      </div>
+      <div class="detail"><span>Subtotal:</span> <span>{{invoice.subtotal | number}}</span></div>
+      <div class="detail"><span>IVA:</span> <span>{{invoice.valueAddedTax | number}}</span></div>
+      <div class="detail"><span>Total:</span> <span>{{invoice.total | number}}</span></div>
+      <div class="detail"><span>Vencido:</span> <span>{{invoice.saldoDocumentoAdicional | number}}</span></div>
+      <div class="detail"><span>Porcentaje:</span>
+        <input type="number" class="form-control" [(ngModel)]="invoice.percentage" (input)="handleSelection(invoice)" />
+      </div>
+      <div class="detail"><span>Valor Calculado:</span> <span>{{invoice.calculatedValue | number: '1.2-2'}}</span></div>
+      <div class="detail"><span>Saldo Final:</span> <span>{{invoice.saldoDocumentoAdicional - (invoice.calculatedValue
+          || 0) | number: '1.2-2'}}</span></div>
+    </div>
+  </div>
+</div>

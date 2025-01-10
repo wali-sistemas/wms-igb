@@ -53,6 +53,7 @@ import { RedeemCapsComponent } from './components/fidelity-program/redeem-caps/r
 import { RedeemPointsComponent } from './components/fidelity-program/redeem-points/redeem-points.component';
 import { CustomerComponent } from './components/collection/customer/customer.component';
 import { CustomerPnComponent } from './components/collection/customer/customer-pn.component';
+import { CalculatorComponent } from './components/collection/calculator/calculator.component';
 import { GeoLocationComponent } from './components/geo-location/geo-location.component';
 import { WalletRedplas } from './components/payments-microsite/redplas/wallet-redplas.component';
 import { from } from 'rxjs/observable/from';
@@ -108,6 +109,7 @@ import { from } from 'rxjs/observable/from';
     RedeemPointsComponent,
     CustomerComponent,
     CustomerPnComponent,
+    CalculatorComponent,
     GeoLocationComponent,
     WalletRedplas
   ],
