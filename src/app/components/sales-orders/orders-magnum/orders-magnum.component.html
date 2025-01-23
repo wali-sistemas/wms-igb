@@ -218,7 +218,7 @@
     <div class="col-xs-12">
       <form>
         <input type="text" class="form-control input-lg" id="filter" name="filter" placeholder="Escribe para filtrar"
-          [(ngModel)]="filter" (keyup)="filterOrders(false)" autocomplete="off" />
+          [(ngModel)]="filter" (keyup)="filterOrders()" autocomplete="off" />
       </form>
     </div>
   </div>
@@ -248,7 +248,7 @@
           </div>
           <div class="col-sm-3">
             <div class="assigned-employee"><span class="icon-warehouse-all"
-                style="font-size: 18px;"></span>{{order.whsCode == '26' ? 'CALI' : 'CARTAGENA'}}</div>
+                style="font-size: 18px;"></span>{{order.whsCode == '26' ? 'CALI' : (order.whsCode == '05' ? 'CARTAGENA' : 'BOGOTÁ')}}</div>
           </div>
         </div>
         <br>

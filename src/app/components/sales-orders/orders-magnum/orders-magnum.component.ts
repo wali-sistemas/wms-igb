@@ -113,7 +113,7 @@ export class OrdersMagnumComponent implements OnInit {
         }
         $('#modal_transfer_process').modal('hide');
         $('#filter').focus();
-        this.filterOrders(true);
+        this.filterOrders();
       },
       error => {
         $('#modal_transfer_process').modal('hide');
@@ -149,7 +149,7 @@ export class OrdersMagnumComponent implements OnInit {
 
     this.order = order.docNum;
     this.transport = order.transp;
-    this.whsName = order.whsCode == '26' ? 'CARTAGENA' : 'CALI';
+    this.whsName = order.whsCode == '05' ? 'CARTAGENA' : (order.whsCode == '26' ? 'CALI' : 'BOGOTÁ');
     this.whsCode = order.whsCode;
     this.subTotal = order.subTotal;
     this.address = order.address;
@@ -176,7 +176,7 @@ export class OrdersMagnumComponent implements OnInit {
     $('#modal_add_invoice').modal('show');
   }
 
-  public filterOrders(force) {
+  public filterOrders() {
     if (this.filter.length > 0) {
       this.searchFilter = this.filter.toLowerCase();
       this.filteredOrders = new Array<SalesOrder>();
@@ -186,7 +186,8 @@ export class OrdersMagnumComponent implements OnInit {
           || ord.cardCode.toLowerCase().includes(this.searchFilter)
           || ord.cardName.toLowerCase().includes(this.searchFilter)
           || (ord.assignedPickingEmployee && ord.assignedPickingEmployee.toLowerCase().includes(this.searchFilter))
-          || ord.address.toLocaleLowerCase().includes(this.searchFilter)) {
+          || ord.address.toLocaleLowerCase().includes(this.searchFilter)
+          || (ord.whsCode == '05' ? 'CARTAGENA' : (ord.whsCode == '26' ? 'CALI' : 'BOGOTÁ')).toLocaleLowerCase().includes(this.searchFilter)) {
           this.filteredOrders.push(ord);
         }
       }
