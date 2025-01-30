@@ -260,7 +260,7 @@ export class PurchaseOrderComponent implements OnInit {
       'cedulCond': this.cedCond == null ? '' : this.cedCond,
       'placa': this.placVeh == null ? '' : this.placVeh,
       'contened': this.contenedor == null ? '' : this.contenedor,
-      'precint': this.precinto == null ? '' : this.precinto,
+      'precint': this.precinto == null ? '' : this.precinto.trim(),
       'enviarDatos': this.selectedEnvDatCond == null ? '' : this.selectedEnvDatCond,
       'vendedor': this.selectedAnalistComex == null ? '' : this.selectedAnalistComex,
       'docNum': this.order.docNum,
@@ -268,7 +268,7 @@ export class PurchaseOrderComponent implements OnInit {
       'sendNotificationFarribPuert': this.checkDateArribPuert,
       'sendNotificationFembarque': this.checkDateEmbarque,
       'comprador': this.slpName == null ? '' : this.slpName,
-      'emailComprador': this.emailComprador = null ? 'grupocomex@igbcolombia.com' : this.emailComprador
+      'emailComprador': this.emailComprador == null ? 'grupocomex@igbcolombia.com' : this.emailComprador
     }
 
     this._purchaseOrdersService.updateOrderUDF(userFieldDTO).subscribe(
