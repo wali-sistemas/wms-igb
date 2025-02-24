@@ -25,4 +25,24 @@ export class PaymentsMicrositeService {
     return this._http.post(this.urlSpring + 'wallet/generate', body, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
+
+  public sendRequestPayment(paymentRequest, companyName) {
+    return this._http.post(this.urlSpring + 'wallet/new-payment-wallet?companyName=' + companyName, paymentRequest, { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
+
+  public sendPaymentSession(paymentSession, companyName) {
+    return this._http.post(this.urlSpring + 'wallet/hold-invoices?schema=' + companyName, paymentSession, { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
+
+  public getHoldInvoices(cardCode, companyName) {
+    return this._http.get(this.urlSpring + 'wallet/hold-invoices?schema=' + companyName + '&userId=' + cardCode, { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
+
+  public releaseInvoices(companyName) {
+    return this._http.get(this.urlSpring + 'wallet/release-expired-invoices?schema=' + companyName, { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
 }
