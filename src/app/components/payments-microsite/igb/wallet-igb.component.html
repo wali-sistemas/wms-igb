@@ -13,6 +13,18 @@
     </div>
   </div>
 </div>
+<!-- Modal de Confirmación -->
+<div *ngIf="showPaymentConfirmation" class="modal-overlay">
+  <div class="modal-content">
+    <h3>Confirmación de Pago</h3>
+    <p>¿Estás seguro de que deseas proceder con el pago de los documentos seleccionados;
+      será redirigido a un sitio externo de Evertec P2P?</p>
+    <div class="modal-buttons">
+      <button class="btn-confirm" (click)="confirmPayment()">Confirmar</button>
+      <button class="btn-cancel" (click)="cancelPayment()">Cancelar</button>
+    </div>
+  </div>
+</div>
 <!--Modal Inactividad-->
 <div *ngIf="showAlert" class="custom-alert">
   <div class="alert-content">
@@ -21,20 +33,88 @@
     <button class="alert-button" (click)="closeAlert()">Aceptar</button>
   </div>
 </div>
-<!--Modal Pagos-->
-<div class="paymentModal">
+<!-- Modal de Edición de Pago -->
+<div *ngIf="showEditModal" class="edit-modal-overlay">
+  <div class="edit-modal-content">
+    <h3>Modificar Valor</h3>
+    <form>
+      <label for="editTotal">Nuevo Valor</label>
+      <input type="text" class="form-control" id="editTotal" [value]="formattedNewTotal" (input)="formatInput($event)"
+        name="newTotal">
+      <div class="edit-modal-actions">
+        <button type="button" class="btn btn-primary" (click)="updateTotal()">Guardar</button>
+        <button type="button" class="btn btn-secondary" (click)="closePopover()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- Modal de Preguntas Frecuentes -->
+<div *ngIf="showFAQModal" class="modal-overlay">
+  <div class="modal-content">
+    <button class="close-btn" (click)="closeFAQModal()">&times;</button>
+    <h2 class="modal-title">Preguntas Frecuentes</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <h3>¿Qué es PlacetoPay?</h3>
+        <p>PlacetoPay es la plataforma de pagos electrónicos que usa IGB para procesar
+          en línea las transacciones generadas en la tienda virtual con las formas de pago habilitadas para tal fin.</p>
+      </div>
+      <div class="faq-item">
+        <h3>¿Cómo puedo pagar?</h3>
+        <p>En la tienda virtual de IGB podrá realizar su pago con los medios
+          habilitados para tal fin: PSE, Visa y MasterCard.</p>
+      </div>
+      <div class="faq-item">
+        <h3>¿Es seguro ingresar mis datos bancarios en este sitio web?</h3>
+        <p>PlacetoPay cumple con los más altos estándares de seguridad como PCI DSS y encriptación SSL para garantizar
+          la protección de sus datos bancarios.</p>
+      </div>
+      <div class="faq-item">
+        <h3>¿Puedo realizar el pago cualquier día y a cualquier hora?</h3>
+        <p>Sí, los pagos pueden realizarse en línea los 7 días de la semana, las 24 horas del día.</p>
+      </div>
+      <div class="faq-item">
+        <h3>¿Puedo cambiar la forma de pago?</h3>
+        <p>Si aún no ha finalizado su pago, puede volver al paso inicial y elegir otra forma de pago. Una vez finalizada
+          la compra, no es posible cambiar el método de pago.</p>
+      </div>
+      <div class="faq-item">
+        <h3>¿Pagar electrónicamente tiene algún costo adicional?</h3>
+        <p>No, los pagos electrónicos realizados a través de PlacetoPay no generan costos adicionales para el comprador.
+        </p>
+      </div>
+      <div class="faq-item">
+        <h3>¿Qué debo hacer si mi transacción no concluyó?</h3>
+        <p>Verifique si recibió un correo de confirmación del pago. Si no lo recibió, comuníquese con
+          tesoreria@igbcolombia.com</p>
+      </div>
+      <div class="faq-item">
+        <h3>¿Qué debo hacer si no recibí el comprobante de pago?</h3>
+        <p>Si no recibió el comprobante, comuníquese con tesoreria@igbcolombia.com o al teléfono (604 444 20 25) para
+          solicitarlo nuevamente.</p>
+      </div>
+      <div class="faq-item">
+        <h3>No me llegó el producto que compré, ¿qué hago?</h3>
+        <p>Verifique si la transacción fue exitosa en su extracto bancario. De ser así, revise las políticas de envío en
+          el sitio web.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal Pagos -->
+<div class="payment-modal-wrapper">
   <div id="paymentReceiptsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
     aria-hidden="true">
     <div class="modal-dialog">
-      <div class="modal-content">
+      <div class="modal-content payment-modal-content">
         <div class="modal-header">
           <button type="button" class="close" (click)="closeModal()" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
           <h4 class="modal-title" id="modalLabel">Detalles del Recibo</h4>
         </div>
-        <div class="table-container">
-          <table class="table-modern">
+        <div class="payment-table-container">
+          <table class="payment-table">
             <thead>
               <tr>
                 <th>Cliente</th>
@@ -57,8 +137,6 @@
             </tbody>
           </table>
         </div>
-        <div class="modal-footer">
-        </div>
       </div>
     </div>
   </div>
@@ -67,7 +145,7 @@
 <div class="container-fluid">
   <!-- Header con el banner -->
   <header class="text-center">
-    <img src="assets/images/banner-redplas.png" alt="Banner Empresa" class="responsive-img" />
+    <img src="assets/images/banner_igb.png" alt="Banner Empresa" class="responsive-img" />
   </header>
   <!-- Sección del cuerpo: dos columnas -->
   <div class="row body-section" *ngIf="!walletInvoices || walletInvoices.length === 0">
@@ -121,9 +199,13 @@
     <div class="col-md-1 hidden-sm hidden-xs"></div>
   </div>
 </div>
-<!-- Footer con imagen centrada -->
-<footer class="text-center">
-  <img src="assets/images/by-wali.png" alt="Footer Empresa" class="img-fluid footer-img" />
+<!-- Footer con imágenes alineadas -->
+<footer class="text-center footer-container">
+  <div class="footer-images">
+    <img src="assets/images/by-wali.png" alt="Footer Empresa" class="img-fluid footer-img" />
+    <img src="https://static.placetopay.com/placetopay-logo.svg" alt="PlacetoPay Logo"
+      class="img-fluid placetopay-logo" />
+  </div>
 </footer>
 <!-- Tabla con registros luego del login -->
 <div *ngIf="walletInvoices && walletInvoices.length > 0">
@@ -178,9 +260,11 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let invoice of filteredInvoices"
-                [ngClass]="{'invoice-selected': selectedInvoices.includes(invoice)}"
-                (click)="toggleInvoiceSelection(invoice)">
+              <tr *ngFor="let invoice of filteredInvoices" [ngClass]="{
+                      'invoice-selected': selectedInvoices.includes(invoice),
+                      'invoice-hold': invoice.isHold
+                    }" (click)="toggleInvoiceSelection(invoice)" [attr.disabled]="invoice.isHold ? true : null"
+                [attr.title]="invoice.isHold ? 'Proceso de pago pendiente' : ''">
                 <td>{{invoice.description}}</td>
                 <td>{{invoice.createdAt | date:'dd/MM/yyyy'}}</td>
                 <td>{{invoice.expirationDate | date:'dd/MM/yyyy'}}</td>
@@ -188,52 +272,46 @@
                 <td>{{invoice.valueAddedTax | number}}</td>
                 <td>{{invoice.total | number}}</td>
                 <td>{{invoice.saldoDocumentoAdicional | number}}</td>
+                <!-- Última columna con iconos condicionales -->
                 <td>
-                  <button (click)="togglePopover(invoice)" class="btn btn-link popover-btn">
-                    <span class="icon-edit-3" title="Editar" style="font-size: 19px;"></span>
+                  <!-- Si la factura está en Hold, muestra un icono de reloj -->
+                  <span *ngIf="invoice.isHold" class="icon-clock-sand" title="En proceso de pago"
+                    style="font-size: 19px; color: #da0611;"></span>
+                  <!-- Si la factura NO está en Hold, muestra el botón de edición -->
+                  <button *ngIf="!invoice.isHold" (click)="togglePopover(invoice)" class="btn btn-link edit-modal-btn">
+                    <span class="icon-edit-3" title="Editar" style="font-size: 19px; color: #da0611;"></span>
                   </button>
                 </td>
-                <!-- Popover para editar el total -->
-                <div class="popover" [ngClass]="{'show': invoice === selectedInvoice}"
-                  *ngIf="invoice === selectedInvoice">
-                  <form>
-                    <label for="newTotal">Modificar Valor</label>
-                    <input type="text" class="form-control" id="newTotal" [(ngModel)]="newTotal" name="newTotal">
-                    <div class="popover-actions">
-                      <button type="button" class="btn btn-primary" (click)="updateTotal()">Guardar</button>
-                      <button type="button" class="btn btn-secondary" (click)="closePopover()">Cancelar</button>
-                    </div>
-                  </form>
-                </div>
               </tr>
             </tbody>
           </table>
-          <!-- Tarjetas para pantallas pequeñas -->
+          <!-- Tabla Pantallas Pequeñas -->
           <div class="invoice-cards d-block d-md-none">
-            <div class="invoice-card" *ngFor="let invoice of filteredInvoices"
-              [ngClass]="{'invoice-selected': selectedInvoices.includes(invoice)}"
-              (click)="toggleInvoiceSelection(invoice)">
+            <div class="invoice-card" *ngFor="let invoice of filteredInvoices" [ngClass]="{
+                   'invoice-selected': selectedInvoices.includes(invoice),
+                   'invoice-hold': invoice.isHold
+                 }" (click)="!invoice.isHold && toggleInvoiceSelection(invoice)">
               <div class="invoice-item"><strong>Descripción:</strong> {{invoice.description}}</div>
-              <div class="invoice-item"><strong>Fecha de Factura:</strong> {{invoice.createdAt |
-                date:'dd/MM/yyyy'}}</div>
+              <div class="invoice-item"><strong>Fecha de Factura:</strong> {{invoice.createdAt | date:'dd/MM/yyyy'}}
+              </div>
               <div class="invoice-item"><strong>Fecha de Vencimiento:</strong> {{invoice.expirationDate |
                 date:'dd/MM/yyyy'}}</div>
               <div class="invoice-item"><strong>Total:</strong> {{invoice.total | number}}</div>
-              <div class="invoice-item"><strong>Vencido:</strong> {{invoice.saldoDocumentoAdicional |
-                number}}</div>
+              <div class="invoice-item"><strong>Vencido:</strong> {{invoice.saldoDocumentoAdicional | number}}</div>
+              <!-- Última sección con icono o botón de edición -->
               <div class="invoice-item">
-                <strong>Total:</strong>
-                <span *ngIf="selectedInvoice !== invoice">{{invoice.total | number}}</span>
-                <input *ngIf="selectedInvoice === invoice" type="number" class="form-control edit-input"
-                  [(ngModel)]="newTotal" (blur)="updateTotal(invoice)" />
-              </div>
-              <div class="invoice-item">
-                <button *ngIf="selectedInvoice !== invoice" (click)="togglePopover(invoice)"
+                <strong>Acción:</strong>
+                <!-- Si la factura está en Hold, muestra un icono de reloj -->
+                <span *ngIf="invoice.isHold" class="icon-clock-sand" title="En proceso de pago"
+                  style="font-size: 19px; color: #da0611;"></span>
+                <!-- Si la factura NO está en Hold, muestra el botón de edición -->
+                <button *ngIf="!invoice.isHold && selectedInvoice !== invoice" (click)="togglePopover(invoice)"
                   class="btn btn-link popover-btn">
-                  <span class="icon-edit-3" title="Editar" style="font-size: 19px;"></span> Editar
-                  valor
+                  <span class="icon-edit-3" title="Editar" style="font-size: 19px;"></span> Editar valor
                 </button>
-                <button *ngIf="selectedInvoice === invoice" (click)="closePopover()" class="btn btn-link popover-btn">
+                <!-- Si la factura está en edición, muestra el botón de guardar -->
+                <button *ngIf="!invoice.isHold && selectedInvoice === invoice" (click)="closePopover()"
+                  class="btn btn-link popover-btn">
                   <span class="icon-check" title="Guardar" style="font-size: 19px;"></span> Guardar
                 </button>
               </div>
@@ -256,16 +334,21 @@
             <p class="total-amount">{{totalToPay | currency:'COP'}}</p>
           </div>
           <!-- Botón de pagar -->
-          <button (click)="loadWompiScript()" class="pay-button" [disabled]="isPayButtonDisabled"
-            [ngClass]="{'pay-button-disabled': isPayButtonDisabled}">Pagar</button>
-          <div class="wompi">
-            <div id="wompiForm" *ngIf="isWompiFormVisible">
-            </div>
-          </div>
+          <button (click)="openPaymentConfirmation()" class="pay-button" [disabled]="isPayButtonDisabled"
+            [ngClass]="{'pay-button-disabled': isPayButtonDisabled}">
+            Pagar
+          </button>
           <div *ngIf="walletInvoices && walletInvoices.length > 0" class="countdown-container">
             <span class="glyphicon glyphicon-time"></span>
             <p class="countdown-text">Tiempo restante: {{formatTime(timeLeft)}}</p>
           </div>
+        </div>
+      </div>
+      <!-- Resumen de pago -->
+      <div class="col-md-3 col-sm-12 col-xs-12">
+        <div class="summary-container">
+          <!-- Botón para abrir el modal -->
+          <button class="question-button" (click)="openFAQModal()">Preguntas Frecuentes</button>
         </div>
       </div>
     </div>

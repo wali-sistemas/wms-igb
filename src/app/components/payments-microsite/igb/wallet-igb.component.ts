@@ -3,26 +3,24 @@ import { Router } from '@angular/router';
 import { WalletInvoice } from '../../../models/wallet-invoice';
 import { PaymentReceipt } from '../../../models/payment-receipt';
 import { PaymentsMicrositeService } from '../../../services/payments-microsite.service';
-import { UserService } from '../../../services/user.service';
 import { ChangeDetectorRef } from '@angular/core';
 
 declare var $: any;
 
 @Component({
-  templateUrl: './wallet-redplas.component.html',
-  styleUrls: ['./wallet-redplas.component.css'],
-  providers: [PaymentsMicrositeService, UserService]
+  templateUrl: './wallet-igb.component.html',
+  styleUrls: ['./wallet-igb.component.css'],
+  providers: [PaymentsMicrositeService]
 })
 
-export class WalletRedplas implements OnInit {
+export class WalletIGB implements OnInit {
+  public selectedCompany: string = 'IGB';
   public cardCode: string = '';
-  public selectedCompany: string = 'REDPLAS';
   public noInvoicesMessage: string = '';
   public filterDetail: string = '';
   public paymentReference: string;
   public concatenatedInvoices: string = '';
   public fullReference: string = '';
-  public dateReference: string = '';
   public keyIntegrity: string = '';
   public input: string = '';
   public walletInvoices: WalletInvoice[] = [];
@@ -30,53 +28,38 @@ export class WalletRedplas implements OnInit {
   public filteredInvoices: WalletInvoice[] = [];
   public selectedInvoice: WalletInvoice;
   public paymentsReceipts: PaymentReceipt[] = [];
+  public holdInvoices: string[] = [];
+  public paymentRequest: any = null;
+  public countdownInterval: any;
   public totalToPay: number = 0;
   public newTotal: number = 0;
   public timeLeft: number = 600;
   public isButtonEnabled: boolean = false;
   public isLoading: boolean = false;
-  public isWompiFormVisible: boolean = false;
   public showAlert: boolean = false;
+  public showPaymentConfirmation: boolean = false;
+  public showEditModal: boolean = false;
+  public showFAQModal = false;
   public isPayButtonDisabled: boolean = true;
-  public countdownInterval: any;
 
-  constructor(private _router: Router, private _paymentsMicrositeService: PaymentsMicrositeService, private _userService: UserService, private _cdr: ChangeDetectorRef) { }
+  constructor(private _router: Router, private _paymentsMicrositeService: PaymentsMicrositeService, private _cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
     $('#cardCode').focus();
+    this.selectedCompany = "IGB";
   }
 
-  public loadWompiScript() {
-    this.isWompiFormVisible = true;
+  // Contruir Ref P2P
+  public loadP2PScript() {
     this.buildReference();
     this.buildIntegrity();
-
-    const script = document.createElement('script');
-    script.src = "https://checkout.wompi.co/widget.js";
-    script.setAttribute("data-render", "button");
-    script.setAttribute("data-public-key", "pub_prod_xsTrvZjX3GMmcdBJFC1PFBCwJ9HXzhuy");
-    script.setAttribute("data-currency", "COP");
-    script.setAttribute("data-amount-in-cents", (this.totalToPay * 100).toString());
-    script.setAttribute("data-reference", this.fullReference);
-    script.setAttribute("data-signature:integrity", this.input);
-    script.setAttribute("data-redirect-url", "https://redplas.co/");
-    script.setAttribute("data-customer-data:email", "contabilidad@redplas.co");
-    // Añadir el script al formulario
-    const wompiForm = document.getElementById('wompiForm');
-    wompiForm.appendChild(script);
-    script.onload = () => {
-      const wompiButton = wompiForm.querySelector('button');
-      if (wompiButton) {
-        wompiButton.style.display = 'none';
-        wompiButton.click();
-      }
-    };
+    this.buildPaymentRequest();
   }
 
   // Método para construir llave de integridad
   public buildIntegrity() {
-    const KeyIntegrityWompi = 'prod_integrity_dGmcUuwbu3jJEEICqnC2zR9K4B60eBhD'
-    this.keyIntegrity = `${this.fullReference}${(this.totalToPay * 100).toString()}${'COP'}${KeyIntegrityWompi}`;
+    const KeyIntegrity = 'prod_integrity_dGmcUuwbu3jJEEICqnC2zR9K4B60eBhD'
+    this.keyIntegrity = `${this.fullReference}${(this.totalToPay * 100).toString()}${'COP'}${KeyIntegrity}`;
     this.generateKeySHA256();
   };
 
@@ -112,12 +95,15 @@ export class WalletRedplas implements OnInit {
 
   // Método para obtener los documentos por cliente
   public getDetailsInvoice() {
+    this.releaseInvoice();
+    this.getHoldInvoices();
     this.isLoading = true;
     this._paymentsMicrositeService.getInvoicesDetail(this.cardCode, this.selectedCompany).subscribe(
       response => {
         this.walletInvoices = response;
         this.filteredInvoices = [...this.walletInvoices];
         if (this.walletInvoices.length > 0) {
+          this.updateInvoicesStatus();
           this.startCountdown();
         } else {
           this.noInvoicesMessage = 'No se encontraron documentos relacionados';
@@ -127,6 +113,42 @@ export class WalletRedplas implements OnInit {
       error => {
         console.error('Error al obtener la lista de facturas', error);
         this.isLoading = false;
+      }
+    );
+  }
+
+  //Metodo para obtener las facturas retenidas por proceso de pago
+  public getHoldInvoices() {
+    this._paymentsMicrositeService.getHoldInvoices(this.cardCode, this.selectedCompany).subscribe(
+      response => {
+        this.holdInvoices = response.invoices; // Guardamos las facturas en hold
+        this.updateInvoicesStatus(); // Llamamos a la función para actualizar el estado de la lista general
+      },
+      error => {
+        console.error("Error al obtener facturas en hold:", error);
+      }
+    );
+  }
+
+  //Marcar facturas en hold
+  public updateInvoicesStatus() {
+    this.walletInvoices.forEach(invoice => {
+      invoice.isHold = this.holdInvoices.includes(invoice.reference);
+    });
+  }
+
+  // Liberar facturas en Hold
+  public releaseInvoice() {
+    this._paymentsMicrositeService.releaseInvoices(this.selectedCompany).subscribe(
+      response => {
+        if (response.code === 0) {
+          this.updateInvoicesStatus();
+        } else {
+          console.warn("No se pudieron liberar las facturas:", response.message);
+        }
+      },
+      error => {
+        console.error("Error al obtener facturas en hold:", error);
       }
     );
   }
@@ -147,9 +169,12 @@ export class WalletRedplas implements OnInit {
     );
   }
 
+  //Abrir modal confirmacion de pago
   public showModal() {
     $('#paymentReceiptsModal').modal('show');
   }
+
+  //Cerrar modal confirmacion de pago
   public closeModal() {
     $('#paymentReceiptsModal').modal('hide');
   }
@@ -178,9 +203,83 @@ export class WalletRedplas implements OnInit {
       const value = Number(inv.saldoDocumentoAdicional);
       return acc + (isNaN(value) ? 0 : value);
     }, 0);
-    this.isWompiFormVisible = false;
     this.updateConcatenatedInvoices();
     this.isPayButtonDisabled = this.selectedInvoices.length === 0;
+  }
+
+  //Registrar facturas en Hold
+  public prepareAndSendPaymentSession() {
+    if (this.selectedInvoices.length === 0) {
+      console.warn("No hay facturas seleccionadas.");
+      return;
+    }
+    const invoiceReferences = this.selectedInvoices.map(inv => inv.reference).join(',');
+    let payerDocument = this.selectedInvoices[0].document.split('-')[0];
+    const paymentSession = {
+      u_invoice_id: invoiceReferences,
+      u_user_id: payerDocument,
+      u_status: "Y"
+    };
+    // Enviar la solicitud al backend
+    this._paymentsMicrositeService.sendPaymentSession(paymentSession, this.selectedCompany).subscribe(
+      response => {
+        console.info("Sesión de pago registrada correctamente:", response);
+      },
+      error => {
+        console.error("Error al registrar la sesión de pago:", error);
+      }
+    );
+  }
+
+  //Construir cuerpo de envío hacia comercio
+  public buildPaymentRequest() {
+    if (this.selectedInvoices.length === 0) {
+      this.paymentRequest = null;
+      return;
+    }
+    const reference = this.concatenatedInvoices;
+    const total = this.totalToPay;
+    const firstInvoice = this.selectedInvoices[0];
+    const cleanedDocument = firstInvoice.document.replace(/-\d+$/, '');
+    this.paymentRequest = {
+      payment: {
+        reference: this.selectedCompany,
+        description: this.fullReference,
+        amount: {
+          currency: "COP",
+          total: total
+        }
+      },
+      payer: {
+        documentType: firstInvoice.documentType,
+        document: cleanedDocument,
+        name: firstInvoice.name,
+        surname: firstInvoice.surname,
+        email: firstInvoice.email
+      }
+    };
+    this.sendPaymentRequest();
+  }
+
+  //Enviar cuerpo hacia Backend
+  public sendPaymentRequest() {
+    this._paymentsMicrositeService.sendRequestPayment(this.paymentRequest, this.selectedCompany).subscribe(
+      response => {
+        $('#modal_transfer_process').modal('hide');
+        if (response.code === 0 && response.content) {
+          window.open(response.content, '_blank');
+        } else {
+          console.error('Error en la respuesta del servidor:', response);
+          alert('Hubo un error al procesar el pago. Intente nuevamente.');
+        }
+      },
+      error => {
+        $('#modal_transfer_process').modal('hide');
+        console.error('Error al enviar la petición al comercio', error);
+        alert('Hubo un error al conectar con el servicio de pagos.');
+      }
+    );
+    this.prepareAndSendPaymentSession()
   }
 
   // Método para actualizar la variable de concatenación con valores sin puntos decimales
@@ -204,6 +303,7 @@ export class WalletRedplas implements OnInit {
 
   // Método para abrir modal de modificar valor
   public togglePopover(invoice: WalletInvoice) {
+    this.showEditModal = true;
     if (this.selectedInvoice === invoice) {
       this.selectedInvoice = null;
     } else {
@@ -215,6 +315,7 @@ export class WalletRedplas implements OnInit {
   // Cierra el popover
   public closePopover() {
     this.selectedInvoice = null;
+    this.showEditModal = false;
   }
 
   // Método para modificar el valor total
@@ -225,33 +326,11 @@ export class WalletRedplas implements OnInit {
     }
   }
 
-  // Método sacar usuario a login principal
-  public clearInput() {
-    this.walletInvoices = [];
-    this.cardCode = '';
-    this.noInvoicesMessage = '';
-    this.selectedInvoices = [];
-    this.totalToPay = 0;
-    this.input = '';
-    this.fullReference = '';
-    this.isPayButtonDisabled = true;
-    $('#cardCode').focus();
-  }
-
   // Método para vaciar llave antes de construirla
   public prepareKey() {
     this.paymentReference = '';
     this.fullReference = '';
-    this.dateReference = '';
     this.keyIntegrity = '';
-  }
-
-  // Método para vaciar listas
-  public clear() {
-    this.selectedInvoices = [];
-    this.totalToPay = 0;
-    this.isWompiFormVisible = false;
-    this.isPayButtonDisabled = true;
   }
 
   // Método para iniciar contador
@@ -278,6 +357,54 @@ export class WalletRedplas implements OnInit {
     this.showAlert = false;
   }
 
+  // Método para formatear  valores del contador a minutos y segundos
+  public formatTime(seconds: number): string {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes.toString();
+    const formattedSeconds = remainingSeconds < 10 ? '0' + remainingSeconds : remainingSeconds.toString();
+    return `${formattedMinutes}:${formattedSeconds}`;
+  }
+
+  // Método para abrir el modal
+  public openPaymentConfirmation() {
+    this.showPaymentConfirmation = true;
+  }
+
+  // Método para confirmar el pago
+  public confirmPayment() {
+    this.showPaymentConfirmation = false;
+    this.loadP2PScript();
+    this.clearInput();
+  }
+
+  // Método para cancelar el pago
+  public cancelPayment() {
+    this.showPaymentConfirmation = false;
+  }
+
+  //Abrir Modal preguntas frecuentes
+  openFAQModal() {
+    this.showFAQModal = true;
+  }
+
+  // Cerrar Modal preguntas frecuentes
+  closeFAQModal() {
+    this.showFAQModal = false;
+  }
+
+  // Formatea el número a nivel visual con separadores de miles
+  public get formattedNewTotal(): string {
+    return this.newTotal.toLocaleString('es-CO');
+  }
+
+  // Método para manejar el input sin afectar el valor real
+  public formatInput(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    const rawValue = inputElement.value.replace(/[^0-9]/g, '');
+    this.newTotal = Number(rawValue);
+  }
+
   // Método paara reestablecer contador
   private clearCountdown() {
     if (this.countdownInterval) {
@@ -286,12 +413,24 @@ export class WalletRedplas implements OnInit {
     }
   }
 
-  // Método para formatear  valores del contador a minutos y segundos
-  public formatTime(seconds: number): string {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes.toString();
-    const formattedSeconds = remainingSeconds < 10 ? '0' + remainingSeconds : remainingSeconds.toString();
-    return `${formattedMinutes}:${formattedSeconds}`;
+  // Método para vaciar listas
+  public clear() {
+    this.selectedInvoices = [];
+    this.totalToPay = 0;
+    this.isPayButtonDisabled = true;
+  }
+
+  // Método sacar usuario a login principal
+  public clearInput() {
+    this.walletInvoices = [];
+    this.cardCode = '';
+    this.noInvoicesMessage = '';
+    this.selectedInvoices = [];
+    this.totalToPay = 0;
+    this.input = '';
+    this.fullReference = '';
+    this.isPayButtonDisabled = true;
+    this.isButtonEnabled = false;
+    $('#cardCode').focus();
   }
 }

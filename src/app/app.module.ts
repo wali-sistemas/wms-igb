@@ -56,6 +56,7 @@ import { CustomerPnComponent } from './components/collection/customer/customer-p
 import { CalculatorComponent } from './components/collection/calculator/calculator.component';
 import { GeoLocationComponent } from './components/geo-location/geo-location.component';
 import { WalletRedplas } from './components/payments-microsite/redplas/wallet-redplas.component';
+import { WalletIGB } from './components/payments-microsite/igb/wallet-igb.component';
 import { from } from 'rxjs/observable/from';
 
 @NgModule({
@@ -111,7 +112,8 @@ import { from } from 'rxjs/observable/from';
     CustomerPnComponent,
     CalculatorComponent,
     GeoLocationComponent,
-    WalletRedplas
+    WalletRedplas,
+    WalletIGB
   ],
   imports: [
     BrowserModule,

@@ -49,6 +49,7 @@ import { CustomerPnComponent } from './components/collection/customer/customer-p
 import { CalculatorComponent } from './components/collection/calculator/calculator.component';
 import { GeoLocationComponent } from './components/geo-location/geo-location.component';
 import { WalletRedplas } from './components/payments-microsite/redplas/wallet-redplas.component';
+import { WalletIGB } from './components/payments-microsite/igb/wallet-igb.component';
 import { from } from 'rxjs/observable/from';
 
 const appRoutes: Routes = [
@@ -100,7 +101,8 @@ const appRoutes: Routes = [
   { path: 'program-fidelity/redeem-caps', component: RedeemCapsComponent },
   { path: 'program-fidelity/redeem-points', component: RedeemPointsComponent },
   { path: 'geo-location', component: GeoLocationComponent },
-  { path: 'wallet-redplas', component: WalletRedplas }
+  { path: 'wallet-redplas', component: WalletRedplas },
+  { path: 'wallet-igb', component: WalletIGB }
 ];
 
 export const appRoutingProviders: any[] = [];

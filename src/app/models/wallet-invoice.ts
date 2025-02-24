@@ -16,6 +16,7 @@ export class WalletInvoice {
     saldoDocumentoAdicional: number;
     currency: string;
     urlDoc: string;
+    isHold?: boolean;
 
     constructor() {}
   }

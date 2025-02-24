@@ -133,6 +133,7 @@ header img {
   }
 }
 
+
 @media (max-width: 768px) {
 
   .row .col-md-9,
@@ -152,6 +153,7 @@ header img {
     margin-bottom: 10px;
     width: 100%;
   }
+
 
   .summary-container {
     margin-top: 20px;
@@ -206,7 +208,6 @@ header img {
 .info-section {
   padding-left: 20px;
   padding-right: 20px;
-
 }
 
 .form-group input {
@@ -338,12 +339,12 @@ h2 {
 
 .exit-button:hover .exit-text,
 .exit-button:hover .glyphicon-log-out {
-  color: #78BE21;
+  color: #e30922;
 }
 
 .receipcs-button:hover .receipcs-text,
 .receipcs-button:hover .icon-sticky-note {
-  color: #78BE21;
+  color: #e30922;
 }
 
 .invoice-table {
@@ -427,32 +428,50 @@ h2 {
 
 .table-container::-webkit-scrollbar-track {
   background-color: #f1f1f1;
+  border-radius: 10px;
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
 
 .table-container::-webkit-scrollbar-thumb {
   background-color: #888;
   border-radius: 5px;
+  margin: 4px 0;
 }
 
 .table-container::-webkit-scrollbar-thumb:hover {
   background-color: #555;
 }
 
-.paymentModal::-webkit-scrollbar {
-  width: 10px;
+.paymentModal .modal-content {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  width: 100%;
 }
 
-.paymentModal::-webkit-scrollbar-track {
-  background-color: #f1f1f1;
+.paymentModal .modal-header {
+  border-bottom: 2px solid #eee;
+  padding-bottom: 15px;
+  text-align: center;
 }
 
-.paymentModal::-webkit-scrollbar-thumb {
-  background-color: #888;
-  border-radius: 5px;
+.paymentModal .modal-header h4 {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
 }
 
-.paymentModal::-webkit-scrollbar-thumb:hover {
-  background-color: #555;
+.paymentModal .close {
+  font-size: 22px;
+  color: #666;
+  opacity: 0.8;
+}
+
+.paymentModal .close:hover {
+  opacity: 1;
 }
 
 .summary-container {
@@ -493,7 +512,7 @@ h2 {
 }
 
 .pay-button {
-  background-color: #4CAF50;
+  background-color: #e30922;
   color: white;
   border: none;
   padding: 12px 24px;
@@ -506,13 +525,7 @@ h2 {
 }
 
 .pay-button:hover {
-  background-color: #4CAF50;
-}
-
-.pay-button-disabled {
-  background-color: rgb(156, 163, 175) !important;
-  cursor: not-allowed;
-  opacity: 0.6;
+  background-color: #e30922;
 }
 
 .btn-submit:disabled {
@@ -521,7 +534,7 @@ h2 {
 }
 
 .btn-submit {
-  background-color: #4CAF50;
+  background-color: #e30922;
   color: white;
   padding: 10px 20px;
   border: none;
@@ -535,7 +548,7 @@ h2 {
 }
 
 .btn-submit:hover {
-  background-color: #4CAF50;
+  background-color: #e30922;
 }
 
 .loading-gif {
@@ -548,8 +561,8 @@ h2 {
 }
 
 table.invoice-table tr.invoice-selected {
-  background-color: #f0fff2;
-  border-left: 4px solid #28a745;
+  background-color: #fdedec;
+  border-left: 4px solid #e30922;
 }
 
 table tr:hover {
@@ -714,19 +727,6 @@ td {
   margin: 30px auto;
 }
 
-
-#wompiForm button {
-  display: none !important;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.wompi {
-  display: none !important;
-  opacity: 0;
-  pointer-events: none;
-}
-
 .waybox-button {
   display: none !important;
   opacity: 0;
@@ -797,8 +797,7 @@ td {
 }
 
 .invoice-card.invoice-selected {
-  border: 2px solid #4CAF50;
-  box-shadow: 0 6px 12px rgba(76, 175, 80, 0.4);
+  border: 2px solid #e30922;
   transform: scale(1.05);
   background: #f5f5f5;
   transition: all 0.3s ease;
@@ -819,7 +818,7 @@ td {
 .invoice-card .popover-btn {
   margin-top: 15px;
   font-size: 1.5rem;
-  color: #4CAF50;
+  color: #e30922;
   text-decoration: none;
   transition: color 0.3s ease, transform 0.3s ease;
   display: flex;
@@ -828,13 +827,13 @@ td {
 }
 
 .invoice-card .popover-btn:hover {
-  color: #388E3C;
+  color: #e30922;
   transform: scale(1.1);
   text-decoration: underline;
 }
 
 .invoice-card.invoice-selected .popover-btn {
-  color: #1B5E20;
+  color: #e30922;
   font-weight: bold;
   transform: scale(1.1);
 }
@@ -912,12 +911,6 @@ td {
   color: #000;
   font-weight: 500;
   white-space: nowrap;
-}
-
-.wompi {
-  font-size: inherit;
-  color: inherit;
-  font-weight: inherit;
 }
 
 .glyphicon-trash {
@@ -1013,7 +1006,7 @@ td {
 
 .alert-button {
   padding: 10px 20px;
-  background-color: #28a745;
+  background-color: #da0611;
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -1023,5 +1016,379 @@ td {
 }
 
 .alert-button:hover {
-  background-color: #218838;
+  background-color: #e30922;
+}
+
+.invoice-hold {
+  background-color: rgba(255, 0, 0, 0.15);
+  color: #888;
+  opacity: 0.6;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.hold-label {
+  font-weight: bold;
+  color: red;
+  background: rgba(255, 0, 0, 0.2);
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #ffffff;
+  padding: 25px 30px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  max-width: 400px;
+  width: 90%;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.btn-confirm {
+  background-color: #6c757d;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.btn-confirm:hover {
+  background-color: #5a6268;
+  transform: scale(1.05);
+}
+
+.btn-cancel {
+  background-color: #da0611;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.btn-cancel:hover {
+  background-color: #b9050f;
+  transform: scale(1.05);
+}
+
+.pay-button {
+  padding: 10px 48px;
+  font-weight: bold;
+  border-radius: 6px;
+  background-color: #da0611;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, opacity 0.3s ease;
+}
+
+.pay-button:hover {
+  background-color: rgb(55, 65, 81);
+}
+
+.pay-button-disabled {
+  background-color: rgb(156, 163, 175) !important;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.question-button {
+  padding: 10px 48px;
+  font-weight: bold;
+  border-radius: 6px;
+  background-color: #da0611;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, opacity 0.3s ease;
+}
+
+.question-button:hover {
+  background-color: rgb(55, 65, 81);
+}
+
+.question-button-disabled {
+  background-color: rgb(156, 163, 175) !important;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 1000px;
+  text-align: center;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  position: relative;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-title {
+  font-size: 22px;
+  color: #333;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #da0611;
+
+  &:hover {
+    color: #b1050e;
+  }
+}
+
+.faq-list {
+  max-height: 400px;
+  overflow-y: auto;
+  text-align: left;
+}
+
+.faq-item {
+  border-bottom: 1px solid #eee;
+  padding: 15px 0;
+  transition: all 0.3s ease;
+
+  h3 {
+    font-size: 18px;
+    color: #da0611;
+    margin: 0;
+    font-weight: bold;
+  }
+
+  p {
+    font-size: 16px;
+    color: #555;
+    margin: 10px 0;
+    line-height: 1.5;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.placetopay-logo {
+  height: 40px;
+}
+
+.payment-modal-wrapper .payment-modal-content {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+  max-width: 800px;
+  width: 100%;
+  border: none;
+}
+
+.payment-modal-wrapper .modal-header {
+  border-bottom: 2px solid #eaeaea;
+  padding-bottom: 15px;
+  text-align: center;
+}
+
+.payment-modal-wrapper .modal-header h4 {
+  font-size: 22px;
+  font-weight: bold;
+  color: #222;
+  margin: 0;
+}
+
+.payment-modal-wrapper .close {
+  font-size: 24px;
+  color: #444;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.payment-modal-wrapper .close:hover {
+  opacity: 1;
+}
+
+.payment-modal-wrapper .payment-table-container {
+  max-height: 400px;
+  overflow-y: auto;
+  border-radius: 8px;
+  margin-top: 15px;
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  background: #fff;
+}
+
+.payment-modal-wrapper .payment-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.payment-modal-wrapper .payment-table thead {
+  background: #ffffff;
+  color: #222;
+  font-size: 15px;
+  border-bottom: 2px solid #eaeaea;
+}
+
+.payment-modal-wrapper .payment-table th {
+  text-align: center;
+  font-weight: bold;
+  padding: 16px;
+  text-transform: uppercase;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.payment-modal-wrapper .payment-table tbody tr {
+  transition: background 0.3s;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.payment-modal-wrapper .payment-table tbody tr:hover {
+  background: #fafafa;
+}
+
+.payment-modal-wrapper .payment-table td {
+  padding: 14px;
+  color: #333;
+  font-size: 14px;
+}
+
+.payment-modal-wrapper .payment-table tbody tr:nth-child(odd) {
+  background: #ffffff;
+}
+
+.payment-modal-wrapper .payment-table tbody tr:nth-child(even) {
+  background: #fcfcfc;
+}
+
+.payment-modal-wrapper .payment-table td:last-child {
+  font-weight: bold;
+  color: #222;
+}
+
+.payment-modal-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+
+.payment-modal-wrapper::-webkit-scrollbar-track {
+  background: #f9f9f9;
+}
+
+.payment-modal-wrapper::-webkit-scrollbar-thumb {
+  background: #c5c5c5;
+  border-radius: 6px;
+}
+
+.payment-modal-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #a5a5a5;
+}
+
+.edit-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.edit-modal-content {
+  background-color: #fff;
+  padding: 20px 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  max-width: 300px;
+}
+
+.edit-modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.edit-modal-actions .btn {
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.edit-modal-actions .btn-primary {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+}
+
+.edit-modal-actions .btn-primary:hover {
+  background-color: #6c757d;
+}
+
+.edit-modal-actions .btn-secondary {
+  background-color: #da0611;
+  color: white;
+  border: none;
+}
+
+.edit-modal-actions .btn-secondary:hover {
+  background-color: #a0040c;
 }
