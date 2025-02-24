@@ -509,6 +509,12 @@ h2 {
   background-color: #4CAF50;
 }
 
+.pay-button-disabled {
+  background-color: rgb(156, 163, 175) !important;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .btn-submit:disabled {
   background-color: #cccccc;
   cursor: not-allowed;

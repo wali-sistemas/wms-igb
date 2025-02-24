@@ -37,6 +37,7 @@ export class WalletRedplas implements OnInit {
   public isLoading: boolean = false;
   public isWompiFormVisible: boolean = false;
   public showAlert: boolean = false;
+  public isPayButtonDisabled: boolean = true;
   public countdownInterval: any;
 
   constructor(private _router: Router, private _paymentsMicrositeService: PaymentsMicrositeService, private _userService: UserService, private _cdr: ChangeDetectorRef) { }
@@ -57,7 +58,6 @@ export class WalletRedplas implements OnInit {
     script.setAttribute("data-currency", "COP");
     script.setAttribute("data-amount-in-cents", (this.totalToPay * 100).toString());
     script.setAttribute("data-reference", this.fullReference);
-    //script.setAttribute("data-reference", "date20241106-154202-631745_55085100-id1001618260");
     script.setAttribute("data-signature:integrity", this.input);
     script.setAttribute("data-redirect-url", "https://redplas.co/");
     script.setAttribute("data-customer-data:email", "contabilidad@redplas.co");
@@ -147,15 +147,15 @@ export class WalletRedplas implements OnInit {
     );
   }
 
-  public showModal(): void {
+  public showModal() {
     $('#paymentReceiptsModal').modal('show');
   }
-  public closeModal(): void {
+  public closeModal() {
     $('#paymentReceiptsModal').modal('hide');
   }
 
   // Método para filtrar las facturas
-  public filterOrdersDetail(): void {
+  public filterOrdersDetail() {
     const filterValue = this.filterDetail.toLowerCase();
     if (filterValue) {
       this.filteredInvoices = this.walletInvoices.filter(invoice =>
@@ -180,6 +180,7 @@ export class WalletRedplas implements OnInit {
     }, 0);
     this.isWompiFormVisible = false;
     this.updateConcatenatedInvoices();
+    this.isPayButtonDisabled = this.selectedInvoices.length === 0;
   }
 
   // Método para actualizar la variable de concatenación con valores sin puntos decimales
@@ -212,7 +213,7 @@ export class WalletRedplas implements OnInit {
   }
 
   // Cierra el popover
-  public closePopover(): void {
+  public closePopover() {
     this.selectedInvoice = null;
   }
 
@@ -233,6 +234,7 @@ export class WalletRedplas implements OnInit {
     this.totalToPay = 0;
     this.input = '';
     this.fullReference = '';
+    this.isPayButtonDisabled = true;
     $('#cardCode').focus();
   }
 
@@ -249,6 +251,7 @@ export class WalletRedplas implements OnInit {
     this.selectedInvoices = [];
     this.totalToPay = 0;
     this.isWompiFormVisible = false;
+    this.isPayButtonDisabled = true;
   }
 
   // Método para iniciar contador

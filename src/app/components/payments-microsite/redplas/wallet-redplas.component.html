@@ -47,18 +47,17 @@
             </thead>
             <tbody>
               <tr *ngFor="let receipt of paymentsReceipts">
-                <td>{{ receipt.customerName }}</td>
-                <td>{{ receipt.receiptNumber }}</td>
-                <td>{{ receipt.documentType }}</td>
-                <td>{{ receipt.documentNumber }}</td>
-                <td>{{ receipt.date | date: 'dd/MM/yyyy' }}</td>
-                <td>{{ receipt.amountPaid | number }}</td>
+                <td>{{receipt.customerName}}</td>
+                <td>{{receipt.receiptNumber}}</td>
+                <td>{{receipt.documentType}}</td>
+                <td>{{receipt.documentNumber}}</td>
+                <td>{{receipt.date | date: 'dd/MM/yyyy'}}</td>
+                <td>{{receipt.amountPaid | number}}</td>
               </tr>
             </tbody>
           </table>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" (click)="closeModal()">Cerrar</button>
         </div>
       </div>
     </div>
@@ -169,7 +168,6 @@
             <thead>
               <tr>
                 <th>Descripción</th>
-                <th>Link Documento</th>
                 <th>Fecha de Factura</th>
                 <th>Fecha de Vencimiento</th>
                 <th>Subtotal</th>
@@ -183,22 +181,13 @@
               <tr *ngFor="let invoice of filteredInvoices"
                 [ngClass]="{'invoice-selected': selectedInvoices.includes(invoice)}"
                 (click)="toggleInvoiceSelection(invoice)">
-                <td>{{ invoice.description }}</td>
-                <td>
-                  <a *ngIf="invoice.urlDoc" [href]="invoice.urlDoc" target="_blank" title="Abrir documento">
-                    <span class="glyphicon glyphicon-list-alt"
-                      style="font-size: 20px; color: #da0611; cursor: pointer;"></span>
-                  </a>
-                  <span *ngIf="!invoice.urlDoc" title="Sin documento disponible">
-                    <span class="icon-file-pdf" style="font-size: 20px; color: #ccc;"></span>
-                  </span>
-                </td>
-                <td>{{ invoice.createdAt | date:'dd/MM/yyyy' }}</td>
-                <td>{{ invoice.expirationDate | date:'dd/MM/yyyy' }}</td>
-                <td>{{ invoice.subtotal | number }}</td>
-                <td>{{ invoice.valueAddedTax | number }}</td>
-                <td>{{ invoice.total | number }}</td>
-                <td>{{ invoice.saldoDocumentoAdicional | number }}</td>
+                <td>{{invoice.description}}</td>
+                <td>{{invoice.createdAt | date:'dd/MM/yyyy'}}</td>
+                <td>{{invoice.expirationDate | date:'dd/MM/yyyy'}}</td>
+                <td>{{invoice.subtotal | number}}</td>
+                <td>{{invoice.valueAddedTax | number}}</td>
+                <td>{{invoice.total | number}}</td>
+                <td>{{invoice.saldoDocumentoAdicional | number}}</td>
                 <td>
                   <button (click)="togglePopover(invoice)" class="btn btn-link popover-btn">
                     <span class="icon-edit-3" title="Editar" style="font-size: 19px;"></span>
@@ -224,17 +213,17 @@
             <div class="invoice-card" *ngFor="let invoice of filteredInvoices"
               [ngClass]="{'invoice-selected': selectedInvoices.includes(invoice)}"
               (click)="toggleInvoiceSelection(invoice)">
-              <div class="invoice-item"><strong>Descripción:</strong> {{ invoice.description }}</div>
-              <div class="invoice-item"><strong>Fecha de Factura:</strong> {{ invoice.createdAt |
-                date:'dd/MM/yyyy' }}</div>
-              <div class="invoice-item"><strong>Fecha de Vencimiento:</strong> {{ invoice.expirationDate |
-                date:'dd/MM/yyyy' }}</div>
-              <div class="invoice-item"><strong>Total:</strong> {{ invoice.total | number }}</div>
-              <div class="invoice-item"><strong>Vencido:</strong> {{ invoice.saldoDocumentoAdicional |
-                number }}</div>
+              <div class="invoice-item"><strong>Descripción:</strong> {{invoice.description}}</div>
+              <div class="invoice-item"><strong>Fecha de Factura:</strong> {{invoice.createdAt |
+                date:'dd/MM/yyyy'}}</div>
+              <div class="invoice-item"><strong>Fecha de Vencimiento:</strong> {{invoice.expirationDate |
+                date:'dd/MM/yyyy'}}</div>
+              <div class="invoice-item"><strong>Total:</strong> {{invoice.total | number}}</div>
+              <div class="invoice-item"><strong>Vencido:</strong> {{invoice.saldoDocumentoAdicional |
+                number}}</div>
               <div class="invoice-item">
                 <strong>Total:</strong>
-                <span *ngIf="selectedInvoice !== invoice">{{ invoice.total | number }}</span>
+                <span *ngIf="selectedInvoice !== invoice">{{invoice.total | number}}</span>
                 <input *ngIf="selectedInvoice === invoice" type="number" class="form-control edit-input"
                   [(ngModel)]="newTotal" (blur)="updateTotal(invoice)" />
               </div>
@@ -260,21 +249,22 @@
             <p><strong>Documentos a pagar:</strong></p>
             <ul>
               <li *ngFor="let selected of selectedInvoices">
-                Factura #{{ selected.id }} - {{ selected.saldoDocumentoAdicional | number }}
+                Factura #{{selected.id}} - {{selected.saldoDocumentoAdicional | number}}
               </li>
             </ul>
             <p><strong>Total a Pagar:</strong></p>
-            <p class="total-amount">{{ totalToPay | currency:'COP' }}</p>
+            <p class="total-amount">{{totalToPay | currency:'COP'}}</p>
           </div>
           <!-- Botón de pagar -->
-          <button (click)="loadWompiScript()" class="pay-button">Pagar</button>
+          <button (click)="loadWompiScript()" class="pay-button" [disabled]="isPayButtonDisabled"
+            [ngClass]="{'pay-button-disabled': isPayButtonDisabled}">Pagar</button>
           <div class="wompi">
             <div id="wompiForm" *ngIf="isWompiFormVisible">
             </div>
           </div>
           <div *ngIf="walletInvoices && walletInvoices.length > 0" class="countdown-container">
             <span class="glyphicon glyphicon-time"></span>
-            <p class="countdown-text">Tiempo restante: {{ formatTime(timeLeft) }}</p>
+            <p class="countdown-text">Tiempo restante: {{formatTime(timeLeft)}}</p>
           </div>
         </div>
       </div>
