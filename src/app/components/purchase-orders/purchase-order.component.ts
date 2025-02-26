@@ -94,6 +94,7 @@ export class PurchaseOrderComponent implements OnInit {
       $('#quantity').focus();
     });
     this.loadSelectedOrder();
+    this.listTransportComex();
   }
 
   public listTransportComex() {
