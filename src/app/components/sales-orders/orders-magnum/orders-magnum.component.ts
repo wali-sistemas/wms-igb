@@ -215,7 +215,7 @@ export class OrdersMagnumComponent implements OnInit {
           $('#process_invoice_express').modal('hide');
           this.getScrollTop();
           this.selectedOrders.delete(this.order);
-          this.pickExpressErrorMessage = "La orden " + this.order + " no esta autorizada o aprobada por comercial.";
+          this.pickExpressErrorMessage = "La orden " + this.order + " no está autorizada o aprobada por comercial.";
         } else {
           this.addPickingExpress();
         }
@@ -243,6 +243,7 @@ export class OrdersMagnumComponent implements OnInit {
         if (response.code == 0) {
           this.processInvoiceStatus = 'done';
           this.docEntryInvoice = response.content;
+          this.order = '';
         } else {
           this.processInvoiceStatus = 'error';
           this.deliveryErrorMessage = response.content + ". Inténtelo creandola desde SAP.";
@@ -306,6 +307,7 @@ export class OrdersMagnumComponent implements OnInit {
         if (response.code == 0) {
           this.docEntryDelivery = response.content;
           this.processDeliveryStatus = 'done';
+          this.order = '';
         } else {
           this.processDeliveryStatus = 'error';
           this.deliveryErrorMessage = response.content;
@@ -332,6 +334,7 @@ export class OrdersMagnumComponent implements OnInit {
     this.processDeliveryStatus = 'none';
     this.pickExpressErrorMessage = '';
     this.invoiceErrorMessage = '';
+    this.order = '';
     this.listOpenOrders();
   }
 
