@@ -322,7 +322,7 @@
                 <br />
                 <div class="row">
                   <div class="col-xs-12 margin-bottom-10">
-                    <label for="Embarcado">Embarcado</label>
+                    <label for="selectedEmb">Embarcado</label>
                     <select id="selectedEmb" class="form-control input-lg" [(ngModel)]="selectedEmb" name="selectedEmb">
                       <option style="display:none" disabled selected value="">Seleccione uno</option>
                       <option value="S">SI</option>
@@ -373,7 +373,7 @@
                 <br />
                 <div class="row">
                   <div class="col-xs-12 margin-bottom-10">
-                    <label for="Embarcado">Tipo de Empaque</label>
+                    <label for="selectedEmp">Tipo de Empaque</label>
                     <select id="selectedEmp" class="form-control input-lg" [(ngModel)]="selectedEmp" name="selectedEmp">
                       <option style="display:none" disabled selected value="">Seleccione uno</option>
                       <option value="01">NO APLICA</option>
@@ -387,7 +387,7 @@
                 <br />
                 <div class="row">
                   <div class="col-xs-12 margin-bottom-10">
-                    <label for="dateArribAlm">Observaciones</label>
+                    <label for="newNotes">Observaciones</label>
                     <textarea id="newNotes" class="md-textarea form-control" name="newNotes" style="width: 100%;"
                       rows="10" placeholder="Ingrese aquí una observación" [(ngModel)]="newNotes" autocomplete="off"
                       [class.required-field]="!validNewNotes" required></textarea>
@@ -396,7 +396,7 @@
                 <br />
                 <div class="row">
                   <div class="col-xs-12 margin-bottom-10">
-                    <label for="Embarcado">Puerto de Embarque</label>
+                    <label for="selectedPuertEmb">Puerto de Embarque</label>
                     <select id="selectedPuertEmb" class="form-control input-lg" [(ngModel)]="selectedPuertEmb"
                       name="selectedPuertEmb">
                       <option style="display:none" disabled selected value="">Seleccione uno</option>
@@ -425,7 +425,7 @@
                 <br />
                 <div class="row">
                   <div class="col-xs-12 margin-bottom-10">
-                    <label for="docBL">Transportador Terrestre</label>
+                    <label for="transpTerr">Transportador Terrestre</label>
                     <input type="text" class="form-control input-lg" [(ngModel)]="transpTerr" autocomplete="off"
                       name="transpTerr" autocorrect="off" autocapitalize="none"
                       placeholder="Ingrese transporte terreste">
@@ -434,7 +434,7 @@
                 <br />
                 <div class="row">
                   <div class="col-xs-12 margin-bottom-10">
-                    <label for="dateArribAlm">Fecha de Arribo a Cedi</label>
+                    <label for="dateArribCed">Fecha de Arribo a Cedi</label>
                     <input type="date" id="dateArribCed" class="form-control input-lg" [(ngModel)]="dateArribCed"
                       name="dateArribCed" min="2022-01-01" max="2050-12-31">
                   </div>
@@ -442,7 +442,7 @@
                 <br />
                 <div class="row">
                   <div class="col-xs-12 margin-bottom-10">
-                    <label for="dateArribAlm">Cant Contenedores</label>
+                    <label for="cantCont">Cant Contenedores</label>
                     <input type="number" id="cantCont" class="form-control input-lg" [(ngModel)]="cantCont"
                       name="cantCont">
                   </div>
@@ -458,7 +458,7 @@
                 <br />
                 <div class="row">
                   <div class="col-xs-12 margin-bottom-10">
-                    <label for="dateArribAlm">Fecha de Carga Lista</label>
+                    <label for="dateCargList">Fecha de Carga Lista</label>
                     <input type="date" id="dateCargList" class="form-control input-lg" [(ngModel)]="dateCargList"
                       name="dateCargList" min="2022-01-01" max="2050-12-31">
                   </div>
@@ -559,7 +559,7 @@
                 <br />
                 <div class="row">
                   <div class="col-xs-12 margin-bottom-10">
-                    <label for="notificarBL">Notificar BL</label>
+                    <label for="selectedNotifBL">Notificar BL</label>
                     <select id="selectedNotifBL" class="form-control input-lg" [(ngModel)]="selectedNotifBL"
                       name="selectedNotifBL">
                       <option style="display:none" disabled selected value="">Seleccione uno</option>
@@ -642,7 +642,7 @@
                 <br />
                 <div class="row">
                   <div class="col-xs-12 margin-bottom-10">
-                    <label for="envDatCond">Enviar datos de Conductor</label>
+                    <label for="selectedEnvDatCond">Enviar datos de Conductor</label>
                     <select id="selectedEnvDatCond" class="form-control input-lg" [(ngModel)]="selectedEnvDatCond"
                       name="selectedEnvDatCond">
                       <option style="display:none" disabled selected value="">Seleccione uno</option>
@@ -656,7 +656,7 @@
                 <br />
                 <div class="row">
                   <div class="col-xs-12 margin-bottom-10">
-                    <label for="analistComex">Analista Comex</label>
+                    <label for="selectedAnalistComex">Analista Comex</label>
                     <select id="selectedAnalistComex" class="form-control input-lg" [(ngModel)]="selectedAnalistComex"
                       name="selectedAnalistComex">
                       <option style="display:none" disabled selected value="">Seleccione uno</option>
@@ -669,7 +669,7 @@
                 <br />
                 <div class="row">
                   <div class="col-xs-12 margin-bottom-10">
-                    <label for="analistComex">Comprador</label>
+                    <label for="slpName">Comprador</label>
                     <input type="text" id="slpName" class="form-control input-lg" [(ngModel)]="slpName"
                       autocomplete="off" name="slpName" autocorrect="off" autocapitalize="none"
                       placeholder="Comprador asignado">
