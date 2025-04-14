@@ -50,6 +50,7 @@ import { CalculatorComponent } from './components/collection/calculator/calculat
 import { GeoLocationComponent } from './components/geo-location/geo-location.component';
 import { WalletRedplas } from './components/payments-microsite/redplas/wallet-redplas.component';
 import { WalletIGB } from './components/payments-microsite/igb/wallet-igb.component';
+import { WalletMTZ } from './components/payments-microsite/mtz/wallet-mtz.component';
 import { from } from 'rxjs/observable/from';
 
 const appRoutes: Routes = [
@@ -102,7 +103,8 @@ const appRoutes: Routes = [
   { path: 'program-fidelity/redeem-points', component: RedeemPointsComponent },
   { path: 'geo-location', component: GeoLocationComponent },
   { path: 'wallet-redplas', component: WalletRedplas },
-  { path: 'wallet-igb', component: WalletIGB }
+  { path: 'wallet-igb', component: WalletIGB },
+  { path: 'wallet-mtz', component: WalletMTZ }
 ];
 
 export const appRoutingProviders: any[] = [];

@@ -157,6 +157,13 @@
   box-shadow: 2px 2px 4px rgb(179, 129, 59);
 }
 
+.order-num-timsun {
+  background-color: #349136;
+  border-radius: 10px;
+  color: #333;
+  text-align: center;
+}
+
 .box {
   background-color: #da0611;
   color: #fff;

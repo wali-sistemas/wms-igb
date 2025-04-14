@@ -89,7 +89,8 @@
       <div class="modal-body contact-modal-body text-center">
         <p>* Para ingresar la dirección diligenciar el siguiente formulario. *</p>
         <input id="customDir" [(ngModel)]="client.address" (ngModelChange)="updateProgress()" placeholder="Dirección"
-          readonly="readonly" type="text" class="form-control" style="margin-bottom: 8px;">
+          readonly="readonly" type="text" class="form-control" style="margin-bottom: 8px;"
+          (blur)="trimInput('address')">
         <p style="color: #cf423b;font-weight: bold;">Verificar en el campo dirección que este ingresada correctamente
         </p>
         <div class="row form-group">
@@ -247,7 +248,8 @@
       <div class="modal-body contact-modal-body text-center">
         <p>* Para ingresar la dirección diligenciar el siguiente formulario. *</p>
         <input id="customDir" [(ngModel)]="client.addressMM" (ngModelChange)="updateProgress()" placeholder="Dirección"
-          readonly="readonly" type="text" class="form-control" style="margin-bottom: 8px;">
+          readonly="readonly" type="text" class="form-control" style="margin-bottom: 8px;"
+          (blur)="trimInput('addressMM')">
         <p style="color: #cf423b;font-weight: bold;">Verificar en el campo dirección que este ingresada correctamente
         </p>
         <div class="row form-group">
@@ -558,7 +560,8 @@
                 <input type="text" class="form-control input-lg" autocomplete="off" maxlength="100" id="name"
                   name="name" placeholder="Ej: JAPONESA DE MOTOS Y/O NEIRA DIAZ WILSON ANDRES" [readonly]="isSearchMode"
                   [(ngModel)]="client.cardName" required (ngModelChange)="handleValidation()"
-                  oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9/\/\s]/g, '')">
+                  oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9/\/\s]/g, '')"
+                  (blur)="trimInput('cardName')">
               </div>
             </div>
           </div>
@@ -567,9 +570,9 @@
               <div class="seccion">
                 <label>Código*</label>
                 <input type="text" class="form-control input-lg" autocomplete="off" placeholder="Ej: C93403038"
-                  [readonly]="isSearchMode" maxlength="12"
+                  [readonly]="isSearchMode || isEditMode" maxlength="12"
                   oninput="this.value = this.value.replace(/[^cC0-9]/g, '').toUpperCase()" [(ngModel)]="client.cardCode"
-                  (ngModelChange)="onCardCodeChange()" id="cardCode">
+                  (ngModelChange)="onCardCodeChange()" id="cardCode" (blur)="trimInput('cardCode')">
               </div>
             </div>
             <div class="col-xs-12 col-md-5" *ngIf="selectedCompany=='IGB'">
@@ -606,7 +609,8 @@
                 <input type="text" class="form-control input-lg" autocomplete="off" maxlength="30"
                   placeholder="Ej: 6042596280"
                   oninput="this.value = this.value.toUpperCase().replace(/[^0-9ex tEX T]/g, '')"
-                  [readonly]="isSearchMode" [(ngModel)]="client.phone" required (ngModelChange)="phoneValidation()">
+                  [readonly]="isSearchMode" [(ngModel)]="client.phone" required (ngModelChange)="phoneValidation()"
+                  (blur)="trimInput('phone')">
               </div>
             </div>
             <div class="col-xs-6 col-md-6">
@@ -615,7 +619,8 @@
                 <input type="text" class="form-control input-lg" autocomplete="off" maxlength="30"
                   placeholder="Ej: 3106194511"
                   oninput="this.value = this.value.toUpperCase().replace(/[^0-9ex tEX T]/g, '')"
-                  [readonly]="isSearchMode" [(ngModel)]="client.cellular" required (ngModelChange)="phoneValidation()">
+                  [readonly]="isSearchMode" [(ngModel)]="client.cellular" required (ngModelChange)="phoneValidation()"
+                  (blur)="trimInput('cellular')">
               </div>
             </div>
           </div>
@@ -626,13 +631,14 @@
                 <input type="text" class="form-control input-lg" autocomplete="off" id="email" name="email"
                   placeholder="Ej: JAPONESA@HOTMAIL.COM"
                   oninput="this.value = this.value.replace(/[^a-zA-Z0-9\-_@.]/g, '')" maxlength="40"
-                  [readonly]="isSearchMode" [(ngModel)]="client.mail" (ngModelChange)="emailValidation()">
+                  [readonly]="isSearchMode" [(ngModel)]="client.mail" (ngModelChange)="emailValidation()"
+                  (blur)="trimInput('mail')">
               </div>
             </div>
             <div class="col-xs-12 col-md-4">
               <div class="seccion">
                 <label>Responsabilidad Fiscal*</label>
-                <select class="form-control input-lg" [disabled]="isSearchMode"
+                <select class="form-control input-lg" [disabled]="isSearchMode || isEditMode"
                   [(ngModel)]="client.selectedTaxResposabilitie" (ngModelChange)="onTaxResponsabilityChange()">
                   <option value="" disabled>Selecciona una RF</option>
                   <option value="R-99-PN">R-99-PN (No aplica – Otros)</option>
@@ -763,8 +769,9 @@
                 <label>ID</label>
                 <input type="text" class="form-control input-lg" autocomplete="off"
                   oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '').toUpperCase()" maxlength="30"
-                  placeholder="Ej: WILSON NEIRA" [readonly]="isSearchMode" [(ngModel)]="client.idContactPerson"
-                  (ngModelChange)="updateProgress()">
+                  placeholder="Ej: WILSON NEIRA" [readonly]="isSearchMode || isEditMode"
+                  [(ngModel)]="client.idContactPerson" (ngModelChange)="updateProgress()"
+                  (blur)="trimInput('idContactPerson')">
               </div>
             </div>
           </div>
@@ -774,7 +781,8 @@
                 <label>Nombre*</label>
                 <input type="text" class="form-control input-lg" autocomplete="off" placeholder="Ej: WILSON"
                   maxlength="50" oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '').toUpperCase()"
-                  [readonly]="isSearchMode" [(ngModel)]="client.nameContactPerson" (ngModelChange)="updateProgress()">
+                  [readonly]="isSearchMode || isEditMode" [(ngModel)]="client.nameContactPerson"
+                  (ngModelChange)="updateProgress()" (blur)="trimInput('nameContactPerson')">
               </div>
             </div>
             <div class="col-xs-12 col-md-4">
@@ -782,8 +790,8 @@
                 <label>Segundo Nombre</label>
                 <input type="text" class="form-control input-lg" autocomplete="off" placeholder="Ej: ANDRES"
                   maxlength="50" oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '').toUpperCase()"
-                  [readonly]="isSearchMode" [(ngModel)]="client.secondNameContactPerson"
-                  (ngModelChange)="updateProgress()">
+                  [readonly]="isSearchMode || isEditMode" [(ngModel)]="client.secondNameContactPerson"
+                  (ngModelChange)="updateProgress()" (blur)="trimInput('secondNameContactPerson')">
               </div>
             </div>
             <div class="col-xs-12 col-md-4">
@@ -791,8 +799,8 @@
                 <label>Apellido*</label>
                 <input type="text" class="form-control input-lg" autocomplete="off" maxlength="50"
                   oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '').toUpperCase()" placeholder="Ej: NEIRA"
-                  [readonly]="isSearchMode" [(ngModel)]="client.lastNameContactPerson"
-                  (ngModelChange)="updateProgress()">
+                  [readonly]="isSearchMode || isEditMode" [(ngModel)]="client.lastNameContactPerson"
+                  (ngModelChange)="updateProgress()" (blur)="trimInput('lastNameContactPerson')">
               </div>
             </div>
           </div>
@@ -801,9 +809,10 @@
               <div class="seccion">
                 <label>Cargo*</label>
                 <input type="text" class="form-control input-lg" id="occupationContactPerson"
-                  name="occupationContactPerson" placeholder="COMPRAS" [readonly]="isSearchMode"
+                  name="occupationContactPerson" placeholder="COMPRAS" [readonly]="isSearchMode || isEditMode"
                   [(ngModel)]="client.occupationContactPerson" (ngModelChange)="updateProgress()"
-                  oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '').toUpperCase()">
+                  oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '').toUpperCase()"
+                  (blur)="trimInput('occupationContactPerson')">
               </div>
             </div>
             <div class="col-xs-6 col-md-3">
@@ -811,14 +820,16 @@
                 <label>Teléfono*</label>
                 <input type="tel" class="form-control input-lg" autocomplete="off" placeholder="Ej: 3166194511"
                   oninput="this.value = this.value.toUpperCase().replace(/[^0-9ex tEX T]/g, '')" maxlength="50"
-                  [readonly]="isSearchMode" [(ngModel)]="client.phoneContactPerson" (ngModelChange)="updateProgress()">
+                  [readonly]="isSearchMode || isEditMode" [(ngModel)]="client.phoneContactPerson"
+                  (ngModelChange)="updateProgress()" (blur)="trimInput('phoneContactPerson')">
               </div>
             </div>
             <div class="col-xs-6 col-md-3 seccion">
               <div class="seccion">
                 <label>Fecha Nacimiento*</label>
-                <input type="date" class="form-control input-lg" autocomplete="off" [readonly]="isSearchMode"
-                  [(ngModel)]="client.dateContactPerson" (ngModelChange)="updateProgress()">
+                <input type="date" class="form-control input-lg" autocomplete="off"
+                  [readonly]="isSearchMode || isEditMode" [(ngModel)]="client.dateContactPerson"
+                  (ngModelChange)="updateProgress()" (blur)="trimInput('dateContactPerson')">
               </div>
             </div>
           </div>
@@ -856,8 +867,9 @@
                 <label>ID Dirección*</label>
                 <input type="text" class="form-control input-lg" autocomplete="off"
                   oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9\/\s]/g, '')"
-                  placeholder="Ej: JAPONESA DE MOTOS Y/O NEIRA DIAZ WILSON ANDRES" [readonly]="isSearchMode"
-                  [(ngModel)]="client.idAdress" (ngModelChange)="updateProgress()">
+                  placeholder="Ej: JAPONESA DE MOTOS Y/O NEIRA DIAZ WILSON ANDRES"
+                  [readonly]="isSearchMode || isEditMode" [(ngModel)]="client.idAdress"
+                  (ngModelChange)="updateProgress()" (blur)="trimInput('idAdress')">
               </div>
             </div>
           </div>
@@ -866,16 +878,16 @@
               <!-- Controles para mostrar municipios filtrados -->
               <div class="col-xs-6 col-md-6 seccion">
                 <label>Departamento*</label>
-                <select class="form-control input-lg" [disabled]="isSearchMode" [(ngModel)]="client.codDepartamento"
-                  (ngModelChange)="onDepartamentChange()">
+                <select class="form-control input-lg" [disabled]="isSearchMode || isEditMode"
+                  [(ngModel)]="client.codDepartamento" (ngModelChange)="onDepartamentChange()">
                   <option value="" disabled>Selecciona un Departamento</option>
                   <option *ngFor="let departmen of departments" [value]="departmen.code"> {{departmen.name}} </option>
                 </select>
               </div>
               <div class="col-xs-6 col-md-6 seccion">
                 <label>Municipio*</label>
-                <select class="form-control input-lg" [disabled]="isSearchMode" [(ngModel)]="client.codMunicipio"
-                  (ngModelChange)="onMunicipalityChange()">
+                <select class="form-control input-lg" [disabled]="isSearchMode || isEditMode"
+                  [(ngModel)]="client.codMunicipio" (ngModelChange)="onMunicipalityChange()">
                   <option value="" disabled>Selecciona un Municipio</option>
                   <option *ngFor="let municipality of filteredMunicipalities" [value]="municipality.code">
                     {{municipality.name}}</option>
@@ -886,8 +898,8 @@
               <!-- Controles para mostrar todos los departamentos y municipios -->
               <div class="col-xs-6 col-md-6 seccion">
                 <label>Departamento*</label>
-                <select class="form-control input-lg" [disabled]="filter" [(ngModel)]="client.codDepartamento"
-                  (ngModelChange)="updateProgress()" readonly>
+                <select class="form-control input-lg" [disabled]="isSearchMode || isEditMode"
+                  [(ngModel)]="client.codDepartamento" (ngModelChange)="updateProgress()" readonly>
                   <option value="" disabled>Selecciona un Departamento</option>
                   <option *ngFor="let department of departments" [value]="department.code">{{department.name}}
                   </option>
@@ -895,8 +907,8 @@
               </div>
               <div class="col-xs-6 col-md-6 seccion">
                 <label>Municipio*</label>
-                <select class="form-control input-lg" [disabled]="filter" [(ngModel)]="client.codMunicipio"
-                  (ngModelChange)="updateProgress()" readonly>
+                <select class="form-control input-lg" [disabled]="isSearchMode || isEditMode"
+                  [(ngModel)]="client.codMunicipio" (ngModelChange)="updateProgress()" readonly>
                   <option value="" disabled>Selecciona un Municipio</option>
                   <option *ngFor="let municipality of municipalities" [value]="municipality.code">{{municipality.name}}
                   </option>
@@ -928,14 +940,15 @@
                 <label>Latitud*</label>
                 <input #latInput id="latInput" type="text" class="form-control input-lg" autocomplete="off"
                   placeholder="Ej: 4.4477253" readonly="readonly" [(ngModel)]="client.latitudeMap"
-                  (ngModelChange)="updateProgress()">
+                  (ngModelChange)="updateProgress()" (blur)="trimInput('latitudeMap')">
               </div>
             </div>
             <div class="col-xs-6 col-md-4">
               <div class="seccion">
                 <label>Longitud*</label>
                 <input #lngInput type="text" class="form-control input-lg" autocomplete="off" placeholder="Ej: -10.214"
-                  readonly="readonly" [(ngModel)]="client.lengthMap" (ngModelChange)="updateProgress()">
+                  readonly="readonly" [(ngModel)]="client.lengthMap" (ngModelChange)="updateProgress()"
+                  (blur)="trimInput('lengthMap')">
               </div>
             </div>
             <div class="col-xs-6 col-md-2">
@@ -996,7 +1009,7 @@
                 <input type="text" class="form-control input-lg" autocomplete="off"
                   oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '').toUpperCase()"
                   placeholder="Ej: WILSON ANDRES" [readonly]="isSearchMode" [(ngModel)]="client.firstname"
-                  (ngModelChange)="updateProgress()">
+                  (ngModelChange)="updateProgress()" (blur)="trimInput('firstname')">
               </div>
             </div>
           </div>
@@ -1006,7 +1019,8 @@
                 <label>Primer Apellido MM*</label>
                 <input type="text" class="form-control input-lg" autocomplete="off"
                   oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '').toUpperCase()" placeholder="Ej: NEIRA"
-                  [readonly]="isSearchMode" [(ngModel)]="client.lastname1" (ngModelChange)="updateProgress()">
+                  [readonly]="isSearchMode" [(ngModel)]="client.lastname1" (ngModelChange)="updateProgress()"
+                  (blur)="trimInput('lastname1')">
               </div>
             </div>
             <div class="col-xs-12 col-md-6">
@@ -1014,7 +1028,8 @@
                 <label>Segundo Apellido MM*</label>
                 <input type="text" class="form-control input-lg" autocomplete="off"
                   oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '').toUpperCase()" placeholder="Ej: DIAZ"
-                  [readonly]="isSearchMode" [(ngModel)]="client.lastname2" (ngModelChange)="updateProgress()">
+                  [readonly]="isSearchMode" [(ngModel)]="client.lastname2" (ngModelChange)="updateProgress()"
+                  (blur)="trimInput('lastname2')">
               </div>
             </div>
           </div>
@@ -1084,7 +1099,7 @@
                 <div class="input-group">
                   <input type="text" class="form-control input-lg" id="filter" name="filter"
                     placeholder="Nomenclatura de la direccion" readonly="readonly" autocomplete="off"
-                    [(ngModel)]="client.addressMM" (ngModelChange)="updateProgress()">
+                    [(ngModel)]="client.addressMM" (ngModelChange)="updateProgress()" (blur)="trimInput('addressMM')">
                   <span class="input-group-btn">
                     <button type="button" class="box" class="btn btn-default btn-lg" data-toggle="modal"
                       data-target="#address-generator-mandatory-Camps">
@@ -1102,7 +1117,7 @@
                 <input type="email" class="form-control input-lg" autocomplete="off" id="emailFE"
                   oninput="this.value = this.value.replace(/[^a-zA-Z0-9\-_@.]/g, '')" maxlength="40"
                   placeholder="Ej: JAPONESA@HOTMAIL.COM" [readonly]="isSearchMode" [(ngModel)]="client.emailFE"
-                  (ngModelChange)="emailFEValidation()">
+                  (ngModelChange)="emailFEValidation()" (blur)="trimInput('emailFE')">
               </div>
             </div>
             <div class="col-xs-12 col-md-6" *ngIf="selectedCompany=='IGB'">
@@ -1140,6 +1155,22 @@
                   <option value="18">REGION CUNDINAMARCA</option>
                   <option value="37">TRANSEGOVIA</option>
                   <option value="73">TRANSPRENSA</option>
+                  <option value="77">EXCE</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12 col-md-12">
+              <div class="seccion">
+                <label>Tipo de negocio*</label>
+                <select class="form-control input-lg" [disabled]="isSearchMode" [(ngModel)]="client.selectedTypeSell"
+                  (ngModelChange)="updateProgress()">
+                  <option value="" disabled>Seleccione tipo de almacén</option>
+                  <option value="1">Almacén de repuestos</option>
+                  <option value="2">Almacén de repuestos mixto</option>
+                  <option value="3">Centro de lubricación</option>
+                  <option value="4">Taller</option>
                 </select>
               </div>
             </div>
@@ -1240,7 +1271,7 @@
               <div class="seccion">
                 <label>% Descuento</label>
                 <input type="text" class="form-control input-lg" autocomplete="off" placeholder="Ej: 15%" maxlength="2"
-                  [readonly] [(ngModel)]="client.discount" [readonly]="isSearchMode">
+                  [readonly] [(ngModel)]="client.discount" [readonly]="isSearchMode" (blur)="trimInput('discount')">
               </div>
             </div>
           </div>
@@ -1252,7 +1283,8 @@
                   <input type="number" class="form-control input-lg" id="limiteCredito" name="limiteCredito"
                     maxlength="10" placeholder="Ingrese el límite de crédito (Min 0 - Max 50.000.000)"
                     [readonly]="isSearchMode" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')"
-                    [(ngModel)]="client.creditLimit" (ngModelChange)="updateProgress()">
+                    [(ngModel)]="client.creditLimit" (ngModelChange)="updateProgress()"
+                    (blur)="trimInput('creditLimit')">
                 </div>
               </div>
               <div class="col-md-6">
@@ -1261,8 +1293,30 @@
                   <input type="number" class="form-control input-lg" id="limiteComprometido" name="limiteComprometido"
                     maxlength="10" placeholder="Ingrese el límite comprometido (Min 0 - Max 50.000.000)"
                     oninput="this.value = this.value.replace(/[^0-9.,]/g, '')" [readonly]="isSearchMode"
-                    [(ngModel)]="client.commitedLimit" (ngModelChange)="updateProgress()">
+                    [(ngModel)]="client.commitedLimit" (ngModelChange)="updateProgress()"
+                    (blur)="trimInput('commitedLimit')">
                 </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-md-12">
+            <div class="row">
+              <div class="seccion retention-box">
+                <label class="retention-title">Retenciones aplicables</label>
+                <!-- Checkbox AUT3 -->
+                <label class="custom-checkbox">
+                  <input type="checkbox" [ngModel]="wTCode3 === 'AUT3'"
+                    (ngModelChange)="wTCode3 = $event ? 'AUT3' : ''; updateProgress()" />
+                  <span class="checkmark"></span>
+                  AUT3 - Retención en la fuente
+                </label>
+                <!-- Checkbox AUT4 -->
+                <label class="custom-checkbox">
+                  <input type="checkbox" [ngModel]="wtCode4 === 'AUT4'"
+                    (ngModelChange)="wtCode4 = $event ? 'AUT4' : ''; updateProgress()" />
+                  <span class="checkmark"></span>
+                  AUT4 - Retención de ICA
+                </label>
               </div>
             </div>
           </div>
@@ -1310,7 +1364,7 @@
                 </canvas>
               </div>
             </div>
-            <div class="col-md-3 col-xs-12 " *ngIf="!isSearchMode">
+            <div class="col-md-3 col-xs-12 " *ngIf="isSearchMode || !isEditMode">
               <div class="secccion">
                 <p style="text-align: center; border: 1px solid #D7DBDD;"><b>Crear</b></p>
                 <div class="customer">
@@ -1320,28 +1374,41 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-3 col-xs-12" *ngIf="isSearchMode">
+            <div class="col-md-3 col-xs-12" *ngIf="isEditMode">
               <div class="seccion">
                 <p style="text-align: center; border: 1px solid #D7DBDD;"><b>Editar</b></p>
                 <div class="customer">
-                  <span class="icon-update-customer disabled-icon"
-                    style="font-size: 170px; position: relative; top: 12px;" data-toggle="modal"
-                    data-target="#confirmationModalUpdate"></span>
+                  <span class="icon-update-customer" style="font-size: 170px; position: relative; top: 12px;"
+                    data-toggle="modal" data-target="#confirmationModalUpdate"
+                    [ngClass]="{'disabled-icon': camposCompletados < 60 || getValidationErrorMessage()}"></span>
                 </div>
               </div>
             </div>
           </div>
           <!-- Mensaje de advertencia -->
-          <div class="col-md-12" *ngIf="camposCompletados < 100 && !isSearchMode">
+          <div class="col-md-12" *ngIf="camposCompletados < 100 && !isEditMode">
             <div class="seccion">
               <p style="text-align: center; color: red;">* Debe llenar la totalidad de los campos para poder
                 crear el cliente. *</p>
             </div>
           </div>
+          <!-- Mensaje de advertencia -->
+          <div class="col-md-12" *ngIf="camposCompletados < 60 && isEditMode">
+            <div class="seccion">
+              <p style="text-align: center; color: red;">* Debe llenar los campos necesarios para poder
+                editar el cliente. *</p>
+            </div>
+          </div>
           <!-- Mensaje de advertencia por campo -->
-          <div class="col-md-12" *ngIf="!isSearchMode">
+          <div class="col-md-12" *ngIf="!isEditMode">
             <div class="seccion">
               <p style="text-align: center; color: red;"> {{validateForm()}} </p>
+            </div>
+          </div>
+          <!-- Mensaje de advertencia por campo -->
+          <div class="col-md-12" *ngIf="isEditMode">
+            <div class="seccion">
+              <p style="text-align: center; color: red;"> {{validateFormEdit()}} </p>
             </div>
           </div>
         </div>

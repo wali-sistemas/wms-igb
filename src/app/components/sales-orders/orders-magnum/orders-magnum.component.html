@@ -138,7 +138,7 @@
             <input type="number" id="lio" class="form-control input-lg" [(ngModel)]="lio" autocomplete="off" name="lio"
               autocorrect="off" autocapitalize="none" placeholder="Lios" (change)="calculateVrlDeclarad(order)"
               [class.required-field]="!validLio" required>
-              <label for="und">Total unidades ({{qtyUnd}})</label>
+            <label for="und">Total unidades ({{qtyUnd}})</label>
           </div>
           <div class="col-xs-6">
             <input type="number" id="pesoPack" class="form-control input-lg" [(ngModel)]="pesoPack" autocomplete="off"
@@ -241,14 +241,15 @@
             <div class="date"><b>{{order.docDate}}</b></div>
           </div>
           <div class="col-sm-3" style="min-height: 24px;">
-            <div class="order-num"><b>SAP {{order.docNum}}</b></div>
+            <div class="order-num" [class.order-num-timsun]="order.marca == 'TIMSUN'"><b>SAP {{order.docNum}}</b></div>
           </div>
           <div class="col-sm-3" style="min-height: 24px;">
             <div class="order-num"><b>{{order.condPayment}}</b></div>
           </div>
           <div class="col-sm-3">
             <div class="assigned-employee"><span class="icon-warehouse-all"
-                style="font-size: 18px;"></span>{{order.whsCode == '26' ? 'CALI' : (order.whsCode == '05' ? 'CARTAGENA' : 'BOGOTÁ')}}</div>
+                style="font-size: 18px;"></span>{{order.whsCode == '26' ? 'CALI' : (order.whsCode == '05' ? 'CARTAGENA'
+              : 'BOGOTÁ')}}</div>
           </div>
         </div>
         <br>
@@ -261,7 +262,7 @@
           <div class="col-sm-10 col-xs-9">
             <p><b>Comentarios</b></p>
             <hr>
-            <p>{{order.comments}}</p>
+            <p>**{{order.marca}}**{{order.comments}}</p>
           </div>
         </div>
         <div class="row">

@@ -46,6 +46,7 @@ export class Client {
   public creditLimit: number;
   public commitedLimit: number;
   public taxType: string;
+  public selectedTypeSell: string;
 
   constructor() { }
 }

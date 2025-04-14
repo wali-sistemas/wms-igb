@@ -57,6 +57,7 @@ import { CalculatorComponent } from './components/collection/calculator/calculat
 import { GeoLocationComponent } from './components/geo-location/geo-location.component';
 import { WalletRedplas } from './components/payments-microsite/redplas/wallet-redplas.component';
 import { WalletIGB } from './components/payments-microsite/igb/wallet-igb.component';
+import { WalletMTZ } from './components/payments-microsite/mtz/wallet-mtz.component';
 import { from } from 'rxjs/observable/from';
 
 @NgModule({
@@ -113,7 +114,8 @@ import { from } from 'rxjs/observable/from';
     CalculatorComponent,
     GeoLocationComponent,
     WalletRedplas,
-    WalletIGB
+    WalletIGB,
+    WalletMTZ
   ],
   imports: [
     BrowserModule,
