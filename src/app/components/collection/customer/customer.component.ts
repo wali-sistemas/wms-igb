@@ -64,8 +64,12 @@ export class CustomerComponent implements OnInit {
   public filteredMunicipalities: Municipality[] = [];
   private initialClient: Client;  // Almacenamos una copia inicial
   public isSearchMode: boolean = false;
+  public isEditMode: boolean = false;
   public selectedCompany: string;
   public typeTransaction: string;
+  public wTCode3: string;
+  public wtCode4: string;
+
   //Alertas
   public changeCustomerMessage: string;
   public changeCustomerErrorMessage: string;
@@ -91,6 +95,7 @@ export class CustomerComponent implements OnInit {
       }]
     }
   };
+
   // Variables para los datos del gráfico Dona
   pieChartLabels = ['% Cliente'];
   pieChartData = [];
@@ -101,6 +106,7 @@ export class CustomerComponent implements OnInit {
     this.client.selectedAdviser = '';
     this.client.selectedZone = '';
     this.client.selectedTaxResposabilitie = '';
+    this.client.selectedTypeSell = '';
     this.client.codDepartamento = ''
     this.client.codMunicipio = '';
     this.client.selectedTaxAdrress = '';
@@ -147,11 +153,18 @@ export class CustomerComponent implements OnInit {
     $('#name').focus();
   }
 
-  private redirectIfSessionInvalid(error): void {
+  private redirectIfSessionInvalid(error) {
     if (error && error.status && error.status == 401) {
       localStorage.removeItem('igb.identity');
       localStorage.removeItem('igb.selectedCompany');
       this._router.navigate(['/']);
+    }
+  }
+
+  // Método para eliminar espacios en el input cuando pierde el foco
+  public trimInput(field: string) {
+    if (this.client[field]) {
+      this.client[field] = this.client[field].trim();
     }
   }
 
@@ -214,6 +227,7 @@ export class CustomerComponent implements OnInit {
     if (!this.tempSearchMode) {
       this.client = { ...this.initialClient };
       this.clear();
+      this.isEditMode = false;
       $(document).ready(function () {
         $('#tab0').click();
       });
@@ -221,12 +235,13 @@ export class CustomerComponent implements OnInit {
     else {
       this.client = new Client();
       this.clear();
+      this.isEditMode = false;
     }
     this.isSearchMode = this.tempSearchMode;
     $('#confirmationModal').modal('hide');
   }
 
-  // Método para actualizar barra de progreso
+  // Calcular progreso
   public updateProgress() {
     const camposModelo = [
       'cardName',
@@ -260,12 +275,25 @@ export class CustomerComponent implements OnInit {
       'addressMM',
       'emailFE',
       'selectedVariable',
-      'selectedPaymentCondition'
+      'selectedPaymentCondition',
+      'selectedTypeSell',
     ];
-    // Filtra solo los campos especificados que no están vacíos
-    const camposLlenos = camposModelo.filter(campo => this.client.hasOwnProperty(campo) && this.client[campo] !== '');
-    // Calcular el progreso en porcentaje
-    this.camposCompletados = (camposLlenos.length / camposModelo.length) * 100;
+
+    const camposLlenos = camposModelo.filter(
+      campo => this.client.hasOwnProperty(campo) && this.client[campo] !== ''
+    ).length;
+    // Retenciones: lógica por compañía
+    let extrasLlenos = 0;
+    if (this.selectedCompany === 'IGB') {
+      if (this.wTCode3) extrasLlenos++;
+      if (this.wtCode4) extrasLlenos++;
+    } else if (this.selectedCompany === 'VARROC') {
+      // Solo una de las dos es requerida
+      if (this.wTCode3 || this.wtCode4) extrasLlenos++;
+    }
+    const totalCampos = camposModelo.length + (this.selectedCompany === 'IGB' ? 2 : 1);
+    const totalLlenos = camposLlenos + extrasLlenos;
+    this.camposCompletados = (totalLlenos / totalCampos) * 100;
     this.calculateProgress();
     this.changeCustomerMessage = '';
     this.changeCustomerErrorMessage = '';
@@ -311,6 +339,7 @@ export class CustomerComponent implements OnInit {
       'addressMM',
       'emailFE',
       'selectedVariable',
+      'selectedTypeSell'
     ];
     const camposTab5 = [
       'selectedPaymentCondition'
@@ -391,6 +420,7 @@ export class CustomerComponent implements OnInit {
     this.changeCustomerErrorMessage = '';
   }
 
+  // Método para manejar la validación del campo de correo electrónico FE
   public emailFEValidation() {
     const minEmailLength = 10;
     this.changeCustomerErrorMessage = '';
@@ -410,11 +440,47 @@ export class CustomerComponent implements OnInit {
     this.changeCustomerErrorMessage = '';
   }
 
+  // Método único que valida dependiendo el modo
+  public getValidationErrorMessage(): string {
+    if (this.isEditMode) {
+      return this.validateFormEdit(); // Si estamos editando
+    } else {
+      return this.validateForm(); // Si estamos creando
+    }
+  }
+
+  // Validar formulario en modo edición
+  public validateFormEdit(): string {
+    let errorMessage = '';
+    if (!this.isEditMode) {
+      return '';
+    }
+    if (!this.client.cardName || this.client.cardName.length < 9) {
+      errorMessage = 'El nombre del cliente debe tener al menos 9 caracteres.';
+    } else if (!this.client.mail || this.client.mail.length < 9 || !this.client.mail.includes('@')) {
+      errorMessage = 'El correo electrónico principal debe tener al menos 9 caracteres y contener el símbolo "@"';
+    } else if (!this.client.phone || this.client.phone.length < 7) {
+      errorMessage = 'El teléfono fijo debe tener al menos 10 caracteres.';
+    } else if (!this.client.cellular || this.client.cellular.length < 10) {
+      errorMessage = 'El teléfono móvil debe tener al menos 10 caracteres.';
+    } else if (!this.client.selectedAdviser) {
+      errorMessage = 'Debe seleccionar un asesor comercial.';
+    } else if (!this.client.address || this.client.address.length < 5) {
+      errorMessage = 'La dirección debe tener al menos 5 caracteres.';
+    } else if (!this.client.codDepartamento || !this.client.codMunicipio) {
+      errorMessage = 'Debe seleccionar un departamento y un municipio.';
+    }
+    return errorMessage;
+  }
+
   // Validar formulario
   public validateForm(): string {
     let errorMessage = '';
+    if (!this.isSearchMode && !this.isEditMode) {
+      return ''; // No aplican validaciones en solo búsqueda
+    }
     if (!this.client.cardName || this.client.cardName.length < 9) {
-      errorMessage = 'El nombre del cliente debe tener al menos 9 caracteres.';
+      errorMessage = 'El nombre del cliente debe tener al menos 9 caracteres';
     } else if (!this.client.emailFE || this.client.emailFE.length < 9 || !this.client.emailFE.includes('@')) {
       errorMessage = 'El correo electrónico de facturación electrónica (FE) debe tener al menos 9 caracteres y contener el símbolo "@"';
     } else if (!this.client.mail || this.client.mail.length < 9 || !this.client.mail.includes('@')) {
@@ -564,12 +630,17 @@ export class CustomerComponent implements OnInit {
       regional: this.client.selectedVariable,
       mailFE: this.client.emailFE,
       transp: transpValue,
+      typeSell: this.client.selectedTypeSell,
       //Impuestos Y Finanzas
       paymentCondition: this.client.selectedPaymentCondition,
       discount: this.client.discount,
       taxType: this.client.taxType,
       creditLimit: this.client.creditLimit,
-      comiteLimit: this.client.creditLimit
+      comiteLimit: this.client.creditLimit,
+      withholdingTax: [
+        ...(this.wTCode3 ? [{ wtCode: this.wTCode3 }] : []),
+        ...(this.wtCode4 ? [{ wtCode: this.wtCode4 }] : [])
+      ]
     };
     this._businessPartnerService.createClient(clientData).subscribe(
       response => {
@@ -580,6 +651,8 @@ export class CustomerComponent implements OnInit {
             $('#tab0').click();
           });
           this.client = { ...this.initialClient };
+          this.wTCode3 = "";
+          this.wtCode4 = "";
         } else {
           this.changeCustomerErrorMessage = response.content;
         }
@@ -594,7 +667,7 @@ export class CustomerComponent implements OnInit {
     $('#confirmationModalCreate').modal('hide');
   }
 
-  // Método para Crear Cliente
+  // Método para Modificar Cliente
   public updateClient() {
     $('#modal_transfer_process').modal({ backdrop: 'static', keyboard: false, show: true });
     let transpValue: string;
@@ -627,24 +700,24 @@ export class CustomerComponent implements OnInit {
       zona: this.client.selectedZone,
       comment: this.client.comments,
       grupo: this.client.selectedGroup,
-      codeResFis: this.client.selectedTaxResposabilitie,
-      descResFis: this.client.nameResFis,
+      //codeResFis: this.client.selectedTaxResposabilitie,
+      //descResFis: this.client.nameResFis,
       //Contacto
-      contactPerson: this.client.idContactPerson,
-      nameContactPerson: this.client.nameContactPerson,
-      secondNamecontactPerson: this.client.secondNameContactPerson,
-      lastNameContactPerson: this.client.lastNameContactPerson,
-      occupationContactPerson: this.client.occupationContactPerson,
-      phoneContactPerson: this.client.phoneContactPerson,
-      dateContactPerson: this.client.dateContactPerson,
+      //contactPerson: this.client.idContactPerson,
+      //nameContactPerson: this.client.nameContactPerson,
+      //secondNamecontactPerson: this.client.secondNameContactPerson,
+      //lastNameContactPerson: this.client.lastNameContactPerson,
+      //occupationContactPerson: this.client.occupationContactPerson,
+      //phoneContactPerson: this.client.phoneContactPerson,
+      //dateContactPerson: this.client.dateContactPerson,
       //Ubicacion
       idAddress: this.client.idAdress,
       address: this.client.address,
       codDepartamento: this.client.codDepartamento,
       codMunicipio: this.client.codMunicipio,
       taxAddress: this.client.selectedTaxAdrress,
-      lengthMap: this.client.lengthMap,
-      latitudeMap: this.client.latitudeMap,
+      //lengthMap: this.client.lengthMap,
+      //latitudeMap: this.client.latitudeMap,
       //MM
       firstname: this.client.firstname,
       lastname1: this.client.lastname1,
@@ -656,18 +729,26 @@ export class CustomerComponent implements OnInit {
       addressMM: this.client.addressMM,
       regional: this.client.selectedVariable,
       mailFE: this.client.emailFE,
+      transp: transpValue,
+      typeSell: this.client.selectedTypeSell,
       //Impuestos Y Finanzas
       paymentCondition: this.client.selectedPaymentCondition,
       discount: this.client.discount,
       taxType: this.client.taxType,
       creditLimit: this.client.creditLimit,
-      comiteLimit: this.client.creditLimit
+      comiteLimit: this.client.creditLimit,
+      withholdingTax: [
+        ...(this.wTCode3 ? [{ wtCode: this.wTCode3 }] : []),
+        ...(this.wtCode4 ? [{ wtCode: this.wtCode4 }] : [])
+      ]
     };
     this._businessPartnerService.createClient(clientData).subscribe(
       response => {
         if (response.code === 0) {
           this.clear();
           this.client = { ...this.initialClient };
+          this.wTCode3 = "";
+          this.wtCode4 = "";
           $('#name').focus();
           this.changeCustomerMessage = response.content;
         } else {
@@ -727,7 +808,8 @@ export class CustomerComponent implements OnInit {
           this.client.addressMM = response.content.ubpcoAddress;
           this.client.emailFE = response.content.uemailFE;
           this.client.selectedVariable = response.content.uregional;
-          this.client.selectedVariable = response.content.transp;
+          this.client.selectedVariable = response.content.utrasp;
+          this.client.selectedTypeSell = response.content.typeSell;
           //Impuestos y Finanzas
           this.client.creditLimit = response.content.creditLine;
           this.client.selectedPaymentCondition = response.content.groupNum;
@@ -735,12 +817,16 @@ export class CustomerComponent implements OnInit {
           this.client.discount = response.content.discount;
           this.client.creditLimit = response.content.creditLine;
           this.client.commitedLimit = response.content.creditLine;
+          this.wTCode3 = response.content.wtAUT3 === 'Y' ? 'AUT3' : '';
+          this.wtCode4 = response.content.wtAUT4 === 'Y' ? 'AUT4' : '';
           $('#modal_transfer_process').modal('hide');
           this.onTaxResponsabilityChange();
           this.onCardCodeChange();
           this.centerMap();
           this.updateProgress();
-          this.isSearchMode = true;
+          this.isSearchMode = false;
+          this.isEditMode = true;
+          this.validateFormEdit();
           $(document).ready(function () { $('#tab0').click(); });
         }
         else {
@@ -790,6 +876,7 @@ export class CustomerComponent implements OnInit {
     });
   }
 
+  // Modificar cordenadas
   public updateCoordinates(latitude: number, longitude: number) {
     this.client.latitudeMap = latitude.toString(); // Convierte a string si es necesario
     this.client.lengthMap = longitude.toString();

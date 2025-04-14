@@ -39,6 +39,16 @@ export class CustomerPnComponent {
   public pieChartData = [];
   public pieChartType = 'doughnut';
 
+  public touchedFields = {
+    firstname: false,
+    lastname1: false,
+    lastname2: false,
+    document: false,
+    mail: false,
+    phone: false,
+    cellular: false
+  };
+
   constructor(private _router: Router, private _businessPartnerService: BusinessPartnerService) {
     this.clientPn.acceptHabeasData = 'Y';
     this.clientPn.companyName = 'VELEZ';
@@ -53,6 +63,13 @@ export class CustomerPnComponent {
     $('#name').focus();
   }
 
+  // Método para eliminar espacios en el input cuando pierde el foco
+  public trimInput(field: string) {
+    if (this.clientPn[field]) {
+      this.clientPn[field] = this.clientPn[field].trim();
+    }
+  }
+
   private redirectIfSessionInvalid(error): void {
     if (error && error.status && error.status == 401) {
       localStorage.removeItem('igb.identity');
@@ -64,6 +81,7 @@ export class CustomerPnComponent {
   // Traslado función para actualizar progreso
   public onFormChange() {
     this.updateProgres();
+    this.validateForm();
   }
 
   // Método para obtener la lista de departamentos
@@ -111,10 +129,16 @@ export class CustomerPnComponent {
     this._businessPartnerService.createClientPn(this.clientPn).subscribe(
       response => {
         if (response.code === 0) {
+          // Cliente creado exitosamente
           this.clear();
           this.changeCustomerPNMessage = 'Cliente creado con éxito: ' + response.content;
-          this.clientPn = new PersonNatural;
+          this.clientPn = new PersonNatural();
+          this.setDefaultClientValues();
+        } else if (response.code === 1) {
+          // Cliente ya existente
+          this.changeCustomerPNMessage = 'Cliente ya existe con el ID: ' + response.content;
         } else {
+          // Otro tipo de error
           this.changeCustomerPNErrorMessage = response.content;
         }
         $('#modal_transfer_process').modal('hide');
@@ -152,6 +176,14 @@ export class CustomerPnComponent {
     this.clientPn.address = `${this.tipoDi1} ${this.numDi1}${this.stDi1}${this.stDi1a}${this.cardiDi1} ${this.numDi2}${this.stDi2}${this.stDi2a}${this.cardiDi2} ${this.numDi3} ${this.tipoViv} ${this.undDi} ${this.numApto}`;
   }
 
+  private setDefaultClientValues() {
+    this.clientPn.acceptHabeasData = 'Y';
+    this.clientPn.companyName = 'VELEZ';
+    this.clientPn.typeDoc = '13';
+    this.clientPn.codDepartamento = '';
+    this.clientPn.codMunicipio = '';
+  }
+
   // Limpiar campos de modal direccion
   public deleteNomenclature() {
     this.clientPn.address = '';
@@ -172,6 +204,7 @@ export class CustomerPnComponent {
 
   // Vaciar formulario y reiniciar objeto cliente
   public clear() {
+    this.clientPn.companyName = 'VELEZ';
     this.clientPn.codDepartamento = '';
     this.clientPn.codMunicipio = '';
     this.clientPn.firstname = '';
@@ -190,5 +223,31 @@ export class CustomerPnComponent {
     this.changeCustomerPNMessage = '';
     this.deleteNomenclature();
     $('#name').focus();
+  }
+
+  public validateForm(): string {
+    this.changeCustomerPNErrorMessage = ''; // Limpiar mensaje anterior
+
+    if (this.touchedFields.firstname && (!this.clientPn.firstname || this.clientPn.firstname.length < 3)) {
+      this.changeCustomerPNErrorMessage = 'El nombre del cliente debe tener al menos 3 caracteres.';
+    } else if (this.touchedFields.lastname1 && (!this.clientPn.lastname1 || this.clientPn.lastname1.length < 3)) {
+      this.changeCustomerPNErrorMessage = 'El primer apellido del cliente debe contener al menos 3 caracteres';
+    } else if (this.touchedFields.lastname2 && (!this.clientPn.lastname2 || this.clientPn.lastname2.length < 3)) {
+      this.changeCustomerPNErrorMessage = 'El segundo apellido del cliente debe tener al menos 3 caracteres';
+    } else if (this.touchedFields.document && (!this.clientPn.document || this.clientPn.document.length < 8)) {
+      this.changeCustomerPNErrorMessage = 'El código del cliente debe contener al menos 8 caracteres';
+    } else if (this.touchedFields.mail && (!this.clientPn.mail || this.clientPn.mail.length < 9 || !this.clientPn.mail.includes('@'))) {
+      this.changeCustomerPNErrorMessage = 'El correo electrónico debe tener @ y al menos 9 caracteres';
+    } else if (this.touchedFields.phone && (!this.clientPn.phone || this.clientPn.phone.length < 9)) {
+      this.changeCustomerPNErrorMessage = 'El teléfono fijo del cliente debe contener al menos 9 caracteres';
+    } else if (this.touchedFields.cellular && (!this.clientPn.cellular || this.clientPn.cellular.length < 9)) {
+      this.changeCustomerPNErrorMessage = 'El teléfono móvil del cliente debe contener al menos 9 caracteres';
+    }
+
+    return this.changeCustomerPNErrorMessage;
+  }
+
+  public isCreateEnabled(): boolean {
+    return this.camposCompletados === 100 && this.validateForm() === '';
   }
 }

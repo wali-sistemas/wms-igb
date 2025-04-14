@@ -8,13 +8,13 @@ import { ChangeDetectorRef } from '@angular/core';
 declare var $: any;
 
 @Component({
-  templateUrl: './wallet-igb.component.html',
-  styleUrls: ['./wallet-igb.component.css'],
+  templateUrl: './wallet-mtz.component.html',
+  styleUrls: ['./wallet-mtz.component.css'],
   providers: [PaymentsMicrositeService]
 })
 
-export class WalletIGB implements OnInit {
-  public selectedCompany: string = 'IGB';
+export class WalletMTZ implements OnInit {
+  public selectedCompany: string = 'VARROC';
   public cardCode: string = '';
   public noInvoicesMessage: string = '';
   public filterDetail: string = '';
@@ -61,7 +61,7 @@ export class WalletIGB implements OnInit {
       }
 
       $('#cardCode').focus();
-      this.selectedCompany = "IGB";
+      this.selectedCompany = "VARROC";
     }
   }
 
@@ -157,7 +157,9 @@ export class WalletIGB implements OnInit {
         this.holdInvoices = response.invoices; // Guardamos las facturas en hold
         this.updateInvoicesStatus(); // Llamamos a la función para actualizar el estado de la lista general
       },
-      error => { console.error("Error al obtener facturas en hold:", error); }
+      error => {
+        console.error("Error al obtener facturas en hold:", error);
+      }
     );
   }
 

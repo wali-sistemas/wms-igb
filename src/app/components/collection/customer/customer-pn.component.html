@@ -26,7 +26,8 @@
       <div class="modal-body contact-modal-body text-center">
         <p>*Para ingresar la dirección diligenciar el siguiente formulario*</p>
         <input id="customDir" [(ngModel)]="clientPn.address" (ngModelChange)="onFormChange()" placeholder="Dirección"
-          readonly="readonly" type="text" class="form-control" style="margin-bottom: 8px;">
+          readonly="readonly" type="text" class="form-control" style="margin-bottom: 8px;" (blur)="trimInput('address')"
+          id="address" name="address">
         <p style="color: #cf423b;font-weight: bold;">
           Verificar en el campo dirección que este ingresada correctamente
         </p>
@@ -45,6 +46,7 @@
               <option value="LT">LOTE</option>
               <option value="VRD">VEREDA</option>
               <option value="AUT">AUTOPISTA</option>
+              <option value="VIA">VÍA</option>
             </select>
           </div>
           <div class="col-md-2 px-0">
@@ -239,7 +241,8 @@
           <label>Nombre MM*</label>
           <input type="text" class="form-control input-lg" autocomplete="off"
             oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '').toUpperCase()" placeholder="Ej: WILSON ANDRES"
-            [(ngModel)]="clientPn.firstname" (ngModelChange)="onFormChange()" id="name" name="name">
+            [(ngModel)]="clientPn.firstname" (ngModelChange)="onFormChange()"
+            (blur)="touchedFields.firstname = true; trimInput('firstname')" id="name" name="name">
         </div>
       </div>
       <div class="col-xs-12 col-md-4">
@@ -247,7 +250,8 @@
           <label>Primer Apellido MM*</label>
           <input type="text" class="form-control input-lg" autocomplete="off"
             oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '').toUpperCase()" placeholder="Ej: NEIRA"
-            [(ngModel)]="clientPn.lastname1" (ngModelChange)="onFormChange()">
+            [(ngModel)]="clientPn.lastname1" (ngModelChange)="onFormChange()"
+            (blur)="touchedFields.lastname1 = true; trimInput('lastname1')" id="lastname1" name="lastname1">
         </div>
       </div>
       <div class="col-xs-12 col-md-4">
@@ -255,7 +259,8 @@
           <label>Segundo Apellido MM*</label>
           <input type="text" class="form-control input-lg" autocomplete="off"
             oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '').toUpperCase()" placeholder="Ej: DIAZ"
-            [(ngModel)]="clientPn.lastname2" (ngModelChange)="onFormChange()">
+            [(ngModel)]="clientPn.lastname2" (ngModelChange)="onFormChange()"
+            (blur)="touchedFields.lastname2 = true; trimInput('lastname2')" id="lastname2" name="lastname2">
         </div>
       </div>
     </div>
@@ -265,7 +270,8 @@
           <label>Código*</label>
           <input type="text" class="form-control input-lg" autocomplete="off" placeholder="Ej:93403038" maxlength="20"
             oninput="this.value = this.value.replace(/[^cC0-9]/g, '').toUpperCase()" [(ngModel)]="clientPn.document"
-            id="cardCode" (ngModelChange)="onFormChange()">
+            id="cardCode" (ngModelChange)="onFormChange()" (blur)="touchedFields.document = true; trimInput('document')"
+            id="document" name="document">
         </div>
       </div>
       <div class="col-xs-12 col-md-7">
@@ -273,7 +279,8 @@
           <label>Correo Electrónico*</label>
           <input type="text" class="form-control input-lg" autocomplete="off" id="email" name="email"
             placeholder="Ej: JAPONESA@HOTMAIL.COM" oninput="this.value = this.value.replace(/[^a-zA-Z0-9\-_@.]/g, '')"
-            maxlength="40" [(ngModel)]="clientPn.mail" (ngModelChange)="onFormChange()">
+            maxlength="40" [(ngModel)]="clientPn.mail" (ngModelChange)="onFormChange()"
+            (blur)="touchedFields.mail = true; trimInput('mail')" id="mail" name="mail">
         </div>
       </div>
     </div>
@@ -283,7 +290,8 @@
           <label>Teléfono Fijo*</label>
           <input type="text" class="form-control input-lg" autocomplete="off" maxlength="30"
             placeholder="Ej: 6042596280" oninput="this.value = this.value.toUpperCase().replace(/[^0-9ex tEX T]/g, '')"
-            [(ngModel)]="clientPn.phone" (ngModelChange)="onFormChange()">
+            [(ngModel)]="clientPn.phone" (ngModelChange)="onFormChange()"
+            (blur)="touchedFields.phone = true; trimInput('phone')" id="phone" name="phone">
         </div>
       </div>
       <div class="col-xs-6 col-md-6">
@@ -291,7 +299,8 @@
           <label>Teléfono Móvil*</label>
           <input type="text" class="form-control input-lg" autocomplete="off" maxlength="30"
             placeholder="Ej: 3106194511" oninput="this.value = this.value.toUpperCase().replace(/[^0-9ex tEX T]/g, '')"
-            [(ngModel)]="clientPn.cellular" (ngModelChange)="onFormChange()">
+            [(ngModel)]="clientPn.cellular" (ngModelChange)="onFormChange()"
+            (blur)="touchedFields.cellular = true; trimInput('cellular')" id="cellular" name="cellular">
         </div>
       </div>
     </div>
@@ -407,7 +416,7 @@
         </p>
         <div class="customer">
           <span class="icon-add-customer" style="font-size: 170px; position: relative; top: 12px;" data-toggle="modal"
-            data-target="#confirmationModalCreate" [ngClass]="{'disabled-icon': camposCompletados < 100}">
+            data-target="#confirmationModalCreate" [ngClass]="{'disabled-icon': !isCreateEnabled()}">
           </span>
         </div>
       </div>
