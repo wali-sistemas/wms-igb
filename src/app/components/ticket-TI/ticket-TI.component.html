@@ -1,5 +1,4 @@
 <igb-navbar></igb-navbar>
-
 <!--Modal procesando-->
 <div id="modal_ticket_process" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
@@ -78,12 +77,74 @@
         <h4 class="modal-title">Nuevo Ticket</h4>
       </div>
       <div class="modal-body">
+        <!--Boton para mostrar el modulo de voz-->
+        <div class="row">
+          <div class="col-xs-12 text-right">
+            <button class="btn voice-toggle-btn" (click)="showVoicePanel = !showVoicePanel">
+              <span class="glyphicon glyphicon-volume-up"></span>
+              {{showVoicePanel ? 'Cerrar captura de voz' : 'Ingresar por voz'}}
+            </button>
+          </div>
+        </div>
+        <!--Panel de voz-->
+        <div class="row" *ngIf="showVoicePanel">
+          <div class="col-xs-12">
+            <div class="voice-panel">
+              <p>
+                <img *ngIf="statusMessage === 'Voz procesada correctamente'" src="assets/images/checkbox-check.png"
+                  alt="Confirmado"
+                  style="width: 25px; height: 25px; vertical-align: middle; position: relative; top: -1px;">
+                <strong>{{statusMessage}}</strong>
+              </p>
+              <!--Indicador visual de grabacion tipo audio-->
+              <div class="recording-visualizer" *ngIf="isRecording">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+              </div>
+              <div class="voice-btn-group row">
+                <div class="col-xs-12 col-sm-3">
+                  <button class="btn btn-danger voice-btn" (click)="startRecording()" [disabled]="isRecording">
+                    <i class="glyphicon glyphicon-record"></i> Iniciar grabación
+                  </button>
+                </div>
+                <div class="col-xs-12 col-sm-3">
+                  <button class="btn btn-secondary voice-btn" (click)="stopRecording()" [disabled]="!isRecording">
+                    <i class="glyphicon glyphicon-stop"></i> Detener
+                  </button>
+                </div>
+                <div class="col-xs-12 col-sm-3" *ngIf="transcript">
+                  <button class="voice-clear-btn voice-btn" (click)="clearTranscript()" title="Limpiar transcripción">
+                    <i class="glyphicon glyphicon-trash"></i>
+                  </button>
+                </div>
+              </div>
+              <div *ngIf="transcript">
+                <label><i class="glyphicon glyphicon-pencil"></i> Transcripción:</label>
+                <textarea class="form-control" rows="5" readonly>{{transcript}}</textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--Sugerencia interpretada por IA-->
+        <div class="row" *ngIf="ticketSuggestion">
+          <div class="col-xs-12">
+            <div class="voice-suggestion">
+              <i class="glyphicon glyphicon-info-sign"></i>
+              <strong>Sugerencia:</strong> {{ticketSuggestion}}
+            </div>
+          </div>
+        </div>
         <div class="row">
           <div class="col-xs-12">
-            <label for="typeTicket">Asunto*</label>
-            <input type="text" id="txtAsunt" class="form-control input-lg" [(ngModel)]="asunt" autocomplete="off"
-              name="asunt" autocorrect="off" autocapitalize="none" placeholder="Ingrese un asunto corto"
-              [class.required-field]="!validAsunt" required>
+            <div class="seccion">
+              <label for="typeTicket">Asunto*</label>
+              <input type="text" id="txtAsunt" class="form-control input-lg" [(ngModel)]="asunt" autocomplete="off"
+                name="asunt" autocorrect="off" autocapitalize="none" placeholder="Ingrese un asunto corto"
+                [class.required-field]="!validAsunt" required>
+            </div>
           </div>
         </div>
         <br />
@@ -238,7 +299,7 @@
         <div class="row">
           <div class="col-xs-12">
             <textarea id="newNotes" class="md-textarea form-control" name="newNotes" style="width: 100%;" rows="10"
-              placeholder="Ingrese aquí un comentario" [(ngModel)]="newNotes" autocomplete="off"
+              placeholder="Ingrese aqu铆 un comentario" [(ngModel)]="newNotes" autocomplete="off"
               [class.required-field]="!validNewNotes" required></textarea>
           </div>
         </div>
@@ -300,10 +361,8 @@
     </div>
   </div>
 </div>
-
 <button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span
     class="icon-chevron-up"></span></button>
-
 <div class="container content">
   <h3>Mis Tickets</h3>
   <div class="row">
