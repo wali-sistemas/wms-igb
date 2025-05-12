@@ -1,15 +1,15 @@
 <nav class="topnav visible-md visible-lg">
-  <a class="topnav-logo"><img src="/assets/images/revo.png" style="height: 30px;"/></a>
+  <a class="topnav-logo"><img src="/assets/images/logo-igb.png" /></a>
 </nav>
 <nav class="topnav visible-xs visible-sm">
-  <a class="topnav-logo"><img src="/assets/images/revo.png" style="height: 30px;"/></a>
+  <a class="topnav-logo"><img src="/assets/images/logo-igb.png" /></a>
 </nav>
 <div id="myNav" class="overlay visible-xs visible-sm">
 </div>
 
 <script src="assets/js/scroll.js"></script>
 
-<!--Modal procesadndo-->
+<!--Modal procesando-->
 <div id="modal_transfer_process" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -24,10 +24,47 @@
     </div>
   </div>
 </div>
-
+<!--Modal grabación de voz-->
+<div id="modal_voice_ai" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Asistente de voz</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row" *ngIf="isRecording">
+          <div class="colxs-12">
+            <div class="recording-visualizer">
+              <div class="bar"></div>
+              <div class="bar"></div>
+              <div class="bar"></div>
+              <div class="bar"></div>
+              <div class="bar"></div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-6 text-center">
+            <button [ngClass]="isRecording ? 'microphone-off' : 'microphone-on'" (click)="startRecording()"
+              [disabled]="isRecording">
+              <span class="icon-microphone-on"></span>
+            </button>
+          </div>
+          <div class="col-xs-6 text-center">
+            <button class="microphone-on" (click)="stopRecording()" [disabled]="!isRecording">
+              <span class="icon-stop" style="position: relative;top: 3px;"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span
     class="icon-chevron-up"></span></button>
-
 <div class="container content">
   <div class="row" *ngIf="errorMessage != null && errorMessage.length > 0">
     <div class="col-xs-12">
@@ -43,7 +80,15 @@
       </div>
     </div>
   </div>
-  <h3>Cliente Feria</h3>
+  <div class="row">
+    <div class="col-xs-6">
+      <h3>Cliente Feria</h3>
+    </div>
+    <div class="col-xs-6" style="text-align: right;">
+      <span class="icon-chatbot-ai" style="font-size: 45px; position: relative; top: 12px;"
+        (click)="openAssistantAI()"></span>
+    </div>
+  </div>
   <hr>
   <form id="form">
     <div class="row">
@@ -56,37 +101,47 @@
     <br />
     <div class="row">
       <div class="col-xs-12 margin-bottom-10">
-        <input type="text" class="form-control input-lg" [(ngModel)]="whsName" autocomplete="off" name="whsName"
-          autocorrect="off" autocapitalize="none" placeholder="Nombre de empresa" [disabled]="!authorizeData">
+        <input type="text" id="txtContact" class="form-control input-lg" [(ngModel)]="contact" autocomplete="off"
+          name="contact" autocorrect="off" autocapitalize="none" placeholder="Nombre completo"
+          [class.required-field]="!validContact" [disabled]="!authorizeData" required>
       </div>
     </div>
-    <!--<div class="row">
+    <br />
+    <div class="row">
+      <div class="col-xs-12 margin-bottom-10">
+        <input type="text" class="form-control input-lg" [(ngModel)]="whsName" autocomplete="off" name="whsName"
+          autocorrect="off" autocapitalize="none" placeholder="Nombre del almacén" [disabled]="!authorizeData">
+      </div>
+    </div>
+    <br />
+    <div class="row">
       <div class="col-xs-12 margin-bottom-10">
         <input type="number" class="form-control input-lg" [(ngModel)]="document" autocomplete="off" name="document"
-          [class.required-field]="!validDocument" autocorrect="off" autocapitalize="none" placeholder="Teléfono de contacto"
+          [class.required-field]="!validDocument" autocorrect="off" autocapitalize="none" placeholder="Cc o Nit"
           [disabled]="!authorizeData" required>
       </div>
-    </div>-->
-    <!--<div class="row">
+    </div>
+    <br />
+    <div class="row">
       <div class="col-xs-12 margin-bottom-10">
         <select id="region" class="form-control input-lg" [(ngModel)]="selectedRegion" name="selectedRegion"
           [class.required-field]="!validSelectRegion" [disabled]="!authorizeData" required>
           <option style="display:none" disabled selected value="">Selecciona una región</option>
-          <option value="REGION ANTIOQUIA">Antioquia</option>
-          <option value="REGION CUNDINAMARCA">Cundinamarca</option>
-          <option value="REGION COSTA">Costa</option>
-          <option value="REGION NORTE">Norte</option>
-          <option value="REGION ORIENTAL">Oriental</option>
-          <option value="REGION VALLE">Valle</option>
-          <option value="REGION SUR">Sur</option>
+          <option value="REGION ANTIOQUIA">ANTIOQUIA</option>
+          <option value="REGION CUNDINAMARCA">CUNDINAMARCA</option>
+          <option value="REGION COSTA">COSTA</option>
+          <option value="REGION NORTE">NORTE</option>
+          <option value="REGION ORIENTAL">ORIENTAL</option>
+          <option value="REGION VALLE">VALLE</option>
+          <option value="REGION SUR">SUR</option>
         </select>
       </div>
-    </div>-->
+    </div>
     <br />
     <div class="row">
       <div class="col-xs-12 margin-bottom-10">
         <input type="text" class="form-control input-lg" [(ngModel)]="city" autocomplete="off" name="city"
-          autocorrect="off" autocapitalize="none" placeholder="Estado" [disabled]="!authorizeData">
+          autocorrect="off" autocapitalize="none" placeholder="Ciudad" [disabled]="!authorizeData">
       </div>
     </div>
     <br />
@@ -107,7 +162,7 @@
       </div>
     </div>
     <br />
-    <!--<div class="row">
+    <div class="row">
       <div class="col-xs-12 margin-bottom-10">
         <select id="asesor" class="form-control input-lg" [(ngModel)]="selectedAsesor" name="selectedAsesor"
           [class.required-field]="!validSelectAsesor" [disabled]="!authorizeData" required>
@@ -122,43 +177,44 @@
           <option value="YURLEY ANGEL">YURLEY ANGEL</option>
           <option value="ELIZABETH MONTOYA">ELIZABETH MONTOYA</option>
           <option value="LUISA AGUDELO">LUISA AGUDELO</option>
+          <option value="JORGE MOLINA">JORGE MOLINA</option>
+          <option value="JOSE BARRERA">JOSE BARRERA</option>
+          <option value="JUAN PABLO MEJIA">JUAN PABLO MEJIA</option>
+          <option value="FAUSTO MACÍAS">FAUSTO MACÍAS</option>
+          <option value="JUAN SEBASTIAN SÁNCHEZ">JUAN SEBASTIAN SÁNCHEZ</option>
+          <option value="JANET VELEZ">JANET VELEZ</option>
+          <option value="JORGE CORREA">JORGE CORREA</option>
+          <option value="FELIX NEIRA">FELIX NEIRA</option>
         </select>
-      </div>
-    </div>-->
-    <div class="row">
-      <div class="col-xs-12 margin-bottom-10">
-        <input type="text" id="txtContact" class="form-control input-lg" [(ngModel)]="contact" autocomplete="off"
-          name="contact" autocorrect="off" autocapitalize="none" placeholder="Marcas"
-          [class.required-field]="!validContact" [disabled]="!authorizeData" required>
       </div>
     </div>
     <br />
     <label for="interes">Interesado en:</label>
     <div class="row">
-      <!--<div class="col-xs-6 col-md-3">
-        <div class="interes" [class.selected]="selected.has(0)" (click)="selectedInteres(0,'Llantas')">
+      <div class="col-xs-6 col-md-3">
+        <div class="interes" [class.selected]="selected.has(0)" (click)="selectedInteres(0,'LLANTAS')">
           <span class="icon-llanta" style="font-size: 100px"></span>
           <h3 class="title">Llantas</h3>
         </div>
-      </div>-->
+      </div>
       <div class="col-xs-6 col-md-3">
-        <div class="interes" [class.selected]="selected.has(1)" (click)="selectedInteres(1,'Repuestos')">
+        <div class="interes" [class.selected]="selected.has(1)" (click)="selectedInteres(1,'RESPUESTOS')">
           <span class="icon-repuestos" style="font-size: 100px"></span>
           <h3 class="title">Repuestos</h3>
         </div>
       </div>
       <div class="col-xs-6 col-md-3">
-        <div class="interes" [class.selected]="selected.has(2)" (click)="selectedInteres(2,'Lubricantes')">
+        <div class="interes" [class.selected]="selected.has(2)" (click)="selectedInteres(2,'LUBRICANTES')">
           <span class="icon-lubricante" style="font-size: 100px"></span>
           <h3 class="title">Lubricantes</h3>
         </div>
       </div>
-      <!--<div class="col-xs-6 col-md-3">
-        <div class="interes" [class.selected]="selected.has(3)" (click)="selectedInteres(3,'Accesorios')">
+      <div class="col-xs-6 col-md-3">
+        <div class="interes" [class.selected]="selected.has(3)" (click)="selectedInteres(3,'ACCESORIOS')">
           <span class="icon-accesorios" style="font-size: 100px"></span>
           <h3 class="title">Accesorios</h3>
         </div>
-      </div>-->
+      </div>
     </div>
     <hr>
     <br />

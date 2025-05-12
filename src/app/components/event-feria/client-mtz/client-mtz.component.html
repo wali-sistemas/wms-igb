@@ -24,10 +24,47 @@
     </div>
   </div>
 </div>
-
+<!--Modal grabación de voz-->
+<div id="modal_voice_ai" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Asistente de voz</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row" *ngIf="isRecording">
+          <div class="colxs-12">
+            <div class="recording-visualizer">
+              <div class="bar"></div>
+              <div class="bar"></div>
+              <div class="bar"></div>
+              <div class="bar"></div>
+              <div class="bar"></div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-6 text-center">
+            <button [ngClass]="isRecording ? 'microphone-off' : 'microphone-on'" (click)="startRecording()"
+              [disabled]="isRecording">
+              <span class="icon-microphone-on"></span>
+            </button>
+          </div>
+          <div class="col-xs-6 text-center">
+            <button class="microphone-on" (click)="stopRecording()" [disabled]="!isRecording">
+              <span class="icon-stop" style="position: relative;top: 3px;"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span
     class="icon-chevron-up"></span></button>
-
 <div class="container content">
   <div class="row" *ngIf="errorMessage != null && errorMessage.length > 0">
     <div class="col-xs-12">
@@ -43,7 +80,15 @@
       </div>
     </div>
   </div>
-  <h3>Cliente Feria</h3>
+  <div class="row">
+    <div class="col-xs-6">
+      <h3>Cliente Feria</h3>
+    </div>
+    <div class="col-xs-6" style="text-align: right;">
+      <span class="icon-chatbot-ai" style="font-size: 45px; position: relative; top: 12px;"
+        (click)="openAssistantAI()"></span>
+    </div>
+  </div>
   <hr>
   <form id="form">
     <div class="row">
@@ -82,10 +127,10 @@
         <select id="region" class="form-control input-lg" [(ngModel)]="selectedRegion" name="selectedRegion"
           [class.required-field]="!validSelectRegion" [disabled]="!authorizeData" required>
           <option style="display:none" disabled selected value="">Selecciona una región</option>
-          <option value="CENTRAL">Central</option>
-          <option value="NORTE">Norte</option>
-          <option value="ORIENTAL">Oriental</option>
-          <option value="SUR">Sur</option>
+          <option value="REGION CENTRAL">CENTRAL</option>
+          <option value="REGION NORTE">NORTE</option>
+          <option value="REGION ORIENTAL">ORIENTAL</option>
+          <option value="REGION SUR">SUR</option>
         </select>
       </div>
     </div>
@@ -120,23 +165,31 @@
           [class.required-field]="!validSelectAsesor" [disabled]="!authorizeData" required>
           <option style="display:none" disabled selected value="">Selecciona un asesor</option>
           <option value="ADRIÁN MONCADA">ADRIÁN MONCADA</option>
-          <option value="ANGIE PEÑA">ANGIE PEÑA</option>
-          <option value="ALEJANDRA MONSALVE">ALEJANDRA MONSALVE</option>
-          <option value="CLAUDIA FERNANDEZ">CLAUDIA FERNANDEZ</option>
-          <option value="DIANA LONDOÑO">DIANA LONDOÑO</option>
-          <option value="FERNEY DIAZ">FERNEY DIAZ</option>
-          <option value="HORACIO OROZCO">HORACIO OROZCO</option>
-          <option value="JULIAN ESTRADA">JULIAN ESTRADA</option>
-          <option value="LAURA USME">LAURA USME</option>
           <option value="LAURA APARICIO">LAURA APARICIO</option>
-          <option value="NESTOR GIRALDO">NESTOR GIRALDO</option>
-          <option value="OSCAR CARVAJAL">OSCAR CARVAJAL</option>
-          <option value="ORNELLA OJEDA">ORNELLA OJEDA</option>
-          <option value="SANTIAGO AGUILAR">SANTIAGO AGUILAR</option>
+          <option value="JESUS ELIAS PERALTA">JESUS ELIAS PERALTA</option>
           <option value="SEBASTIAN USUGA">SEBASTIAN USUGA</option>
-          <option value="VALENTINA SANCHEZ">VALENTINA SANCHEZ</option>
-          <option value="VALENTINA ESCOBAR">VALENTINA ESCOBAR</option>
+          <option value="JENNIFER TRIANA">JENNIFER TRIANA</option>
+          <option value="LISANDRO ARLEY CALISTO">LISANDRO ARLEY CALISTO</option>
+          <option value="ANGIE PEÑA">ANGIE PEÑA</option>
+          <option value="ANGELYS VALLESTEROS">ANGELYS VALLESTEROS</option>
+          <option value="JAVIER MAURICIO BARON">JAVIER MAURICIO BARON</option>
+          <option value="CARLOS ALBERTO MURGAS">CARLOS ALBERTO MURGAS</option>
+          <option value="ORNELLA OJEDA">ORNELLA OJEDA</option>
+          <option value="NESTOR GIRALDO">NESTOR GIRALDO</option>
+          <option value="JORGE ALONSO RESTREPO">JORGE ALONSO RESTREPO</option>
           <option value="WENDY VELAZQUES">WENDY VELAZQUES</option>
+          <option value="JULIAN ESTRADA">JULIAN ESTRADA</option>
+          <option value="MONICA CARMONA">JULIAN ESTRADA</option>
+          <option value="LUISA FERNANDA MORENO">LUISA FERNANDA MORENO</option>
+          <option value="BORIS FRANCO">BORIS FRANCO</option>
+          <option value="EDELBERTO GONZALEZ">EDELBERTO GONZALEZ</option>
+          <option value="EDWIN OWEIMER RAMIREZ">EDWIN OWEIMER RAMIREZ</option>
+          <option value="GIAN CARLOS PULIDO">GIAN CARLOS PULIDO</option>
+          <option value="MATEO ACOSTA">MATEO ACOSTA</option>
+          <option value="FERNEY DIAZ">FERNEY DIAZ</option>
+          <option value="CLAUDIA FERNANDEZ">CLAUDIA FERNANDEZ</option>
+          <option value="ALEJANDRA MONSALVE">ALEJANDRA MONSALVE</option>
+          <option value="VALENTINA SANCHEZ">VALENTINA SANCHEZ</option>
         </select>
       </div>
     </div>
@@ -144,25 +197,25 @@
     <label for="interes">Interesado en lubricantes para:</label>
     <div class="row">
       <div class="col-xs-6 col-md-3">
-        <div class="interes" [class.selected]="selected.has(0)" (click)="selectedInteres(0,'Partes Plásticas')">
+        <div class="interes" [class.selected]="selected.has(0)" (click)="selectedInteres(0,'PARTES PLÁSTICAS')">
           <span class="icon-guardabarro2" style="font-size: 100px"></span>
           <h3 class="title">Plásticos</h3>
         </div>
       </div>
       <div class="col-xs-6 col-md-3">
-        <div class="interes" [class.selected]="selected.has(1)" (click)="selectedInteres(1,'Lubricantes')">
+        <div class="interes" [class.selected]="selected.has(1)" (click)="selectedInteres(1,'LUBRICANTES')">
           <span class="icon-lubricante" style="font-size: 100px"></span>
           <h3 class="title">Lubricantes</h3>
         </div>
       </div>
       <div class="col-xs-6 col-md-3">
-        <div class="interes" [class.selected]="selected.has(2)" (click)="selectedInteres(2,'Repuestos')">
+        <div class="interes" [class.selected]="selected.has(2)" (click)="selectedInteres(2,'RESPUESTOS')">
           <span class="icon-repuestos" style="font-size: 100px"></span>
           <h3 class="title">Repuestos</h3>
         </div>
       </div>
       <div class="col-xs-6 col-md-3">
-        <div class="interes" [class.selected]="selected.has(3)" (click)="selectedInteres(3,'Llantas')">
+        <div class="interes" [class.selected]="selected.has(3)" (click)="selectedInteres(3,'LLANTAS')">
           <span class="icon-llanta" style="font-size: 100px"></span>
           <h3 class="title">Llantas</h3>
         </div>
