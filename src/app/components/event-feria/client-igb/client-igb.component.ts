@@ -15,7 +15,7 @@ export class ClientIgbComponent implements OnInit {
   public contact: string;
   public whsName: string;
   public document: string;
-  public selectedRegion: string = "";
+  public departamento: string = "";
   public selectedAsesor: string = "";
   public city: string;
   public phone: string;
@@ -28,7 +28,6 @@ export class ClientIgbComponent implements OnInit {
   public validPhone: boolean = true;
   public validDocument: boolean = true;
   public validMail: boolean = true;
-  public validSelectRegion: boolean = true;
   public validSelectAsesor: boolean = true;
   public authorizeData: boolean = false;
   //Variables OPEN IA
@@ -83,12 +82,6 @@ export class ClientIgbComponent implements OnInit {
       $('#modal_transfer_process').modal('hide');
       return;
     }
-    if (this.selectedRegion == null || this.selectedRegion.length <= 0) {
-      this.validSelectRegion = false;
-      this.getScrollTop();
-      $('#modal_transfer_process').modal('hide');
-      return;
-    }
     if (this.phone == null || this.phone.length <= 0) {
       this.validPhone = false;
       this.getScrollTop();
@@ -125,7 +118,7 @@ export class ClientIgbComponent implements OnInit {
       "correo": this.mail.toUpperCase(),
       "almacen": this.whsName,
       "interes": interes.trim(),
-      "regional": this.selectedRegion,
+      "regional": this.departamento,
       "ciudad": this.city.toUpperCase(),
       "companyName": "IGB",
       "asesor": this.selectedAsesor
@@ -222,19 +215,12 @@ export class ClientIgbComponent implements OnInit {
   private interpretWithAI(text: string) {
     const prompt = `Actuar como un asesor que esta capturando datos de un futuro cliente o empresa en una feria expocitora. Los datos capturados son el siguiente mensaje de voz transcrito en texto:
     "${text}"
-    Necesito que clasifiques y devuelvas la siguiente información en un objeto JSON:
+    Necesito que clasifiques y devuelvas la siguiente información en un objeto JSON, de no tener suficientes datos retornar un mensaje de volver a intentarlo:
     1. "authorizeData": Autorización a IGB al uso de los datos (Artículo 20 Decreto Reglamentario 1377 de 2013 de la Ley de Habeas Data) (Dato booleano)
     2. "cardName": Nombre del cliente o empresa (Dato string)
     3. "whsName": Nombre del almacén o local (Dato string)
     4. "document": Cédula o NIT (Dato number)
-    5. "selectedRegion": Obtener solo el value (Dato string) de la región según esta lista:
-      value="REGION ANTIOQUIA"
-      value="REGION CUNDINAMARCA"
-      value="REGION COSTA"
-      value="REGION NORTE"
-      value="REGION ORIENTAL"
-      value="REGION VALLE"
-      value="REGION SUR"
+    5. "departamento": Nombre del departamento del país de Colombia (Dato string)
     6. "city": Nombre de la ciudad, localidad, zona o barrio (Dato string)
     7. "phone": Número de contacto, número de teléfono o número de celular (Dato number)
     8. "mail": Correo eléctronico (Dato string) - pattern="[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*@[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{1,5}"
@@ -262,7 +248,7 @@ export class ClientIgbComponent implements OnInit {
      "cardName": "JHON RESTREPO",
      "whsName": "TALLER",
      "document": "0123456789",
-     "selectedRegion": "REGION ANTIOQUIA",
+     "departamento": "ANTIOQUIA",
      "city": "BELLO",
      "phone": "0123456789",
      "mail": "correo@dominio.com",
@@ -302,17 +288,19 @@ export class ClientIgbComponent implements OnInit {
           const formJson = JSON.parse(aiResponse);
 
           this.authorizeData = formJson.authorizeData;
-          this.contact = formJson.cardName.toUpperCase();
-          this.whsName = formJson.whsName.toUpperCase();
+          this.contact = formJson.cardName;
+          this.whsName = formJson.whsName;
           this.document = formJson.document;
-          this.selectedRegion = formJson.selectedRegion.toUpperCase();
-          this.city = formJson.city.toUpperCase();
+          this.departamento = formJson.departamento;
+          this.city = formJson.city;
           this.phone = formJson.phone;
-          this.mail = formJson.mail.toUpperCase();
-          this.selectedAsesor = formJson.selectedAsesor.toUpperCase();
+          this.mail = formJson.mail;
+          this.selectedAsesor = formJson.selectedAsesor;
 
-          for (const interesado of formJson.selectedInteres) {
-            this.selectedInteres(interesado.key, interesado.value);
+          if (formJson.selectedInteres != null) {
+            for (const interesado of formJson.selectedInteres) {
+              this.selectedInteres(interesado.key, interesado.value);
+            }
           }
 
           $('#modal_transfer_process').modal('hide');
@@ -356,12 +344,13 @@ export class ClientIgbComponent implements OnInit {
     this.phone = "";
     this.mail = "";
     this.whsName = "";
-    this.selectedRegion = "";
+    this.departamento = "";
     this.authorizeData = false;
     this.selected = new Map<number, string>();
     this.errorMessage = "";
     this.exitMessage = "";
     this.city = "";
+    this.selectedAsesor = "";
   }
 
   public getScrollTop() {

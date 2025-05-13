@@ -124,17 +124,9 @@
     <br />
     <div class="row">
       <div class="col-xs-12 margin-bottom-10">
-        <select id="region" class="form-control input-lg" [(ngModel)]="selectedRegion" name="selectedRegion"
-          [class.required-field]="!validSelectRegion" [disabled]="!authorizeData" required>
-          <option style="display:none" disabled selected value="">Selecciona una región</option>
-          <option value="REGION ANTIOQUIA">ANTIOQUIA</option>
-          <option value="REGION CUNDINAMARCA">CUNDINAMARCA</option>
-          <option value="REGION COSTA">COSTA</option>
-          <option value="REGION NORTE">NORTE</option>
-          <option value="REGION ORIENTAL">ORIENTAL</option>
-          <option value="REGION VALLE">VALLE</option>
-          <option value="REGION SUR">SUR</option>
-        </select>
+        <input type="text" class="form-control input-lg" [(ngModel)]="departamento" autocomplete="off"
+          name="departamento" autocorrect="off" autocapitalize="none" placeholder="Departamento"
+          [disabled]="!authorizeData">
       </div>
     </div>
     <br />
