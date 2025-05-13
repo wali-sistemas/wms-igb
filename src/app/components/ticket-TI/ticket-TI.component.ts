@@ -62,6 +62,7 @@ export class TicketTIComponent implements OnInit {
   public email: string;
   public ticketSuggestion: string = '';
   public apiKeyIA: string = AIGlobal.apiKey;
+  public showVoicePanel: boolean;
 
   constructor(private _ticketTIService: TicketTIService, private _userService: UserService, private _router: Router, private _binLocationService: BinLocationService) {
     this.tickets = new Array<TicketTI>();
@@ -124,6 +125,9 @@ export class TicketTIComponent implements OnInit {
         } else {
           this.tickets = response;
           this.filteredTicket = this.tickets;
+          console.log("**********************");
+          console.log(this.tickets);
+          console.log("**********************");
         }
         $('#modal_ticket_process').modal('hide');
       }, error => {

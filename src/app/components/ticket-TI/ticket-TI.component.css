@@ -180,7 +180,8 @@
   padding: 5px;
   position: absolute;
   right: 9px;
-  top: -30px;
+  top: -20px;
+  font-size: 60px;
 }
 
 .scrollTop:hover {
@@ -207,6 +208,13 @@
 
 .status {
   text-align: end;
+}
+
+.clip {
+  font-size: 40px;
+  position: absolute;
+  bottom: 5px;
+  left: 160px;
 }
 
 label[for="customFileLang"] {
@@ -245,6 +253,23 @@ label[for="customFileLang"] {
 
   .assigned-employee {
     text-align: center;
+  }
+
+  .clip {
+    font-size: 40px;
+    position: absolute;
+    bottom: 5px;
+    left: 55px;
+  }
+
+  .avatar {
+    background-repeat: no-repeat;
+    background-position: 50%;
+    border-radius: 50%;
+    background-size: 100% auto;
+    width: 40px;
+    position: relative;
+    top: 6px;
   }
 }
 
@@ -380,6 +405,7 @@ label[for="customFileLang"] {
 }
 
 @keyframes bounce {
+
   0%,
   100% {
     height: 10px;
