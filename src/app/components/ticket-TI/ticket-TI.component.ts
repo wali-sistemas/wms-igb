@@ -133,6 +133,9 @@ export class TicketTIComponent implements OnInit {
         } else {
           this.tickets = response;
           this.filteredTicket = this.tickets;
+          console.log("**********************");
+          console.log(this.tickets);
+          console.log("**********************");
         }
         $('#modal_ticket_process').modal('hide');
       }, error => {
