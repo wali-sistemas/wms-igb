@@ -432,7 +432,7 @@
           </div>
           <div class="col-xs-6">
             <div class="notes">
-              <span class="icon-sms" style="font-size: 60px;" (click)="getTicketNotes(ticket)"></span>
+              <span class="icon-sms" (click)="getTicketNotes(ticket)"></span>
             </div>
           </div>
         </div>
@@ -448,7 +448,12 @@
               <b>{{ticket.typeTicket == 'OTRO' ? ticket.dateEnd : ticket.typeTicket}}</b>
             </div>
           </div>
-          <div class="col-xs-6">
+          <div class="col-xs-2">
+            <div *ngIf="ticket.urlAttached.length > 0" class="clip">
+              <span class="icon-clip"></span>
+            </div>
+          </div>
+          <div class="col-xs-4">
             <div class="status">
               <p><b>{{ticket.status}}</b></p>
             </div>
