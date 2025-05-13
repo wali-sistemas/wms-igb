@@ -2,10 +2,10 @@ import { Headers } from '@angular/http';
 
 export let GLOBAL = {
   //HTTP
-  /*url: 'http://192.168.10.218:8080/igb/res/',
-  urlShared: 'http://192.168.10.218:8080/shared/',
-  urlManager: 'http://192.168.10.218:8080/manager/res/',
-  urlSpring: 'http://192.168.10.8:8080/apiRest/wali/'*/
+  /*url: 'http://192.168.10.69:8080/igb/res/',
+  urlShared: 'http://192.168.10.69:8080/shared/',
+  urlManager: 'http://192.168.10.69:8080/manager/res/',
+  urlSpring: 'http://192.168.10.69:8080/apiRest/wali/'*/
   //HTTPS
   url: 'https://wali.igbcolombia.com/api/igb/res/',
   urlShared: 'https://wali.igbcolombia.com/api/shared/',
@@ -15,7 +15,7 @@ export let GLOBAL = {
 
 export let AIGlobal = {
   url: 'https://api.openai.com/v1/',
-  apiKey: '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'
+  apiKey: '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'
 }
 
 export class IGBHeaders {
