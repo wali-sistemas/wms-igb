@@ -37,12 +37,19 @@ export class ClientMtzComponent implements OnInit {
   public mediaRecorder: any;
   public transcript: string = '';
   public audioChunks: any[] = [];
+  public apiKey: string = '';
 
   constructor(private _eventService: EventService, private _openAIService: OpenAIService) {
     this.selected = new Map<number, string>();
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this._openAIService.getApikeyOpenAI().subscribe(
+      response => {
+        this.apiKey = response.content;
+      }, error => { console.error(error); }
+    );
+  }
 
   public selectedInteres(key: number, interes: string) {
     this.errorMessage = "";
@@ -196,7 +203,7 @@ export class ClientMtzComponent implements OnInit {
     formData.append('model', 'whisper-1');
     formData.append('language', 'es');
 
-    this._openAIService.transcribeVoiceInput(formData).subscribe(
+    this._openAIService.transcribeVoiceInput(formData, this.apiKey).subscribe(
       response => {
         if (!response.ok) {
           this.interpretWithAI(response.text);
@@ -299,7 +306,7 @@ export class ClientMtzComponent implements OnInit {
       temperature: 0.2
     };
 
-    this._openAIService.interpretTextInput(formData).subscribe(
+    this._openAIService.interpretTextInput(formData, this.apiKey).subscribe(
       response => {
         const data = response.json();
         const aiResponse = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;

@@ -4,6 +4,5 @@
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 
 export const environment = {
-  production: false,
-  openAIKey: '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'
+  production: false
 };

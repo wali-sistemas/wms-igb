@@ -1,5 +1,4 @@
 import { Headers } from '@angular/http';
-import { environment } from '../../environments/environment';
 
 export let GLOBAL = {
   //HTTP
@@ -15,8 +14,7 @@ export let GLOBAL = {
 };
 
 export let AIGlobal = {
-  url: 'https://api.openai.com/v1/',
-  apiKey: environment.openAIKey
+  url: 'https://api.openai.com/v1/'
 }
 
 export class IGBHeaders {
