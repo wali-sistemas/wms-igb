@@ -1,29 +1,35 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
-import { AIGlobal } from './global';
+import { AIGlobal, GLOBAL } from './global';
 
 @Injectable()
 export class OpenAIService {
   public url: string;
-  public apiKey: string;
+  public urlManager: string;
 
   constructor(private _http: Http) {
     this.url = AIGlobal.url;
-    this.apiKey = AIGlobal.apiKey;
+    this.urlManager = GLOBAL.urlManager;
   }
 
-  public transcribeVoiceInput(formData) {
+  public getApikeyOpenAI() {
+    console.log("Ingreso al servicio de consulta de apikey");
+    return this._http.get(this.urlManager + 'chatbot/open-ai/apikey')
+      .map(res => res.json());
+  }
+
+  public transcribeVoiceInput(formData, apiKey: string) {
     let igbHeaders = new Headers({
-      'Authorization': 'Bearer ' + this.apiKey
+      'Authorization': 'Bearer ' + apiKey
     });
     return this._http.post(this.url + 'audio/transcriptions', formData, { headers: igbHeaders })
       .map(res => res.json());
   }
 
-  public interpretTextInput(formData: any) {
+  public interpretTextInput(formData: any, apiKey: string) {
     let igbHeaders = new Headers({
-      'Authorization': 'Bearer ' + this.apiKey,
+      'Authorization': 'Bearer ' + apiKey,
       'Content-Type': 'application/json'
     });
     return this._http.post(this.url + 'chat/completions', formData, { headers: igbHeaders });

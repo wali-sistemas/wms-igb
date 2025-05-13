@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, Params } from '@angular/router';
-import { GLOBAL, AIGlobal } from '../../services/global';
+import { Router } from '@angular/router';
+import { GLOBAL } from '../../services/global';
 
 import { UserService } from '../../services/user.service';
 import { TicketTIService } from '../../services/ticket-TI.service';
 import { TicketTI, TicketTINotes } from '../../models/ticket-ti';
 import { BinLocationService } from '../../services/bin-locations.service';
+import { OpenAIService } from '../../services/openai.service';
 
 import 'rxjs/Rx'
 
@@ -15,7 +16,7 @@ declare var MediaRecorder: any;
 @Component({
   templateUrl: './ticket-TI.component.html',
   styleUrls: ['./ticket-TI.component.css'],
-  providers: [UserService, TicketTIService, BinLocationService]
+  providers: [UserService, TicketTIService, BinLocationService, OpenAIService]
 })
 
 export class TicketTIComponent implements OnInit {
@@ -61,10 +62,10 @@ export class TicketTIComponent implements OnInit {
   public audioChunks: any[] = [];
   public email: string;
   public ticketSuggestion: string = '';
-  public apiKeyIA: string = AIGlobal.apiKey;
+  public apiKey: string = "";
   public showVoicePanel: boolean;
 
-  constructor(private _ticketTIService: TicketTIService, private _userService: UserService, private _router: Router, private _binLocationService: BinLocationService) {
+  constructor(private _ticketTIService: TicketTIService, private _userService: UserService, private _router: Router, private _binLocationService: BinLocationService, private _openAIService: OpenAIService) {
     this.tickets = new Array<TicketTI>();
     this.ticketNotes = new Array<TicketTINotes>();
     this.ticketTypes = new Array<any>();
@@ -86,6 +87,13 @@ export class TicketTIComponent implements OnInit {
       //Autorizados para crear proyectos y tickets.
       this.authorizeAddProyect = true;
     }
+
+    this._openAIService.getApikeyOpenAI().subscribe(
+      response => {
+        this.apiKey = response.content;
+      }, error => { console.error(error); }
+    );
+
     this.listTypeTickets();
     $('#filter').focus();
   }
@@ -596,7 +604,7 @@ export class TicketTIComponent implements OnInit {
     try {
       const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
         method: 'POST',
-        headers: { Authorization: `Bearer ${this.apiKeyIA}` },
+        headers: { Authorization: 'Bearer ' + this.apiKey },
         body: formData
       });
 
@@ -655,7 +663,7 @@ export class TicketTIComponent implements OnInit {
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${this.apiKeyIA}`,
+          Authorization: 'Bearer ' + this.apiKey,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
