@@ -4,6 +4,8 @@ import { OpenAIService } from '../../../services/openai.service';
 
 declare var $: any;
 declare var MediaRecorder: any;
+declare var require: any;
+const MicRecorder = require('mic-recorder-to-mp3');
 
 @Component({
   templateUrl: './client-igb.component.html',
@@ -37,6 +39,8 @@ export class ClientIgbComponent implements OnInit {
   public transcript: string = '';
   public audioChunks: any[] = [];
   public apiKey: string = '';
+  public recorder = new MicRecorder({ bitRate: 128 });
+  public stream: MediaStream;
 
   constructor(private _eventService: EventService, private _openAIService: OpenAIService) {
     this.selected = new Map<number, string>();
@@ -145,6 +149,9 @@ export class ClientIgbComponent implements OnInit {
   }
 
   public startRecording() {
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       this.warningMessage = "Tu navegador no soporta grabación de voz.";
       $('#modal_voice_ai').modal('hide');
@@ -152,21 +159,36 @@ export class ClientIgbComponent implements OnInit {
     }
 
     navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-      this.audioChunks = [];
-      this.mediaRecorder = new MediaRecorder(stream);
-      this.mediaRecorder.start();
-      this.isRecording = true;
+      this.stream = stream;
 
-      this.mediaRecorder.addEventListener('dataavailable', event => {
-        this.audioChunks.push(event.data);
-      });
-    }).catch(
-      error => {
-        this.errorMessage = "Ocurrio un error al acceder el micrófono.";
-        $('#modal_voice_ai').modal('hide');
-        console.error('Ocurrio un error al acceder el micrófono ', error);
+      if (isIOS && isSafari) {
+        this.recorder.start()
+          .then(() => {
+            this.isRecording = true;
+          })
+          .catch(error => {
+            this.errorMessage = "Ocurrió un error al acceder al micrófono en iphone.";
+            $('#modal_voice_ai').modal('hide');
+            console.error('Ocurrió un error al acceder al micrófono en iphone ', error);
+          });
+      } else {
+        navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+          this.audioChunks = [];
+          this.stream = stream;
+          this.mediaRecorder = new MediaRecorder(stream);
+          this.mediaRecorder.start();
+          this.isRecording = true;
+
+          this.mediaRecorder.addEventListener('dataavailable', event => {
+            this.audioChunks.push(event.data);
+          });
+        }).catch(error => {
+          this.errorMessage = "Ocurrió un error al acceder el micrófono.";
+          $('#modal_voice_ai').modal('hide');
+          console.error('Error MediaRecorder:', error);
+        });
       }
-    );
+    });
   }
 
   public stopRecording() {
@@ -178,15 +200,39 @@ export class ClientIgbComponent implements OnInit {
       show: true
     });
 
-    if (this.mediaRecorder) {
-      this.mediaRecorder.stop();
-      this.isRecording = false;
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
-      this.mediaRecorder.addEventListener('stop', () => {
-        const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
+    if (isIOS && isSafari) {
+      this.recorder.stop().getMp3().then(([buffer, blob]) => {
+        const file = new File(buffer, 'voice.mp3', {
+          type: blob.type,
+          lastModified: Date.now()
+        });
+        this.transcribeAudio(file);
+        this.isRecording = false;
 
-        this.transcribeAudio(audioBlob);
+        if (this.stream) {
+          this.stream.getTracks().forEach(track => track.stop());
+          this.stream = null;
+        }
+      }).catch(error => {
+        console.error('Error al detener grabación Safari:', error);
       });
+    } else {
+      if (this.mediaRecorder) {
+        this.mediaRecorder.stop();
+        this.mediaRecorder.addEventListener('stop', () => {
+          const audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
+          this.transcribeAudio(audioBlob);
+          this.isRecording = false;
+        });
+      }
+
+      if (this.stream) {
+        this.stream.getTracks().forEach(track => track.stop());
+        this.stream = null;
+      }
     }
   }
 
@@ -328,6 +374,11 @@ export class ClientIgbComponent implements OnInit {
   }
 
   public closeModal() {
+    if (this.stream) {
+      this.stream.getTracks().forEach(track => track.stop());
+      this.stream = null;
+    }
+
     this.mediaRecorder.stop();
     this.isRecording = false;
     $('#modal_voice_ai').modal('hide');
