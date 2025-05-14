@@ -64,6 +64,7 @@ export class TicketTIComponent implements OnInit {
   public ticketSuggestion: string = '';
   public apiKey: string = "";
   public showVoicePanel: boolean;
+  public stream: MediaStream;
 
   constructor(private _ticketTIService: TicketTIService, private _userService: UserService, private _router: Router, private _binLocationService: BinLocationService, private _openAIService: OpenAIService) {
     this.tickets = new Array<TicketTI>();
@@ -133,9 +134,6 @@ export class TicketTIComponent implements OnInit {
         } else {
           this.tickets = response;
           this.filteredTicket = this.tickets;
-          console.log("**********************");
-          console.log(this.tickets);
-          console.log("**********************");
         }
         $('#modal_ticket_process').modal('hide');
       }, error => {
@@ -556,6 +554,7 @@ export class TicketTIComponent implements OnInit {
 
     navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
       this.audioChunks = [];
+      this.stream = stream;
       this.mediaRecorder = new MediaRecorder(stream);
       this.mediaRecorder.start();
       this.isRecording = true;
@@ -566,15 +565,18 @@ export class TicketTIComponent implements OnInit {
       });
 
       this.mediaRecorder.addEventListener('stop', () => {
+        if (this.stream) {
+          this.stream.getTracks().forEach(track => track.stop());
+          this.stream = null;
+        }
+
         const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
         this.transcribeAudio(audioBlob);
       });
-    }).catch(
-      error => {
-        alert('Error al acceder al micrófono');
-        console.error('🎙️ Error al acceder al micrófono:', error);
-      }
-    );
+    }).catch(error => {
+      alert('Error al acceder al micrófono');
+      console.error('🎙️ Error al acceder al micrófono:', error);
+    });
   }
 
   public stopRecording() {
@@ -582,6 +584,11 @@ export class TicketTIComponent implements OnInit {
       this.mediaRecorder.stop();
       this.isRecording = false;
       this.statusMessage = '⏳ Procesando voz...';
+    }
+
+    if (this.stream) {
+      this.stream.getTracks().forEach(track => track.stop());
+      this.stream = null;
     }
   }
 
