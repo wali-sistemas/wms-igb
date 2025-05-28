@@ -171,6 +171,11 @@
   border-radius: 6px;
 }
 
+.promotion {
+  background: #ffee8f;
+  border-color: #f28500;
+}
+
 .scrollTop {
   display: none;
   position: fixed;

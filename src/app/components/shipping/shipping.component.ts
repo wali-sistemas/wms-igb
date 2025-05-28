@@ -9,10 +9,7 @@ import { ReportService } from '../../services/report.service';
 import { ShippingInvoice } from '../../models/shipping-invoice';
 
 import 'rxjs/Rx'
-import { ResupplyComponent } from '../resupply/resupply.component';
-import { from } from 'rxjs/observable/from';
 import { Cities } from 'app/models/cities';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 declare var $: any;
 
@@ -65,7 +62,9 @@ export class ShippingComponent implements OnInit {
   public listDestinations: Array<Cities>;
   public listDestinationsByDep: Array<Cities>;
   public selectedCityDest: string = '';
+  public selectedCityOrig: string = '';
   public validSelectedCityDest: boolean = true;
+  public validSelectedCity: boolean = true;
   public checkSede: boolean = false;
   public valStandDeclMTZ: number;
   public unidEmpStandMTZ: number;
@@ -415,7 +414,7 @@ export class ShippingComponent implements OnInit {
     switch (this.selectInvoicesPack[0].transport) {
       case 'RAPIDO OCHOA':
         const apiRapidoochoaDTO = {
-          "cdPoblacionOrigen": "5001000",//Medellin
+          "cdPoblacionOrigen": this.selectedCityOrig,
           "cdPoblacionDestino": poblacionDestino,
           "cdTipoDniCliente": "NI",
           "nmPesoDeclarado": this.pesoPack,
@@ -434,7 +433,11 @@ export class ShippingComponent implements OnInit {
           "nmFormaDePago": "CRÉDITO"
         }
 
-        this._shippingService.createGuiaRapidoochoa(apiRapidoochoaDTO, invoices).subscribe(
+        console.log("**************************************");
+        console.log(apiRapidoochoaDTO);
+        console.log("**************************************");
+
+        /*this._shippingService.createGuiaRapidoochoa(apiRapidoochoaDTO, invoices).subscribe(
           response => {
             if (response.code == 0) {
               //Registramos shipping en tablas temporales
@@ -454,7 +457,7 @@ export class ShippingComponent implements OnInit {
             console.error(error);
             this.redirectIfSessionInvalid(error);
           }
-        );
+        );*/
         break;
       case 'OLA':
         const apiOlaDTO = {
