@@ -434,7 +434,11 @@ export class ShippingComponent implements OnInit {
           "nmFormaDePago": "CRÉDITO"
         }
 
-        this._shippingService.createGuiaRapidoochoa(apiRapidoochoaDTO, invoices).subscribe(
+        console.log("**************************************");
+        console.log(apiRapidoochoaDTO);
+        console.log("**************************************");
+
+        /*this._shippingService.createGuiaRapidoochoa(apiRapidoochoaDTO, invoices).subscribe(
           response => {
             if (response.code == 0) {
               //Registramos shipping en tablas temporales
@@ -454,7 +458,7 @@ export class ShippingComponent implements OnInit {
             console.error(error);
             this.redirectIfSessionInvalid(error);
           }
-        );
+        );*/
         break;
       case 'OLA':
         const apiOlaDTO = {
