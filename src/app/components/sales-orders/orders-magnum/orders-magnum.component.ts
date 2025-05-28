@@ -186,9 +186,10 @@ export class OrdersMagnumComponent implements OnInit {
           || ord.cardCode.toLowerCase().includes(this.searchFilter)
           || ord.cardName.toLowerCase().includes(this.searchFilter)
           || (ord.assignedPickingEmployee && ord.assignedPickingEmployee.toLowerCase().includes(this.searchFilter))
-          || ord.address.toLocaleLowerCase().includes(this.searchFilter)
-          || (ord.whsCode == '05' ? 'CARTAGENA' : (ord.whsCode == '26' ? 'CALI' : 'BOGOTÁ')).toLocaleLowerCase().includes(this.searchFilter)
-          || ord.marca.toLocaleLowerCase().includes(this.searchFilter)) {
+          || ord.address.toLowerCase().includes(this.searchFilter)
+          || (ord.whsCode == '05' ? 'CARTAGENA' : (ord.whsCode == '26' ? 'CALI' : 'BOGOTÁ')).toLowerCase().includes(this.searchFilter)
+          || ord.marca.toLowerCase().includes(this.searchFilter)
+          || ord.promotion.toLowerCase().includes(this.searchFilter)) {
           this.filteredOrders.push(ord);
         }
       }

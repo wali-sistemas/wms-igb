@@ -262,6 +262,18 @@
                         <label for="transport" style="font-size: 12px">{{fv.transport}}</label>
                     </div>
                 </div>
+                <div class="row" *ngIf="selectedTransp=='RAPIDO OCHOA'">
+                  <div class="col-xs-12">
+                    <select id="origen" class="form-control input-lg" [(ngModel)]="selectedCityOrig" name="selectedCityOrig">
+                            <option value="" disabled>Seleccione ciudad de origen</option>
+                            <option value="5001000">MEDELLÍN</option>
+                            <option value="7600100">CALI</option>
+                            <option value="1300100">CARTAGENA</option>
+                            <option value="1100100">BOGOTÁ</option>
+                        </select>
+                  </div>
+                </div>
+                <br />
                 <div class="row">
                     <div class="col-xs-12">
                         <select id="typePack" class="form-control input-lg" [(ngModel)]="selectedTypePack"
