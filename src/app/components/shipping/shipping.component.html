@@ -273,6 +273,17 @@
                         </select>
                   </div>
                 </div>
+                <div class="row" *ngIf="selectedTransp=='TRANSPRENSA'">
+                  <div class="col-xs-12">
+                    <select id="origen" class="form-control input-lg" [(ngModel)]="selectedCityOrig" name="selectedCityOrig">
+                            <option value="" disabled>Seleccione ciudad de origen</option>
+                            <option value="05001000">MEDELLÍN</option>
+                            <option value="76001000">CALI</option>
+                            <option value="11001000">BOGOTÁ</option>
+                            <option value="05380000">LA ESTRELLA</option>
+                        </select>
+                  </div>
+                </div>
                 <br />
                 <div class="row">
                     <div class="col-xs-12">
