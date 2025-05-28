@@ -351,6 +351,7 @@ export class ShippingComponent implements OnInit {
     this.selectInvoicesPack = new Array<ShippingInvoice>();
     this.listDestinationsByDep = new Array<Cities>();
     this.selectedCityDest = '';
+    this.selectedCityOrig = '';
     this.checkSede = false;
     this.selectedTypeProduct = '';
   }
@@ -433,11 +434,7 @@ export class ShippingComponent implements OnInit {
           "nmFormaDePago": "CRÉDITO"
         }
 
-        console.log("**************************************");
-        console.log(apiRapidoochoaDTO);
-        console.log("**************************************");
-
-        /*this._shippingService.createGuiaRapidoochoa(apiRapidoochoaDTO, invoices).subscribe(
+        this._shippingService.createGuiaRapidoochoa(apiRapidoochoaDTO, invoices).subscribe(
           response => {
             if (response.code == 0) {
               //Registramos shipping en tablas temporales
@@ -457,7 +454,7 @@ export class ShippingComponent implements OnInit {
             console.error(error);
             this.redirectIfSessionInvalid(error);
           }
-        );*/
+        );
         break;
       case 'OLA':
         const apiOlaDTO = {
@@ -562,7 +559,7 @@ export class ShippingComponent implements OnInit {
           "nombrer": "IGB MOTORCYCLE PARTS S.A.S",
           "direccionr": "CALLE 98 SUR # 42-225 BOB 114",
           "telefonor": "4442025",
-          "codCiudadr": "05380000", //La Estrella
+          "codCiudadr": this.selectedCityOrig,
           //Destino
           "tipoDocumentod": "1",
           "documentod": this.selectInvoicesPack[0].cardCode.replace('C', ''),

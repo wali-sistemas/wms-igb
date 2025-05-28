@@ -155,7 +155,13 @@ export class OrdersMagnumComponent implements OnInit {
     this.address = order.address;
     this.comments = order.comments;
     this.selectedTransp = order.transp;
-    this.qtyUnd = order.qty;
+
+    if (order.promotion == "COMBO") {
+      this.qtyUnd = order.qty*2;
+    } else {
+      this.qtyUnd = order.qty;
+    }
+
     if (this.qtyUnd <= 6) {
       this.lio = 1;
     } else {
