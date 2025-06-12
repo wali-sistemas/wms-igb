@@ -14,7 +14,6 @@ export class OpenAIService {
   }
 
   public getApikeyOpenAI() {
-    console.log("Ingreso al servicio de consulta de apikey");
     return this._http.get(this.urlManager + 'chatbot/open-ai/apikey')
       .map(res => res.json());
   }
