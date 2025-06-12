@@ -434,11 +434,7 @@ export class ShippingComponent implements OnInit {
           "nmFormaDePago": "CRÉDITO"
         }
 
-        console.log("**************************************");
-        console.log(apiRapidoochoaDTO);
-        console.log("**************************************");
-
-        /*this._shippingService.createGuiaRapidoochoa(apiRapidoochoaDTO, invoices).subscribe(
+        this._shippingService.createGuiaRapidoochoa(apiRapidoochoaDTO, invoices).subscribe(
           response => {
             if (response.code == 0) {
               //Registramos shipping en tablas temporales
@@ -458,7 +454,7 @@ export class ShippingComponent implements OnInit {
             console.error(error);
             this.redirectIfSessionInvalid(error);
           }
-        );*/
+        );
         break;
       case 'OLA':
         const apiOlaDTO = {
@@ -735,7 +731,7 @@ export class ShippingComponent implements OnInit {
             //Remite
             "documentor": localStorage.getItem('igb.selectedCompany') == 'IGB' ? "18483" : "",
             "nombrer": localStorage.getItem('igb.selectedCompany') == 'IGB' ? "IGB MOTORCYCLE PARTS S.A.S" : "MOTOZONE S.A.S",
-            "codCiudadr": "05380", //La Estrella
+            "codCiudadr": this.selectedCityOrig,
             //Destino
             "tipoDocumentod": "1",
             "documentod": this.selectInvoicesPack[0].cardCode.replace('C', ''),
