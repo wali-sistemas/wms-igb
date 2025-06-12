@@ -351,6 +351,7 @@ export class ShippingComponent implements OnInit {
     this.selectInvoicesPack = new Array<ShippingInvoice>();
     this.listDestinationsByDep = new Array<Cities>();
     this.selectedCityDest = '';
+    this.selectedCityOrig = '';
     this.checkSede = false;
     this.selectedTypeProduct = '';
   }
