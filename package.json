@@ -24,7 +24,7 @@
     "chart.js": "^2.7.2",
     "core-js": "^2.4.1",
     "enhanced-resolve": "^3.3.0",
-    "mic-recorder-to-mp3": "^2.2.1",
+    "mic-recorder-to-mp3": "^2.2.2",
     "ng2-charts": "^1.6.0",
     "rxjs": "^5.1.0",
     "zone.js": "^0.8.4"
