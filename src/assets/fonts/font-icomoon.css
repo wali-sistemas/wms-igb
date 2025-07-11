@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?hlyj6h');
-  src:  url('fonts/icomoon.eot?hlyj6h#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?hlyj6h') format('truetype'),
-    url('fonts/icomoon.woff?hlyj6h') format('woff'),
-    url('fonts/icomoon.svg?hlyj6h#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?y37ye8');
+  src:  url('fonts/icomoon.eot?y37ye8#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?y37ye8') format('truetype'),
+    url('fonts/icomoon.woff?y37ye8') format('woff'),
+    url('fonts/icomoon.svg?y37ye8#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -25,8 +25,11 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-clip:before {
-  content: "\e9b3";
+.icon-TABLET:before {
+  content: "\e9b4";
+}
+.icon-PDA:before {
+  content: "\e9b5";
 }
 .icon-add-customer:before {
   content: "\e99f";
@@ -498,6 +501,9 @@
 }
 .icon-radio_checked:before {
   content: "\e926";
+}
+.icon-clip:before {
+  content: "\e9b3";
 }
 .icon-block:before {
   content: "\e14b";
