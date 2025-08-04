@@ -371,7 +371,7 @@ export class ShippingComponent implements OnInit {
 
       if (this.selectInvoicesPack.length == 1) {
         this.selectInvoice = this.selectInvoicesPack[i].docNum;
-        this.pesoPack = this.selectInvoicesPack[i].unidEmpStand;
+        this.pesoPack = this.selectInvoicesPack[i].unidEmpStand == null ? 1 : this.selectInvoicesPack[i].unidEmpStand;
         this.valorDeclPack = this.selectInvoicesPack[i].valStandDecl;
       } else {
         this.pesoPack = this.selectInvoicesPack[i].unidEmpStand * this.selectInvoicesPack.length;
