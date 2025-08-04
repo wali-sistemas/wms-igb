@@ -279,7 +279,7 @@ export class WalletMTZ implements OnInit {
           total: total
         }
       },
-      payer: {
+      buyer: {
         documentType: firstInvoice.documentType,
         document: cleanedDocument,
         name: firstInvoice.name,
