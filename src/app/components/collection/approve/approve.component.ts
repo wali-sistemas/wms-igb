@@ -45,10 +45,20 @@ export class ApproveComponent {
       response => {
         this.invoices = response.content;
         this.filteredInvoices = response.content;
-        this.locations = this.invoices.map((item, i) => { return item.location })
+
+        // Si no hay facturas, mostrar mensaje
+        if (!this.invoices || this.invoices.length === 0) {
+          this.changeInvoiceMessage = 'No se encontraron facturas para mostrar.';
+        } else {
+          this.changeInvoiceMessage = null;
+        }
+
+        this.locations = this.invoices.map(item => item.location);
         this.filteredLocations = Array.from(new Set(this.locations));
+
         $('#modal_transfer_process').modal('hide');
-      }, error => {
+      },
+      error => {
         $('#modal_transfer_process').modal('hide');
         console.error(error);
         this.redirectIfSessionInvalid(error);
@@ -120,6 +130,11 @@ export class ApproveComponent {
   public getScrollTop() {
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0;
+  }
+
+  public onFilterInput(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.filter = input.value.replace(/\s+/g, '');
   }
 
   public clear() {
