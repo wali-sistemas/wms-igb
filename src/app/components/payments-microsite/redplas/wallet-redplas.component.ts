@@ -30,6 +30,7 @@ export class WalletRedplas implements OnInit {
   public filteredInvoices: WalletInvoice[] = [];
   public selectedInvoice: WalletInvoice;
   public paymentsReceipts: PaymentReceipt[] = [];
+  public holdInvoices: string[] = [];
   public totalToPay: number = 0;
   public newTotal: number = 0;
   public timeLeft: number = 600;
@@ -39,38 +40,112 @@ export class WalletRedplas implements OnInit {
   public showAlert: boolean = false;
   public isPayButtonDisabled: boolean = true;
   public countdownInterval: any;
+  public showPaymentConfirmation: boolean = false;
+  public showEditModal: boolean = false;
+  public showFAQModal = false;
 
   constructor(private _router: Router, private _paymentsMicrositeService: PaymentsMicrositeService, private _userService: UserService, private _cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
     $('#cardCode').focus();
+    this.releaseInvoices();
+    this.getDetailsInvoice();
   }
 
   public loadWompiScript() {
     this.isWompiFormVisible = true;
-    this.buildReference();
-    this.buildIntegrity();
 
-    const script = document.createElement('script');
-    script.src = "https://checkout.wompi.co/widget.js";
-    script.setAttribute("data-render", "button");
-    script.setAttribute("data-public-key", "pub_prod_xsTrvZjX3GMmcdBJFC1PFBCwJ9HXzhuy");
-    script.setAttribute("data-currency", "COP");
-    script.setAttribute("data-amount-in-cents", (this.totalToPay * 100).toString());
-    script.setAttribute("data-reference", this.fullReference);
-    script.setAttribute("data-signature:integrity", this.input);
-    script.setAttribute("data-redirect-url", "https://redplas.co/");
-    script.setAttribute("data-customer-data:email", "contabilidad@redplas.co");
-    // Añadir el script al formulario
-    const wompiForm = document.getElementById('wompiForm');
-    wompiForm.appendChild(script);
-    script.onload = () => {
-      const wompiButton = wompiForm.querySelector('button');
-      if (wompiButton) {
-        wompiButton.style.display = 'none';
-        wompiButton.click();
+    // 1. Registrar facturas en hold
+    this.prepareAndSendPaymentSession();
+    this.buildReference(); // Genera la referencia completa
+    this.buildIntegrityAndLoadScript(); // Genera la firma y carga el script cuando esté lista
+  }
+
+  private buildIntegrityAndLoadScript() {
+    const KeyIntegrityWompi = 'prod_integrity_dGmcUuwbu3jJEEICqnC2zR9K4B60eBhD';
+    this.keyIntegrity = `${this.fullReference}${(this.totalToPay * 100)}COP${KeyIntegrityWompi}`;
+
+    this._paymentsMicrositeService.getKeySHA256(this.keyIntegrity).subscribe(
+      response => {
+        this.input = response.content;
+
+        const script = document.createElement('script');
+        script.src = "https://checkout.wompi.co/widget.js";
+        script.setAttribute("data-render", "button");
+        script.setAttribute("data-public-key", "pub_prod_xsTrvZjX3GMmcdBJFC1PFBCwJ9HXzhuy");
+        script.setAttribute("data-currency", "COP");
+        script.setAttribute("data-amount-in-cents", (this.totalToPay * 100).toString());
+        script.setAttribute("data-reference", this.fullReference);
+        script.setAttribute("data-signature:integrity", this.input);
+        script.setAttribute("data-redirect-url", "https://redplas.co/");
+        script.setAttribute("data-customer-data:email", "contabilidad@redplas.co");
+
+        const wompiForm = document.getElementById('wompiForm');
+        wompiForm.innerHTML = ''; // Limpia scripts anteriores si los hay
+        wompiForm.appendChild(script);
+
+        script.onload = () => {
+          const wompiButton = wompiForm.querySelector('button');
+          if (wompiButton) {
+            wompiButton.style.display = 'none';
+            wompiButton.click(); // Opcional: abre el widget automáticamente
+          }
+        };
+      },
+      error => {
+        console.error('Error al obtener el token SHA256', error);
       }
+    );
+  }
+
+  // Facturas en hold
+  public prepareAndSendPaymentSession() {
+    if (this.selectedInvoices.length === 0) return;
+    const invoiceReferences = this.selectedInvoices.map(inv => inv.reference).join(',');
+    let payerDocument = this.selectedInvoices[0].document.split('-')[0];
+    const paymentSession = {
+      u_invoice_id: invoiceReferences,
+      u_user_id: payerDocument,
+      u_status: "Y"
     };
+    this._paymentsMicrositeService.sendPaymentSession(paymentSession, this.selectedCompany).subscribe(
+      response => {
+        console.info("Facturas en hold registradas:", response);
+        this.getHoldInvoices(); // actualiza visualmente las facturas retenidas
+      },
+      error => {
+        console.error("Error al registrar la sesión de pago:", error);
+      }
+    );
+  }
+
+  public releaseInvoices() {
+    this._paymentsMicrositeService.releaseInvoices(this.selectedCompany).subscribe(
+      response => {
+        console.log("Facturas expiradas liberadas:", response.message);
+      },
+      error => {
+        console.error("Error al liberar facturas expiradas:", error);
+      }
+    );
+  }
+
+  public getHoldInvoices() {
+    this._paymentsMicrositeService.getHoldInvoices(this.cardCode, this.selectedCompany).subscribe(
+      response => {
+        this.holdInvoices = response.invoices; // lista de referencias
+        this.updateInvoicesStatus(); // marca cuáles están en hold
+      },
+      error => {
+        console.error("Error al obtener facturas en hold:", error);
+      }
+    );
+  }
+
+  public updateInvoicesStatus() {
+    this.walletInvoices.forEach(invoice => {
+      invoice.isHold = this.holdInvoices.includes(invoice.reference);
+    });
   }
 
   // Método para construir llave de integridad
@@ -113,11 +188,13 @@ export class WalletRedplas implements OnInit {
   // Método para obtener los documentos por cliente
   public getDetailsInvoice() {
     this.isLoading = true;
+
     this._paymentsMicrositeService.getInvoicesDetail(this.cardCode, this.selectedCompany).subscribe(
       response => {
         this.walletInvoices = response;
         this.filteredInvoices = [...this.walletInvoices];
         if (this.walletInvoices.length > 0) {
+          this.getHoldInvoices(); // Marca las facturas en hold una vez estén cargadas
           this.startCountdown();
         } else {
           this.noInvoicesMessage = 'No se encontraron documentos relacionados';
@@ -202,26 +279,55 @@ export class WalletRedplas implements OnInit {
     this.fullReference = `${this.paymentReference}-${invoicesReference}-idC${this.cardCode}id`;
   }
 
-  // Método para abrir modal de modificar valor
-  public togglePopover(invoice: WalletInvoice) {
-    if (this.selectedInvoice === invoice) {
-      this.selectedInvoice = null;
-    } else {
-      this.selectedInvoice = invoice;
-      this.newTotal = Number(invoice.saldoDocumentoAdicional);
-    }
+  // Método para abrir el modal
+  public openPaymentConfirmation() {
+    this.showPaymentConfirmation = true;
+  }
+
+  // Método para confirmar el pago
+  public confirmPayment() {
+    this.showPaymentConfirmation = false;
+    this.clearInput();
+  }
+
+  // Método para cancelar el pago
+  public cancelPayment() {
+    this.showPaymentConfirmation = false;
+  }
+
+  //Abrir Modal preguntas frecuentes
+  openFAQModal() {
+    this.showFAQModal = true;
+  }
+
+  // Cerrar Modal preguntas frecuentes
+  closeFAQModal() {
+    this.showFAQModal = false;
+  }
+
+  public get formattedNewTotal(): string {
+    return this.newTotal.toLocaleString('es-CO');
   }
 
   // Cierra el popover
   public closePopover() {
     this.selectedInvoice = null;
+    this.showEditModal = false;
   }
 
-  // Método para modificar el valor total
-  public updateTotal() {
-    if (this.selectedInvoice && this.newTotal > 0) {
-      this.selectedInvoice.saldoDocumentoAdicional = Number(this.newTotal);
+  public updateTotal(invoice: WalletInvoice) {
+    if (invoice && this.newTotal > 0) {
+      invoice.saldoDocumentoAdicional = Number(this.newTotal);
       this.closePopover();
+
+      // Vuelve a calcular el total a pagar
+      this.totalToPay = this.selectedInvoices.reduce((acc, inv) => {
+        const value = Number(inv.saldoDocumentoAdicional);
+        return acc + (isNaN(value) ? 0 : value);
+      }, 0);
+
+      // También actualiza la concatenación para la referencia
+      this.updateConcatenatedInvoices();
     }
   }
 
@@ -286,6 +392,17 @@ export class WalletRedplas implements OnInit {
     }
   }
 
+  // Método para abrir modal de modificar valor
+  public togglePopover(invoice: WalletInvoice) {
+    this.showEditModal = true;
+    if (this.selectedInvoice === invoice) {
+      this.selectedInvoice = null;
+    } else {
+      this.selectedInvoice = invoice;
+      this.newTotal = Number(invoice.saldoDocumentoAdicional);
+    }
+  }
+
   // Método para formatear  valores del contador a minutos y segundos
   public formatTime(seconds: number): string {
     const minutes = Math.floor(seconds / 60);
@@ -293,5 +410,12 @@ export class WalletRedplas implements OnInit {
     const formattedMinutes = minutes < 10 ? '0' + minutes : minutes.toString();
     const formattedSeconds = remainingSeconds < 10 ? '0' + remainingSeconds : remainingSeconds.toString();
     return `${formattedMinutes}:${formattedSeconds}`;
+  }
+
+  // Método para manejar el input sin afectar el valor real
+  public formatInput(event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    const rawValue = inputElement.value.replace(/[^0-9]/g, '');
+    this.newTotal = Number(rawValue);
   }
 }

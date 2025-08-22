@@ -21,6 +21,74 @@
     <button class="alert-button" (click)="closeAlert()">Aceptar</button>
   </div>
 </div>
+<!-- Modal de Edición de Pago -->
+<div *ngIf="showEditModal" class="edit-modal-overlay">
+  <div class="edit-modal-content">
+    <h3>Modificar Valor</h3>
+    <form>
+      <label for="editTotal">Nuevo Valor</label>
+      <input type="text" class="form-control" id="editTotal" [value]="formattedNewTotal" (input)="formatInput($event)"
+        name="newTotal">
+      <div class="edit-modal-actions">
+        <button type="button" class="btn btn-primary" (click)="updateTotal(selectedInvoice)">Guardar</button>
+        <button type="button" class="btn btn-secondary" (click)="closePopover()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- Modal de Preguntas Frecuentes -->
+<div *ngIf="showFAQModal" class="modal-overlay">
+  <div class="modal-content">
+    <button class="close-btn" (click)="closeFAQModal()">&times;</button>
+    <h2 class="modal-title">Preguntas Frecuentes</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <h3>¿Qué es WOMPI?</h3>
+        <p>WOMPI es la plataforma de pagos electrónicos que usa IGB para procesar
+          en línea las transacciones generadas en la tienda virtual con las formas de pago habilitadas para tal fin.</p>
+      </div>
+      <div class="faq-item">
+        <h3>¿Cómo puedo pagar?</h3>
+        <p>En la tienda virtual de IGB podrá realizar su pago con los medios
+          habilitados para tal fin: PSE, Visa y MasterCard.</p>
+      </div>
+      <div class="faq-item">
+        <h3>¿Es seguro ingresar mis datos bancarios en este sitio web?</h3>
+        <p>WOMPI cumple con los más altos estándares de seguridad como PCI DSS y encriptación SSL para garantizar
+          la protección de sus datos bancarios.</p>
+      </div>
+      <div class="faq-item">
+        <h3>¿Puedo realizar el pago cualquier día y a cualquier hora?</h3>
+        <p>Sí, los pagos pueden realizarse en línea los 7 días de la semana, las 24 horas del día.</p>
+      </div>
+      <div class="faq-item">
+        <h3>¿Puedo cambiar la forma de pago?</h3>
+        <p>Si aún no ha finalizado su pago, puede volver al paso inicial y elegir otra forma de pago. Una vez finalizada
+          la compra, no es posible cambiar el método de pago.</p>
+      </div>
+      <div class="faq-item">
+        <h3>¿Pagar electrónicamente tiene algún costo adicional?</h3>
+        <p>No, los pagos electrónicos realizados a través de WOMPI no generan costos adicionales para el comprador.
+        </p>
+      </div>
+      <div class="faq-item">
+        <h3>¿Qué debo hacer si mi transacción no concluyó?</h3>
+        <p>Verifique si recibió un correo de confirmación del pago. Si no lo recibió, comuníquese con
+          tesoreria@redplas.co</p>
+      </div>
+      <div class="faq-item">
+        <h3>¿Qué debo hacer si no recibí el comprobante de pago?</h3>
+        <p>Si no recibió el comprobante, comuníquese con tesoreria@igbcolombia.com o al teléfono (604 444 20 25) para
+          solicitarlo nuevamente.</p>
+      </div>
+      <div class="faq-item">
+        <h3>No me llegó el producto que compré, ¿qué hago?</h3>
+        <p>Verifique si la transacción fue exitosa en su extracto bancario. De ser así, revise las políticas de envío en
+          el sitio web.</p>
+      </div>
+    </div>
+  </div>
+</div>
 <!--Modal Pagos-->
 <div class="paymentModal">
   <div id="paymentReceiptsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
@@ -56,8 +124,6 @@
               </tr>
             </tbody>
           </table>
-        </div>
-        <div class="modal-footer">
         </div>
       </div>
     </div>
@@ -179,8 +245,9 @@
             </thead>
             <tbody>
               <tr *ngFor="let invoice of filteredInvoices"
-                [ngClass]="{'invoice-selected': selectedInvoices.includes(invoice)}"
-                (click)="toggleInvoiceSelection(invoice)">
+                [ngClass]="{'invoice-selected': selectedInvoices.includes(invoice),'invoice-hold': invoice.isHold}"
+                (click)="!invoice.isHold && toggleInvoiceSelection(invoice)"
+                [attr.title]="invoice.isHold ? 'Proceso de pago pendiente' : ''">
                 <td>{{invoice.description}}</td>
                 <td>{{invoice.createdAt | date:'dd/MM/yyyy'}}</td>
                 <td>{{invoice.expirationDate | date:'dd/MM/yyyy'}}</td>
@@ -188,23 +255,15 @@
                 <td>{{invoice.valueAddedTax | number}}</td>
                 <td>{{invoice.total | number}}</td>
                 <td>{{invoice.saldoDocumentoAdicional | number}}</td>
+                <!-- Última columna con iconos condicionales -->
                 <td>
-                  <button (click)="togglePopover(invoice)" class="btn btn-link popover-btn">
-                    <span class="icon-edit-3" title="Editar" style="font-size: 19px;"></span>
+                  <span *ngIf="invoice.isHold" class="icon-clock-sand" title="En proceso de pago"
+                    style="font-size: 19px; color: #da0611;"></span>
+
+                  <button *ngIf="!invoice.isHold" (click)="togglePopover(invoice)" class="btn btn-link edit-modal-btn">
+                    <span class="icon-edit-3" title="Editar" style="font-size: 19px; color: #4CAF50;"></span>
                   </button>
                 </td>
-                <!-- Popover para editar el total -->
-                <div class="popover" [ngClass]="{'show': invoice === selectedInvoice}"
-                  *ngIf="invoice === selectedInvoice">
-                  <form>
-                    <label for="newTotal">Modificar Valor</label>
-                    <input type="text" class="form-control" id="newTotal" [(ngModel)]="newTotal" name="newTotal">
-                    <div class="popover-actions">
-                      <button type="button" class="btn btn-primary" (click)="updateTotal()">Guardar</button>
-                      <button type="button" class="btn btn-secondary" (click)="closePopover()">Cancelar</button>
-                    </div>
-                  </form>
-                </div>
               </tr>
             </tbody>
           </table>
@@ -219,8 +278,7 @@
               <div class="invoice-item"><strong>Fecha de Vencimiento:</strong> {{invoice.expirationDate |
                 date:'dd/MM/yyyy'}}</div>
               <div class="invoice-item"><strong>Total:</strong> {{invoice.total | number}}</div>
-              <div class="invoice-item"><strong>Vencido:</strong> {{invoice.saldoDocumentoAdicional |
-                number}}</div>
+              <div class="invoice-item"><strong>Vencido:</strong> {{invoice.saldoDocumentoAdicional | number}}</div>
               <div class="invoice-item">
                 <strong>Total:</strong>
                 <span *ngIf="selectedInvoice !== invoice">{{invoice.total | number}}</span>
@@ -233,7 +291,8 @@
                   <span class="icon-edit-3" title="Editar" style="font-size: 19px;"></span> Editar
                   valor
                 </button>
-                <button *ngIf="selectedInvoice === invoice" (click)="closePopover()" class="btn btn-link popover-btn">
+                <button *ngIf="selectedInvoice === invoice" (click)="updateTotal(invoice)"
+                  class="btn btn-link popover-btn">
                   <span class="icon-check" title="Guardar" style="font-size: 19px;"></span> Guardar
                 </button>
               </div>
@@ -266,6 +325,8 @@
             <span class="glyphicon glyphicon-time"></span>
             <p class="countdown-text">Tiempo restante: {{formatTime(timeLeft)}}</p>
           </div>
+          <!-- Botón para abrir el modal -->
+          <button class="question-button" (click)="openFAQModal()">Preguntas Frecuentes</button>
         </div>
       </div>
     </div>

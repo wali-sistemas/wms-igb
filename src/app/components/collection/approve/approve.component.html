@@ -56,7 +56,8 @@
   <div class="row">
     <div class="col-xs-12 col-md-6">
       <input type="text" class="form-control input-lg" id="filter" name="filter" placeholder="Digitar factura"
-        autocomplete="off" [(ngModel)]="filter" (keyup)="filterInvoices()" style="margin-top: 5px;" />
+        autocomplete="off" [(ngModel)]="filter" (input)="onFilterInput($event)" (keyup)="filterInvoices()"
+        style="margin-top: 5px;" />
     </div>
     <div class="col-xs-12 col-md-6">
       <select class="form-control input-lg" (change)="onLocationSelect()" [(ngModel)]="location"
@@ -84,41 +85,43 @@
     </div>
   </div>
   <!--Tabla Listar Facturas Descktop-->
-  <table id="ordering-table" class="table-desktop">
-    <thead>
-      <tr>
-        <th>Factura</th>
-        <th>NIT</th>
-        <th>Cliente</th>
-        <th>Saldo</th>
-        <th>Categoría</th>
-        <th>Días</th>
-        <th>Fecha</th>
-        <th>Valor</th>
-        <th>Asesor</th>
-        <th>Despachar</th>
-      </tr>
-    </thead>
-    <tbody *ngFor="let filteredInvoices of filteredInvoices">
-      <tr>
-        <td>{{filteredInvoices.docNum}}</td>
-        <td>{{filteredInvoices.cardCode}}</td>
-        <td>{{filteredInvoices.cardName}}</td>
-        <td>{{filteredInvoices.balance | number}}</td>
-        <td>{{filteredInvoices.category}}</td>
-        <td>{{filteredInvoices.day}}</td>
-        <td class="tableData">{{filteredInvoices.docDate}}</td>
-        <td>{{filteredInvoices.docTotal | number}}</td>
-        <td>{{filteredInvoices.slpName}}</td>
-        <td>
-          <label class="switch">
-            <input type="checkbox" class="tableCenter" (click)="handleChecked(filteredInvoices.docNum)">
-            <div class="slider"></div>
-          </label>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="table-container">
+    <table id="ordering-table" class="table-desktop">
+      <thead>
+        <tr>
+          <th>Factura</th>
+          <th>NIT</th>
+          <th>Cliente</th>
+          <th>Saldo</th>
+          <th>Categoría</th>
+          <th>Días</th>
+          <th>Fecha</th>
+          <th>Valor</th>
+          <th>Asesor</th>
+          <th>Despachar</th>
+        </tr>
+      </thead>
+      <tbody *ngFor="let filteredInvoices of filteredInvoices">
+        <tr>
+          <td>{{filteredInvoices.docNum}}</td>
+          <td>{{filteredInvoices.cardCode}}</td>
+          <td>{{filteredInvoices.cardName}}</td>
+          <td>{{filteredInvoices.balance | number}}</td>
+          <td>{{filteredInvoices.category}}</td>
+          <td>{{filteredInvoices.day}}</td>
+          <td class="tableData">{{filteredInvoices.docDate}}</td>
+          <td>{{filteredInvoices.docTotal | number}}</td>
+          <td>{{filteredInvoices.slpName}}</td>
+          <td>
+            <label class="switch">
+              <input type="checkbox" class="tableCenter" (click)="handleChecked(filteredInvoices.docNum)">
+              <div class="slider"></div>
+            </label>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
   <br>
   <!--Tabla Listar Facturas mobile-->
   <table id="ordering-table" class="table-responsive">
