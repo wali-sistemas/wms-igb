@@ -557,11 +557,11 @@
             <div class="col-md-12">
               <div class="seccion">
                 <label>Nombre*</label>
-                <input type="text" class="form-control input-lg" autocomplete="off" maxlength="50"
-                  oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9\/\s]/g, '')"
-                  placeholder="Ej: JAPONESA DE MOTOS Y/O NEIRA DIAZ WILSON ANDRES"
-                  [readonly]="isSearchMode || isEditMode" [(ngModel)]="client.idAdress"
-                  (ngModelChange)="updateProgress()" (blur)="trimInput('idAdress')">
+                <input type="text" class="form-control input-lg" autocomplete="off" maxlength="70" id="name" name="name"
+                  placeholder="Ej: JAPONESA DE MOTOS Y/O NEIRA DIAZ WILSON ANDRES" [readonly]="isSearchMode"
+                  [(ngModel)]="client.cardName" required (ngModelChange)="handleValidation()"
+                  oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9/\/\s]/g, '')"
+                  (blur)="trimInput('cardName')">
               </div>
             </div>
           </div>
@@ -858,6 +858,18 @@
                   Direcciones
                 </h3>
                 <p>Dirección de factura de la mercancía</p>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="seccion">
+                <label>ID Dirección*</label>
+                <input type="text" class="form-control input-lg" autocomplete="off"
+                  oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9\/\s]/g, '')"
+                  placeholder="Ej: JAPONESA DE MOTOS Y/O NEIRA DIAZ WILSON ANDRES"
+                  [readonly]="isSearchMode || isEditMode" [(ngModel)]="client.idAdress"
+                  (ngModelChange)="updateProgress()" (blur)="trimInput('idAdress')">
               </div>
             </div>
           </div>
