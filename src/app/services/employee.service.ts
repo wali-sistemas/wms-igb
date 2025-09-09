@@ -44,4 +44,29 @@ export class EmployeeService {
     return this._http.get(this.urlManager + 'employee/validate-employee-existence/' + companyName + '?id=' + idEmployee + '&birthdate=' + birthdate, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
+
+  public addAfiliadoFemprobien(afiliado) {
+    return this._http.post(this.urlManager + 'employee/femprobien/add-associated', afiliado, { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
+
+  public validateAssociatedExistence(cardcode: string, birthdate: string) {
+    return this._http.get(this.urlManager + 'employee/femprobien/validate-associated-existence?cardcode=' + cardcode + '&birthdate=' + birthdate, { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
+
+  public loadAssociatedRequests() {
+    return this._http.get(this.urlManager + 'employee/femprobien/load-associated-requests?status=PENDIENTE', { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
+
+  public loadAffiliatedEmployees() {
+    return this._http.get(this.urlManager + 'employee/femprobien/load-associated-requests?status=AFILIADO(A)', { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
+
+  public updateStatusAssociatedReques(cardcode: string, status: string) {
+    return this._http.patch(this.urlManager + 'employee/femprobien/update-status-requests?cardcode=' + cardcode + '&status=' + status, null, { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
 }
