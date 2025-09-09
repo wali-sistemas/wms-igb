@@ -69,7 +69,7 @@ export class EmployeeFemprobienComponent {
   // ========== Ciclo de vida ==========
   ngOnInit() {
     this.identity = this._userService.getItentity();
-    const adminUsers = ['jlondonoc', 'jguisao', 'lcano'];
+    const adminUsers = ['jlondonoc', 'jguisao', 'lcano', 'pcolorado', 'sarboleda', 'duribe', 'dbetancur'];
 
     if (this.identity && this.identity.username) {
       this.isAdmin = adminUsers.indexOf(this.identity.username) !== -1;
