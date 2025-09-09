@@ -17,7 +17,6 @@ import { CubicService } from '../../services/cubic.service';
 import { MotorepuestoService } from '../../services/motorepuesto.service';
 
 import 'rxjs/Rx'
-import { ResupplyComponent } from '../resupply/resupply.component';
 
 declare var $: any;
 
@@ -79,6 +78,17 @@ export class PackingComponent implements OnInit {
   public selectedSalesPerson: string;
   public salesPersonList: Array<any>;
   public identity;
+  //Variables creadas para la session de impresión
+  public schema: string = '';
+  public currentUser: string = '';
+  public histLoaded = false;
+  public prevSessions: any[] = [];
+  public prevSessionsCount = 0;
+  public prevTotalBoxes = 0;
+  public prevLastAt = '';
+  public prevLastUser = '';
+  public prevLastPrinter = '';
+  public lastHistoryForOrder: number = null;
 
   constructor(private _userService: UserService, private _packingService: PackingService, private _invoiceService: InvoiceService, private _printService: PrintService, private _router: Router, private _generic: GenericService, private _reportService: ReportService, private _healthchekService: HealthchekService, private _cubicService: CubicService, private _motorepuestoService: MotorepuestoService) {
     this.start();
@@ -110,6 +120,113 @@ export class PackingComponent implements OnInit {
     this.loadCustomers();
     this.listOpenJobs();
     this.isPackingComplete();
+
+    this.schema = this.identity.selectedCompany;
+    this.currentUser = this.identity.username;
+  }
+
+  public onOrderBlur() {
+    this.histLoaded = false;
+    this.prevSessions = [];
+    this.prevSessionsCount = 0;
+    this.prevTotalBoxes = 0;
+    this.prevLastAt = '';
+    this.prevLastUser = '';
+    this.prevLastPrinter = '';
+    if (typeof this.lastHistoryForOrder !== 'undefined') {
+      this.lastHistoryForOrder = null;
+    }
+
+    if (this.orderNumber == null || this.orderNumber <= 0) {
+      this.histLoaded = true;
+      return;
+    }
+
+    this._invoiceService.getPrinterSessions(Number(this.orderNumber), this.identity.selectedCompany).subscribe(
+      response => {
+        if (response && response.code === 0) {
+          const list = response.content || [];
+          this.prevSessions = list;
+          this.prevSessionsCount = list.length;
+
+          if (list.length > 0) {
+            let total = 0;
+            for (let i = 0; i < list.length; i++) {
+              total += Number(list[i].u_box_qty) || 0;
+            }
+            this.prevTotalBoxes = total;
+            const last = list[0];
+            this.prevLastAt = last.u_created_at ? new Date(last.u_created_at).toLocaleString() : '';
+            this.prevLastUser = last.u_username ? last.u_username : 'N/D';
+            this.prevLastPrinter = last.u_printer_name ? last.u_printer_name : 'N/D';
+
+            if (typeof this.lastHistoryForOrder !== 'undefined') {
+              this.lastHistoryForOrder = this.orderNumber;
+            }
+          }
+        } else {
+          console.warn('Historial de impresión no disponible:', response ? response.content : 'Respuesta vacía');
+        }
+        this.histLoaded = true;
+      },
+      error => {
+        console.error('Ocurrió un error consultando historial de impresión.', error);
+        this.histLoaded = true;
+      }
+    );
+  }
+
+  public confirmReprint() {
+    $('#confirm_reprint').modal('hide');
+    $('#modal_transfer_process').modal({ backdrop: 'static', keyboard: false, show: true });
+    this._printAndLog();
+  }
+
+  public cancelReprint() {
+    $('#confirm_reprint').modal('hide');
+  }
+
+  private _printAndLog() {
+    const payload = {
+      u_order_num: Number(this.orderNumber),
+      u_box_qty: Number(this.qtyBox),
+      u_printer_name: this.selectedPrinter,
+      u_username: this.currentUser
+    };
+
+    const RePrintDTO = {
+      orderNumber: this.orderNumber,
+      boxNumber: this.qtyBox,
+      printerName: this.selectedPrinter,
+      assigBoxInvoice: this.autoBox
+    };
+
+    //Imprimir
+    this._printService.reprintOrder(RePrintDTO).subscribe(
+      response => {
+        if (response.code == 0) {
+          this._invoiceService.insertPrinterSession(this.identity.selectedCompany, payload).subscribe(
+            response => {
+              $('#modal_transfer_process').modal('hide');
+              this.exitMessage = 'Reimprimiendo las etiquetas exitosamente.';
+            },
+            error => {
+              console.error('Error registrando la sesión de impresión:', error);
+              $('#modal_transfer_process').modal('hide');
+              this.exitMessage = 'Impresión exitosa (no se pudo registrar el log).';
+            }
+          );
+        } else {
+          $('#modal_transfer_process').modal('hide');
+          this.errorMessage = response.content || 'Error en la impresión.';
+        }
+      },
+      error => {
+        $('#modal_transfer_process').modal('hide');
+        this.errorMessage = 'Lo sentimos. Se produjo un error interno.';
+        console.error('Ocurrió un error re-imprimiendo las etiquetas de empaque.', error);
+      }
+    );
   }
 
   private listSalesPersonActive() {
@@ -126,9 +243,7 @@ export class PackingComponent implements OnInit {
   private listOpenJobs() {
     this._packingService.listOpenJobRecords(this.identity.username).subscribe(
       response => {
-        console.log('registros de packing abiertos: ', response);
         if (response.content.length > 0) {
-          console.log('procesando registros...');
           this.customersListDisabled = true;
           const firstRecord = response.content[0];
           this.selectedOrder = firstRecord[2];
@@ -144,13 +259,9 @@ export class PackingComponent implements OnInit {
               box.boxNumber = record[12];
               box.addItem(record[7], record[9]);
               this.boxes.push(box);
-            } /*else {
-                            //Si hay que agregar la cantidad a una caja existente
-                            //this.boxes[record[12] - 1].addItem(record[7], record[9]);
-                        }*/
+            }
           }
           this.loadCustomerOrders();
-          console.log('termino de procesar los registros. ' + this.boxes.length + ' cajas agregadas');
         }
         this.showAllItems();
       }, error => { console.error('Ocurrio un error procesando ítems para packing.', error); }
@@ -168,7 +279,6 @@ export class PackingComponent implements OnInit {
   private loadCustomers() {
     this._packingService.listCustomers().subscribe(
       response => {
-        console.log('se encontraron los siguientes clientes: ', response.content);
         this.customersList = response.content;
       },
       error => {
@@ -183,7 +293,6 @@ export class PackingComponent implements OnInit {
     this.exitMessage = '';
     this._packingService.listCustomerOrders(this.selectedCustomer).subscribe(
       response => {
-        console.log('se encontraron las siguientes ordenes: ', response.content);
         this.ordersList = response.content;
       },
       error => { console.error('ocurrio un error al consultar las ordenes del cliente. ', error); }
@@ -227,7 +336,6 @@ export class PackingComponent implements OnInit {
       this.boxes.push(newBox);
       return;
     }
-    console.log('Se selecciono la caja # ' + this.qtyBox);
     newBox.boxDisplayName = 'Caja #' + this.qtyBox;
     newBox.boxNumber = +this.qtyBox;
     newBox.addItem(this.itemCode, this.itemQuantity);
@@ -308,6 +416,7 @@ export class PackingComponent implements OnInit {
     this.errorMessageModal = '';
     this.orderNumber = null;
     this.qtyBox = null;
+    this.clearSessionHistory()
   }
 
   private isPackingComplete() {
@@ -372,14 +481,13 @@ export class PackingComponent implements OnInit {
       show: true
     });
     this.deliveryErrorMessage = '';
-    console.log('creando documento sap para idPackingOrder=' + this.idPackingOrder + ' OrderNumber=' + this.selectedOrder);
     localStorage.setItem('selectedOrder', JSON.stringify(this.selectedOrder));
 
     this._packingService.createDelivery(this.idPackingOrder).subscribe(
       response => {
         if (response.code == 0) {
           this.processDeliveryStatus = 'done';
-          //TODO: cerrando packing en MySql
+          //cerrando packing
           this.closePackingOrder(this.idPackingOrder, this.identity.username);
           this.idPackingOrder = null;
           this.customersListDisabled = true;
@@ -413,7 +521,6 @@ export class PackingComponent implements OnInit {
       keyboard: false,
       show: true
     });
-    console.log('cancelando packing order ' + this.idPackingOrder);
     this._packingService.cleanPackingOrder(this.idPackingOrder).subscribe(
       response => {
         $('#modal_transfer_process').modal('hide');
@@ -427,43 +534,17 @@ export class PackingComponent implements OnInit {
   }
 
   public loadPrinters() {
-    console.log('listando impresoras habilitadas...');
     $('#close_confirmation').modal('hide');
     this._printService.listEnabledPrinters().subscribe(
       response => {
         if (response.code == 0) {
           this.printersList = response.content;
           $('#modal_transfer_process').modal('hide');
-          console.log('Nro de etiqueta a imprimir: ' + this.qtyBox);
           $('#printer_selection').modal('show');
         }
       }, error => {
         console.error(error);
         $('#modal_transfer_process').modal('hide');
-      }
-    );
-  }
-
-  private printLabels() {
-    this.processPrintLabelsStatus = 'inprogress';
-    this._printService.printLabels(this.idPackingOrder, this.selectedPrinter).subscribe(
-      response => {
-        if (response.code == 0) {
-          if (response.content) {
-            //todas las etiquetas se imprimieron
-            this.processPrintLabelsStatus = 'done';
-          } else {
-            //no se imprimieron correctamente todas las etiquetas
-            this.processPrintLabelsStatus = 'warn';
-          }
-        } else {
-          this.processPrintLabelsStatus = 'error';
-          this.deliveryErrorMessage += response.content;
-        }
-      }, error => {
-        console.error(error);
-        this.processPrintLabelsStatus = 'error';
-        this.deliveryErrorMessage += 'Ocurrió un error al imprimir las etiquetas de empaque. Deben imprimirse manualmente';
       }
     );
   }
@@ -492,7 +573,6 @@ export class PackingComponent implements OnInit {
     let printReportDTO = {
       "id": JSON.parse(localStorage.getItem('selectedOrder')), "copias": 0, "documento": documento, "companyName": this.identity.selectedCompany, "origen": origen, "imprimir": false
     }
-    console.log(printReportDTO);
     this._reportService.generateReport(printReportDTO).subscribe(
       response => {
         if (response.code == 0) {
@@ -577,7 +657,6 @@ export class PackingComponent implements OnInit {
 
   public createOrderCubic() {
     this.processOrderLinkStatus = 'inprogress';
-
     this._cubicService.addOrder(this.docEntryInvoice).subscribe(
       response => {
         this.processOrderLinkStatus = 'done';
@@ -590,7 +669,6 @@ export class PackingComponent implements OnInit {
   }
 
   public createPurchaseInvoice(docNum) {
-    console.log('Entro al metodo de crear factura de compra');
     this._motorepuestoService.postCreatePurchaseInvoice(docNum).subscribe(
       response => {
         console.log(response);
@@ -764,45 +842,56 @@ export class PackingComponent implements OnInit {
 
   public reprintOrder() {
     $("#reimprimir").modal('hide');
-    $('#modal_transfer_process').modal({
-      backdrop: 'static',
-      keyboard: false,
-      show: true
-    });
-    if (this.orderNumber == null || this.orderNumber <= 0 || this.qtyBox == null || this.qtyBox <= 0 ||
+    $('#modal_transfer_process').modal({ backdrop: 'static', keyboard: false, show: true });
+
+    if (this.orderNumber == null || this.orderNumber <= 0 ||
+      this.qtyBox == null || this.qtyBox <= 0 ||
       this.selectedPrinter == null || this.selectedPrinter.length <= 0) {
-      $("#reimprimir").modal('hide');
       $('#modal_transfer_process').modal('hide');
-      this.errorMessage = 'Debe ingresar todos los datos obligatorios.'
-    } else {
-      if (this.qtyBox.toString().length >= 3) {
-        this.errorMessage = "Error, demasiadas etiquetas para imprimir."
-        $('#modal_transfer_process').modal('hide');
-      } else {
-        let RePrintDTO = {
-          "orderNumber": this.orderNumber,
-          "boxNumber": this.qtyBox,
-          "printerName": this.selectedPrinter,
-          "assigBoxInvoice": this.autoBox
-        }
-        this._printService.reprintOrder(RePrintDTO).subscribe(
-          response => {
-            if (response.code == 0) {
-              $('#modal_transfer_process').modal('hide');
-              this.exitMessage = 'Reimprimiendo las etiquetas exitosamente.';
-            } else {
-              $('#modal_transfer_process').modal('hide');
-              this.errorMessage = response.content;
-            }
-          },
-          error => {
-            $('#modal_transfer_process').modal('hide');
-            this.errorMessage = "Lo sentimos. Se produjo un error interno."
-            console.error("Ocurrio un error re-imprimiendo las etiquetas de empaque.", error);
-          }
-        );
-      }
+      this.errorMessage = 'Debe ingresar todos los datos obligatorios.';
+      return;
     }
+    if (this.qtyBox.toString().length >= 3) {
+      $('#modal_transfer_process').modal('hide');
+      this.errorMessage = 'Error, demasiadas etiquetas para imprimir.';
+      return;
+    }
+
+    var companyName = (this.identity && this.identity.selectedCompany) ? this.identity.selectedCompany : 'IGB';
+
+    this._invoiceService.getPrinterSessions(Number(this.orderNumber), companyName)
+      .subscribe(
+        (checkResp: any) => {
+          var prev = (checkResp && checkResp.content) ? checkResp.content : [];
+
+          if (prev.length > 0) {
+            var totalBoxes = 0;
+            for (var i = 0; i < prev.length; i++) {
+              var n = Number(prev[i].u_box_qty);
+              if (!isNaN(n)) { totalBoxes += n; }
+            }
+            var last = prev[0];
+
+            this.prevSessions = prev;
+            this.prevSessionsCount = prev.length;
+            this.prevTotalBoxes = totalBoxes;
+            this.prevLastAt = (last && last.u_created_at) ? new Date(last.u_created_at).toLocaleString() : 'N/D';
+            this.prevLastUser = (last && last.u_username) ? last.u_username : 'N/D';
+            this.prevLastPrinter = (last && last.u_printer_name) ? last.u_printer_name : 'N/D';
+
+            $('#modal_transfer_process').modal('hide');
+            $('#confirm_reprint').modal('show');
+            return;
+          }
+
+          this._printAndLog();
+        },
+        (e: any) => {
+          console.error('Error consultando sesiones previas:', e);
+          $('#modal_transfer_process').modal('hide');
+          this.errorMessage = 'No fue posible validar sesiones previas de impresión.';
+        }
+      );
   }
 
   public resetSesionId() {
@@ -904,5 +993,16 @@ export class PackingComponent implements OnInit {
   public getScrollTop() {
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0;
+  }
+
+  private clearSessionHistory() {
+    this.histLoaded = false;
+    this.prevSessions = [];
+    this.prevSessionsCount = 0;
+    this.prevTotalBoxes = 0;
+    this.prevLastAt = '';
+    this.prevLastUser = '';
+    this.prevLastPrinter = '';
+    this.lastHistoryForOrder = null;
   }
 }
