@@ -15,7 +15,7 @@ declare var $: any;
 
 export class EmployeeVacationComponent {
   public selectedCompany: string = '';
-  public identity;
+  public identity: any;
   public cedula: number;
   public jefeInmediato: string = '';
   public logo: string = '';
@@ -32,9 +32,23 @@ export class EmployeeVacationComponent {
   public comentarios: string = '';
   public url: string;
   public showErrorModal = false;
-  public errorMessage: string;
+  public errorMessage: string = '';
+  public successMessage: string = '';
+  public tipoVacaciones: 'DINERO' | 'TIEMPO' | 'AMBAS' | '' = '';
+  public formLocked = false;
+  public showPanels = false;
 
-  constructor(private _reportService: ReportService, private _userService: UserService, private _router: Router, private _employeeService: EmployeeService) {
+  private readonly LOGO_BY_COMPANY: Record<string, string> = {
+    'DSM_NOVAWEB': '1',
+    'INVERSUR_NOVAWEB': '2',
+    'IGB_NOVAWEB': '3',
+    'MOTOREPUESTOS_NOVAWEB': '4',
+    'MTZ_NOVAWEB': '5',
+    'VILNA_NOVAWEB': '6',
+    'WALI_NOVAWEB': '7',
+  };
+
+  constructor(private _reportService: ReportService, private _userService: UserService, private _router: Router) {
     this.url = GLOBAL.urlShared;
   }
 
@@ -45,7 +59,7 @@ export class EmployeeVacationComponent {
     }
   }
 
-  private redirectIfSessionInvalid(error) {
+  private redirectIfSessionInvalid(error: any) {
     if (error && error.status && error.status == 401) {
       localStorage.removeItem('igb.identity');
       localStorage.removeItem('igb.selectedCompany');
@@ -53,42 +67,48 @@ export class EmployeeVacationComponent {
     }
   }
 
-  public generateVacation() {
-    let printReportDTO = {
-      id: this.cedula,
-      jefeInmediato: this.jefeInmediato.toString(),
-      logo: this.logo.toString(),
-      fechaInicio: this.fechaInicio.toString(),
-      fechaFin: this.fechaFin.toString(),
-      fechaReintegro: this.fechaReintegro.toString(),
-      diasSolicitados: this.diasSolicitados.toString(),
-      numDiasSolicitadosDinero: this.vacacionesDinero.toString(),
-      fechaInicioPeriodo: this.fecha1.toString(),
-      fechaFinPeriodo: this.fecha2.toString(),
-      diasDisfrutados: this.diasDisfrutados.toString(),
-      diasPendientes: this.diasPendientes.toString(),
-      comentarios: this.comentarios.toString()
-    };
-
-    this._reportService.generateVacation(printReportDTO, this.selectedCompany).subscribe(
-      response => {
-        if (response.code === 0) {
-          this.errorMessage = '';
-          window.open(response.content, '_blank');
-          this.cancelForm();
-        } else {
-          this.errorMessage = 'La generación de la solicitud de vacaciones no fue exitosa';
-        }
-      },
-      error => {
-        console.error('Error al generar el reporte:', error);
-        this.errorMessage = 'La generación de la solicitud de vacaciones no fue exitosa';
-        this.redirectIfSessionInvalid(error);
-      }
-    );
+  public isDinero() {
+    return this.tipoVacaciones === 'DINERO';
   }
 
-  public cancelForm(): void {
+  public isTiempo() {
+    return this.tipoVacaciones === 'TIEMPO';
+  }
+
+  public isAmbas() {
+    return this.tipoVacaciones === 'AMBAS';
+  }
+
+  public onTipoVacacionesChange() {
+    if (this.isDinero()) {
+      this.fechaInicio = '';
+      this.fechaFin = '';
+      this.fechaReintegro = '';
+      this.diasSolicitados = null;
+    } else if (this.isTiempo()) {
+      this.vacacionesDinero = null;
+    }
+  }
+
+  public onCompanyChange() {
+    this.logo = this.LOGO_BY_COMPANY[this.selectedCompany] || '';
+  }
+
+  private isFormComplete() {
+    return !!this.cedula && !!this.selectedCompany && !!this.jefeInmediato && !!this.tipoVacaciones;
+  }
+
+  public checkAndLock() {
+    if (!this.formLocked && this.isFormComplete()) {
+      this.formLocked = true;
+      this.showPanels = true;
+      this.errorMessage = '';
+    } else if (!this.formLocked && !this.isFormComplete()) {
+      this.showPanels = false;
+    }
+  }
+
+  private resetFormFields() {
     this.cedula = null;
     this.jefeInmediato = '';
     this.logo = '';
@@ -104,34 +124,91 @@ export class EmployeeVacationComponent {
     this.diasPendientes = null;
     this.comentarios = '';
     this.selectedCompany = '';
-    this.errorMessage = '';
+    this.tipoVacaciones = '';
   }
 
-  public onCompanyChange() {
-    switch (this.selectedCompany) {
-      case 'DSM_NOVAWEB':
-        this.logo = "1";
-        break;
-      case 'INVERSUR_NOVAWEB':
-        this.logo = "2";
-        break;
-      case 'IGB_NOVAWEB':
-        this.logo = "3";
-        break;
-      case 'MOTOREPUESTOS_NOVAWEB':
-        this.logo = "4";
-        break;
-      case 'MTZ_NOVAWEB':
-        this.logo = "5";
-        break;
-      case 'VILNA_NOVAWEB':
-        this.logo = "6";
-        break;
-      case 'WALI_NOVAWEB':
-        this.logo = "7";
-        break;
-      default:
-        this.selectedCompany = '';
+  private resetOnError(msg: string) {
+    this.resetFormFields();
+    this.formLocked = false;
+    this.showPanels = false;
+    this.successMessage = '';
+    this.errorMessage = msg;
+  }
+
+  public generateVacation() {
+    if (!this.cedula || !this.jefeInmediato || !this.selectedCompany) {
+      this.resetOnError('Debe diligenciar cédula, jefe inmediato y seleccionar una empresa.');
+      return;
     }
+
+    if (!this.tipoVacaciones) {
+      this.resetOnError('Seleccione el tipo de vacaciones (Dinero, Tiempo o Ambas).');
+      return;
+    }
+
+    const derivedLogo: string = this.LOGO_BY_COMPANY[this.selectedCompany] || '';
+
+    const isDinero = this.tipoVacaciones === 'DINERO';
+    const isTiempo = this.tipoVacaciones === 'TIEMPO';
+    const isAmbas = this.tipoVacaciones === 'AMBAS';
+
+    const fechaInicio = (isTiempo || isAmbas) ? (this.fechaInicio || '') : '';
+    const fechaFin = (isTiempo || isAmbas) ? (this.fechaFin || '') : '';
+    const fechaReintegro = (isTiempo || isAmbas) ? (this.fechaReintegro || '') : '';
+    const diasSolicitados = (isTiempo || isAmbas) && this.diasSolicitados != null ? String(this.diasSolicitados) : '';
+    const numDiasDinero = (isDinero || isAmbas) && this.vacacionesDinero != null ? String(this.vacacionesDinero) : '';
+
+    const fecha1 = this.fecha1 || '';
+    const fecha2 = this.fecha2 || '';
+    const diasDisfrutados = this.diasDisfrutados != null ? String(this.diasDisfrutados) : '';
+    const diasPendientes = this.diasPendientes != null ? String(this.diasPendientes) : '';
+
+    const printReportDTO = {
+      id: this.cedula,
+      jefeInmediato: (this.jefeInmediato || '').toString(),
+      logo: derivedLogo,
+      fechaInicio,
+      fechaFin,
+      fechaReintegro,
+      diasSolicitados,
+      numDiasSolicitadosDinero: numDiasDinero,
+      fechaInicioPeriodo: fecha1,
+      fechaFinPeriodo: fecha2,
+      diasDisfrutados,
+      diasPendientes,
+      comentarios: this.comentarios || ''
+    };
+
+    this._reportService.generateVacation(printReportDTO, this.selectedCompany).subscribe(
+      response => {
+        if (response.code === 0) {
+          this.errorMessage = '';
+          this.successMessage = 'La solicitud de vacaciones se generó correctamente.';
+          const url = response.content;
+
+          this.resetFormFields();
+          this.formLocked = false;
+          this.showPanels = false;
+
+          if (url) {
+            window.open(url, '_blank');
+          } else {
+            this.resetOnError('La generación de la solicitud de vacaciones no fue exitosa');
+          }
+        }
+      },
+      error => {
+        console.error('Error al generar el reporte:', error);
+        this.resetOnError('La generación de la solicitud de vacaciones no fue exitosa');
+        this.redirectIfSessionInvalid(error);
+      }
+    );
+  }
+
+  public cancelForm() {
+    this.resetFormFields();
+    this.formLocked = false;
+    this.showPanels = false;
+    this.errorMessage = '';
   }
 }

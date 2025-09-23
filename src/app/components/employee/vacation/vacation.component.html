@@ -1,33 +1,33 @@
 <igb-navbar></igb-navbar>
 
 <div class="container content">
-  <h3>Generar Solicitud de Vacaciones</h3>
-  <!--Alerta error-->
-  <div class="row" *ngIf="errorMessage" role="alert">
-    <div class="col-xs-12">
-      <div class="alert alert-danger">
-        {{errorMessage}}
-      </div>
-    </div>
+  <h3>Solicitud de Vacaciones</h3>
+  <!-- Alertas -->
+  <div class="alert alert-danger text-center error-alert" role="alert" *ngIf="errorMessage">
+    {{errorMessage}}
   </div>
-  <div style="margin-top: 20px;"></div>
-  <form (submit)="generateVacation()">
-    <div class="row">
-      <div class="col-md-6">
-        <div class="card order">
-          <div class="card-body">
-            <!-- Datos del solicitante -->
-            <h4 class="section-title">Datos del Solicitante</h4>
-            <div class="form-group">
-              <label for="cedula">Cédula</label>
-              <input type="number" id="cedula" class="form-control input-lg" [(ngModel)]="cedula" name="cedula"
-                autocomplete="off" required placeholder="Ingrese cédula" [class.required-field]="!cedula" required>
-            </div>
-            <div class="form-group">
-              <label for="empresa">Seleccione empresa</label>
-              <select id="empresa" class="form-control input-lg" [(ngModel)]="selectedCompany" name="empresa"
-                (ngModelChange)="onCompanyChange()" required>
-                <option value="" disabled selected>Seleccione empresa</option>
+  <div class="alert alert-success success-alert" role="alert" *ngIf="successMessage">
+    {{successMessage}}
+  </div>
+  <div class="main-container">
+    <div class="tarjeta-ingreso-agrupada">
+      <!-- Datos del solicitante -->
+      <div class="ingreso-card">
+        <h4>Datos del Solicitante</h4>
+        <table class="table">
+          <tr>
+            <th>Número Documento</th>
+            <td>
+              <input type="number" id="cedula" class="form-control" [(ngModel)]="cedula" name="cedula" required
+                placeholder="Ingrese su documento" [disabled]="formLocked" (ngModelChange)="checkAndLock()" />
+            </td>
+          </tr>
+          <tr>
+            <th>Empresa</th>
+            <td>
+              <select id="empresa" class="form-control" [(ngModel)]="selectedCompany" name="empresa" required
+                [disabled]="formLocked" (ngModelChange)="onCompanyChange(); checkAndLock()">
+                <option value="" disabled>Seleccione empresa</option>
                 <option value="IGB_NOVAWEB">IGB</option>
                 <option value="MTZ_NOVAWEB">MOTOZONE</option>
                 <option value="VILNA_NOVAWEB">REDPLAS</option>
@@ -36,115 +36,142 @@
                 <option value="INVERSUR_NOVAWEB">INVERSUR</option>
                 <option value="MOTOREPUESTOS_NOVAWEB">MOTOREPUESTOS</option>
               </select>
-            </div>
-            <div class="form-group">
-              <label for="jefe">Seleccione Jefe</label>
-              <select id="jefe" class="form-control input-lg" [(ngModel)]="jefeInmediato" name="jefe" required>
-                <option value="" disabled selected>Seleccione jefe</option>
+            </td>
+          </tr>
+          <tr>
+            <th>Jefe Inmediato</th>
+            <td>
+              <select id="jefe" class="form-control" [(ngModel)]="jefeInmediato" name="jefe" required
+                [disabled]="formLocked" (ngModelChange)="checkAndLock()">
+                <option value="" disabled>Seleccione jefe</option>
+                <option value="ALEJANDRO VELEZ">ALEJANDRO VELEZ</option>
+                <option value="ANDRES VELEZ">ANDRES VELEZ</option>
                 <option value="PAOLA COLORADO">PAOLA COLORADO</option>
                 <option value="DAVID URIBE">DAVID URIBE</option>
                 <option value="SIOMARA ARBOLEDA">SIOMARA ARBOLEDA</option>
                 <option value="EDINSON JARAMILLO">EDINSON JARAMILLO</option>
                 <option value="SANDRA CUADROS">SANDRA CUADROS</option>
+                <option value="GILMA GARCIA">GILMA GARCIA</option>
+                <option value="VALENTINA SANCHEZ">VALENTINA SANCHEZ</option>
+                <option value="MARIA SERRANO">MARIA SERRANO</option>
+                <option value="ADRIAN MONCADA">ADRIAN MONCADA</option>
+                <option value="PABLO ARBELAEZ">PABLO ARBELAEZ</option>
+                <option value="DANIELA BETANCUR">DANIELA BETANCUR</option>
+                <option value="ANGELICA CARDONA">ANGELICA CARDONA</option>
+                <option value="DANIEL ECHEVERRI">DANIEL ECHEVERRI</option>
               </select>
-            </div>
-          </div>
-        </div>
-        <br>
-        <div class="card order">
-          <div class="card-body">
-            <!-- Solicitud vacaciones en dinero -->
-            <h4 class="section-title">Solicitud Vacaciones (Dinero)</h4>
-            <div class="form-group">
-              <label for="vacacionesDinero">Cantidad en Dinero</label>
-              <input type="number" id="vacacionesDinero" class="form-control input-lg" [(ngModel)]="vacacionesDinero"
-                name="vacacionesDinero" required placeholder="Ingrese el número de días solicitados en dinero"
-                [class.required-field]="!vacacionesDinero" required>
-            </div>
-          </div>
-        </div>
-        <br>
-        <div class="card order">
-          <div class="card-body">
-            <!-- Comentarios -->
-            <h4 class="section-title">Comentarios</h4>
-            <div class="form-group">
-              <textarea id="comentarios" class="form-control input-lg" [(ngModel)]="comentarios" name="comentarios"
-                placeholder="Ingrese comentarios" rows="4"></textarea>
-            </div>
-          </div>
+            </td>
+          </tr>
+          <!-- Tipo de Vacaciones -->
+          <tr>
+            <th>Tipo Vacaciones</th>
+            <td>
+              <select id="tipoVacaciones" class="form-control" [(ngModel)]="tipoVacaciones" name="tipoVacaciones"
+                required [disabled]="formLocked" (ngModelChange)="onTipoVacacionesChange(); checkAndLock()">
+                <option value="" disabled selected>Seleccione</option>
+                <option value="DINERO">DINERO</option>
+                <option value="TIEMPO">TIEMPO</option>
+                <option value="AMBAS">AMBAS</option>
+              </select>
+            </td>
+          </tr>
+        </table>
+        <div class="employee-actions">
+          <button type="button" class="btn btn-primary" (click)="generateVacation()"
+            [disabled]="!showPanels">Generar</button>
+          <button type="button" class="btn btn-secondary" (click)="cancelForm()">Cancelar</button>
         </div>
       </div>
-      <div class="col-md-6">
-        <div class="card order">
-          <div class="card-body">
-            <!-- Solicitud vacaciones en tiempo -->
-            <h4 class="section-title">Solicitud Vacaciones (Tiempo)</h4>
-            <div class="form-group row">
-              <div class="col-md-6">
-                <label for="fechaInicio">Fecha Inicio</label>
-                <input type="date" id="fechaInicio" class="form-control input-lg" [(ngModel)]="fechaInicio"
-                  name="fechaInicio" required [class.required-field]="!fechaInicio" required>
-              </div>
-              <div class="col-md-6">
-                <label for="fechaFin">Fecha Fin</label>
-                <input type="date" id="fechaFin" class="form-control input-lg" [(ngModel)]="fechaFin" name="fechaFin"
-                  required [class.required-field]="!fechaFin" required>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="fechaReintegro">Fecha Reintegro</label>
-              <input type="date" id="fechaReintegro" class="form-control input-lg" [(ngModel)]="fechaReintegro"
-                name="fechaReintegro" required [class.required-field]="!fechaReintegro" required>
-            </div>
-            <div class="form-group">
-              <label for="diasSolicitados">Cantidad en Tiempo</label>
-              <input type="number" id="diasSolicitados" class="form-control input-lg" [(ngModel)]="diasSolicitados"
-                name="diasSolicitados" required placeholder="Ingrese el número de días solicitados en tiempo"
-                [class.required-field]="!diasSolicitados" required>
-            </div>
-          </div>
-        </div>
-        <br>
-        <div class="card order">
-          <div class="card-body">
-            <!-- Uso exclusivo de gestión humana -->
-            <h4 class="section-title">Uso Exclusivo de Gestión Humana</h4>
-            <div class="form-group row">
-              <div class="col-md-6">
-                <label for="fecha1">Fecha Inicio</label>
-                <input type="date" id="fecha1" class="form-control input-lg" [(ngModel)]="fecha1" name="fecha1" required
-                  [class.required-field]="!fecha1" required>
-              </div>
-              <div class="col-md-6">
-                <label for="fecha2">Fecha Fin</label>
-                <input type="date" id="fecha2" class="form-control input-lg" [(ngModel)]="fecha2" name="fecha2" required
-                  [class.required-field]="!fecha2" required>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="diasDisfrutados">Días Disfrutados de Este Periodo a la Fecha</label>
-              <input type="number" id="diasDisfrutados" class="form-control input-lg" [(ngModel)]="diasDisfrutados"
-                name="diasDisfrutados" required placeholder="Ingrese el número de días"
-                [class.required-field]="!diasDisfrutados" required>
-            </div>
-            <div class="form-group">
-              <label for="diasPendientes">Días de Vacaciones Pendientes por Disfrutar</label>
-              <input type="number" id="diasPendientes" class="form-control input-lg" [(ngModel)]="diasPendientes"
-                name="diasPendientes" required placeholder="Ingrese el número de días"
-                [class.required-field]="!diasPendientes" required>
-            </div>
-          </div>
-        </div>
-        <div class="row mt-3">
-          <div class="col-md-6">
-            <button type="button" class="btn btn-danger btn-lg" (click)="generateVacation()" data-toggle="modal"
-              data-target="#confirmModal">Generar</button>
-            <button type="button" class="btn btn-secondary btn-lg" (click)="cancelForm()">Cancelar</button>
-          </div>
-        </div>
+      <div class="ingreso-card" style="margin-top:20px" *ngIf="showPanels">
+        <h4>Comentarios</h4>
+        <table class="table">
+          <tr>
+            <td>
+              <textarea id="comentarios" class="form-control" [(ngModel)]="comentarios" name="comentarios" rows="3"
+                placeholder="Agregar comentarios (opcional)"></textarea>
+            </td>
+          </tr>
+        </table>
       </div>
     </div>
-    <br>
-  </form>
+    <div class="card-box" *ngIf="showPanels">
+      <!-- Vacaciones (Tiempo) -->
+      <div class="section" *ngIf="isTiempo() || isAmbas()">
+        <h4>VACACIONES (TIEMPO)</h4>
+        <table class="table">
+          <tr>
+            <th>Fecha Inicio</th>
+            <td>
+              <input type="date" id="fechaInicio" class="form-control" [(ngModel)]="fechaInicio" name="fechaInicio" />
+            </td>
+          </tr>
+          <tr>
+            <th>Fecha Fin</th>
+            <td>
+              <input type="date" id="fechaFin" class="form-control" [(ngModel)]="fechaFin" name="fechaFin" />
+            </td>
+          </tr>
+          <tr>
+            <th>Fecha Reintegro</th>
+            <td>
+              <input type="date" id="fechaReintegro" class="form-control" [(ngModel)]="fechaReintegro"
+                name="fechaReintegro" />
+            </td>
+          </tr>
+          <tr>
+            <th>Cantidad Tiempo</th>
+            <td>
+              <input type="number" id="diasSolicitados" class="form-control" [(ngModel)]="diasSolicitados"
+                name="diasSolicitados" min="0" placeholder="Número de días solicitados en tiempo" />
+            </td>
+          </tr>
+        </table>
+      </div>
+      <!-- Vacaciones (Dinero) -->
+      <div class="section" *ngIf="isDinero() || isAmbas()">
+        <h4>VACACIONES (DINERO)</h4>
+        <table class="table">
+          <tr>
+            <th>Cantidad Dinero</th>
+            <td>
+              <input type="number" id="vacacionesDinero" class="form-control" [(ngModel)]="vacacionesDinero"
+                name="vacacionesDinero" min="0" placeholder="Número de días solicitados en dinero" />
+            </td>
+          </tr>
+        </table>
+      </div>
+      <!-- Uso Exclusivo de Gestión Humana -->
+      <div class="section">
+        <h4>USO EXCLUSIVO DE GESTIÓN HUMANA</h4>
+        <table class="table">
+          <tr>
+            <th>Fecha Inicio</th>
+            <td>
+              <input type="date" id="fecha1" class="form-control" [(ngModel)]="fecha1" name="fecha1" />
+            </td>
+          </tr>
+          <tr>
+            <th>Fecha Fin</th>
+            <td>
+              <input type="date" id="fecha2" class="form-control" [(ngModel)]="fecha2" name="fecha2" />
+            </td>
+          </tr>
+          <tr>
+            <th>Días Disfrutados</th>
+            <td>
+              <input type="number" id="diasDisfrutados" class="form-control" [(ngModel)]="diasDisfrutados"
+                name="diasDisfrutados" min="0" placeholder="Número de días solicitados" />
+            </td>
+          </tr>
+          <tr>
+            <th>Días Pendientes</th>
+            <td>
+              <input type="number" id="diasPendientes" class="form-control" [(ngModel)]="diasPendientes"
+                name="diasPendientes" min="0" placeholder="Número de días pendientes" />
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>

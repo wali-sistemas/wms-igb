@@ -1,134 +1,143 @@
 <igb-navbar></igb-navbar>
-<!-- Modal para generar carta laboral -->
-<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel"
-  aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title text-center" id="confirmModalLabel" style="font-size: 18px;">Carta laboral con la
-          siguiente información:</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p><strong>Cédula:</strong> {{cedula}}</p>
-        <p><strong>Fecha de Nacimiento:</strong> {{fechaNacimiento}}</p>
-        <p><strong>Fecha carta laboral:</strong> {{selectedYear}}-{{selectedMonth }}-{{selectedPeriodo}}</p>
-        <p><strong>Dirigido a: </strong> {{dirigidoA}}</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" (click)="generateJobCertify()">Aceptar</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-      </div>
-    </div>
-  </div>
-</div>
+
 <div class="container content">
   <h3>Generar Carta Laboral</h3>
-  <form (submit)="confirmGenerate()">
-    <div class="row">
-      <div class="col-xs-12">
-        <label for="empresa">Seleccione empresa</label>
-        <select id="empresa" class="form-control input-lg" [(ngModel)]="selectedCompany" name="selectedCompany"
-          (ngModelChange)="onCompanyChange()" required [class.required-field]="!selectedCompany">
-          <option value="" disabled>Seleccione empresa</option>
-          <option value="IGB_NOVAWEB">IGB</option>
-          <option value="MTZ_NOVAWEB">MOTOZONE</option>
-          <!--<option value="VILNA_NOVAWEB">REDPLAS</option>
-          <option value="WALI_NOVAWEB">WALI</option>
-          <option value="DSM_NOVAWEB">DIGITAL</option>
-          <option value="INVERSUR_NOVAWEB">INVERSUR</option>
-          <option value="MOTOREPUESTOS_NOVAWEB">MOTOREPUESTOS</option>-->
-        </select>
+  <div class="alert alert-danger text-center error-alert" role="alert" *ngIf="errorMessage">
+    {{errorMessage}}
+  </div>
+  <div class="alert alert-success success-alert" role="alert" *ngIf="successMessage">
+    {{successMessage}}
+  </div>
+  <div class="main-container">
+    <div class="tarjeta-ingreso-agrupada">
+      <div class="ingreso-card">
+        <h4>Datos del Solicitante</h4>
+        <table class="table">
+          <tr>
+            <th>Número Documento</th>
+            <td>
+              <input type="number" class="form-control" [(ngModel)]="cedula" name="cedula"
+                placeholder="Ingrese su documento" required [disabled]="formLocked" />
+            </td>
+          </tr>
+          <tr>
+            <th>Empresa</th>
+            <td>
+              <select class="form-control" [(ngModel)]="selectedCompany" name="empresa"
+                (ngModelChange)="onCompanyChange()" required [disabled]="formLocked">
+                <option value="" disabled>Seleccione empresa</option>
+                <option value="IGB_NOVAWEB">IGB</option>
+                <option value="MTZ_NOVAWEB">MOTOZONE</option>
+                <option value="WALI_NOVAWEB">WALI</option>
+                <option value="DSM_NOVAWEB">DIGITAL</option>
+                <option value="INVERSUR_NOVAWEB">INVERSUR</option>
+                <option value="MOTOREPUESTOS_NOVAWEB">MOTOREPUESTOS</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <th>Mes / Año</th>
+            <td colspan="3">
+              <div class="fila-doble">
+                <select class="form-control" [(ngModel)]="selectedMonth" name="selectedMonth" disabled>
+                  <option [value]="selectedMonth">
+                    {{selectedMonth === '01' ? 'Enero' :
+                    selectedMonth === '02' ? 'Febrero' :
+                    selectedMonth === '03' ? 'Marzo' :
+                    selectedMonth === '04' ? 'Abril' :
+                    selectedMonth === '05' ? 'Mayo' :
+                    selectedMonth === '06' ? 'Junio' :
+                    selectedMonth === '07' ? 'Julio' :
+                    selectedMonth === '08' ? 'Agosto' :
+                    selectedMonth === '09' ? 'Septiembre' :
+                    selectedMonth === '10' ? 'Octubre' :
+                    selectedMonth === '11' ? 'Noviembre' : 'Diciembre'}}
+                  </option>
+                </select>
+                <select class="form-control" [(ngModel)]="selectedYear" name="selectedYear" disabled>
+                  <option [value]="selectedYear">{{selectedYear}}</option>
+                </select>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th>Fecha Nacimiento</th>
+            <td colspan="3">
+              <input type="date" class="form-control" [(ngModel)]="fechaNacimiento" name="fechaNacimiento" required
+                [disabled]="formLocked" />
+            </td>
+          </tr>
+          <tr>
+            <th>Tipo</th>
+            <td colspan="3">
+              <select class="form-control" [(ngModel)]="selectedPeriodo" name="selectedPeriodo" required
+                [disabled]="formLocked">
+                <option value="" disabled>Seleccione uno</option>
+                <option value="15">ADMINISTRATIVO</option>
+                <option value="30">LOGISTICA</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <th>Dirigido A</th>
+            <td colspan="3">
+              <select class="form-control" [(ngModel)]="dirigidoA" name="dirigidoA" required [disabled]="formLocked">
+                <option value="" disabled selected>Seleccione uno</option>
+                <option value="A quién pueda interesar">A QUIEN PUEDA INTERESAR</option>
+                <option value="Personalizado">PERSONALIZADO</option>
+              </select>
+            </td>
+          </tr>
+          <tr *ngIf="dirigidoA === 'Personalizado'">
+            <th>Entidad</th>
+            <td colspan="3">
+              <textarea class="form-control" [(ngModel)]="contenidoPersonalizado" name="contenidoPersonalizado" rows="2"
+                placeholder="Escriba el destinatario" [disabled]="formLocked"></textarea>
+            </td>
+          </tr>
+        </table>
+        <div class="employee-actions">
+          <button type="button" class="btn btn-primary" (click)="mostrarResumen()"
+            [disabled]="formLocked || !cedula || !selectedPeriodo || !fechaNacimiento || !dirigidoA || !selectedCompany">
+            Generar
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="cancelForm()" [disabled]="formLocked">
+            Cancelar
+          </button>
+        </div>
       </div>
     </div>
-    <br>
-    <div class="row">
-      <div class="col-xs-12">
-        <label for="cedula">Cédula</label>
-        <input type="number" id="cedula" class="form-control input-lg" [(ngModel)]="cedula" name="cedula"
-          autocomplete="off" required placeholder="Ingrese cédula" [class.required-field]="!cedula" required>
+    <div class="col-derecha" *ngIf="showResumen">
+      <div class="card-box">
+        <h4>DETALLES DE LA CARTA LABORAL</h4>
+        <table class="table">
+          <tr>
+            <th>Documento</th>
+            <td>{{cedula}}</td>
+          </tr>
+          <tr>
+            <th>Empresa</th>
+            <td>{{selectedCompanyPrint}}</td>
+          </tr>
+          <tr>
+            <th>Dirigido a</th>
+            <td>
+              <span *ngIf="dirigidoA !== 'Personalizado'">{{dirigidoA}}</span>
+              <span *ngIf="dirigidoA === 'Personalizado'">{{contenidoPersonalizado || '(sin texto)'}}</span>
+            </td>
+          </tr>
+        </table>
+        <div class="employee-actions">
+          <button type="button" class="btn btn-success" (click)="generateJobCertify()">Confirmar</button>
+          <button type="button" class="btn btn-secondary" (click)="editar()">Volver</button>
+        </div>
+      </div>
+      <div class="global-info-box">
+        <p>
+          <strong>NOTA:</strong>
+          La carta se liquida con la información del <strong>mes anterior</strong>
+          ({{mesAnteriorLabel}}) por corte de nómina, pero el documento se emite con la
+          <strong>fecha actual</strong>: {{today | date:'dd/MM/yyyy'}}.
+        </p>
       </div>
     </div>
-    <br>
-    <div class="row">
-      <div class="col-xs-4">
-        <label for="year">Año</label>
-        <select id="year" class="form-control input-lg" [(ngModel)]="selectedYear" name="selectedYear" required
-          [class.required-field]="!selectedYear" required>
-          <option value="" disabled>Seleccione año</option>
-          <option value="2021">2021</option>
-          <option value="2022">2022</option>
-          <option value="2023">2023</option>
-          <option value="2024">2024</option>
-          <option value="2025">2025</option>
-        </select>
-      </div>
-      <div class="col-xs-4">
-        <label for="month">Mes</label>
-        <select id="month" class="form-control input-lg" [(ngModel)]="selectedMonth" name="selectedMonth" required
-          [class.required-field]="!selectedMonth" required>
-          <option value="" disabled>Seleccione mes</option>
-          <option value="01">Enero</option>
-          <option value="02">Febrero</option>
-          <option value="03">Marzo</option>
-          <option value="04">Abril</option>
-          <option value="05">Mayo</option>
-          <option value="06">Junio</option>
-          <option value="07">Julio</option>
-          <option value="08">Agosto</option>
-          <option value="09">Septiembre</option>
-          <option value="10">Octubre</option>
-          <option value="11">Noviembre</option>
-          <option value="12">Diciembre</option>
-        </select>
-      </div>
-      <div class="col-xs-4">
-        <label for="periodo">Tipo</label>
-        <select id="periodo" class="form-control input-lg" [(ngModel)]="selectedPeriodo" name="selectedPeriodo" required
-          [class.required-field]="!selectedPeriodo" required>
-          <option value="" disabled>Seleccione uno</option>
-          <option value="15">Administrativo</option>
-          <option value="30">Logística</option>
-        </select>
-      </div>
-    </div>
-    <br>
-    <div class="row">
-      <div class="col-xs-12">
-        <label for="fechaNacimiento">Fecha de nacimiento</label>
-        <input type="date" id="fechaNacimiento" class="form-control input-lg" [(ngModel)]="fechaNacimiento"
-          name="fechaNacimiento" required [class.required-field]="!fechaNacimiento" required>
-      </div>
-    </div>
-    <br>
-    <div class="row">
-      <div class="col-xs-12">
-        <label for="dirigido">Dirigido a</label>
-        <select id="dirigido" class="form-control input-lg" [(ngModel)]="dirigidoA" name="dirigidoA" required
-          [class.required-field]="!dirigidoA" required>
-          <option value="" selected disabled>Seleccione uno</option>
-          <option value="A quién pueda interesar">A quién pueda interesar</option>
-          <option value="Personalizado">Personalizado</option>
-        </select>
-      </div>
-    </div>
-    <br />
-    <div class="row" *ngIf="dirigidoA == 'Personalizado'">
-      <div class="col-xs-12">
-        <label for="contenidoPersonalizado">Contenido personalizado</label>
-        <textarea id="contenidoPersonalizado" class="form-control" [(ngModel)]="contenidoPersonalizado"
-          name="contenidoPersonalizado"></textarea>
-      </div>
-    </div>
-    <br>
-    <div class="row">
-      <div class="col-xs-12">
-        <button type="button" class="btn btn-danger btn-lg" (click)="confirmGenerate()"
-          [disabled]="!cedula || !selectedYear || !selectedMonth || !selectedPeriodo || !fechaNacimiento || !dirigidoA">Generar</button>
-        <button type="button" class="btn btn-secondary btn-lg" (click)="cancelForm()">Cancelar</button>
-      </div>
-    </div>
-  </form>
-</div>
