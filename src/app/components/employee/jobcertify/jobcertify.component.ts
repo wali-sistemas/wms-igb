@@ -201,6 +201,20 @@ export class EmployeeJobCertifyComponent {
     this.onCompanyChange();
   }
 
+  public cancelForm() {
+    this.cedula = null;
+    this.selectedPeriodo = '';
+    this.fechaNacimiento = '';
+    this.dirigidoA = '';
+    this.contenidoPersonalizado = '';
+    this.showResumen = false;
+    this.formLocked = false;
+    this.setMesAnterior();
+    this.selectedCompany = '';
+    this.selectedCompanyPrint = '';
+    this.onCompanyChange();
+  }
+
   public onCompanyChange() {
     this.selectedCompanyPrint = this.getCompanyFolder(this.selectedCompany);
   }
