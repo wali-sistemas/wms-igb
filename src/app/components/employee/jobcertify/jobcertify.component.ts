@@ -15,10 +15,10 @@ export class EmployeeJobCertifyComponent {
   public identity: any;
   public selectedCompany: string = '';
   public selectedCompanyPrint: string = '';
-  public cedula: number;
-  public fechaNacimiento: string;
+  public cedula: number | null = null;
+  public fechaNacimiento: string = '';
   public dirigidoA: string = '';
-  public contenidoPersonalizado: string;
+  public contenidoPersonalizado: string = '';
   public formLocked = false;
   public selectedYear: string = '';
   public selectedMonth: string = '';
@@ -28,7 +28,21 @@ export class EmployeeJobCertifyComponent {
   public errorMessage = '';
   public successMessage = '';
   public urlShared: string = GLOBAL.urlShared;
-  public logo: string;
+  public logo: string = '';
+  public today = new Date();
+
+  private readonly COMPANY_FOLDER: { [schema: string]: string } = {
+    'IGB_NOVAWEB': 'IGB',
+    'MTZ_NOVAWEB': 'MOTOZONE',
+    'WALI_NOVAWEB': 'WALI',
+    'DSM_NOVAWEB': 'DIGITAL',
+    'INVERSUR_NOVAWEB': 'INVERSUR',
+    'MOTOREPUESTOS_NOVAWEB': 'MOTOREPUESTOS'
+  };
+
+  private getCompanyFolder(schema?: string): string {
+    return this.COMPANY_FOLDER[schema || this.selectedCompany] || '';
+  }
 
   constructor(private _reportService: ReportService, private _userService: UserService, private _router: Router, private _employeeService: EmployeeService) { }
 
@@ -45,13 +59,20 @@ export class EmployeeJobCertifyComponent {
     const d = new Date();
     d.setMonth(d.getMonth() - 1);
     const yyyy = d.getFullYear();
-    const mm = (d.getMonth() + 1 < 10 ? '0' : '') + (d.getMonth() + 1);
+    const mmNumber = d.getMonth() + 1;
+    const mm = (mmNumber < 10 ? '0' : '') + mmNumber;
 
     this.selectedYear = String(yyyy);
     this.selectedMonth = mm;
 
     const nombres = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
     this.mesAnteriorLabel = `${nombres[d.getMonth()]} ${yyyy}`;
+  }
+
+  private getLastDayOfSelectedMonth() {
+    const y = Number(this.selectedYear);
+    const m = Number(this.selectedMonth);
+    return new Date(y, m, 0).getDate();
   }
 
   private redirectIfSessionInvalid(error: any) {
@@ -69,6 +90,12 @@ export class EmployeeJobCertifyComponent {
     if (!this.selectedCompany || !this.cedula ||
       !this.selectedPeriodo || !this.fechaNacimiento || !this.dirigidoA) {
       this.errorMessage = 'Completa todos los campos obligatorios.';
+      return;
+    }
+
+    if (this.dirigidoA === 'Personalizado' &&
+      !(this.contenidoPersonalizado && this.contenidoPersonalizado.trim())) {
+      this.errorMessage = 'Escribe el destinatario personalizado.';
       return;
     }
 
@@ -103,43 +130,59 @@ export class EmployeeJobCertifyComponent {
   }
 
   public generateJobCertify() {
-    if (!this.selectedYear || !this.selectedMonth) {
-      this.setMesAnterior();
-    }
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    if (!this.selectedYear || !this.selectedMonth) this.setMesAnterior();
 
     if (!this.selectedCompany) {
       this.errorMessage = 'Selecciona la empresa.';
       return;
     }
 
-    const printReportDTO = {
-      id: this.cedula,
-      copias: 0,
-      documento: 'jobCertify',
-      companyName: this.selectedCompany,
-      origen: 'N',
-      filtro: this.dirigidoA === 'Personalizado' ? this.contenidoPersonalizado : this.dirigidoA,
-      imprimir: false,
-      year: this.selectedYear,
-      month: this.selectedMonth,
-      day: this.selectedPeriodo
+    if (!this.cedula || !this.selectedPeriodo || !this.fechaNacimiento || !this.dirigidoA) {
+      this.errorMessage = 'Completa todos los campos obligatorios.';
+      return;
+    }
+    if (this.dirigidoA === 'Personalizado' &&
+      !(this.contenidoPersonalizado && this.contenidoPersonalizado.trim())) {
+      this.errorMessage = 'Escribe el destinatario personalizado.';
+      return;
+    }
+
+    const dayForTipo = this.selectedPeriodo === '30' ? this.getLastDayOfSelectedMonth() : 15;
+
+    const payload = {
+      id: String(this.cedula),
+      year: Number(this.selectedYear),
+      month: Number(this.selectedMonth),
+      day: dayForTipo,
+      sendto: this.dirigidoA === 'Personalizado'
+        ? this.contenidoPersonalizado.trim()
+        : this.dirigidoA
     };
 
-    this._reportService.generateReport(printReportDTO).subscribe(
+    this._reportService.generateJobCertify(payload, this.selectedCompany).subscribe(
       response => {
-        if (response && response.code >= 0) {
-          const pdfUrl = this.urlShared + this.identity.selectedCompany + '/employee/jobCertify/' + this.cedula + '.pdf';
-          window.open(pdfUrl, '_blank');
-
-          this.successMessage = 'Carta generada correctamente.';
-          this.cancelForm();
-        } else {
-          this.errorMessage = 'La generación de la carta laboral no fue exitosa.';
+        let urlFromBackend = '';
+        if (response) {
+          if (typeof response === 'string') urlFromBackend = response.trim();
+          else if (response.content) urlFromBackend = String(response.content).trim();
+          else if (response.url) urlFromBackend = String(response.url).trim();
         }
+
+        const folder = this.getCompanyFolder(this.selectedCompany);
+        const fallbackUrl = `${this.urlShared}${folder}/employee/jobcertify/${this.cedula}.pdf`;
+
+        const finalUrl = urlFromBackend || fallbackUrl;
+
+        window.open(finalUrl, '_blank');
+        this.successMessage = 'Carta generada correctamente.';
+        this.cancelForm();
       },
       error => {
         this.redirectIfSessionInvalid(error);
-        console.error(error);
+        this.errorMessage = 'Ocurrió un error generando la carta.';
       }
     )
   }
@@ -155,17 +198,35 @@ export class EmployeeJobCertifyComponent {
     this.setMesAnterior();
   }
 
+  public cancelForm() {
+    this.cedula = null;
+    this.selectedPeriodo = '';
+    this.fechaNacimiento = '';
+    this.dirigidoA = '';
+    this.contenidoPersonalizado = '';
+    this.showResumen = false;
+    this.formLocked = false;
+    this.setMesAnterior();
+    this.selectedCompany = '';
+    this.selectedCompanyPrint = '';
+    this.onCompanyChange();
+  }
+
   public onCompanyChange() {
-    switch (this.selectedCompany) {
-      case 'IGB_NOVAWEB':
-        this.selectedCompanyPrint = 'IGB';
-        break;
-      case 'MTZ_NOVAWEB':
-        this.selectedCompanyPrint = 'VARROC';
-        break;
-      default:
-        this.selectedCompanyPrint = '';
-    }
+    this.selectedCompanyPrint = this.getCompanyFolder(this.selectedCompany);
+  }
+
+  private resetForm() {
+    this.selectedCompany = '';
+    this.selectedCompanyPrint = '';
+    this.cedula = null;
+    this.selectedPeriodo = '';
+    this.fechaNacimiento = '';
+    this.dirigidoA = '';
+    this.contenidoPersonalizado = '';
+    this.showResumen = false;
+    this.formLocked = false;
+    this.setMesAnterior();
   }
 
   private resetForm() {
