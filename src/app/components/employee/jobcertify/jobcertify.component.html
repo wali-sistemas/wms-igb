@@ -92,7 +92,9 @@
             <th>Entidad</th>
             <td colspan="3">
               <textarea class="form-control" [(ngModel)]="contenidoPersonalizado" name="contenidoPersonalizado" rows="2"
-                placeholder="Escriba el destinatario" [disabled]="formLocked"></textarea>
+                placeholder="Escriba el destinatario" [disabled]="formLocked"
+                (input)="contenidoPersonalizado = contenidoPersonalizado.toUpperCase()"
+                style="text-transform: uppercase;"></textarea>
             </td>
           </tr>
         </table>
@@ -141,3 +143,5 @@
         </p>
       </div>
     </div>
+  </div>
+</div>

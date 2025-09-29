@@ -181,4 +181,9 @@ export class ReportService {
     return this._http.post(this.urlSpring + 'reports/paystub?schema=' + companyName, paystubData, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
+
+  public generateJobCertify(jobCertifyData, companyName) {
+    return this._http.post(this.urlSpring + 'reports/job-certify?schema=' + companyName, jobCertifyData, { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
 }
