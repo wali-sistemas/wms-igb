@@ -196,6 +196,9 @@ export class EmployeeJobCertifyComponent {
     this.showResumen = false;
     this.formLocked = false;
     this.setMesAnterior();
+    this.selectedCompany = '';
+    this.selectedCompanyPrint = '';
+    this.onCompanyChange();
   }
 
   public cancelForm() {
@@ -220,19 +223,6 @@ export class EmployeeJobCertifyComponent {
     this.selectedCompany = '';
     this.selectedCompanyPrint = '';
     this.cedula = null;
-    this.selectedPeriodo = '';
-    this.fechaNacimiento = '';
-    this.dirigidoA = '';
-    this.contenidoPersonalizado = '';
-    this.showResumen = false;
-    this.formLocked = false;
-    this.setMesAnterior();
-  }
-
-  private resetForm() {
-    this.selectedCompany = '';
-    this.selectedCompanyPrint = '';
-    this.cedula = null as any;
     this.selectedPeriodo = '';
     this.fechaNacimiento = '';
     this.dirigidoA = '';
