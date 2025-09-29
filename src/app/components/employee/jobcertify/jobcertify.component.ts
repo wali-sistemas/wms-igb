@@ -44,8 +44,7 @@ export class EmployeeJobCertifyComponent {
     return this.COMPANY_FOLDER[schema || this.selectedCompany] || '';
   }
 
-  constructor(private _reportService: ReportService, private _userService: UserService, private _router: Router, private _employeeService: EmployeeService) {
-  }
+  constructor(private _reportService: ReportService, private _userService: UserService, private _router: Router, private _employeeService: EmployeeService) { }
 
   ngOnInit() {
     this.identity = this._userService.getItentity();
@@ -140,6 +139,7 @@ export class EmployeeJobCertifyComponent {
       this.errorMessage = 'Selecciona la empresa.';
       return;
     }
+
     if (!this.cedula || !this.selectedPeriodo || !this.fechaNacimiento || !this.dirigidoA) {
       this.errorMessage = 'Completa todos los campos obligatorios.';
       return;
@@ -184,7 +184,18 @@ export class EmployeeJobCertifyComponent {
         this.redirectIfSessionInvalid(error);
         this.errorMessage = 'Ocurrió un error generando la carta.';
       }
-    );
+    )
+  }
+
+  public cancelForm() {
+    this.cedula = null;
+    this.selectedPeriodo = '';
+    this.fechaNacimiento = '';
+    this.dirigidoA = '';
+    this.contenidoPersonalizado = '';
+    this.showResumen = false;
+    this.formLocked = false;
+    this.setMesAnterior();
   }
 
   public cancelForm() {
@@ -209,6 +220,19 @@ export class EmployeeJobCertifyComponent {
     this.selectedCompany = '';
     this.selectedCompanyPrint = '';
     this.cedula = null;
+    this.selectedPeriodo = '';
+    this.fechaNacimiento = '';
+    this.dirigidoA = '';
+    this.contenidoPersonalizado = '';
+    this.showResumen = false;
+    this.formLocked = false;
+    this.setMesAnterior();
+  }
+
+  private resetForm() {
+    this.selectedCompany = '';
+    this.selectedCompanyPrint = '';
+    this.cedula = null as any;
     this.selectedPeriodo = '';
     this.fechaNacimiento = '';
     this.dirigidoA = '';
