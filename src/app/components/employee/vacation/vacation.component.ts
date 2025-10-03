@@ -46,9 +46,10 @@ export class EmployeeVacationComponent {
     'MTZ_NOVAWEB': '5',
     'VILNA_NOVAWEB': '6',
     'WALI_NOVAWEB': '7',
+    'MODULA_NOVAWEB': '8',
   };
 
-  constructor(private _reportService: ReportService, private _userService: UserService, private _router: Router) {
+  constructor(private _reportService: ReportService, private _userService: UserService, private _router: Router, private _employeeService: EmployeeService) {
     this.url = GLOBAL.urlShared;
   }
 
@@ -137,7 +138,7 @@ export class EmployeeVacationComponent {
 
   public generateVacation() {
     if (!this.cedula || !this.jefeInmediato || !this.selectedCompany) {
-      this.resetOnError('Debe diligenciar cédula, jefe inmediato y seleccionar una empresa.');
+      this.resetOnError('Debe diligenciar documento, jefe inmediato y seleccionar una empresa.');
       return;
     }
 

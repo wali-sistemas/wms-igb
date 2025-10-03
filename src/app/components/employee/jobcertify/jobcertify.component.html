@@ -32,6 +32,7 @@
                 <option value="DSM_NOVAWEB">DIGITAL</option>
                 <option value="INVERSUR_NOVAWEB">INVERSUR</option>
                 <option value="MOTOREPUESTOS_NOVAWEB">MOTOREPUESTOS</option>
+                <option value="MODULA_NOVAWEB">BODEGAS</option>
               </select>
             </td>
           </tr>
@@ -92,9 +93,8 @@
             <th>Entidad</th>
             <td colspan="3">
               <textarea class="form-control" [(ngModel)]="contenidoPersonalizado" name="contenidoPersonalizado" rows="2"
-                placeholder="Escriba el destinatario" [disabled]="formLocked"
-                (input)="contenidoPersonalizado = contenidoPersonalizado.toUpperCase()"
-                style="text-transform: uppercase;"></textarea>
+                placeholder="Ingrese el destinatario" [disabled]="formLocked"
+                (input)="contenidoPersonalizado = contenidoPersonalizado.toUpperCase()"></textarea>
             </td>
           </tr>
         </table>
@@ -144,4 +144,3 @@
       </div>
     </div>
   </div>
-</div>
