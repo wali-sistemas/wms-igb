@@ -180,7 +180,7 @@ export class EmployeeJobCertifyComponent {
 
         window.open(finalUrl, '_blank');
         this.successMessage = 'Carta generada correctamente.';
-        this.cancelForm();
+        this.cancelFormulary();
       },
       error => {
         this.redirectIfSessionInvalid(error);
@@ -189,7 +189,7 @@ export class EmployeeJobCertifyComponent {
     );
   }
 
-  public cancelForm() {
+  public cancelFormulary() {
     this.cedula = null;
     this.selectedPeriodo = '';
     this.fechaNacimiento = '';
