@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserService } from '../../services/user.service';
-import { BusinessPartnerService } from '../../services/business-partner.service';
-import { Advisor } from '../../models/customer/client-advisor';
-import { GeoLocation } from '../../models/geoLocation/geo-location';
-import { GeoLocationSalesData } from '../../models/geoLocation/geo-location-salesData';
-import { DailyMarkers } from '../../models/daily-markers-advisor';
+import { UserService } from '../../../services/user.service';
+import { BusinessPartnerService } from '../../../services/business-partner.service';
+import { Advisor } from '../../../models/customer/client-advisor';
+import { GeoLocation } from '../../../models/geoLocation/geo-location';
+import { GeoLocationSalesData } from '../../../models/geoLocation/geo-location-salesData';
+import { DailyMarkers } from '../../../models/daily-markers-advisor';
 
 declare var $: any;
 declare var google: any;

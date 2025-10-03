@@ -13,7 +13,7 @@ declare var $: any;
   providers: [PaymentsMicrositeService]
 })
 
-export class WalletIGB implements OnInit {
+export class WalletIGBComponent implements OnInit {
   public selectedCompany: string = 'IGB';
   public cardCode: string = '';
   public noInvoicesMessage: string = '';

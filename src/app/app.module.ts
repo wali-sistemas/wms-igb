@@ -35,6 +35,8 @@ import { ClientIgbComponent } from './components/event-feria/client-igb/client-i
 import { ClientMtzComponent } from './components/event-feria/client-mtz/client-mtz.component';
 import { CheckOutComponent } from './components/packing/check-out/check-out.component';
 import { ShippingComponent } from './components/shipping/shipping.component';
+import { InvoiceShippingComponent } from './components/shipping/invoice-shipping/invoice-shipping.component';
+import { LoadGuidesComponent } from './components/shipping/load-guides/load-guides.component';
 import { WithholdingTaxesComponent } from './components/withholding-taxes/withholding-taxes.component';
 import { TicketTIComponent } from './components/ticket-TI/ticket-TI.component';
 import { ReportComexComponent } from './components/report/comex/report.comex.component';
@@ -55,10 +57,12 @@ import { RedeemPointsComponent } from './components/fidelity-program/redeem-poin
 import { CustomerComponent } from './components/collection/customer/customer.component';
 import { CustomerPnComponent } from './components/collection/customer/customer-pn.component';
 import { CalculatorComponent } from './components/collection/calculator/calculator.component';
-import { GeoLocationComponent } from './components/geo-location/geo-location.component';
-import { WalletRedplas } from './components/payments-microsite/redplas/wallet-redplas.component';
-import { WalletIGB } from './components/payments-microsite/igb/wallet-igb.component';
-import { WalletMTZ } from './components/payments-microsite/mtz/wallet-mtz.component';
+import { GeoLocationComponent } from './components/telemarketing/geo-location/geo-location.component';
+import { WalletRedplasComponent } from './components/payments-microsite/redplas/wallet-redplas.component';
+import { WalletIGBComponent } from './components/payments-microsite/igb/wallet-igb.component';
+import { WalletMTZComponent } from './components/payments-microsite/mtz/wallet-mtz.component';
+import { TrackingGuidesComponent } from './components/tracking-guides/tracking-guides.component';
+import { TelemarketingComponent } from './components/telemarketing/telemarketing.component';
 import { from } from 'rxjs/observable/from';
 
 @NgModule({
@@ -93,6 +97,8 @@ import { from } from 'rxjs/observable/from';
     ClientRedplasComponent,
     CheckOutComponent,
     ShippingComponent,
+    LoadGuidesComponent,
+    InvoiceShippingComponent,
     WithholdingTaxesComponent,
     TicketTIComponent,
     SoulStockComponent,
@@ -115,9 +121,11 @@ import { from } from 'rxjs/observable/from';
     CustomerPnComponent,
     CalculatorComponent,
     GeoLocationComponent,
-    WalletRedplas,
-    WalletIGB,
-    WalletMTZ
+    WalletRedplasComponent,
+    WalletIGBComponent,
+    WalletMTZComponent,
+    TelemarketingComponent,
+    TrackingGuidesComponent
   ],
   imports: [
     BrowserModule,

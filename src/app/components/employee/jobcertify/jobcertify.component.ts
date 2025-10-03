@@ -37,10 +37,11 @@ export class EmployeeJobCertifyComponent {
     'WALI_NOVAWEB': 'WALI',
     'DSM_NOVAWEB': 'DIGITAL',
     'INVERSUR_NOVAWEB': 'INVERSUR',
-    'MOTOREPUESTOS_NOVAWEB': 'MOTOREPUESTOS'
+    'MOTOREPUESTOS_NOVAWEB': 'MOTOREPUESTOS',
+    'MODULA_NOVAWEB': 'BODEGAS'
   };
 
-  private getCompanyFolder(schema?: string): string {
+  private getCompanyFolder(schema?: string) {
     return this.COMPANY_FOLDER[schema || this.selectedCompany] || '';
   }
 
@@ -144,6 +145,7 @@ export class EmployeeJobCertifyComponent {
       this.errorMessage = 'Completa todos los campos obligatorios.';
       return;
     }
+
     if (this.dirigidoA === 'Personalizado' &&
       !(this.contenidoPersonalizado && this.contenidoPersonalizado.trim())) {
       this.errorMessage = 'Escribe el destinatario personalizado.';
@@ -184,21 +186,7 @@ export class EmployeeJobCertifyComponent {
         this.redirectIfSessionInvalid(error);
         this.errorMessage = 'Ocurrió un error generando la carta.';
       }
-    )
-  }
-
-  public cancelForm() {
-    this.cedula = null;
-    this.selectedPeriodo = '';
-    this.fechaNacimiento = '';
-    this.dirigidoA = '';
-    this.contenidoPersonalizado = '';
-    this.showResumen = false;
-    this.formLocked = false;
-    this.setMesAnterior();
-    this.selectedCompany = '';
-    this.selectedCompanyPrint = '';
-    this.onCompanyChange();
+    );
   }
 
   public onCompanyChange() {

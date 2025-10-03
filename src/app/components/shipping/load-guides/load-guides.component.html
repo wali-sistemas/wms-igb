@@ -1,0 +1,116 @@
+<igb-navbar></igb-navbar>
+
+<!-- Modal “procesando” -->
+<div id="modal_transfer_process" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="progress">
+          <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100"
+            aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+            <span class="sr-only">Procesando</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- CARGA CSV/EXCEL -->
+<div class="container content">
+  <div class="exchange-container">
+    <div id="exchange-checkout">
+      <h3>Cargar guías (CSV / Excel)</h3>
+      <div class="exchange-form">
+        <!-- Ayuda estructura (nombres en español) -->
+        <div class="alert alert-warning" *ngIf="!file">
+          Estructura obligatoria (cabeceras):
+          <b>Transportadora, Guía, Estado, Fecha Despacho, Fecha Entrega, Ciudad, Factura</b>
+          <button class="btn btn-xs btn-default pull-right" (click)="downloadTemplate()">
+            <span class="icon-download" style="position: relative; top: 2px;"></span> Descargar plantilla CSV
+          </button>
+        </div>
+        <!-- Dropzone -->
+        <div class="dropzone" [class.hover]="dragOver" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
+          (drop)="onDrop($event)">
+          <div class="title">
+            Arrastra tu archivo aquí o
+            <label for="fileInput" style="color:#da0611; cursor:pointer; text-decoration: underline;">búscalo</label>
+          </div>
+          <small>Formatos permitidos: .csv, .xlsx, .xls — Máximo 10 MB</small>
+          <input id="fileInput" type="file" accept=".csv,.xlsx,.xls" (change)="onFileSelected($event)"
+            style="display:none;">
+          <div class="file-chip" *ngIf="file">
+            <span class="icon-file" aria-hidden="true"></span>
+            {{file.name}} · {{(file.size/1024 | number:'1.0-0')}} KB
+            <span class="icon-close" style="cursor:pointer;" (click)="clearAll()"></span>
+          </div>
+        </div>
+        <!-- Progreso -->
+        <div class="progress-wrapper" *ngIf="uploading || uploadProgress > 0">
+          <div class="progress">
+            <div class="progress-bar" [style.width.%]="uploadProgress"></div>
+          </div>
+          <div style="margin-top:6px; font-size:12px; color:#475569;">Progreso: {{uploadProgress}}%</div>
+        </div>
+        <!-- Mensajes -->
+        <div *ngIf="errorMessage" class="alert alert-danger">{{errorMessage}}</div>
+        <div *ngIf="warningMessage" class="alert alert-warning">{{warningMessage}}</div>
+        <div *ngIf="successMessage" class="alert alert-success">{{successMessage}}</div>
+        <!-- Botonera -->
+        <div class="actions">
+          <button class="btn btn-lg btn-primary-modern" (click)="upload()" [disabled]="!file || uploading">
+            <span class="icon-upload" style="position: relative; top: 2px;"></span> Subir archivo
+          </button>
+          <button class="btn btn-lg custom-button" (click)="clearAll()" [disabled]="uploading">
+            Limpiar
+          </button>
+          <button class="btn btn-lg custom-button" (click)="downloadTemplate()" [disabled]="uploading">
+            Plantilla CSV
+          </button>
+        </div>
+        <!-- Resumen -->
+        <div class="summary" *ngIf="summary">
+          <div class="card">
+            <h4>Total filas</h4>
+            <div class="value">{{summary.rows_total || 0}}</div>
+          </div>
+          <div class="card">
+            <h4>Correctas</h4>
+            <div class="value">{{summary.rows_ok || 0}}</div>
+          </div>
+          <div class="card">
+            <h4>Con error</h4>
+            <div class="value">{{summary.rows_error || 0}}</div>
+          </div>
+          <div class="card" *ngIf="summary && summary.jobId">
+            <h4>Job ID</h4>
+            <div class="value">{{summary.jobId}}</div>
+          </div>
+        </div>
+        <div class="actions" *ngIf="summary && summary.rows_error">
+          <button class="btn btn-lg btn-default" (click)="downloadErrors()">
+            <span class="icon-download" style="position: relative; top: 2px;"></span> Descargar errores
+          </button>
+        </div>
+        <!-- Preview CSV -->
+        <div class="preview" *ngIf="isCsv && previewHeaders.length">
+          <table>
+            <thead>
+              <tr>
+                <th *ngFor="let h of previewHeaders">{{h}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of previewRows">
+                <td *ngFor="let cell of row">{{cell}}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="font-size:12px; color:#64748b; padding:10px;">
+            Mostrando primeras {{previewRows.length}} filas del archivo (solo vista previa).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

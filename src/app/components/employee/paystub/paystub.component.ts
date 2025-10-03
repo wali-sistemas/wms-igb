@@ -38,11 +38,11 @@ export class EmployeePaystubComponent {
     'DSM_NOVAWEB': 'DIGITAL',
     'INVERSUR_NOVAWEB': 'INVERSUR',
     'MOTOREPUESTOS_NOVAWEB': 'MOTOREPUESTOS',
-    'VILNA_NOVAWEB': 'REDPLAS'
+    'VILNA_NOVAWEB': 'REDPLAS',
+    'MODULA_NOVAWEB': 'BODEGAS'
   };
 
-  constructor(private _reportService: ReportService, private _userService: UserService, private _router: Router, private _employeeService: EmployeeService) {
-  }
+  constructor(private _reportService: ReportService, private _userService: UserService, private _router: Router, private _employeeService: EmployeeService) { }
 
   ngOnInit() {
     this.selectedYear = '2025';
@@ -71,6 +71,7 @@ export class EmployeePaystubComponent {
       case 'MTZ_NOVAWEB': this.logo = '5'; break;
       case 'VILNA_NOVAWEB': this.logo = '6'; break;
       case 'WALI_NOVAWEB': this.logo = '7'; break;
+      case 'MODULA_NOVAWEB': this.logo = '8'; break;
       default: this.logo = '';
     }
   }

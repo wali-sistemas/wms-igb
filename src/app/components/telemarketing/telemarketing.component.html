@@ -1,0 +1,22 @@
+<igb-navbar></igb-navbar>
+
+<div class="container content">
+  <div class="row">
+    <div class="col-xs-12 col-md-6">
+      <div class="box" [routerLink]="['/telemarketing/geo-location']">
+        <div class="icon-wrap">
+          <span class="glyphicon glyphicon-map-marker"></span>
+        </div>
+        <h4 class="title">Geolocalización</h4>
+      </div>
+    </div>
+    <div *ngIf="selectedCompany == 'IGB'" class="col-xs-12 col-md-6">
+      <div class="box" [routerLink]="['/telemarketing/tracking-guides']">
+        <div class="icon-wrap">
+          <span class="icon-container-truck"></span>
+        </div>
+        <h4 class="title">Consulta de Guías</h4>
+      </div>
+    </div>
+  </div>
+</div>

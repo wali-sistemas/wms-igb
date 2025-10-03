@@ -14,7 +14,7 @@ declare var $: any;
   providers: [PaymentsMicrositeService, UserService]
 })
 
-export class WalletRedplas implements OnInit {
+export class WalletRedplasComponent implements OnInit {
   public cardCode: string = '';
   public selectedCompany: string = 'REDPLAS';
   public noInvoicesMessage: string = '';

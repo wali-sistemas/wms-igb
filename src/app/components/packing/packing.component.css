@@ -417,3 +417,62 @@
 .modern-footer .btn+.btn {
   margin-left: 8px;
 }
+
+.btn-doc-wrap {
+  margin-top: 12px;
+  margin-bottom: 6px;
+}
+
+.btn-doc {
+  display: inline-block;
+  width: 100%;
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  color: #111827;
+  font-weight: 600;
+  padding: 10px 14px;
+  border-radius: 8px;
+  text-align: center;
+  transition: box-shadow .12s ease, transform .06s ease, background .12s ease;
+}
+
+.btn-doc:hover {
+  background: #f3f4f6;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
+  transform: translateY(-1px);
+  text-decoration: none;
+  color: #111827;
+}
+
+.btn-doc.is-disabled {
+  opacity: .6;
+  pointer-events: none;
+}
+
+.btn-invoice-wide {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #f8fafc;
+  color: #0f172a;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.btn-invoice-wide:hover {
+  background: #eef2f7;
+  text-decoration: none;
+  color: #0f172a;
+}
+
+.btn-invoice-wide.is-disabled {
+  pointer-events: none;
+  opacity: .6;
+}
+
+.mt-3 {
+  padding-top: 10px;
+}
