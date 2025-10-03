@@ -180,13 +180,27 @@ export class EmployeeJobCertifyComponent {
 
         window.open(finalUrl, '_blank');
         this.successMessage = 'Carta generada correctamente.';
-        this.cancelForm();
+        this.cancelFormulary();
       },
       error => {
         this.redirectIfSessionInvalid(error);
         this.errorMessage = 'Ocurrió un error generando la carta.';
       }
     );
+  }
+
+  public cancelFormulary() {
+    this.cedula = null;
+    this.selectedPeriodo = '';
+    this.fechaNacimiento = '';
+    this.dirigidoA = '';
+    this.contenidoPersonalizado = '';
+    this.showResumen = false;
+    this.formLocked = false;
+    this.setMesAnterior();
+    this.selectedCompany = '';
+    this.selectedCompanyPrint = '';
+    this.onCompanyChange();
   }
 
   public onCompanyChange() {
