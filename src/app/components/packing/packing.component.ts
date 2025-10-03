@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { GLOBAL } from '../../services/global';
-
 import { PackingBox } from '../../models/packing-box';
 import { PackingRecord } from '../../models/packing-record';
 import { Printer } from '../../models/printer';
-
+import { OrderDoc } from '../../models/order-doc';
 import { UserService } from '../../services/user.service';
 import { PackingService } from '../../services/packing.service';
 import { InvoiceService } from '../../services/invoice.service';
@@ -15,7 +14,6 @@ import { ReportService } from '../../services/report.service';
 import { HealthchekService } from '../../services/healthchek.service';
 import { CubicService } from '../../services/cubic.service';
 import { MotorepuestoService } from '../../services/motorepuesto.service';
-
 import 'rxjs/Rx'
 
 declare var $: any;
@@ -89,6 +87,11 @@ export class PackingComponent implements OnInit {
   public prevLastUser = '';
   public prevLastPrinter = '';
   public lastHistoryForOrder: number = null;
+  //Variables creadas para la impresión de facturas
+  public orderLookupNumber: string;
+  public orderDocResult: OrderDoc;
+  public orderDocError: string = '';
+  public orderDocLoading: boolean = false;
 
   constructor(private _userService: UserService, private _packingService: PackingService, private _invoiceService: InvoiceService, private _printService: PrintService, private _router: Router, private _generic: GenericService, private _reportService: ReportService, private _healthchekService: HealthchekService, private _cubicService: CubicService, private _motorepuestoService: MotorepuestoService) {
     this.start();
@@ -123,6 +126,14 @@ export class PackingComponent implements OnInit {
 
     this.schema = this.identity.selectedCompany;
     this.currentUser = this.identity.username;
+  }
+
+  private redirectIfSessionInvalid(error) {
+    if (error && error.status && error.status == 401) {
+      localStorage.removeItem('igb.identity');
+      localStorage.removeItem('igb.selectedCompany');
+      this._router.navigate(['/']);
+    }
   }
 
   public onOrderBlur() {
@@ -268,14 +279,6 @@ export class PackingComponent implements OnInit {
     );
   }
 
-  private redirectIfSessionInvalid(error) {
-    if (error && error.status && error.status == 401) {
-      localStorage.removeItem('igb.identity');
-      localStorage.removeItem('igb.selectedCompany');
-      this._router.navigate(['/']);
-    }
-  }
-
   private loadCustomers() {
     this._packingService.listCustomers().subscribe(
       response => {
@@ -295,7 +298,10 @@ export class PackingComponent implements OnInit {
       response => {
         this.ordersList = response.content;
       },
-      error => { console.error('ocurrio un error al consultar las ordenes del cliente. ', error); }
+      error => {
+        console.error('ocurrio un error al consultar las ordenes del cliente. ', error);
+        this.redirectIfSessionInvalid(error);
+      }
     );
     this.orderItemsList = new Array<any>();
   }
@@ -352,7 +358,10 @@ export class PackingComponent implements OnInit {
           box.boxDisplayName = 'Caja #' + response.content[i];
           this.usedBoxesList.push(box);
         }
-      }, error => { console.error(error); }
+      }, error => {
+        console.error(error);
+        this.redirectIfSessionInvalid(error);
+      }
     );
   }
 
@@ -401,7 +410,10 @@ export class PackingComponent implements OnInit {
             });
           }
         }
-      }, error => { console.error('Ocurrio un error creando el packing record. ', error); }
+      }, error => {
+        console.error('Ocurrio un error creando el packing record. ', error);
+        this.redirectIfSessionInvalid(error);
+      }
     );
   }
 
@@ -423,7 +435,10 @@ export class PackingComponent implements OnInit {
     this._packingService.arePackingOrdersComplete().subscribe(
       response => {
         this.packingOrdersComplete = response.content;
-      }, error => { console.error(error); }
+      }, error => {
+        console.error(error);
+        this.redirectIfSessionInvalid(error);
+      }
     );
   }
 
@@ -510,6 +525,7 @@ export class PackingComponent implements OnInit {
         this.processDeliveryStatus = 'error';
         this.deliveryErrorMessage = 'Ocurrió un error al crear el documento de entrega en SAP. ';
         console.error(error);
+        this.redirectIfSessionInvalid(error);
       }
     );
   }
@@ -527,6 +543,7 @@ export class PackingComponent implements OnInit {
         this._router.navigate(['/']);
       }, error => {
         console.error(error);
+        this.redirectIfSessionInvalid(error);
         $('#modal_transfer_process').modal('hide');
         this._router.navigate(['/']);
       }
@@ -545,6 +562,7 @@ export class PackingComponent implements OnInit {
       }, error => {
         console.error(error);
         $('#modal_transfer_process').modal('hide');
+        this.redirectIfSessionInvalid(error);
       }
     );
   }
@@ -560,6 +578,7 @@ export class PackingComponent implements OnInit {
       }, error => {
         this.processClosePackingOrderStatus = 'error';
         console.error("Ocurrio un error cerrando el packing.", error);
+        this.redirectIfSessionInvalid(error);
       }
     );
   }
@@ -584,6 +603,7 @@ export class PackingComponent implements OnInit {
       error => {
         console.error('Ocurrio un error al guardar la lista de empaque.', error);
         $('#modal_transfer_process').modal('hide');
+        this.redirectIfSessionInvalid(error);
       }
     );
   }
@@ -609,6 +629,7 @@ export class PackingComponent implements OnInit {
         error => {
           console.error('Ocurrio un error al guardar la lista de empaque.', error);
           $('#modal_transfer_process').modal('hide');
+          this.redirectIfSessionInvalid(error);
         }
       );
     }
@@ -651,6 +672,7 @@ export class PackingComponent implements OnInit {
         this.processInvoiceStatus = 'error';
         this.deliveryErrorMessage = "Error creando factura por favor inténtelo mas tarde.";
         console.error("Ocurrio un error al crear la factura.", error);
+        this.redirectIfSessionInvalid(error);
       }
     );
   }
@@ -664,6 +686,7 @@ export class PackingComponent implements OnInit {
       }, error => {
         this.processOrderLinkStatus = 'error';
         console.error(error);
+        this.redirectIfSessionInvalid(error);
       }
     );
   }
@@ -672,7 +695,10 @@ export class PackingComponent implements OnInit {
     this._motorepuestoService.postCreatePurchaseInvoice(docNum).subscribe(
       response => {
         console.log(response);
-      }, error => { console.error(error); }
+      }, error => {
+        console.error(error);
+        this.redirectIfSessionInvalid(error);
+      }
     );
   }
 
@@ -755,6 +781,7 @@ export class PackingComponent implements OnInit {
       }, error => {
         console.error(error);
         $('#modal_transfer_process').modal('hide');
+        this.redirectIfSessionInvalid(error);
       }
     );
   }
@@ -803,6 +830,7 @@ export class PackingComponent implements OnInit {
       }, error => {
         $('#modal_transfer_process').modal('hide');
         console.error("Ocurrio un error listando los ítems para expressPack.", error);
+        this.redirectIfSessionInvalid(error);
       }
     );
     //TODO: Temporizador temportal de modal en packing
@@ -830,7 +858,10 @@ export class PackingComponent implements OnInit {
         if (response.code == 0) {
           this.printersList = response.content;
         }
-      }, error => { console.error(error); }
+      }, error => {
+        console.error(error);
+        this.redirectIfSessionInvalid(error);
+      }
     );
 
     if (this.identity.selectedCompany.includes('VARROC')) {
@@ -859,39 +890,39 @@ export class PackingComponent implements OnInit {
 
     var companyName = (this.identity && this.identity.selectedCompany) ? this.identity.selectedCompany : 'IGB';
 
-    this._invoiceService.getPrinterSessions(Number(this.orderNumber), companyName)
-      .subscribe(
-        (checkResp: any) => {
-          var prev = (checkResp && checkResp.content) ? checkResp.content : [];
+    this._invoiceService.getPrinterSessions(Number(this.orderNumber), companyName).subscribe(
+      response => {
+        var prev = (response && response.content) ? response.content : [];
 
-          if (prev.length > 0) {
-            var totalBoxes = 0;
-            for (var i = 0; i < prev.length; i++) {
-              var n = Number(prev[i].u_box_qty);
-              if (!isNaN(n)) { totalBoxes += n; }
-            }
-            var last = prev[0];
-
-            this.prevSessions = prev;
-            this.prevSessionsCount = prev.length;
-            this.prevTotalBoxes = totalBoxes;
-            this.prevLastAt = (last && last.u_created_at) ? new Date(last.u_created_at).toLocaleString() : 'N/D';
-            this.prevLastUser = (last && last.u_username) ? last.u_username : 'N/D';
-            this.prevLastPrinter = (last && last.u_printer_name) ? last.u_printer_name : 'N/D';
-
-            $('#modal_transfer_process').modal('hide');
-            $('#confirm_reprint').modal('show');
-            return;
+        if (prev.length > 0) {
+          var totalBoxes = 0;
+          for (var i = 0; i < prev.length; i++) {
+            var n = Number(prev[i].u_box_qty);
+            if (!isNaN(n)) { totalBoxes += n; }
           }
+          var last = prev[0];
 
-          this._printAndLog();
-        },
-        (e: any) => {
-          console.error('Error consultando sesiones previas:', e);
+          this.prevSessions = prev;
+          this.prevSessionsCount = prev.length;
+          this.prevTotalBoxes = totalBoxes;
+          this.prevLastAt = (last && last.u_created_at) ? new Date(last.u_created_at).toLocaleString() : 'N/D';
+          this.prevLastUser = (last && last.u_username) ? last.u_username : 'N/D';
+          this.prevLastPrinter = (last && last.u_printer_name) ? last.u_printer_name : 'N/D';
+
           $('#modal_transfer_process').modal('hide');
-          this.errorMessage = 'No fue posible validar sesiones previas de impresión.';
+          $('#confirm_reprint').modal('show');
+          return;
         }
-      );
+
+        this._printAndLog();
+      },
+      error => {
+        console.error('Error consultando sesiones previas:', error);
+        $('#modal_transfer_process').modal('hide');
+        this.errorMessage = 'No fue posible validar sesiones previas de impresión.';
+        this.redirectIfSessionInvalid(error);
+      }
+    );
   }
 
   public resetSesionId() {
@@ -915,6 +946,7 @@ export class PackingComponent implements OnInit {
         $('#modal_transfer_process').modal('hide');
         console.error("Ocurrio un error al reiniciar los sesion Id", error);
         this.errorMessage = "Ocurrio un error al reiniciar los sesion Id";
+        this.redirectIfSessionInvalid(error);
       }
     );
   }
@@ -990,9 +1022,47 @@ export class PackingComponent implements OnInit {
     );
   }
 
+  public fetchOrderDocsByOrder() {
+    this.orderDocError = '';
+    this.orderDocResult = null;
+    const order = Number(this.orderLookupNumber);
+    if (!order || order <= 0) {
+      this.orderDocError = 'Ingresa un número de pedido válido.';
+      return;
+    }
+    this.orderDocLoading = true;
+    this._packingService.getOrderDocs(this.identity.selectedCompany, order).subscribe(
+      response => {
+        this.orderDocLoading = false;
+        if (response && response.code === 0) {
+          if (response.content) {
+            this.orderDocResult = response.content;
+          } else {
+            this.orderDocError = 'No se encontraron documentos para este pedido.';
+          }
+        } else {
+          this.orderDocError = 'Error consultando documentos.';
+        }
+      },
+      error => {
+        console.error('Error consultando documentos:', error);
+        this.orderDocLoading = false;
+        this.orderDocError = 'Error consultando documentos.';
+        this.redirectIfSessionInvalid(error);
+      }
+    );
+  }
+
   public getScrollTop() {
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0;
+  }
+
+  public clearOrderDocsModal() {
+    this.orderLookupNumber = '';
+    this.orderDocError = '';
+    this.orderDocResult = null;
+    this.orderDocLoading = false;
   }
 
   private clearSessionHistory() {

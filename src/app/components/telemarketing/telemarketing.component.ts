@@ -5,12 +5,12 @@ import { UserService } from '../../services/user.service'
 declare var $: any;
 
 @Component({
-  templateUrl: './shipping.component.html',
-  styleUrls: ['./shipping.component.css'],
+  templateUrl: './telemarketing.component.html',
+  styleUrls: ['./telemarketing.component.css'],
   providers: [UserService]
 })
 
-export class ShippingComponent {
+export class TelemarketingComponent {
   public identity;
   public selectedCompany: string;
 

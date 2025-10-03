@@ -13,7 +13,7 @@ declare var $: any;
   providers: [PaymentsMicrositeService]
 })
 
-export class WalletMTZ implements OnInit {
+export class WalletMTZComponent implements OnInit {
   public selectedCompany: string = 'VARROC';
   public cardCode: string = '';
   public noInvoicesMessage: string = '';

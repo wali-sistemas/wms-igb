@@ -10,6 +10,7 @@
   overflow: hidden;
 }
 
+/* Hover igual para todos */
 .box:hover {
   color: #ddd;
   background-color: #da0611;
@@ -29,14 +30,12 @@
   justify-content: center;
 }
 
-.icon-wrap .icon-search-stock {
-  font-size: 120px;
+.icon-wrap .glyphicon {
+  font-size: 110px;
   line-height: 1;
 }
 
-.icon-wrap .glyphicon.glyphicon-level-up {
-  font-size: 110px;
+.icon-wrap .icon-container-truck {
+  font-size: 120px;
   line-height: 1;
-  position: relative;
-  top: 5px;
 }

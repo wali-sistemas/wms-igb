@@ -21,6 +21,8 @@ import { ClientIgbComponent } from './components/event-feria/client-igb/client-i
 import { ClientMtzComponent } from './components/event-feria/client-mtz/client-mtz.component';
 import { CheckOutComponent } from './components/packing/check-out/check-out.component';
 import { ShippingComponent } from './components/shipping/shipping.component';
+import { InvoiceShippingComponent } from './components/shipping/invoice-shipping/invoice-shipping.component';
+import { LoadGuidesComponent } from './components/shipping/load-guides/load-guides.component';
 import { WithholdingTaxesComponent } from './components/withholding-taxes/withholding-taxes.component';
 import { TicketTIComponent } from './components/ticket-TI/ticket-TI.component';
 import { InventoryRandomComponent } from './components/inventory/random/inventory-Random.component';
@@ -48,10 +50,12 @@ import { RedeemPointsComponent } from './components/fidelity-program/redeem-poin
 import { CustomerComponent } from './components/collection/customer/customer.component';
 import { CustomerPnComponent } from './components/collection/customer/customer-pn.component';
 import { CalculatorComponent } from './components/collection/calculator/calculator.component';
-import { GeoLocationComponent } from './components/geo-location/geo-location.component';
-import { WalletRedplas } from './components/payments-microsite/redplas/wallet-redplas.component';
-import { WalletIGB } from './components/payments-microsite/igb/wallet-igb.component';
-import { WalletMTZ } from './components/payments-microsite/mtz/wallet-mtz.component';
+import { TelemarketingComponent } from './components/telemarketing/telemarketing.component';
+import { GeoLocationComponent } from './components/telemarketing/geo-location/geo-location.component';
+import { WalletRedplasComponent } from './components/payments-microsite/redplas/wallet-redplas.component';
+import { WalletIGBComponent } from './components/payments-microsite/igb/wallet-igb.component';
+import { WalletMTZComponent } from './components/payments-microsite/mtz/wallet-mtz.component';
+import { TrackingGuidesComponent } from './components/tracking-guides/tracking-guides.component';
 import { from } from 'rxjs/observable/from';
 
 const appRoutes: Routes = [
@@ -85,6 +89,8 @@ const appRoutes: Routes = [
   { path: 'feria/redplas', component: ClientRedplasComponent },
   { path: 'check-out', component: CheckOutComponent },
   { path: 'shipping', component: ShippingComponent },
+  { path: 'shipping/invoice-shipping', component: InvoiceShippingComponent },
+  { path: 'shipping/load-guides', component: LoadGuidesComponent },
   { path: 'withholding', component: WithholdingTaxesComponent },
   { path: 'ticket-TI', component: TicketTIComponent },
   { path: 'report/comex/tracking', component: ReportComexComponent },
@@ -94,6 +100,7 @@ const appRoutes: Routes = [
   { path: 'collection/customer', component: CustomerComponent },
   { path: 'collection/customer-pn', component: CustomerPnComponent },
   { path: 'collection/calculator', component: CalculatorComponent },
+  { path: 'collection/tracking-guides', component: TrackingGuidesComponent },
   { path: 'employee', component: EmployeeComponent },
   { path: 'employee/employee-custody', component: EmployeeCustodyComponent },
   { path: 'employee/employee-jobcertify', component: EmployeeJobCertifyComponent },
@@ -103,10 +110,12 @@ const appRoutes: Routes = [
   { path: 'program-fidelity', component: FidelityProgramComponent },
   { path: 'program-fidelity/redeem-caps', component: RedeemCapsComponent },
   { path: 'program-fidelity/redeem-points', component: RedeemPointsComponent },
-  { path: 'geo-location', component: GeoLocationComponent },
-  { path: 'wallet-redplas', component: WalletRedplas },
-  { path: 'wallet-igb', component: WalletIGB },
-  { path: 'wallet-mtz', component: WalletMTZ }
+  { path: 'telemarketing', component: TelemarketingComponent },
+  { path: 'telemarketing/geo-location', component: GeoLocationComponent },
+  { path: 'telemarketing/tracking-guides', component: TrackingGuidesComponent },
+  { path: 'wallet-redplas', component: WalletRedplasComponent },
+  { path: 'wallet-igb', component: WalletIGBComponent },
+  { path: 'wallet-mtz', component: WalletMTZComponent },
 ];
 
 export const appRoutingProviders: any[] = [];

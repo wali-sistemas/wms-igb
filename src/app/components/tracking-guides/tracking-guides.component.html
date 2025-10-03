@@ -1,0 +1,254 @@
+<!-- Navbar solo para WALI (cuando hay identity) -->
+<igb-navbar *ngIf="!isPublic"></igb-navbar>
+<div class="public-wrap" [ngClass]="{ 'with-navbar': !isPublic }">
+  <!-- Header (público) -->
+  <div class="header" *ngIf="isPublic">
+    <div class="brand">
+      <img src="assets/images/logo-igb.png" alt="IGB Logo" class="brand-logo">
+      <h1>Seguimiento de envío</h1>
+    </div>
+    <div class="help">
+      Busca tus facturas por documento y consulta su estado en tiempo real.
+    </div>
+  </div>
+  <!-- Título WALI -->
+  <div *ngIf="!isPublic" class="container content">
+    <div class="row">
+      <div class="col-xs-12">
+        <h3 class="page-title">Seguimiento de envío</h3>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <!-- HERO -->
+    <div class="card-hero" [ngClass]="{ 'intranet-hero': !isPublic }">
+      <h2 *ngIf="phase === 'lookup'">Identifícate con el documento</h2>
+      <h2 *ngIf="phase === 'list'">Tus facturas</h2>
+      <h2 *ngIf="phase === 'detail'">Estado del envío</h2>
+      <div class="meta" *ngIf="record && phase === 'detail'">
+        <div class="chip"><b>Transportadora:</b> {{record.carrier}}</div>
+        <div class="chip"><b>Guía:</b> {{record.guide}}</div>
+        <div class="chip"><b>Factura:</b> {{record.invoice}}</div>
+        <div class="chip" [ngClass]="statusBadgeClass(record.status)">{{statusLabelEs(record.status)}}</div>
+        <!-- Botón WhatsApp si NOVEDAD o DEVOLUCION Debe renderizarse desde HTML-->
+        <a *ngIf="showWhatsApp(record?.status)" class="btn-whatsapp" [href]="whatsAppUrl" target="_blank" rel="noopener"
+          title="Contactar soporte">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path
+              d="M20.52 3.48A11.91 11.91 0 0 0 12.07 0C5.5 0 .2 5.3.2 11.86c0 2.09.55 4.08 1.6 5.86L0 24l6.45-1.68a11.76 11.76 0 0 0 5.62 1.43h.01c6.56 0 11.86-5.3 11.86-11.86 0-3.17-1.23-6.15-3.42-8.41zM12.08 21.4h-.01a9.5 9.5 0 0 1-4.85-1.32l-.35-.2-3.83 1 1.02-3.73-.23-.38a9.49 9.49 0 0 1-1.46-5.12c0-5.26 4.28-9.54 9.55-9.54 2.55 0 4.95.99 6.76 2.8a9.5 9.5 0 0 1 2.8 6.74c0 5.27-4.28 9.55-9.55 9.55zm5.42-7.15c-.3-.15-1.76-.86-2.04-.96-.27-.1-.46-.15-.66.15-.19.3-.76.95-.94 1.14-.17.2-.35.22-.65.08-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.48-1.73-1.65-2.02-.17-.3-.02-.46.13-.61.14-.14.3-.35.45-.52.15-.17.2-.29.3-.49.1-.2.05-.37-.02-.52-.08-.15-.66-1.6-.9-2.2-.24-.57-.48-.49-.66-.5h-.56c-.19 0-.49.07-.75.37-.26.3-1 1-1 2.44 0 1.44 1.03 2.84 1.18 3.04.15.2 2.02 3.1 4.89 4.3.68.29 1.21.47 1.63.6.69.22 1.32.19 1.82.12.55-.08 1.76-.72 2-1.41.24-.69.24-1.28.17-1.41-.06-.13-.26-.2-.56-.35z" />
+          </svg>
+          Soporte
+        </a>
+      </div>
+    </div>
+    <!-- FASE: LOOKUP (documento) -->
+    <div class="section" *ngIf="phase === 'lookup'">
+      <div class="search-row">
+        <input class="form-control input-lg" type="text" placeholder="Ingresa tu número de documento"
+          [(ngModel)]="idNumber" (keyup.enter)="searchByDocument()">
+        <button class="btn btn-primary-modern" (click)="searchByDocument()" [disabled]="loading">
+          <span class="icon-search-stock" style="position: relative; top:2px;"></span> Buscar
+        </button>
+        <button class="btn btn-ghost" (click)="backToLookup()" [disabled]="loading">Limpiar</button>
+      </div>
+    </div>
+    <div *ngIf="errorMessage" class="alert alert-danger">{{errorMessage}}</div>
+    <div *ngIf="warningMessage" class="alert alert-warning">{{warningMessage}}</div>
+    <!-- Loading -->
+    <div *ngIf="loading" class="progress-wrap">
+      <div class="progress">
+        <div class="progress-bar" [style.width.%]="100"></div>
+      </div>
+    </div>
+    <!-- LIST desktop -->
+    <div class="table-wrap headroom" *ngIf="phase === 'list' && invoices && invoices.length > 0">
+      <div class="table-scroll">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Factura</th>
+              <th>Transportadora</th>
+              <th>Fecha de creación</th>
+              <th>Ciudad</th>
+              <th>Estado</th>
+              <th>Documento</th>
+              <th style="width: 210px;"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let inv of invoices">
+              <td>{{inv.invoice}}</td>
+              <td>{{inv.carrier}}</td>
+              <td>{{inv.created_at}}</td>
+              <td>{{inv.city}}</td>
+              <td>
+                <span [ngClass]="invoiceStatusBadge(inv)">{{invoiceStatusLabel(inv)}}</span>
+              </td>
+              <td>
+                <a class="btn btn-compact btn-ghost" [href]="inv.doc_url" target="_blank" rel="noopener">Abrir</a>
+              </td>
+              <td style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button class="btn btn-compact" [ngClass]="invoiceHasGuide(inv) ? 'btn-primary-modern' : 'btn-ghost'"
+                  (click)="invoiceHasGuide(inv) && openTracking(inv)" [disabled]="!invoiceHasGuide(inv)">
+                  Ver guía
+                </button>
+                <a *ngIf="showWhatsApp(inv?.status)" class="btn-whatsapp" [href]="whatsAppUrl" target="_blank"
+                  rel="noopener" title="Contactar soporte">
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path
+                      d="M20.52 3.48A11.91 11.91 0 0 0 12.07 0C5.5 0 .2 5.3.2 11.86c0 2.09.55 4.08 1.6 5.86L0 24l6.45-1.68a11.76 11.76 0 0 0 5.62 1.43h.01c6.56 0 11.86-5.3 11.86-11.86 0-3.17-1.23-6.15-3.42-8.41zM12.08 21.4h-.01a9.5 9.5 0 0 1-4.85-1.32l-.35-.2-3.83 1 1.02-3.73-.23-.38a9.49 9.49 0 0 1-1.46-5.12c0-5.26 4.28-9.54 9.55-9.54 2.55 0 4.95.99 6.76 2.8a9.5 9.5 0 0 1 2.8 6.74c0 5.27-4.28 9.55-9.55 9.55zm5.42-7.15c-.3-.15-1.76-.86-2.04-.96-.27-.1-.46-.15-.66.15-.19.3-.76.95-.94 1.14-.17.2-.35.22-.65.08-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.48-1.73-1.65-2.02-.17-.3-.02-.46.13-.61.14-.14.3-.35.45-.52.15-.17.2-.29.3-.49.1-.2.05-.37-.02-.52-.08-.15-.66-1.6-.9-2.2-.24-.57-.48-.49-.66-.5h-.56c-.19 0-.49.07-.75.37-.26.3-1 1-1 2.44 0 1.44 1.03 2.84 1.18 3.04.15.2 2.02 3.1 4.89 4.3.68.29 1.21.47 1.63.6.69.22 1.32.19 1.82.12.55-.08 1.76-.72 2-1.41.24-.69.24-1.28.17-1.41-.06-.13-.26-.2-.56-.35z" />
+                  </svg>
+                  Soporte
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer">
+        <div class="ft-note">
+          ¿No ves alguna factura? Verifica el documento ingresado o intenta de nuevo más tarde.
+          <!-- Soporte solo ícono -->
+          <a [href]="whatsAppUrl" class="btn-whatsapp btn-icon-only" target="_blank" rel="noopener" title="Soporte"
+            style="margin-left:8px;">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path
+                d="M20.52 3.48A11.91 11.91 0 0 0 12.07 0C5.5 0 .2 5.3.2 11.86c0 2.09.55 4.08 1.6 5.86L0 24l6.45-1.68a11.76 11.76 0 0 0 5.62 1.43h.01c6.56 0 11.86-5.3 11.86-11.86 0-3.17-1.23-6.15-3.42-8.41zM12.08 21.4h-.01a9.5 9.5 0 0 1-4.85-1.32l-.35-.2-3.83 1 1.02-3.73-.23-.38a9.49 9.49 0 0 1-1.46-5.12c0-5.26 4.28-9.54 9.55-9.54 2.55 0 4.95.99 6.76 2.8a9.5 9.5 0 0 1 2.8 6.74c0 5.27-4.28 9.55-9.55 9.55zm5.42-7.15c-.3-.15-1.76-.86-2.04-.96-.27-.1-.46-.15-.66.15-.19.3-.76.95-.94 1.14-.17.2-.35.22-.65.08-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.48-1.73-1.65-2.02-.17-.3-.02-.46.13-.61.14-.14.3-.35.45-.52.15-.17.2-.29.3-.49.1-.2.05-.37-.02-.52-.08-.15-.66-1.6-.9-2.2-.24-.57-.48-.49-.66-.5h-.56c-.19 0-.49 .07-.75 .37-.26 .3-1 1-1 2.44 0 1.44 1.03 2.84 1.18 3.04 .15 .2 2.02 3.1 4.89 4.3 .68 .29 1.21 .47 1.63 .6 .69 .22 1.32 .19 1.82 .12 .55 -.08 1.76 -.72 2 -1.41 .24 -.69 .24 -1.28 .17 -1.41 -.06 -.13 -.26 -.2 -.56 -.35z" />
+            </svg>
+          </a>
+        </div>
+        <!-- Botón gris (no rojo) -->
+        <button class="btn btn-ghost btn-compact btn-secondary" (click)="backToLookup()">Cambiar documento</button>
+      </div>
+    </div>
+    <!-- LIST móvil -->
+    <div class="cards-wrap" *ngIf="phase === 'list' && invoices && invoices.length > 0">
+      <div class="card-inv" *ngFor="let inv of invoices">
+        <div class="row1">
+          <div class="title">Factura: {{inv.invoice}}</div>
+          <span [ngClass]="invoiceStatusBadge(inv)">{{invoiceStatusLabel(inv)}}</span>
+        </div>
+        <div class="row2">
+          <div class="muted">Transportadora: <b>{{inv.carrier}}</b></div>
+          <div class="muted">Fecha: <b>{{inv.created_at}}</b></div>
+          <div class="muted">Ciudad: <b>{{inv.city}}</b></div>
+          <div class="muted">Doc: <a [href]="inv.doc_url" target="_blank" rel="noopener">Abrir</a></div>
+        </div>
+        <div class="row3">
+          <!-- Abrir factura como botón pequeño (gris) -->
+          <a class="btn btn-compact btn-ghost" [href]="inv.doc_url" target="_blank" rel="noopener"
+            title="Abrir factura">
+            Abrir factura
+          </a>
+          <button class="btn btn-compact" [ngClass]="invoiceHasGuide(inv) ? 'btn-primary-modern' : 'btn-ghost'"
+            (click)="invoiceHasGuide(inv) && openTracking(inv)" [disabled]="!invoiceHasGuide(inv)">
+            Ver guía
+          </button>
+          <a *ngIf="showWhatsApp(inv?.status)" class="btn-whatsapp" [href]="whatsAppUrl" target="_blank" rel="noopener"
+            title="Contactar soporte">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path
+                d="M20.52 3.48A11.91 11.91 0 0 0 12.07 0C5.5 0 .2 5.3.2 11.86c0 2.09.55 4.08 1.6 5.86L0 24l6.45-1.68a11.76 11.76 0 0 0 5.62 1.43h.01c6.56 0 11.86-5.3 11.86-11.86 0-3.17-1.23-6.15-3.42-8.41zM12.08 21.4h-.01a9.5 9.5 0 0 1-4.85-1.32l-.35-.2-3.83 1 1.02-3.73-.23-.38a9.49 9.49 0 0 1-1.46-5.12c0-5.26 4.28-9.54 9.55-9.54 2.55 0 4.95.99 6.76 2.8a9.5 9.5 0 0 1 2.8 6.74c0 5.27-4.28 9.55-9.55 9.55zm5.42-7.15c-.3-.15-1.76-.86-2.04-.96-.27-.1-.46-.15-.66.15-.19.3-.76.95-.94 1.14-.17.2-.35.22-.65.08-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.48-1.73-1.65-2.02-.17-.3-.02-.46.13-.61.14-.14.3-.35.45-.52.15-.17.2-.29.3-.49.1-.2.05-.37-.02-.52-.08-.15-.66-1.6-.9-2.2-.24-.57-.48-.49-.66-.5h-.56c-.19 0 -.49 .07 -.75 .37 -.26 .3 -1 1 -1 2.44 0 1.44 1.03 2.84 1.18 3.04 .15 .2 2.02 3.1 4.89 4.3 .68 .29 1.21 .47 1.63 .6 .69 .22 1.32 .19 1.82 .12 .55 -.08 1.76 -.72 2 -1.41 .24 -.69 .24 -1.28 .17 -1.41 -.06 -.13 -.26 -.2 -.56 -.35z" />
+            </svg>
+            Soporte
+          </a>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="ft-note">¿No ves alguna factura? Verifica el documento ingresado o intenta de nuevo más tarde.</div>
+        <div style="display:flex; gap:8px; align-items:center; margin-top:6px;">
+          <button class="btn btn-ghost btn-compact" (click)="backToLookup()">Cambiar documento</button>
+          <a [href]="whatsAppUrl" target="_blank" rel="noopener" class="btn-whatsapp btn-icon-only" title="Soporte">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path
+                d="M20.52 3.48A11.91 11.91 0 0 0 12.07 0C5.5 0 .2 5.3.2 11.86c0 2.09.55 4.08 1.6 5.86L0 24l6.45-1.68a11.76 11.76 0 0 0 5.62 1.43h.01c6.56 0 11.86-5.3 11.86-11.86 0-3.17-1.23-6.15-3.42-8.41zM12.08 21.4h-.01a9.5 9.5 0 0 1-4.85-1.32l-.35-.2-3.83 1 1.02-3.73-.23-.38a9.49 9.49 0 0 1-1.46-5.12c0-5.26 4.28-9.54 9.55-9.54 2.55 0 4.95.99 6.76 2.8a9.5 9.5 0 0 1 2.8 6.74c0 5.27-4.28 9.55-9.55 9.55zm5.42-7.15c-.3-.15-1.76-.86-2.04-.96-.27-.1-.46-.15-.66.15-.19.3-.76.95-.94 1.14-.17.2-.35.22-.65.08-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.48-1.73-1.65-2.02-.17-.3-.02-.46.13-.61.14-.14.3-.35.45-.52.15-.17.2-.29.3-.49.1-.2.05-.37-.02-.52-.08-.15-.66-1.6-.9-2.2-.24-.57-.48-.49-.66-.5h-.56c-.19 0-.49.07-.75.37-.26.3-1 1-1 2.44 0 1.44 1.03 2.84 1.18 3.04.15.2 2.02 3.1 4.89 4.3.68.29 1.21.47 1.63.6.69.22 1.32.19 1.82.12.55-.08 1.76-.72 2-1.41.24-.69.24-1.28.17-1.41-.06-.13-.26-.2-.56-.35z" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <!-- DETAIL -->
+    <ng-container *ngIf="phase === 'detail' && record && !loading">
+      <!-- Progreso -->
+      <div class="progress-wrap">
+        <div class="progress">
+          <div class="progress-bar" [style.width.%]="progressPercent()"></div>
+        </div>
+      </div>
+      <!-- Stepper (3 pasos, “pintamos linea de tiempo” hasta Entregado) -->
+      <div class="steps">
+        <div class="stepper-grid">
+          <div [ngClass]="stepClassFor('DESPACHADA')" class="step">
+            <div class="dot">1</div>
+            <div class="label">Despachada</div>
+          </div>
+          <div class="connector" [class.fill]="connectorFill(0)"></div>
+          <div [ngClass]="stepClassFor('EN REPARTO')" class="step">
+            <div class="dot">2</div>
+            <div class="label">En reparto</div>
+          </div>
+          <div class="connector" [class.fill]="connectorFill(1)"></div>
+          <div [ngClass]="stepClassFor('ENTREGADO')" class="step">
+            <div class="dot">3</div>
+            <div class="label">Entregado</div>
+          </div>
+        </div>
+      </div>
+      <!-- Detalle -->
+      <div class="detail">
+        <div class="kv">
+          <div class="kv-item">
+            <h5>Transportadora</h5>
+            <div class="v">{{record.carrier}}</div>
+          </div>
+          <div class="kv-item">
+            <h5>Guía</h5>
+            <div class="v">{{record.guide}}</div>
+          </div>
+          <div class="kv-item">
+            <h5>Estado</h5>
+            <div class="v">{{statusLabelEs(record.status)}}</div>
+          </div>
+          <div class="kv-item">
+            <h5>Ciudad</h5>
+            <div class="v">{{record.city}}</div>
+          </div>
+          <div class="kv-item">
+            <h5>Fecha Despacho</h5>
+            <div class="v">{{record.shipped_at}}</div>
+          </div>
+          <div class="kv-item">
+            <h5>Fecha Entrega</h5>
+            <div class="v">{{record.delivered_at || '—'}}</div>
+          </div>
+          <div class="kv-item">
+            <h5>Factura</h5>
+            <div class="v">{{record.invoice}}</div>
+          </div>
+        </div>
+        <div class="timeline" *ngIf="record.events && record.events.length">
+          <ul class="tl">
+            <li class="ti" *ngFor="let e of record.events">
+              <h6>{{e.title}} — {{e.at}}</h6>
+              <p>{{e.description}}</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="card-footer">
+        <!-- Gris -->
+        <button class="btn btn-ghost btn-compact btn-secondary" (click)="backToList()">Volver a mis facturas</button>
+        <div class="ft-note">
+          <b>Privacidad:</b> no se muestran datos personales; solo guía, estado y factura.
+          <a *ngIf="showWhatsApp(record?.status)" [href]="whatsAppUrl" target="_blank" rel="noopener"
+            class="btn-whatsapp btn-icon-only" title="Soporte" style="margin-left:8px;">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path
+                d="M20.52 3.48A11.91 11.91 0 0 0 12.07 0C5.5 0 .2 5.3.2 11.86c0 2.09.55 4.08 1.6 5.86L0 24l6.45-1.68a11.76 11.76 0 0 0 5.62 1.43h.01c6.56 0 11.86-5.3 11.86-11.86 0-3.17-1.23-6.15-3.42-8.41zM12.08 21.4h-.01a9.5 9.5 0 0 1-4.85-1.32l-.35-.2-3.83 1 1.02-3.73-.23-.38a9.49 9.49 0 0 1-1.46-5.12c0-5.26 4.28-9.54 9.55-9.54 2.55 0 4.95.99 6.76 2.8a9.5 9.5 0 0 1 2.8 6.74c0 5.27-4.28 9.55-9.55 9.55zm5.42-7.15c-.3-.15-1.76-.86-2.04-.96-.27-.1-.46-.15-.66.15-.19.3-.76.95-.94 1.14-.17.2-.35.22-.65.08-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.48-1.73-1.65-2.02-.17-.3-.02-.46 .13-.61 .14-.14 .3-.35 .45-.52 .15-.17 .2-.29 .3-.49 .1-.2 .05-.37 -.02-.52 -.08-.15 -.66-1.6 -.9-2.2 -.24-.57 -.48-.49 -.66-.5 h-.56 c-.19 0 -.49 .07 -.75 .37 -.26 .3 -1 1 -1 2.44 0 1.44 1.03 2.84 1.18 3.04 .15 .2 2.02 3.1 4.89 4.3 .68 .29 1.21 .47 1.63 .6 .69 .22 1.32 .19 1.82 .12 .55 -.08 1.76 -.72 2 -1.41 .24 -.69 .24 -1.28 .17 -1.41 -.06 -.13 -.26 -.2 -.56 -.35z" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>
