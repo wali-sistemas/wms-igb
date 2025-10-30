@@ -59,17 +59,18 @@ export class CustomerComponent implements OnInit {
   public filter: string = '';
   public client: Client = new Client(); // Instancia de la clase Client
   public advisors: Advisor[] = []; // Lista de asesores
+  public regions: string[] = []; // lista de regiones
   public municipalities: Municipality[] = []; // Lista de municipios
   public departments: Department[] = []; // Lista de departamentos
   public filteredMunicipalities: Municipality[] = [];
   private initialClient: Client;  // Almacenamos una copia inicial
+  private readonly MAX_LIMIT = 50000000;
   public isSearchMode: boolean = false;
   public isEditMode: boolean = false;
   public selectedCompany: string;
   public typeTransaction: string;
   public wTCode3: string;
   public wtCode4: string;
-
   //Alertas
   public changeCustomerMessage: string;
   public changeCustomerErrorMessage: string;
@@ -95,7 +96,6 @@ export class CustomerComponent implements OnInit {
       }]
     }
   };
-
   // Variables para los datos del gráfico Dona
   pieChartLabels = ['% Cliente'];
   pieChartData = [];
@@ -168,13 +168,17 @@ export class CustomerComponent implements OnInit {
     }
   }
 
-  // Método para obtener la lista de todos los asesores "*"
+  // Método para obtener info de asesores
   public getListOfAdvisors() {
     this._businessPartnerService.listAdvisors("*").subscribe(
       response => {
-        this.advisors = response.map((item, index) => {
+        this.advisors = response.map((item) => {
           return new Advisor(item[0], item[1], item[2], item[3], item[4]);
         });
+
+        // Extraer regiones únicas
+        const uniqueRegions = new Set(this.advisors.map(a => a.region).filter(r => !!r));
+        this.regions = Array.from(uniqueRegions);
       },
       error => {
         console.error('Error al obtener la lista de asesores:', error);
@@ -924,12 +928,38 @@ export class CustomerComponent implements OnInit {
 
   // Concatenar campos de modal direccion
   public updateAddress() {
-    this.client.address = `${this.tipoDi1} ${this.numDi1}${this.stDi1}${this.stDi1a}${this.cardiDi1} ${this.numDi2}${this.stDi2}${this.stDi2a}${this.cardiDi2} ${this.numDi3} ${this.tipoViv} ${this.undDi} ${this.numApto}`;
+    this.client.address = `${this.tipoDi1} ${this.numDi1}${this.stDi1}${this.stDi1a}${this.cardiDi1} ${this.numDi2}${this.stDi2}${this.stDi2a}${this.cardiDi2} ${this.numDi3} ${this.tipoViv} ${this.undDi} ${this.numApto}`.trim();
   }
 
   // Concatenar campos de modal direccion MM
   public updateAddressMM() {
-    this.client.addressMM = `${this.tipoDi1MM} ${this.numDi1MM}${this.stDi1MM}${this.stDi1aMM}${this.cardiDi1MM} ${this.numDi2MM}${this.stDi2MM}${this.stDi2aMM}${this.cardiDi2MM} ${this.numDi3MM} ${this.tipoVivMM} ${this.undDiMM} ${this.numAptoMM}`;
+    this.client.addressMM = `${this.tipoDi1MM} ${this.numDi1MM}${this.stDi1MM}${this.stDi1aMM}${this.cardiDi1MM} ${this.numDi2MM}${this.stDi2MM}${this.stDi2aMM}${this.cardiDi2MM} ${this.numDi3MM} ${this.tipoVivMM} ${this.undDiMM} ${this.numAptoMM}`.trim();
+  }
+
+  // Metodo para convertir string en miles
+  private formatNumber(n?: number): string {
+    if (n == null) return '';
+    return new Intl.NumberFormat('es-CO').format(n);
+  }
+
+  public formatMoneyInput(event: Event, field: 'creditLimit' | 'commitedLimit') {
+    const el = event.target as HTMLInputElement;
+    const raw = el.value.replace(/\D/g, ''); // solo dígitos
+    let val = raw ? Number(raw) : 0;
+
+    // límites
+    if (val < 0) val = 0;
+    if (val > this.MAX_LIMIT) val = this.MAX_LIMIT;
+
+    this.client[field] = val;
+    el.value = this.formatNumber(val);
+
+    //notifica cambio de progreso
+    this.updateProgress();
+  }
+
+  public displayMoney(n?: number): string {
+    return this.formatNumber(n != null ? n : 0);
   }
 
   // Limpiar campos de modal direccion

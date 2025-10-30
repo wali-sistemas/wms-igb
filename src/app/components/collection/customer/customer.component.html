@@ -874,18 +874,6 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-xs-12">
-              <div class="seccion">
-                <label>ID Dirección*</label>
-                <input type="text" class="form-control input-lg" autocomplete="off"
-                  oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9\/\s]/g, '')"
-                  placeholder="Ej: JAPONESA DE MOTOS Y/O NEIRA DIAZ WILSON ANDRES"
-                  [readonly]="isSearchMode || isEditMode" [(ngModel)]="client.idAdress"
-                  (ngModelChange)="updateProgress()" (blur)="trimInput('idAdress')">
-              </div>
-            </div>
-          </div>
-          <div class="row">
             <div *ngIf="!filter">
               <!-- Controles para mostrar municipios filtrados -->
               <div class="col-xs-6 col-md-6 seccion">
@@ -1137,17 +1125,8 @@
                 <label>Regional*</label>
                 <select class="form-control input-lg" [disabled]="isSearchMode" [(ngModel)]="client.selectedVariable"
                   (ngModelChange)="updateProgress()">
-                  <option value="" disabled>Seleccione Regional</option>
-                  <option value="REGION SUR">REGION SUR</option>
-                  <option value="REGION SURESTE">REGION SURESTE</option>
-                  <option value="REGION CENTRAL">REGION CENTRAL</option>
-                  <option value="REGION ORIENTAL">REGION ORIENTAL</option>
-                  <option value="REGION ANTIOQUIA">REGION ANTIOQUIA</option>
-                  <option value="REGION NORTE">REGION NORTE</option>
-                  <option value="REGION COSTA">REGION COSTA</option>
-                  <option value="REGION CUNDINAMARCA">REGION CUNDINAMARCA</option>
-                  <option value="REGION OCCIDENTE">REGION OCCIDENTE</option>
-                  <option value="EMPLEADOS">EMPLEADOS</option>
+                  <option value="" disabled selected>Seleccione Regional</option>
+                  <option *ngFor="let region of regions" [value]="region">{{region}}</option>
                 </select>
               </div>
             </div>
@@ -1289,24 +1268,24 @@
           </div>
           <div class="row">
             <div *ngIf="client.selectedPaymentCondition !== '-1'">
+              <!-- Límite de crédito -->
               <div class="col-md-6">
                 <div class="seccion">
                   <label for="limiteCredito">Límite de crédito</label>
-                  <input type="number" class="form-control input-lg" id="limiteCredito" name="limiteCredito"
-                    maxlength="10" placeholder="Ingrese el límite de crédito (Min 0 - Max 50.000.000)"
-                    [readonly]="isSearchMode" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')"
-                    [(ngModel)]="client.creditLimit" (ngModelChange)="updateProgress()"
-                    (blur)="trimInput('creditLimit')">
+                  <input type="text" class="form-control input-lg" id="limiteCredito" name="limiteCredito"
+                    maxlength="12" placeholder="Ingrese el límite de crédito (Min 0 - Max 50.000.000)"
+                    [readonly]="isSearchMode" [value]="displayMoney(client.creditLimit)"
+                    (input)="formatMoneyInput($event, 'creditLimit')" (blur)="updateProgress()">
                 </div>
               </div>
+              <!-- Límite comprometido -->
               <div class="col-md-6">
                 <div class="seccion">
                   <label for="limiteComprometido">Límite comprometido</label>
-                  <input type="number" class="form-control input-lg" id="limiteComprometido" name="limiteComprometido"
-                    maxlength="10" placeholder="Ingrese el límite comprometido (Min 0 - Max 50.000.000)"
-                    oninput="this.value = this.value.replace(/[^0-9.,]/g, '')" [readonly]="isSearchMode"
-                    [(ngModel)]="client.commitedLimit" (ngModelChange)="updateProgress()"
-                    (blur)="trimInput('commitedLimit')">
+                  <input type="text" class="form-control input-lg" id="limiteComprometido" name="limiteComprometido"
+                    maxlength="12" placeholder="Ingrese el límite comprometido (Min 0 - Max 50.000.000)"
+                    [readonly]="isSearchMode" [value]="displayMoney(client.commitedLimit)"
+                    (input)="formatMoneyInput($event, 'commitedLimit')" (blur)="updateProgress()">
                 </div>
               </div>
             </div>
