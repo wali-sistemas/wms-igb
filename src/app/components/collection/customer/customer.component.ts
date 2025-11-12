@@ -578,7 +578,11 @@ export class CustomerComponent implements OnInit {
     let priceListValue: number;
     if (this.selectedCompany === 'IGB') {
       transpValue = '03';
-      priceListValue = 4;
+      if (this.client.selectedGroup === '114') {
+        priceListValue = 8;
+      } else {
+        priceListValue = 4;
+      }
     } else if (this.selectedCompany === 'VARROC') {
       transpValue = this.client.selectedVariable;
       priceListValue = 1;

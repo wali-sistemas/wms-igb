@@ -81,11 +81,11 @@ export class EmployeeFemprobienComponent {
   }
 
   // ========== Utilidades UI ==========
-  public clearError(): void {
+  public clearError() {
     this.errorMessage = '';
   }
 
-  public toggleSeccion(seccion: string): void {
+  public toggleSeccion(seccion: string) {
     this.seccionesAbiertas[seccion] = !this.seccionesAbiertas[seccion];
   }
 
@@ -197,7 +197,7 @@ export class EmployeeFemprobienComponent {
   }
 
   // ========== Empleados afiliados (búsqueda) ==========
-  private cargarEmpleadosAfiliados(): void {
+  private cargarEmpleadosAfiliados() {
     this._employeeService.loadAffiliatedEmployees().subscribe(
       response => {
         if (response && response.code === 0 && Array.isArray(response.content)) {
@@ -257,7 +257,7 @@ export class EmployeeFemprobienComponent {
     this.filtroBusqueda = '';
   }
 
-  public limpiarBusqueda(): void {
+  public limpiarBusqueda() {
     this.filtroBusqueda = '';
     this.empleadosFiltrados = [];
     this.mostrarFormularioAfiliado = false;
@@ -265,7 +265,7 @@ export class EmployeeFemprobienComponent {
   }
 
   // ========== Solicitudes de afiliación ==========
-  loadSolicitudesAfiliacion(): void {
+  public loadSolicitudesAfiliacion() {
     this._employeeService.loadAssociatedRequests().subscribe(
       response => {
         if (response && response.code === 0 && Array.isArray(response.content)) {
@@ -337,7 +337,7 @@ export class EmployeeFemprobienComponent {
     this.cambiarEstadoSolicitud(index, this.accionPendiente);
   }
 
-  public cambiarEstadoSolicitud(index: number, status: EstadoSolicitud): void {
+  public cambiarEstadoSolicitud(index: number, status: EstadoSolicitud) {
     const solicitud = this.solicitudesAfiliacion[index];
     this.accionesEnProgreso[index] = true;
 
@@ -368,27 +368,27 @@ export class EmployeeFemprobienComponent {
     );
   }
 
-  public aprobarSolicitud(index: number): void {
+  public aprobarSolicitud(index: number) {
     this.cambiarEstadoSolicitud(index, 'AFILIADO(A)');
   }
 
-  public rechazarSolicitud(index: number): void {
+  public rechazarSolicitud(index: number) {
     this.cambiarEstadoSolicitud(index, 'RECHAZADO(A)');
   }
 
-  public verDetalleAfiliado(index: number): void {
+  public verDetalleAfiliado(index: number) {
     this.indexSeleccionado = index;
     this.solicitudSeleccionada = this.solicitudesAfiliacion[index];
     this.mostrarModalAfiliado = true;
   }
 
-  cerrarModalAfiliado(): void {
+  cerrarModalAfiliado() {
     this.mostrarModalAfiliado = false;
     this.solicitudSeleccionada = null;
   }
 
   // ========== Nuevo asociado (formulario en pestaña "Ingreso") ==========
-  guardarNuevoAfiliado() {
+  public guardarNuevoAfiliado() {
     this.errorMessage = '';
     this.successMessage = '';
     this.isSubmitting = true;
@@ -471,15 +471,15 @@ export class EmployeeFemprobienComponent {
     };
   }
 
-  limpiarFormularioAfiliado() {
+  public limpiarFormularioAfiliado() {
     this.nuevoAfiliado = {};
   }
 
-  toggleFormularioAfiliado() {
+  public toggleFormularioAfiliado() {
     this.mostrarFormularioAfiliado = !this.mostrarFormularioAfiliado;
   }
 
-  hayDatosEnFormulario(): boolean {
+  public hayDatosEnFormulario(): boolean {
     if (!this.nuevoAfiliado || typeof this.nuevoAfiliado !== 'object') {
       return false;
     }
