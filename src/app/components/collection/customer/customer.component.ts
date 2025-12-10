@@ -247,6 +247,8 @@ export class CustomerComponent implements OnInit {
 
   // Calcular progreso
   public updateProgress() {
+    const isJuridica = this.client.selectedPersonType === '02';
+
     const camposModelo = [
       'cardName',
       'cardCode',
@@ -269,9 +271,8 @@ export class CustomerComponent implements OnInit {
       'codMunicipio',
       'latitudeMap',
       'lengthMap',
-      'firstname',
-      'lastname1',
-      'lastname2',
+      // Solo obligatorios si NO es jurídica
+      ...(isJuridica ? [] : ['firstname', 'lastname1', 'lastname2']),
       'typeDoc',
       'selectedPersonType',
       'selectedTaxRegimen',
@@ -286,13 +287,12 @@ export class CustomerComponent implements OnInit {
     const camposLlenos = camposModelo.filter(
       campo => this.client.hasOwnProperty(campo) && this.client[campo] !== ''
     ).length;
-    // Retenciones: lógica por compañía
+    // ---- Retenciones ----
     let extrasLlenos = 0;
     if (this.selectedCompany === 'IGB') {
       if (this.wTCode3) extrasLlenos++;
       if (this.wtCode4) extrasLlenos++;
     } else if (this.selectedCompany === 'VARROC') {
-      // Solo una de las dos es requerida
       if (this.wTCode3 || this.wtCode4) extrasLlenos++;
     }
     const totalCampos = camposModelo.length + (this.selectedCompany === 'IGB' ? 2 : 1);
@@ -305,6 +305,8 @@ export class CustomerComponent implements OnInit {
 
   // Método para calcular el progreso con campos de todos los tabs
   public calculateProgress(): number {
+    const isJuridica = this.client.selectedPersonType === '02';
+
     const camposTab1 = [
       'cardName',
       'cardCode',
@@ -316,6 +318,7 @@ export class CustomerComponent implements OnInit {
       'selectedZone',
       'selectedAdviser'
     ];
+
     const camposTab2 = [
       'idContactPerson',
       'nameContactPerson',
@@ -324,6 +327,7 @@ export class CustomerComponent implements OnInit {
       'phoneContactPerson',
       'dateContactPerson'
     ];
+
     const camposTab3 = [
       'idAdress',
       'address',
@@ -332,10 +336,10 @@ export class CustomerComponent implements OnInit {
       'latitudeMap',
       'lengthMap'
     ];
+
     const camposTab4 = [
-      'firstname',
-      'lastname1',
-      'lastname2',
+      // Si NO es jurídica, se incluyen. Si es jurídica → no obligatorios.
+      ...(isJuridica ? [] : ['firstname', 'lastname1', 'lastname2']),
       'typeDoc',
       'selectedPersonType',
       'selectedTaxRegimen',
@@ -345,15 +349,22 @@ export class CustomerComponent implements OnInit {
       'selectedVariable',
       'selectedTypeSell'
     ];
-    const camposTab5 = [
-      'selectedPaymentCondition'
-    ];
+
+    const camposTab5 = ['selectedPaymentCondition'];
+
     this.progressTab1 = this.calculateProgressTab(camposTab1);
     this.progressTab2 = this.calculateProgressTab(camposTab2);
     this.progressTab3 = this.calculateProgressTab(camposTab3);
     this.progressTab4 = this.calculateProgressTab(camposTab4);
     this.progressTab5 = this.calculateProgressTab(camposTab5);
-    const progresoTotal = this.progressTab1 + this.progressTab2 + this.progressTab3 + this.progressTab4 + this.progressTab5;
+
+    const progresoTotal =
+      this.progressTab1 +
+      this.progressTab2 +
+      this.progressTab3 +
+      this.progressTab4 +
+      this.progressTab5;
+
     return Math.min(progresoTotal, 100);
   }
 
