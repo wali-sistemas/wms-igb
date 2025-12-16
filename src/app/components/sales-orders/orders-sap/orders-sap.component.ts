@@ -45,13 +45,7 @@ export class OrdersSapComponent implements OnInit {
   public multiPickingErrorMessage: string = '';
   public selectedCompany: string;
 
-  constructor(private _userService: UserService,
-    private _salesOrdersService: SalesOrdersService,
-    private _deliveryService: DeliveryService,
-    private _route: ActivatedRoute, private _router: Router,
-    private _healthchekService: HealthchekService,
-    private _reportService: ReportService,
-    private _modulaService: ModulaService) {
+  constructor(private _userService: UserService, private _salesOrdersService: SalesOrdersService, private _deliveryService: DeliveryService, private _route: ActivatedRoute, private _router: Router, private _healthchekService: HealthchekService, private _reportService: ReportService, private _modulaService: ModulaService) {
     this.orders = new Array<SalesOrder>();
     this.filteredOrders = new Array<SalesOrder>();
     this.selectedOrders = new Map<string, string>();
