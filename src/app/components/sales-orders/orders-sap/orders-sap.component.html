@@ -30,7 +30,8 @@
           <select name="selectedUser" class="form-control input-lg" [(ngModel)]="selectedUser"
             *ngIf="assignableUsers && assignableUsers.length > 0">
             <option disabled selected style="display:none" value="">Selecciona un empleado</option>
-            <option *ngFor="let employee of assignableUsers" [value]="employee.username">{{employee.completeName}}
+            <option *ngFor="let employee of assignableUsers" [value]="employee.username">{{employee.name}}
+              {{employee.surname}}
             </option>
           </select>
           <br />
@@ -152,7 +153,8 @@
         <div class="modal-body">
           <div class="row">
             <div class="col-xs-12 text-center">
-              <div *ngIf="processDeliveryStatus === 'done'" class="box-printer" (click)="printPickingExpressDocument(false)">
+              <div *ngIf="processDeliveryStatus === 'done'" class="box-printer"
+                (click)="printPickingExpressDocument(false)">
                 <span class="icon-printer" style="font-size: 140px"></span>
                 <h4 class="title">Documentos</h4>
               </div>
