@@ -22,7 +22,7 @@ export class EmployeePaystubComponent {
   public selectedCompany: string = '';
   public selectedCompanyPrint: string = '';
   public cedula: number | null = null;
-  public selectedYear: string = '2025';
+  public selectedYear: string = '2026';
   public selectedMonth: string = '';
   public selectedPeriodo: string = '';
   public fechaNacimiento: string = '';
@@ -45,7 +45,7 @@ export class EmployeePaystubComponent {
   constructor(private _reportService: ReportService, private _userService: UserService, private _router: Router, private _employeeService: EmployeeService) { }
 
   ngOnInit() {
-    this.selectedYear = '2025';
+    this.selectedYear = '2026';
     this.identity = this._userService.getItentity();
     if (this.identity === null) {
       this._router.navigate(['/']);
@@ -170,7 +170,7 @@ export class EmployeePaystubComponent {
     this.selectedCompany = '';
     this.selectedCompanyPrint = '';
     this.cedula = null;
-    this.selectedYear = '2025';
+    this.selectedYear = '2026';
     this.selectedMonth = '';
     this.selectedPeriodo = '';
     this.fechaNacimiento = '';
