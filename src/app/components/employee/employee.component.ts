@@ -26,7 +26,7 @@ export class EmployeeComponent {
     this.selectedCompany = this.identity.selectedCompany;
 
     //TODO: Se debe definir que usuarios pueden asignar y cambiar la prioridad.
-    if (this.identity.username !== "rmoncada" && this.identity.username !== "jguisao" && this.identity.username !== "rzapata" && this.identity.username !== "jlondonoc" && this.identity.username !== "cperez" && this.identity.username !== "jvelasquez") {
+    if (this.identity.username !== "rmoncada" && this.identity.username !== "jguisao" && this.identity.username !== "rzapata" && this.identity.username !== "jlondonoc" && this.identity.username !== "jvelasquez") {
       this.custodyEmployeeModuleAccesible = false;
     } else {
       //Autorizados para ver modulo de custodias

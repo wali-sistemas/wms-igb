@@ -82,7 +82,7 @@ export class TicketTIComponent implements OnInit {
       this.validateInactiveSession();
     }
     //TODO: Se debe definir que usuarios pueden asignar y cambiar la prioridad.
-    if (this.identity.username !== "rmoncada" && this.identity.username !== "jguisao" && this.identity.username !== "rzapata" && this.identity.username !== "jlondonoc" && this.identity.username != "cperez" && this.identity.username != "jvelasquez") {
+    if (this.identity.username !== "rmoncada" && this.identity.username !== "jguisao" && this.identity.username !== "rzapata" && this.identity.username !== "jlondonoc" && this.identity.username != "jvelasquez") {
       this.authorizeAddProyect = false;
     } else {
       //Autorizados para crear proyectos y tickets.
