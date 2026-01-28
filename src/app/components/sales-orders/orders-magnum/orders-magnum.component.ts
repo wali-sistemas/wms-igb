@@ -149,7 +149,7 @@ export class OrdersMagnumComponent implements OnInit {
 
     this.order = order.docNum;
     this.transport = order.transp;
-    this.whsName = order.whsCode == '05' ? 'CARTAGENA' : (order.whsCode == '26' ? 'CALI' : (order.whsCode == '45' ? 'MEDELLÍN' : 'BOGOTÁ'));
+    this.whsName = order.whsCode == '05' ? 'CARTAGENA' : (order.whsCode == '26' ? 'CALI' : (order.whsCode == '60' ? 'MEDELLÍN' : 'LA ESTRELLA'));
     this.whsCode = order.whsCode;
     this.subTotal = order.subTotal;
     this.address = order.address;
@@ -193,7 +193,7 @@ export class OrdersMagnumComponent implements OnInit {
           || ord.cardName.toLowerCase().includes(this.searchFilter)
           || (ord.assignedPickingEmployee && ord.assignedPickingEmployee.toLowerCase().includes(this.searchFilter))
           || ord.address.toLowerCase().includes(this.searchFilter)
-          || (ord.whsCode == '05' ? 'CARTAGENA' : (ord.whsCode == '26' ? 'CALI' : (ord.whsCode == '45' ? 'MEDELLÍN' : 'BOGOTÁ'))).toLowerCase().includes(this.searchFilter)
+          || (ord.whsCode == '05' ? 'CARTAGENA' : (ord.whsCode == '26' ? 'CALI' : (ord.whsCode == '60' ? 'MEDELLÍN' : 'LA ESTRELLA'))).toLowerCase().includes(this.searchFilter)
           || ord.marca.toLowerCase().includes(this.searchFilter)
           || ord.promotion.toLowerCase().includes(this.searchFilter)) {
           this.filteredOrders.push(ord);
