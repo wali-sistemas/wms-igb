@@ -223,7 +223,7 @@ export class PickExpressComponent implements OnInit {
     this._userService.listUsersByGroup('WMS').subscribe(
       response => {
         for (let user of response) {
-          if (user.organization.includes("Cedi")) {
+          if (user.rol.includes("Cedi")) {
             this.assignableUsersCedi.push(user);
           }
         }

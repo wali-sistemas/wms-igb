@@ -64,7 +64,7 @@
         <select name="selectedUser" class="form-control" [(ngModel)]="selectedUser" name="selectedUser"
           [class.required-field]="!validSelectedUser" required>
           <option style="display:none" disabled value="">Seleccione un empleado</option>
-          <option *ngFor="let employee of assignableUsersCedi" [value]="employee.username">{{employee.completeName}}
+          <option *ngFor="let employee of assignableUsersCedi" [value]="employee.username">{{employee.name}} {{employee.surname}}
           </option>
         </select>
       </div>
