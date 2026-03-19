@@ -323,6 +323,9 @@
             <p><b>Comentarios</b></p>
             <hr>
             <p>
+              <b *ngIf="selectedCompany == 'VELEZ'">
+                **{{order.group}}**
+              </b>
               <b *ngIf="selectedCompany == 'VARROC'">
                 **{{order.transp}}**
               </b>
