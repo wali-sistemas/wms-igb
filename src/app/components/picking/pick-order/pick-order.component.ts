@@ -22,12 +22,13 @@ export class PickOrderComponent implements OnInit {
   public selectedPickingMethod: string = 'multiple';
   public selectedCart: number = 0;
   public selectedOrder: string = '';
-
   public nextOrderNumber: number;
   public nextBinLocationCode: string;
   public nextItemCode: string = '';
   public nextItemName: string = '';
   public nextItemQuantity: number;
+  public nextItemCodeF: string = '';
+  public nextItemNameF: string = '';
   public nextBinAbs: number;
   public nextBinStock: number;
   public nextBinType: string;
@@ -36,7 +37,6 @@ export class PickOrderComponent implements OnInit {
   public pickedItemCodeValidated = false;
   public pickedItemQuantityValidated = false;
   public disabledSelectCart = true;
-
   public confirmBinCode: string = '';
   public confirmingItemQuantity = false;
   public errorMessage: string = '';
@@ -50,15 +50,9 @@ export class PickOrderComponent implements OnInit {
   public pickingItems: Array<any>;
   public position: number = 0;
   public countLineNum: number = 0;
+  public selectedCompany: string ='';
 
-  constructor(private _userService: UserService,
-    private _salesOrderService: SalesOrdersService,
-    private _binLocationService: BinLocationService,
-    private _stockTransferService: StockTransferService,
-    private _pickingService: PickingService,
-    private _route: ActivatedRoute,
-    private _router: Router,
-    private _healthchekService: HealthchekService) {
+  constructor(private _userService: UserService, private _salesOrderService: SalesOrdersService, private _binLocationService: BinLocationService, private _stockTransferService: StockTransferService, private _pickingService: PickingService, private _route: ActivatedRoute, private _router: Router, private _healthchekService: HealthchekService) {
     this.availableCarts = new Array<BinLocation>();
   }
 
@@ -70,6 +64,8 @@ export class PickOrderComponent implements OnInit {
     $('#modal_quantity').on('shown.bs.modal', function () {
       $('#quantity').focus();
     });
+    this.selectedCompany = this.identity.selectedCompany;
+
     this.loadAvailablePickingCarts();
     this.loadAssignedOrders();
   }
@@ -177,6 +173,8 @@ export class PickOrderComponent implements OnInit {
           this.nextItemName = response.content[this.position].itemName;
           this.nextOrderNumber = response.content[this.position].orderNumber;
           this.nextBinType = response.content[this.position].binLocationType;
+          this.nextItemCodeF = response.content[this.position].itemCodeF;
+          this.nextItemNameF = response.content[this.position].itemNameF;
 
           $('#modal_loading_next').modal('hide');
           $('#binLoc').focus();
