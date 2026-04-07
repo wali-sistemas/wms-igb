@@ -589,7 +589,11 @@ export class CustomerComponent implements OnInit {
     let priceListValue: number;
     if (this.selectedCompany === 'IGB') {
       transpValue = '03';
-      if (this.client.selectedGroup === '114') {
+      //Asesores con lista de precios 9
+      const advisersPriceList9 = [6, 259, 210, 227, 209, 32];
+      if (advisersPriceList9.includes(Number(this.client.selectedAdviser))) {
+        priceListValue = 9;
+      } else if (this.client.selectedGroup === '114') {
         priceListValue = 8;
       } else {
         priceListValue = 4;
@@ -693,7 +697,15 @@ export class CustomerComponent implements OnInit {
     let priceListValue: number;
     if (this.selectedCompany === 'IGB') {
       transpValue = '03';
-      priceListValue = 4;
+      //Asesores con lista de precios
+      const advisersPriceList9 = [6, 259, 210, 227, 209, 32];
+      if (advisersPriceList9.includes(Number(this.client.selectedAdviser))) {
+        priceListValue = 9;
+      } else if (this.client.selectedGroup === '114') {
+        priceListValue = 8;
+      } else {
+        priceListValue = 4;
+      }
     } else if (this.selectedCompany === 'VARROC') {
       transpValue = this.client.selectedVariable;
       priceListValue = 1;
@@ -704,6 +716,7 @@ export class CustomerComponent implements OnInit {
     const clientData = {
       //Generales
       typeTransaction: 'update',
+      cardType: 'L',
       companyName: this.selectedCompany,
       acceptHabeasData: 'Y',
       priceList: priceListValue,
@@ -719,24 +732,24 @@ export class CustomerComponent implements OnInit {
       zona: this.client.selectedZone,
       comment: this.client.comments,
       grupo: this.client.selectedGroup,
-      //codeResFis: this.client.selectedTaxResposabilitie,
-      //descResFis: this.client.nameResFis,
+      codeResFis: this.client.selectedTaxResposabilitie,
+      descResFis: this.client.nameResFis,
       //Contacto
-      //contactPerson: this.client.idContactPerson,
-      //nameContactPerson: this.client.nameContactPerson,
-      //secondNamecontactPerson: this.client.secondNameContactPerson,
-      //lastNameContactPerson: this.client.lastNameContactPerson,
-      //occupationContactPerson: this.client.occupationContactPerson,
-      //phoneContactPerson: this.client.phoneContactPerson,
-      //dateContactPerson: this.client.dateContactPerson,
+      contactPerson: this.client.idContactPerson,
+      nameContactPerson: this.client.nameContactPerson,
+      secondNamecontactPerson: this.client.secondNameContactPerson,
+      lastNameContactPerson: this.client.lastNameContactPerson,
+      occupationContactPerson: this.client.occupationContactPerson,
+      phoneContactPerson: this.client.phoneContactPerson,
+      dateContactPerson: this.client.dateContactPerson,
       //Ubicacion
       idAddress: this.client.idAdress,
       address: this.client.address,
       codDepartamento: this.client.codDepartamento,
       codMunicipio: this.client.codMunicipio,
       taxAddress: this.client.selectedTaxAdrress,
-      //lengthMap: this.client.lengthMap,
-      //latitudeMap: this.client.latitudeMap,
+      lengthMap: this.client.lengthMap,
+      latitudeMap: this.client.latitudeMap,
       //MM
       firstname: this.client.firstname,
       lastname1: this.client.lastname1,
