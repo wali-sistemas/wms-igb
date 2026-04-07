@@ -590,7 +590,7 @@ export class CustomerComponent implements OnInit {
     if (this.selectedCompany === 'IGB') {
       transpValue = '03';
       //Asesores con lista de precios 9
-      const advisersPriceList9 = [6, 259, 210, 227, 209, 32];
+      const advisersPriceList9 = [6, 259, 210, 227, 209, 32, 285];
       if (advisersPriceList9.includes(Number(this.client.selectedAdviser))) {
         priceListValue = 9;
       } else if (this.client.selectedGroup === '114') {
