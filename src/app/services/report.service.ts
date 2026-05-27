@@ -31,74 +31,74 @@ export class ReportService {
       .map(res => res.json());
   }
 
-  public generateReport(printReportDTO) {
+  public generateReport(printReportDTO: any) {
     let igbHeaders = new IGBHeaders().loadHeaders();
     return this._http.post(this.url + 'report/generate-report', printReportDTO, { headers: igbHeaders })
       .map(res => res.json());
   }
 
-  public generateReportManager(printReportDTO) {
+  public generateReportManager(printReportDTO: any) {
     return this._http.post(this.urlManager + 'report/generate-report', printReportDTO)
       .map(res => res.json());
   }
 
-  public getSalesAnnual(companyName: string, testing: boolean) {
+  public getSalesAnnual(companyName: string, testing: boolean, isTaller: boolean) {
     let igbHeaders = new Headers({
       'Content-Type': 'application/json',
       'X-Company-Name': companyName,
       'X-Pruebas': testing
     });
-    return this._http.get(this.url + 'report/sales-annual', { headers: igbHeaders })
+    return this._http.get(this.url + 'report/sales-annual?isTaller=' + isTaller, { headers: igbHeaders })
       .map(res => res.json());
   }
 
-  public getSalesMonthly(companyName: string, testing: boolean) {
+  public getSalesMonthly(companyName: string, testing: boolean, isTaller: boolean) {
     let igbHeaders = new Headers({
       'Content-Type': 'application/json',
       'X-Company-Name': companyName,
       'X-Pruebas': testing
     });
-    return this._http.get(this.url + 'report/sales-monthly', { headers: igbHeaders })
+    return this._http.get(this.url + 'report/sales-monthly?isTaller=' + isTaller, { headers: igbHeaders })
       .map(res => res.json());
   }
 
-  public getSalesCollectMonthly(companyName: string, testing: boolean) {
+  public getSalesCollectMonthly(companyName: string, testing: boolean, isTaller: boolean) {
     let igbHeaders = new Headers({
       'Content-Type': 'application/json',
       'X-Company-Name': companyName,
       'X-Pruebas': testing
     });
-    return this._http.get(this.url + 'report/sales-collect-monthly', { headers: igbHeaders })
+    return this._http.get(this.url + 'report/sales-collect-monthly?isTaller=' + isTaller, { headers: igbHeaders })
       .map(res => res.json());
   }
 
-  public getSalesByCollect(companyName: string, testing: boolean) {
+  public getSalesByCollect(companyName: string, testing: boolean, isTaller: boolean) {
     let igbHeaders = new Headers({
       'Content-Type': 'application/json',
       'X-Company-Name': companyName,
       'X-Pruebas': testing
     });
-    return this._http.get(this.url + 'report/sales-by-collect', { headers: igbHeaders })
+    return this._http.get(this.url + 'report/sales-by-collect?isTaller=' + isTaller, { headers: igbHeaders })
       .map(res => res.json());
   }
 
-  public getStatesOrder(companyName: string, testing: boolean) {
+  public getStatesOrder(companyName: string, testing: boolean, isTaller: boolean) {
     let igbHeaders = new Headers({
       'Content-Type': 'application/json',
       'X-Company-Name': companyName,
       'X-Pruebas': testing
     });
-    return this._http.get(this.url + 'report/states-order', { headers: igbHeaders })
+    return this._http.get(this.url + 'report/states-order?isTaller=' + isTaller, { headers: igbHeaders })
       .map(res => res.json());
   }
 
-  public listOrdersOfDay(companyName: string, testing: boolean) {
+  public listOrdersOfDay(companyName: string, testing: boolean, isTaller: boolean) {
     let igbHeaders = new Headers({
       'Content-Type': 'application/json',
       'X-Company-Name': companyName,
       'X-Pruebas': testing
     });
-    return this._http.get(this.url + 'report/orders-of-day', { headers: igbHeaders })
+    return this._http.get(this.url + 'report/orders-of-day?isTaller=' + isTaller, { headers: igbHeaders })
       .map(res => res.json());
   }
 
@@ -172,17 +172,17 @@ export class ReportService {
       .map(res => res.json());
   }
 
-  public generateVacation(vacationData, companyName) {
+  public generateVacation(vacationData: any, companyName: string) {
     return this._http.post(this.urlSpring + 'reports/vacation?schema=' + companyName, vacationData, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 
-  public generatePaystub(paystubData, companyName) {
+  public generatePaystub(paystubData: any, companyName: string) {
     return this._http.post(this.urlSpring + 'reports/paystub?schema=' + companyName, paystubData, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 
-  public generateJobCertify(jobCertifyData, companyName) {
+  public generateJobCertify(jobCertifyData: any, companyName: string) {
     return this._http.post(this.urlSpring + 'reports/job-certify?schema=' + companyName, jobCertifyData, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
