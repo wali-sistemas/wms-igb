@@ -1,12 +1,13 @@
 export class OrderProductionDetail {
-  public cardCode: string;
+  public docNum: number;
   public itemCode: string;
   public article: string;
-  public docNum: string;
-  public quantity: number;
   public description: string;
-  public unitPackaging: string;
-  public checked: string;
+  public quantity: any;
+  public unitPackaging: any;
+  public cardCode: string;
+  public checked: boolean;
+  public selectedToPrint: boolean;
 
   constructor() { }
 }
