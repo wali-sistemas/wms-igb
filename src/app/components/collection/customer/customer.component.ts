@@ -55,7 +55,7 @@ export class CustomerComponent implements OnInit {
   public undDiMM: string = '';
   public numAptoMM: string = '';
   public map: any;
-  public tempSearchMode: boolean;
+  public tempSearchMode: boolean = false;
   public filter: string = '';
   public client: Client = new Client(); // Instancia de la clase Client
   public advisors: Advisor[] = []; // Lista de asesores
@@ -63,17 +63,17 @@ export class CustomerComponent implements OnInit {
   public municipalities: Municipality[] = []; // Lista de municipios
   public departments: Department[] = []; // Lista de departamentos
   public filteredMunicipalities: Municipality[] = [];
-  private initialClient: Client;  // Almacenamos una copia inicial
+  private initialClient: Client = new Client();  // Almacenamos una copia inicial
   private readonly MAX_LIMIT = 50000000;
   public isSearchMode: boolean = false;
   public isEditMode: boolean = false;
-  public selectedCompany: string;
-  public typeTransaction: string;
-  public wTCode3: string;
-  public wtCode4: string;
+  public selectedCompany: string = '';
+  public typeTransaction: string = '';
+  public wTCode3: string = '';
+  public wtCode4: string = '';
   //Alertas
-  public changeCustomerMessage: string;
-  public changeCustomerErrorMessage: string;
+  public changeCustomerMessage: string = '';
+  public changeCustomerErrorMessage: string = '';
   // Variables para los datos del gráfico
   barChartLabels = ['Cliente', 'Contacto', 'Ubicacion', 'Campos mandatarios', 'Finanzas'];
   barChartData = [];
@@ -142,7 +142,7 @@ export class CustomerComponent implements OnInit {
       mapOptions
     );
 
-    this.googleMap.addListener('click', (event) => {
+    this.googleMap.addListener('click', (event: any) => {
       $('#latInput').focus();
       this.updateCoordinates(event.latLng.lat(), event.latLng.lng());
     });
@@ -153,7 +153,7 @@ export class CustomerComponent implements OnInit {
     $('#name').focus();
   }
 
-  private redirectIfSessionInvalid(error) {
+  private redirectIfSessionInvalid(error: any) {
     if (error && error.status && error.status == 401) {
       localStorage.removeItem('igb.identity');
       localStorage.removeItem('igb.selectedCompany');
@@ -172,7 +172,7 @@ export class CustomerComponent implements OnInit {
   public getListOfAdvisors() {
     this._businessPartnerService.listAdvisors("*").subscribe(
       response => {
-        this.advisors = response.map((item) => {
+        this.advisors = response.map((item: any) => {
           return new Advisor(item[0], item[1], item[2], item[3], item[4]);
         });
 
@@ -931,7 +931,7 @@ export class CustomerComponent implements OnInit {
     const departmentName = selectedDepartment.name;
     const address = `${cityName}, ${departmentName}, Colombia`;
     const geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ 'address': address }, (results, status) => {
+    geocoder.geocode({ 'address': address }, (results: any[], status: any) => {
       if (status === 'OK' && results && results.length > 0) {
         const location = results[0].geometry.location;
         const latitude = location.lat();

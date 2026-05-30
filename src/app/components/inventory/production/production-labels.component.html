@@ -1,5 +1,5 @@
 <igb-navbar></igb-navbar>
-<!--Modal procesando-->
+<!-- Modal procesando -->
 <div id="modal_transfer_process" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -22,22 +22,40 @@
       <div class="modal-header">
         <div class="orderStatus">
           <div class="col-sm-12 col-xs-12">
-            <div class="statusClient"><b>Número de orden :</b> {{ordersDetails[0]?.docNum}}</div>
+            <div class="statusClient">
+              <b>Número de orden :</b> {{ordersDetails[0]?.docNum}}
+            </div>
           </div>
         </div>
       </div>
       <div class="col-xs-12 col-md-12">
         <div class="seeker">
-          <input type="text" class="form-control input-lg" id="filter" name="filter"
-            placeholder="Buscar articulo o descripción" autocomplete="off" [(ngModel)]="filterDetail"
+          <input type="text" class="form-control input-lg" id="filterDetail" name="filterDetail"
+            placeholder="Buscar artículo o descripción" autocomplete="off" [(ngModel)]="filterDetail"
             (keyup)="filterOrdersDetail()" style="margin-top: 5px;" />
         </div>
       </div>
+      <div class="modal-actions">
+        <div class="selection-actions">
+          <button type="button" class="btn btn-select-lines" (click)="selectAllDetails()">
+            Marcar todo
+          </button>
+          <button type="button" class="btn btn-unselect-lines" (click)="unselectAllDetails()">
+            Desmarcar todo
+          </button>
+        </div>
+        <button type="button" class="btn btn-print-all" [disabled]="printingAllLabels || !hasSelectedDetails()"
+          (click)="sendSelectedLabels()">
+          <span class="icon-printer"></span>
+          {{ printingAllLabels ? 'Imprimiendo etiquetas...' : 'Imprimir referencias seleccionadas' }}
+        </button>
+      </div>
       <div class="table-container">
-        <!-- Tabla Listar Ordenes Desktop -->
+        <!-- Tabla Desktop -->
         <table class="table table-desktop">
           <thead>
             <tr>
+              <th>Sel.</th>
               <th>SKU</th>
               <th>Descripción</th>
               <th>Cantidad</th>
@@ -49,37 +67,69 @@
           </thead>
           <tbody>
             <tr *ngFor="let orderDetail of filteredOrdersDetails">
+              <td class="td-select">
+                <input type="checkbox" class="line-check" [(ngModel)]="orderDetail.selectedToPrint">
+              </td>
               <td>{{orderDetail.article}}</td>
               <td>{{orderDetail.description}}</td>
-              <td style="position: relative; top: 4px;"><input type="number" class="form-control custom-input"
-                  [(ngModel)]="orderDetail.quantity">
+              <td class="td-quantity">
+                <input type="number" class="form-control custom-input" [(ngModel)]="orderDetail.quantity">
               </td>
-              <td style="position: relative; top: 9px;">{{orderDetail.unitPackaging | number}}</td>
-              <td><span class="icon-printer" (click)="sendLabel(orderDetail)" title="Imprimir"
-                  style="position: relative; top: 4px;"></span></td>
-              <td><span class="icon-eye" (click)="openImage(orderDetail.itemCode)" title="Ver"
-                  style="position: relative; top: 6px;"></span></td>
-              <td style="padding-left: 28px;">
-                <div class="checkbox"><input type="checkbox" [(ngModel)]="orderDetail.checked" style="top: -3px;"></div>
+              <td class="td-packaging">
+                {{formatNumber(orderDetail.unitPackaging)}}
+              </td>
+              <td>
+                <span class="icon-printer" (click)="sendLabel(orderDetail)" title="Imprimir"></span>
+              </td>
+              <td>
+                <span class="icon-eye" (click)="openImage(orderDetail.itemCode)" title="Ver"></span>
+              </td>
+              <td>
+                <div class="checkbox">
+                  <input type="checkbox" [(ngModel)]="orderDetail.checked">
+                </div>
               </td>
             </tr>
           </tbody>
         </table>
-        <!-- Tabla Listar Ordenes Mobile -->
+        <!-- Tabla Mobile -->
         <table class="table table-responsive">
           <tbody>
             <tr *ngFor="let orderDetail of filteredOrdersDetails">
-              <td><b>SKU</b><br>{{orderDetail.article}}</td>
-              <td><b>Descripción</b><br>{{orderDetail.description}}</td>
-              <td><b>Cantidad</b><br>
-                <div class="quantity-container"><input type="number" class="form-control custom-input"
-                    [(ngModel)]="orderDetail.quantity"></div>
+              <td>
+                <b>Seleccionar</b><br>
+                <input type="checkbox" class="line-check" [(ngModel)]="orderDetail.selectedToPrint">
               </td>
-              <td><b>Embalaje</b><br>{{orderDetail.unitPackaging | number}}</td>
-              <td><b>Imprimir</b><br><span class="icon-printer" (click)="sendLabel(orderDetail)" title="Imprimir"
-                  style="position: relative; top: 4px;"></span></td>
-              <td><b>Imagen</b><br><span class="icon-eye" (click)="openImage(orderDetail.itemCode)" title="Ver"
-                  style="position: relative; top: 6px;"></span></td>
+              <td>
+                <b>SKU</b><br>
+                {{orderDetail.article}}
+              </td>
+              <td>
+                <b>Descripción</b><br>
+                {{orderDetail.description}}
+              </td>
+              <td>
+                <b>Cantidad</b><br>
+                <input type="number" class="form-control custom-input" [(ngModel)]="orderDetail.quantity">
+              </td>
+              <td>
+                <b>Embalaje</b><br>
+                {{formatNumber(orderDetail.unitPackaging)}}
+              </td>
+              <td>
+                <b>Imprimir</b><br>
+                <span class="icon-printer" (click)="sendLabel(orderDetail)" title="Imprimir"></span>
+              </td>
+              <td>
+                <b>Imagen</b><br>
+                <span class="icon-eye" (click)="openImage(orderDetail.itemCode)" title="Ver"></span>
+              </td>
+              <td>
+                <b>Logo</b><br>
+                <div class="checkbox">
+                  <input type="checkbox" [(ngModel)]="orderDetail.checked">
+                </div>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -87,18 +137,16 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
       </div>
-      <!-- Botón para subir al principio -->
       <button type="button" class="scrollTop" id="btnScrollTop1" (click)="getScrollTop();" title="Arriba">
         <span class="icon-chevron-up"></span>
       </button>
     </div>
   </div>
 </div>
-<!-- Boton subir pagina -->
+<!-- Botón subir página -->
 <button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba">
   <span class="icon-chevron-up"></span>
 </button>
-<!-- Titulo - icono -->
 <div class="container content">
   <div class="row">
     <div class="col-xs-10">
@@ -106,11 +154,11 @@
     </div>
     <div class="col-xs-2">
       <div class="reload">
-        <span class="icon-refresh" (click)="listOrders()" title="Recargar Facturas"></span>
+        <span class="icon-refresh" (click)="listOrders()" title="Recargar órdenes"></span>
       </div>
     </div>
   </div>
-  <!-- Filtro cuadro texto -->
+  <!-- Filtro principal -->
   <div class="row">
     <div class="col-xs-12 col-md-12">
       <div class="filter">
@@ -120,7 +168,7 @@
       </div>
     </div>
   </div>
-  <!--Alerta error-->
+  <!-- Alerta error -->
   <div class="row" *ngIf="changeOrderErrorMessage" role="alert">
     <div class="col-xs-12">
       <div class="alert alert-danger">
@@ -128,7 +176,7 @@
       </div>
     </div>
   </div>
-  <!--Alerta aprobación-->
+  <!-- Alerta aprobación -->
   <div class="row" *ngIf="changeOrderMessage" role="alert">
     <div class="col-xs-12">
       <div class="alert alert-success">
@@ -136,20 +184,23 @@
       </div>
     </div>
   </div>
-  <!-- Contenedores-->
+  <!-- Contenedores -->
   <div class="row">
     <div *ngFor="let order of filteredOrders" class="col-xs-12 col-md-4">
-      <div class="order" [ngClass]="{'selected': selectedOrder === order}" (click)="getOrdersDetail(order.docNum)">
+      <div class="order" [ngClass]="{'selected': selectedOrder === order}" (click)="selectOrder(order)">
         <div class="orderStatus">
           <div class="row">
             <div class="col-sm-12 col-xs-12">
-              <div class="statusClient"><b>Orden #</b> {{order.docNum}}</div>
+              <div class="statusClient">
+                <b>Orden #</b> {{order.docNum}}
+              </div>
             </div>
           </div>
         </div>
         <div class="row">
           <div class="col-sm-6 col-xs-6 text-left">
-            <p><b><span class="icon-user" style="font-size: 18px;"></span> Cliente:</b> {{order.cardCode}}
+            <p>
+              <b><span class="icon-user" style="font-size: 18px;"></span> Cliente:</b> {{order.cardCode}}
             </p>
           </div>
         </div>
@@ -163,8 +214,11 @@
             <div class="col-sm-12 col-xs-12">
               <div class="orderTitle">
                 <p>
-                  <b><span class="glyphicon glyphicon-map-marker"
-                      style="font-size: 15px; position: relative; top: 1px;"></span> Destino</b>
+                  <b>
+                    <span class="glyphicon glyphicon-map-marker"
+                      style="font-size: 15px; position: relative; top: 1px;"></span>
+                    Destino
+                  </b>
                 </p>
                 <hr>
               </div>
@@ -173,21 +227,28 @@
           <div class="row">
             <div class="col-sm-12 col-xs-12">
               <div class="seccion">
-                <p><span class="bullet bulletGray"></span> <b>Departamento:</b> {{order.block}}</p>
+                <p>
+                  <span class="bullet bulletGray"></span>
+                  <b>Departamento:</b> {{order.block}}
+                </p>
               </div>
             </div>
           </div>
           <div class="row">
             <div class="col-sm-12 col-xs-12">
               <div class="seccion">
-                <p><span class="bullet bulletGray"></span> <b>Ciudad:</b> {{order.city}}</p>
+                <p>
+                  <span class="bullet bulletGray"></span>
+                  <b>Ciudad:</b> {{order.city}}
+                </p>
               </div>
             </div>
           </div>
           <div class="row">
             <div class="col-sm-12 col-xs-12">
               <div class="seccion address-container">
-                <p><span class="glyphicon glyphicon-road"
+                <p>
+                  <span class="glyphicon glyphicon-road"
                     style="padding-right: 7px; padding-left: 1px; position: relative;"></span>
                   <b>Dirección:</b> {{order.address}}
                 </p>
@@ -200,9 +261,11 @@
             <div class="col-sm-12 col-xs-12">
               <div class="orderTitle">
                 <p>
-                  <b><span class="glyphicon glyphicon-list-alt"
+                  <b>
+                    <span class="glyphicon glyphicon-list-alt"
                       style="font-size: 15px; position: relative; top: 2px; padding-right: 3px;"></span>
-                    Pedido</b>
+                    Pedido
+                  </b>
                 </p>
                 <hr>
               </div>
@@ -211,30 +274,47 @@
           <div class="row">
             <div class="col-sm-6 col-xs-6">
               <div class="seccion">
-                <p><b><span class="icon-cuenta_bancaria" style="font-size: 18px; position: relative; top: 3px;"></span>
-                    Valor:</b> {{order.docTotal | number}}</p>
+                <p>
+                  <b>
+                    <span class="icon-cuenta_bancaria" style="font-size: 18px; position: relative; top: 3px;"></span>
+                    Valor:
+                  </b> {{order.docTotal | number}}
+                </p>
               </div>
             </div>
             <div class="col-sm-6 col-xs-6">
               <div class="seccion">
-                <p style="position: relative; top: 2px;"><b><span class="glyphicon glyphicon-calendar"
-                      style="font-size: 17px; position: relative; top: 1px;"></span> Fecha:</b> {{order.date | date: 'dd/MM/yyyy'}}</p>
+                <p style="position: relative; top: 2px;">
+                  <b>
+                    <span class="glyphicon glyphicon-calendar"
+                      style="font-size: 17px; position: relative; top: 1px;"></span>
+                    Fecha:
+                  </b> {{order.date | date: 'dd/MM/yyyy'}}
+                </p>
               </div>
             </div>
           </div>
           <div class="row">
             <div class="col-sm-6 col-xs-6">
               <div class="seccion">
-                <p><b><span class="glyphicon glyphicon-align-justify"
+                <p>
+                  <b>
+                    <span class="glyphicon glyphicon-align-justify"
                       style="font-size: 14px; position: relative; top: 3px;"></span>
-                    Referencias:</b> {{order.countArticles}}</p>
+                    Referencias:
+                  </b> {{order.countArticles}}
+                </p>
               </div>
             </div>
             <div class="col-sm-6 col-xs-6">
               <div class="seccion">
-                <p style="position: relative; top: 2px;"><b><span class="glyphicon glyphicon-align-left"
-                      style="font-size: 14px; position: relative; top: 1px;"></span> Cantidad:</b>
-                  {{order.sumArticles | number}}</p>
+                <p style="position: relative; top: 2px;">
+                  <b>
+                    <span class="glyphicon glyphicon-align-left"
+                      style="font-size: 14px; position: relative; top: 1px;"></span>
+                    Cantidad:
+                  </b> {{order.sumArticles | number}}
+                </p>
               </div>
             </div>
           </div>
