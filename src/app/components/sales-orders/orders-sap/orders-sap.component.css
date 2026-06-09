@@ -143,6 +143,11 @@
   border-color: #E5BE01;
 }
 
+.order.identity-taller {
+  background-color: #5abbb3;
+  border-color: #012728;
+}
+
 .order.identity-motoSport {
   border-color: #FF8000;
 }
