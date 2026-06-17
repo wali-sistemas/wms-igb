@@ -11,21 +11,22 @@ export class SalesOrdersService {
     this.url = GLOBAL.url;
   }
 
-  public listOpenOrders(showApprovedOnly, filterGroup) {
+  public listOpenOrders(showApprovedOnly: boolean, filterGroup: boolean) {
     let igbHeaders = new IGBHeaders().loadHeaders();
     return this._http.get(this.url + 'salesorder/list/orders/' + !showApprovedOnly + '/' + filterGroup, { headers: igbHeaders })
       .map(res => res.json());
   }
 
-  public listOpenOrdersModula(showApprovedOnly, filterGroup) {
+  public listOpenOrdersModula(showApprovedOnly: boolean, filterGroup: boolean) {
     const ident = localStorage.getItem('igb.identity');
+    const identity = ident ? JSON.parse(ident) : { token: '', username: '' };
     let igbHeaders = new Headers({
       'Content-Type': 'application/json',
-      'X-Company-Name': localStorage.getItem('igb.selectedCompany'),
+      'X-Company-Name': localStorage.getItem('igb.selectedCompany') || '',
       'X-Warehouse-Code': '30',
-      'Authorization': JSON.parse(ident).token,
-      'X-Employee': JSON.parse(ident).username,
-      'X-Pruebas': localStorage.getItem('igb.pruebas')
+      'Authorization': identity.token,
+      'X-Employee': identity.username,
+      'X-Pruebas': localStorage.getItem('igb.pruebas') || ''
     });
 
     return this._http.get(this.url + 'salesorder/list/orders/' + !showApprovedOnly + '/' + filterGroup, { headers: igbHeaders })
@@ -38,13 +39,13 @@ export class SalesOrdersService {
       .map(res => res.json());
   }
 
-  public assignOrders(assignment) {
+  public assignOrders(assignment: any) {
     let igbHeaders = new IGBHeaders().loadHeaders();
     return this._http.post(this.url + 'salesorder/assign', JSON.stringify(assignment), { headers: igbHeaders })
       .map(res => res.json());
   }
 
-  public getNextPickingItem(username, orderNumber) {
+  public getNextPickingItem(username: string, orderNumber: number) {
     let igbHeaders = new IGBHeaders().loadHeaders();
     let orderNumberFilter = '';
     if (orderNumber) {
@@ -54,31 +55,31 @@ export class SalesOrdersService {
       .map(res => res.json());
   }
 
-  public listUserOrders(username) {
+  public listUserOrders(username: string) {
     let igbHeaders = new IGBHeaders().loadHeaders();
     return this._http.get(this.url + 'salesorder/orders/' + username, { headers: igbHeaders })
       .map(res => res.json());
   }
 
-  public listAvailableStock(orderNumber) {
+  public listAvailableStock(orderNumber: number) {
     let igbHeaders = new IGBHeaders().loadHeaders();
     return this._http.get(this.url + 'salesorder/stock/' + orderNumber, { headers: igbHeaders })
       .map(res => res.json());
   }
 
-  public enableAssignation(orderNumber) {
+  public enableAssignation(orderNumber: number) {
     let igbHeaders = new IGBHeaders().loadHeaders();
     return this._http.put(this.url + 'salesorder/enable', orderNumber, { headers: igbHeaders })
       .map(res => res.json());
   }
 
-  public deleteAssignOrders(orderNumber) {
+  public deleteAssignOrders(orderNumber: number) {
     let igbHeaders = new IGBHeaders().loadHeaders();
     return this._http.delete(this.url + 'salesorder/reset-assigned/' + orderNumber, { headers: igbHeaders })
       .map(res => res.json());
   }
 
-  public validateOrderAuthorized(orderNumber) {
+  public validateOrderAuthorized(orderNumber: string) {
     let igbHeaders = new IGBHeaders().loadHeaders();
     return this._http.get(this.url + 'salesorder/validate-order/' + orderNumber, { headers: igbHeaders })
       .map(res => res.json());

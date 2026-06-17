@@ -289,6 +289,7 @@
       <div class="order" [class.warning]="order.status == 'warning'" [class.identity]="order.cardCode == 'C900998242'"
         [class.identity-2]="order.cardCode == 'C900640419'" [class.identity-motoSport]="order.marca == 'MTZ MOTOSPORT'"
         [class.identity-xcelink]="order.marca == 'XCELINK'" [class.identity-rkj]="order.marca == 'RKJ'"
+        [class.identity-taller]="order.groupCardCode == 'TALLERES'"
         [class.unauthorized]="order.confirmed === 'N' || order.address.length === 0 || order.transp.length === 0"
         [class.selected]="selectedOrders.has(order.docNum)" (click)="selectOrder(order)">
         <div class="row">
@@ -335,7 +336,7 @@
         </div>
         <div class="row">
           <div class="col-xs-12">
-            <p>{{order.cardName}}</p>
+            <p>{{order.cardName}} {{order.groupCardCode == 114 ? ' ***TALLERES***' : ''}}</p>
           </div>
         </div>
         <br>

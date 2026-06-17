@@ -18,32 +18,32 @@ declare var $: any;
 })
 export class OrdersSapComponent implements OnInit {
   public urlShared: string = GLOBAL.urlShared;
-  public identity;
-  public token;
+  public identity: any;
+  public token: any;
   public orders: Array<SalesOrder>;
   public filteredOrders: Array<SalesOrder>;
   public filter: string = '';
-  public searchFilter: string;
+  public searchFilter: string = '';
   public showApprovedOnly: boolean = true;
   public filterGroup: boolean = false;
   public selectedOrders: Map<string, string>;
-  public assignableUsers: Array<any>;
-  public availableStock: Array<any>;
+  public assignableUsers: Array<any> = [];
+  public availableStock: Array<any> = [];
   public selectedUser: string = '';
   public allStockAvailable: boolean = true;
   public loadingAvailableStock: boolean = false;
   public pickingExpressModuleAccesible: boolean = false;
-  public selectedOrder: number;
+  public selectedOrder: number = 0;
   public processDeliveryStatus: string = 'none';
   public processPrintLabelsStatus: string = 'none';
   public processPrintDeliveryStatus: string = 'none';
-  public docNumDelivery: number;
+  public docNumDelivery: number = 0;
   public orderPickingExpress: string = '';
   public orderPickingExpressMDL: string = '';
   public deliveryErrorMessage: string = '';
   public pickExpressErrorMessage: string = '';
   public multiPickingErrorMessage: string = '';
-  public selectedCompany: string;
+  public selectedCompany: string = '';
 
   constructor(private _userService: UserService, private _salesOrdersService: SalesOrdersService, private _deliveryService: DeliveryService, private _route: ActivatedRoute, private _router: Router, private _healthchekService: HealthchekService, private _reportService: ReportService, private _modulaService: ModulaService) {
     this.orders = new Array<SalesOrder>();
@@ -57,11 +57,12 @@ export class OrdersSapComponent implements OnInit {
       this._router.navigate(['/']);
     }
     this.listOpenOrders();
-    this.pickingExpressModuleAccesible = JSON.parse(localStorage.getItem('igb.user.access')).pickingExpressModuleAccesible;
+    const storedUserAccess = localStorage.getItem('igb.user.access');
+    this.pickingExpressModuleAccesible = storedUserAccess ? JSON.parse(storedUserAccess).pickingExpressModuleAccesible : false;
     this.selectedCompany = this.identity.selectedCompany;
   }
 
-  private redirectIfSessionInvalid(error) {
+  private redirectIfSessionInvalid(error: any) {
     if (error && error.status && error.status === 401) {
       localStorage.removeItem('igb.identity');
       localStorage.removeItem('igb.selectedCompany');
@@ -85,6 +86,9 @@ export class OrdersSapComponent implements OnInit {
     this._salesOrdersService.listOpenOrders(this.showApprovedOnly, this.filterGroup).subscribe(
       response => {
         this.orders = response;
+        console.log("*************************************");
+        console.log(this.orders);
+        console.log("*************************************");
         $('#modal_transfer_process').modal('hide');
         $('#filter').focus();
         //TODO: validar ordenes asignadas
@@ -105,7 +109,7 @@ export class OrdersSapComponent implements OnInit {
       return;
     }
     if (order.status === 'warning') {
-      this.listAvailableStock(order.docNum);
+      this.listAvailableStock(parseInt(order.docNum));
       return;
     }
     if (this.selectedOrders.has(order.docNum)) {
@@ -163,7 +167,7 @@ export class OrdersSapComponent implements OnInit {
   public resetAssignOrder() {
     let orders = Array.from(this.selectedOrders.entries());
     for (let i = 0; i < orders.length; i++) {
-      this._salesOrdersService.deleteAssignOrders(orders[i][0]).subscribe(
+      this._salesOrdersService.deleteAssignOrders(parseInt(orders[i][0])).subscribe(
         response => {
           $('#modal_users').modal('hide');
           this.listOpenOrders();
@@ -177,7 +181,7 @@ export class OrdersSapComponent implements OnInit {
     }
   }
 
-  public filterOrders(force) {
+  public filterOrders(force: boolean) {
     if (this.filter.length > 0) {
       this.searchFilter = this.filter.toLowerCase();
       this.filteredOrders = new Array<SalesOrder>();
@@ -187,6 +191,7 @@ export class OrdersSapComponent implements OnInit {
           || ord.docNumMDL.toLowerCase().includes(this.searchFilter)
           || ord.cardCode.toLowerCase().includes(this.searchFilter)
           || ord.cardName.toLowerCase().includes(this.searchFilter)
+          || ord.groupCardCode.toLowerCase().toString().includes(this.searchFilter)
           || (ord.assignedPickingEmployee && ord.assignedPickingEmployee.toLowerCase().includes(this.searchFilter))) {
           this.filteredOrders.push(ord);
         }
@@ -208,7 +213,7 @@ export class OrdersSapComponent implements OnInit {
     $('#filter').focus();
   }
 
-  public listAvailableStock(orderNumber) {
+  public listAvailableStock(orderNumber: number) {
     this.selectedOrder = orderNumber;
     this.loadingAvailableStock = true;
     this.allStockAvailable = true;
@@ -238,7 +243,7 @@ export class OrdersSapComponent implements OnInit {
       response => {
         $('#order_status').modal('hide');
         this.listOpenOrders();
-        this.selectedOrder = null;
+        this.selectedOrder = 0;
       },
       error => {
         console.error(error);

@@ -10,7 +10,7 @@ export class PickingService {
         this.url = GLOBAL.url;
     }
 
-    public getNextPickingItem(username, orderNumber) {
+    public getNextPickingItem(username: string, orderNumber: string) {
         let igbHeaders = new IGBHeaders().loadHeaders();
         let orderNumberFilter = '';
 
@@ -22,7 +22,7 @@ export class PickingService {
             .map(res => res.json());
     }
 
-    public finishPicking(username, orderNumber) {
+    public finishPicking(username: string, orderNumber: string) {
         let igbHeaders = new IGBHeaders().loadHeaders();
         let orderNumberFilter = '';
         if (orderNumber) {

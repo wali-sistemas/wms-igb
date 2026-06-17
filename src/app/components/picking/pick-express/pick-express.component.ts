@@ -12,44 +12,43 @@ declare var $: any;
   providers: [UserService, DeliveryService]
 })
 export class PickExpressComponent implements OnInit {
-  public identity;
-  public selectedCompany: string;
-  public deliveries: Array<any>;
+  public identity: any;
+  public selectedCompany: string = '';
+  public deliveries: Array<any> = new Array<any>();
   public selectedDelivery: string = '';
   public errorMessagePickingCarts: string = '';
   public warningMessageNoOrders: string = '';
   public errorMessageBinLocation: string = '';
   public errorMessageNextItem: string = '';
   public confirmBinCode: string = '';
-  public assignableUsersCedi: Array<any>;
+  public assignableUsersCedi: Array<any> = new Array<any>();
   public selectedUser: string = '';
   public validSelectedDelivery: boolean = true;
   public validSelectedUser: boolean = true;
   public pickedItemCodeValidated: boolean = false;
   public confirmingItemQuantity: boolean = false;
   public confirmingItem: boolean = true;
-  public detailItemsDelivery: Array<PickingListExpress>;
+  public detailItemsDelivery: Array<PickingListExpress> = new Array<PickingListExpress>();
   public pickedItemCode: string = '';
-  public pickedItemQuantity: number;
+  public pickedItemQuantity: number = 0;
   public activeBtnConfig: boolean = true;
-  public nextBinType: string;
-  public nextItemQuantity: number;
-  public nextItemCode: string;
-  public nextIdPickingExpress: number;
-  public nextOrderDelivery: string;
-  public nextItemName: string;
-  public nextLineNum: number;
-  public nextOrderNumber: string;
-  public nextTypeOrderNumber: string;
-  public nextBinLocationCode: string;
-  public nextObservation: string;
-  public nextCountRow: number;
+  public nextBinType: string = '';
+  public nextItemQuantity: number = 0;
+  public nextItemCode: string = '';
+  public nextIdPickingExpress: number = 0;
+  public nextOrderDelivery: string = '';
+  public nextItemName: string = '';
+  public nextLineNum: number = 0;
+  public nextOrderNumber: string = '';
+  public nextTypeOrderNumber: string = '';
+  public nextBinLocationCode: string = '';
+  public nextObservation: string = '';
+  public nextCountRow: number = 0;
   public validNextObservation: boolean = true;
   public position: number = 1;
   public selectedDeliveryMultiple: string = '';
 
-  constructor(private _userService: UserService, private _router: Router, private _deliveryService: DeliveryService) {
-  }
+  constructor(private _userService: UserService, private _router: Router, private _deliveryService: DeliveryService) { }
 
   ngOnInit() {
     $('#selectOrders').selectpicker();
@@ -61,7 +60,7 @@ export class PickExpressComponent implements OnInit {
     this.listAssignableEmployees();
   }
 
-  private redirectIfSessionInvalid(error) {
+  private redirectIfSessionInvalid(error: any) {
     if (error && error.status && error.status === 401) {
       localStorage.removeItem('igb.identity');
       localStorage.removeItem('igb.selectedCompany');
@@ -119,7 +118,7 @@ export class PickExpressComponent implements OnInit {
 
         $('#selectOrders').on('change', () => {
           const obj = $("#selectOrders option:selected").text().replace(',', ' ').split('|');
-          this.selectedDeliveryMultiple = obj.filter(item => item.trim() !== '');
+          this.selectedDeliveryMultiple = obj.filter((item: string) => item.trim() !== '');
         });
       },
       error => {
@@ -156,7 +155,10 @@ export class PickExpressComponent implements OnInit {
           if (this.identity.username == this.selectedUser) {
             this.nextItemToPickListExpress(this.selectedUser, this.selectedDelivery, 1);
             this.activeBtnConfig = false;
-            document.getElementById("location").style.display = "block";
+            const locationElement = document.getElementById("location");
+            if (locationElement) {
+              locationElement.style.display = "block";
+            }
           } else {
             this.warningMessageNoOrders = "El usuario es diferente al que se le asignó la operación.";
             this.selectedDelivery = '';
@@ -187,8 +189,14 @@ export class PickExpressComponent implements OnInit {
       return;
     }
     this.confirmingItem = false;
-    document.getElementById("location").style.display = "none";
-    document.getElementById("item").style.display = "block";
+    const locationElement = document.getElementById("location");
+    if (locationElement) {
+      locationElement.style.display = "none";
+    }
+    const itemElement = document.getElementById("item");
+    if (itemElement) {
+      itemElement.style.display = "block";
+    }
     $('#input_pickedItem').focus();
   }
 
@@ -246,12 +254,12 @@ export class PickExpressComponent implements OnInit {
     this.errorMessageNextItem = '';
   }
 
-  public getBinLocation(bin) {
+  public getBinLocation(bin: string) {
     this.confirmBinCode = bin.trim();
     $('#binLoc').focus();
   }
 
-  public getPickedItemCode(item) {
+  public getPickedItemCode(item: string) {
     this.pickedItemCode = item.trim();
     $('#input_pickedItem').focus();
   }
@@ -260,7 +268,10 @@ export class PickExpressComponent implements OnInit {
     this.pickedItemCode = this.pickedItemCode.replace(/\s/g, '');
     if (this.pickedItemCode === this.nextItemCode) {
       this.pickedItemCodeValidated = true;
-      document.getElementById("qty").style.display = "block";
+      const qtyElement = document.getElementById("qty");
+      if (qtyElement) {
+        qtyElement.style.display = "block";
+      }
       $('#input_pickedQuantity').focus();
     }
   }
@@ -346,34 +357,52 @@ export class PickExpressComponent implements OnInit {
     this.pickedItemCodeValidated = false;
     this.confirmingItemQuantity = false;
     this.confirmingItem = true;
-    this.pickedItemQuantity = null;
+    this.pickedItemQuantity = 0;
     this.pickedItemCode = '';
-    this.nextBinLocationCode = null;
+    this.nextBinLocationCode = '';
     this.nextItemCode = '';
     this.nextItemName = '';
-    this.nextItemQuantity = null;
+    this.nextItemQuantity = 0;
     this.nextBinType = '';
     this.confirmBinCode = '';
-    document.getElementById("qty").style.display = "none";
-    document.getElementById("item").style.display = "none";
-    document.getElementById("location").style.display = "none";
+    const qtyElement = document.getElementById("qty");
+    if (qtyElement) {
+      qtyElement.style.display = "none";
+    }
+    const itemElement = document.getElementById("item");
+    if (itemElement) {
+      itemElement.style.display = "none";
+    }
+    const locationElement = document.getElementById("location");
+    if (locationElement) {
+      locationElement.style.display = "none";
+    }
   }
 
   public deleteBinCode() {
     this.pickedItemCodeValidated = false;
     this.confirmingItemQuantity = false;
     this.confirmingItem = true;
-    this.pickedItemQuantity = null;
+    this.pickedItemQuantity = 0;
     this.pickedItemCode = '';
-    this.nextBinLocationCode = null;
+    this.nextBinLocationCode = '';
     this.nextItemCode = '';
     this.nextItemName = '';
-    this.nextItemQuantity = null;
+    this.nextItemQuantity = 0;
     this.nextBinType = '';
     this.confirmBinCode = '';
-    document.getElementById("qty").style.display = "none";
-    document.getElementById("item").style.display = "none";
-    document.getElementById("location").style.display = "block";
+    const qtyElement = document.getElementById("qty");
+    if (qtyElement) {
+      qtyElement.style.display = "none";
+    }
+    const itemElement = document.getElementById("item");
+    if (itemElement) {
+      itemElement.style.display = "none";
+    }
+    const locationElement = document.getElementById("location");
+    if (locationElement) {
+      locationElement.style.display = "block";
+    }
     this.nextItemToPickListExpress(this.selectedUser, this.selectedDelivery, 1);
     $('#binLoc').focus();
   }

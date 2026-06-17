@@ -26,6 +26,7 @@ export class SalesOrder {
     public condPayment: number;
     public marca: string;
     public promotion: string;
+    public groupCardCode: string;
 
     constructor() { }
 }
