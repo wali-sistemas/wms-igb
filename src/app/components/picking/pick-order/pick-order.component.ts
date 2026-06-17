@@ -17,23 +17,23 @@ declare var $: any;
   providers: [UserService, SalesOrdersService, BinLocationService, StockTransferService, PickingService, HealthchekService]
 })
 export class PickOrderComponent implements OnInit {
-  public identity;
+  public identity: any;
   public pickingMethod: string = 'multiple';
   public selectedPickingMethod: string = 'multiple';
   public selectedCart: number = 0;
   public selectedOrder: string = '';
-  public nextOrderNumber: number;
-  public nextBinLocationCode: string;
+  public nextOrderNumber: number = 0;
+  public nextBinLocationCode: string = '';
   public nextItemCode: string = '';
   public nextItemName: string = '';
-  public nextItemQuantity: number;
+  public nextItemQuantity: number = 0;
   public nextItemCodeF: string = '';
   public nextItemNameF: string = '';
-  public nextBinAbs: number;
-  public nextBinStock: number;
-  public nextBinType: string;
+  public nextBinAbs: number = 0;
+  public nextBinStock: number = 0;
+  public nextBinType: string = '';
   public pickedItemCode: string = '';
-  public pickedItemQuantity: number;
+  public pickedItemQuantity: number = 0;
   public pickedItemCodeValidated = false;
   public pickedItemQuantityValidated = false;
   public disabledSelectCart = true;
@@ -45,12 +45,12 @@ export class PickOrderComponent implements OnInit {
   public errorMessageBinTransfer: string = '';
   public errorMessageNextItem: string = '';
   public warningMessageNoOrders: string = '';
-  public availableCarts: Array<BinLocation>;
-  public assignedOrders: Array<SalesOrder>;
-  public pickingItems: Array<any>;
+  public availableCarts: Array<BinLocation> = new Array<BinLocation>();
+  public assignedOrders: Array<SalesOrder> = new Array<SalesOrder>();
+  public pickingItems: Array<any> = new Array<any>();
   public position: number = 0;
   public countLineNum: number = 0;
-  public selectedCompany: string ='';
+  public selectedCompany: string = '';
 
   constructor(private _userService: UserService, private _salesOrderService: SalesOrdersService, private _binLocationService: BinLocationService, private _stockTransferService: StockTransferService, private _pickingService: PickingService, private _route: ActivatedRoute, private _router: Router, private _healthchekService: HealthchekService) {
     this.availableCarts = new Array<BinLocation>();
@@ -70,7 +70,7 @@ export class PickOrderComponent implements OnInit {
     this.loadAssignedOrders();
   }
 
-  private redirectIfSessionInvalid(error) {
+  private redirectIfSessionInvalid(error: any) {
     if (error && error.status && error.status === 401) {
       localStorage.removeItem('igb.identity');
       localStorage.removeItem('igb.selectedCompany');
@@ -98,7 +98,10 @@ export class PickOrderComponent implements OnInit {
           if (this.selectedCart > 0) {
             this.loadNextItem();
           }
-          document.getElementById("loc").style.display = "inline";
+          const locElement = document.getElementById("loc");
+          if (locElement) {
+            locElement.style.display = "inline";
+          }
         }
       }, error => {
         console.error(error);
@@ -134,18 +137,24 @@ export class PickOrderComponent implements OnInit {
     this.errorMessageNextItem = '';
     this.warningMessageNoOrders = '';
     this.errorMessageBinLocation = '';
-    document.getElementById("item").style.display = "none";
-    document.getElementById("qty").style.display = "none";
-    this.pickedItemQuantity = null;
+    const itemElement = document.getElementById('item');
+    if (itemElement) {
+      itemElement.style.display = 'none';
+    }
+    const qtyElement = document.getElementById('qty');
+    if (qtyElement) {
+      qtyElement.style.display = 'none';
+    }
+    this.pickedItemQuantity = 0;
     this.pickedItemQuantityValidated = false;
     this.pickedItemCode = '';
     this.pickedItemCodeValidated = false;
-    this.nextBinLocationCode = null;
-    this.nextBinAbs = null;
-    this.nextBinStock = null;
+    this.nextBinLocationCode = '';
+    this.nextBinAbs = 0;
+    this.nextBinStock = 0;
     this.nextItemCode = '';
     this.nextItemName = '';
-    this.nextItemQuantity = null;
+    this.nextItemQuantity = 0;
     this.nextBinType = '';
     this.confirmingItemQuantity = false;
     this.confirmBinCode = '';
@@ -158,7 +167,7 @@ export class PickOrderComponent implements OnInit {
       show: true
     });
 
-    this._pickingService.getNextPickingItem(this.identity.username, this.selectedOrder == "" ? null : this.selectedOrder).subscribe(
+    this._pickingService.getNextPickingItem(this.identity.username, this.selectedOrder === "" ? "" : this.selectedOrder).subscribe(
       response => {
         console.log("Lista de ítem para picking ", response);
         if (response.code === 0) {
@@ -179,15 +188,14 @@ export class PickOrderComponent implements OnInit {
           $('#modal_loading_next').modal('hide');
           $('#binLoc').focus();
         } else if (response.code === -1) {
-          for (let i = 0; i < response.content.length; i++) {
-            this.errorMessageNextItem += response.content[i].message;
-          }
-          $('#modal_loading_next').modal('hide');
-          document.getElementById("loc").style.display = "none";
+          window.location.reload();
         } else {
           this.errorMessageNextItem = response.content;
           $('#modal_loading_next').modal('hide');
-          document.getElementById("loc").style.display = "none";
+          const loc = document.getElementById("loc");
+          if (loc) {
+            loc.style.display = "none";
+          }
         }
         this.loadAssignedOrders();
       }, error => {
@@ -199,7 +207,7 @@ export class PickOrderComponent implements OnInit {
     );
   }
 
-  private closeOrderAssignation(username, orderNumber) {
+  private closeOrderAssignation(username: string, orderNumber: string) {
     console.log('closing picking assignation for ' + (orderNumber == null ? 'all orders' : 'order ' + orderNumber));
     this._pickingService.finishPicking(username, orderNumber).subscribe(
       response => {
@@ -225,7 +233,10 @@ export class PickOrderComponent implements OnInit {
       return;
     }
     this.confirmingItemQuantity = true;
-    document.getElementById("item").style.display = "inline";
+    const itemElement = document.getElementById("item");
+    if (itemElement) {
+      itemElement.style.display = "inline";
+    }
     $('#input_pickedItem').focus();
   }
 
@@ -233,7 +244,10 @@ export class PickOrderComponent implements OnInit {
     this.pickedItemCode = this.pickedItemCode.replace(/\s/g, '');
     if (this.pickedItemCode === this.nextItemCode) {
       this.pickedItemCodeValidated = true;
-      document.getElementById("qty").style.display = "inline";
+      const qtyElement = document.getElementById("qty");
+      if (qtyElement) {
+        qtyElement.style.display = "inline";
+      }
       $('#input_pickedQuantity').focus();
     }
   }
@@ -297,7 +311,7 @@ export class PickOrderComponent implements OnInit {
 
   public resetForm() {
     //clean picked quantity
-    this.pickedItemQuantity = null;
+    this.pickedItemQuantity = 0;
     this.pickedItemQuantityValidated = false;
 
     //clean pickedItem
@@ -305,12 +319,12 @@ export class PickOrderComponent implements OnInit {
     this.pickedItemCodeValidated = false;
 
     //clean next item/location
-    this.nextBinLocationCode = null;
-    this.nextBinAbs = null;
-    this.nextBinStock = null;
+    this.nextBinLocationCode = '';
+    this.nextBinAbs = 0;
+    this.nextBinStock = 0;
     this.nextItemCode = '';
     this.nextItemName = '';
-    this.nextItemQuantity = null;
+    this.nextItemQuantity = 0;
     this.nextBinType = '';
 
     //clean selected location
@@ -320,9 +334,19 @@ export class PickOrderComponent implements OnInit {
     //reload carts and inventory
     this.loadAvailablePickingCarts();
 
-    document.getElementById("qty").style.display = "none";
-    document.getElementById("item").style.display = "none";
-    document.getElementById("loc").style.display = "none";
+    const qtyElement = document.getElementById("qty");
+    const itemElement = document.getElementById("item");
+    const locElement = document.getElementById("loc");
+
+    if (qtyElement) {
+      qtyElement.style.display = "none";
+    }
+    if (itemElement) {
+      itemElement.style.display = "none";
+    }
+    if (locElement) {
+      locElement.style.display = "none";
+    }
 
     //reload next item
     this.position = 0;
@@ -443,12 +467,12 @@ export class PickOrderComponent implements OnInit {
     this.loadNextItem();
   }
 
-  public getBinLocation(bin) {
+  public getBinLocation(bin: string) {
     this.confirmBinCode = bin.trim();
     $('#binLoc').focus();
   }
 
-  public getPickedItemCode(item) {
+  public getPickedItemCode(item: string) {
     this.pickedItemCode = item.trim();
     $('#input_pickedItem').focus();
   }

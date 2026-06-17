@@ -1,5 +1,4 @@
 <igb-navbar></igb-navbar>
-
 <!--Modal confimar cantidad diferente-->
 <div id="modal_confirm_quantity_diff" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
@@ -10,7 +9,8 @@
           ¿Deseas continuar?</p>
         <p *ngIf="pickedItemQuantity < nextItemQuantity">Si continúas, se reportara como inconsistencia en el
           inventario.</p>
-        <p *ngIf="pickedItemQuantity > nextItemQuantity">Si continúas, se modificará la cantidad en la orden de venta.</p>
+        <p *ngIf="pickedItemQuantity > nextItemQuantity">Si continúas, se modificará la cantidad en la orden de venta.
+        </p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary btn-lg" (click)="confirmItemQuantity()">Sí, continuar</button>
@@ -19,7 +19,6 @@
     </div>
   </div>
 </div>
-
 <!--Modal cambio metodo picking-->
 <div id="modal_change_picking_method" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
@@ -34,7 +33,6 @@
     </div>
   </div>
 </div>
-
 <!--Modal procesadndo-->
 <div id="modal_transfer_process" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
@@ -50,7 +48,6 @@
     </div>
   </div>
 </div>
-
 <!--Modal siguiente ítem-->
 <div id="modal_loading_next" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
@@ -66,7 +63,6 @@
     </div>
   </div>
 </div>
-
 <!--Modal seleccinar modo picking-->
 <div id="modal_config" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
@@ -96,7 +92,6 @@
     </div>
   </div>
 </div>
-
 <!--Modal siguiente ítem-->
 <div id="modal_bin_detail" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
@@ -146,7 +141,6 @@
     </div>
   </div>
 </div>
-
 <!--Modal Confirmar-->
 <div id="modal_confirmar" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
   aria-hidden="true">
@@ -165,7 +159,6 @@
     </div>
   </div>
 </div>
-
 <!--Modal error-->
 <div id="modal_error" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
   data-backdrop="static" aria-hidden="true">
@@ -192,13 +185,11 @@
     </div>
   </div>
 </div>
-
 <div class="container content" *ngIf="errorMessagePickingCarts">
   <div class="alert alert-danger" role="alert" *ngIf="errorMessagePickingCarts">
     {{errorMessagePickingCarts}}
   </div>
 </div>
-
 <div class="container content" *ngIf="!errorMessagePickingCarts">
   <div class="row" *ngIf="warningMessageNoOrders">
     <div class="col-xs-12">
@@ -243,12 +234,13 @@
       <form (submit)="scanBinLocation()">
         <div class="row">
           <div class="col-xs-12">
-            <label *ngIf="selectedCompany=='REDPLAS'" for="itemFather">
+            <label *ngIf="selectedCompany=='REDPLAS' && !confirmingItemQuantity && nextBinLocationCode"
+              for="itemFather">
               Item Principal {{nextItemCodeF}} ({{nextItemNameF}})
             </label>
           </div>
         </div>
-        <hr *ngIf="selectedCompany=='REDPLAS'">
+        <hr *ngIf="selectedCompany=='REDPLAS' && !confirmingItemQuantity && nextBinLocationCode">
         <div class="row">
           <div class="col-xs-12">
             <label *ngIf="!confirmingItemQuantity && nextBinLocationCode" for="binLocation">
