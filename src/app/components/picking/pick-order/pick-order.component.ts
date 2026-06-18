@@ -145,7 +145,7 @@ export class PickOrderComponent implements OnInit {
     if (qtyElement) {
       qtyElement.style.display = 'none';
     }
-    this.pickedItemQuantity = 0;
+    this.pickedItemQuantity = '' as any;
     this.pickedItemQuantityValidated = false;
     this.pickedItemCode = '';
     this.pickedItemCodeValidated = false;
