@@ -13,15 +13,15 @@ declare var $: any;
   providers: [UserService, PurchaseOrdersService]
 })
 export class OrderSapComponent implements OnInit {
-  public identity;
-  public token;
-  public quantity: number;
-  public generalErrorMessage: string;
-  public errorMessage: string;
-  public scannedText: string;
+  public identity: any;
+  public token: any;
+  public quantity: number = 0;
+  public generalErrorMessage: string = '';
+  public errorMessage: string = '';
+  public scannedText: string = '';
   public order: PurchaseOrder;
   public receivedItems: Array<PurchaseOrderLine>;
-  public processingItem: PurchaseOrderLine;
+  public processingItem: PurchaseOrderLine = new PurchaseOrderLine('', '', '', 0, 0);
   private processingItemIndex: number = 0;
   public creatingSAPDocument: boolean = false;
   public editingQuantity: boolean = false;
@@ -43,7 +43,7 @@ export class OrderSapComponent implements OnInit {
     if (this.identity === null) {
       this._router.navigate(['/']);
     }
-    $('#modal_quantity').on('shown.bs.modal', function() {
+    $('#modal_quantity').on('shown.bs.modal', function () {
       $('#quantity').focus();
     });
     this.loadSelectedOrder();
@@ -58,7 +58,7 @@ export class OrderSapComponent implements OnInit {
             console.log(response);
             this.order = response;
             //busca si hay ordenes en proceso en el localStorage
-            let previousReception = JSON.parse(localStorage.getItem('igb.reception'));
+            let previousReception = JSON.parse(localStorage.getItem('igb.reception') || 'null');
             console.log(previousReception);
             let itemsToRemove = [];
             if (previousReception) {
@@ -102,7 +102,7 @@ export class OrderSapComponent implements OnInit {
   public scanItem() {
     this.editingQuantity = false;
     this.errorMessage = '';
-    this.processingItem = null;
+    this.processingItem = new PurchaseOrderLine('', '', '', 0, 0);
     console.log('validando articulo ' + this.scannedText);
     if (this.scannedText == null || this.scannedText.trim().length == 0) {
       this.scannedText = '';
@@ -136,9 +136,9 @@ export class OrderSapComponent implements OnInit {
       this.receivedItems.push(this.processingItem);
       this.received.set(this.processingItem.itemCode, this.receivedItems.length - 1);
       this.order.lines.splice(this.processingItemIndex, 1);
-      this.quantity = null;
+      this.quantity = 0;
       localStorage.setItem('igb.reception', JSON.stringify(this.receivedItems));
-      this.processingItem = null;
+      this.processingItem = new PurchaseOrderLine('', '', '', 0, 0);
     } else if (this.quantity < this.processingItem.quantity) {
       $('#modal_warning').modal('show');
     } else {
@@ -158,15 +158,15 @@ export class OrderSapComponent implements OnInit {
     //TODO: validar item parcial
     if (this.received.has(this.processingItem.itemCode)) {
       //el item ha sido recibido parcialmente
-      this.receivedItems[this.received.get(this.processingItem.itemCode)].quantity += this.processingItem.quantity;
+      this.receivedItems[this.received.get(this.processingItem.itemCode)!].quantity += this.processingItem.quantity;
     } else {
       //el item no se ha recibido parcialmente
       this.receivedItems.push(this.processingItem);
       this.received.set(this.processingItem.itemCode, this.receivedItems.length - 1);
     }
 
-    this.quantity = null;
-    this.processingItem = null;
+    this.quantity = 0;
+    this.processingItem = new PurchaseOrderLine('', '', '', 0, 0);
     localStorage.setItem('igb.reception', JSON.stringify(this.receivedItems));
   }
 
@@ -204,7 +204,7 @@ export class OrderSapComponent implements OnInit {
     this.loadSelectedOrder();
   }
 
-  public modificarRecibido(i) {
+  public modificarRecibido(i: number) {
     this.editingQuantity = true;
     this.editingPosition = i;
     this.processingItem = this.receivedItems[i];
@@ -218,7 +218,7 @@ export class OrderSapComponent implements OnInit {
       this.received.delete(this.processingItem.itemCode);
       this.editingPosition = -1;
       this.editingQuantity = false;
-      this.processingItem = null;
+      this.processingItem = new PurchaseOrderLine('', '', '', 0, 0);
       this.quantity = 0;
       $('#modal_quantity').modal('hide');
       localStorage.setItem('igb.reception', JSON.stringify(this.receivedItems));

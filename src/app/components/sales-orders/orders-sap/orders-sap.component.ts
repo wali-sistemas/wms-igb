@@ -187,12 +187,12 @@ export class OrdersSapComponent implements OnInit {
       this.filteredOrders = new Array<SalesOrder>();
       for (let i = 0; i < this.orders.length; i++) {
         const ord = this.orders[i];
-        if (ord.docNum.toLowerCase().includes(this.searchFilter)
-          || ord.docNumMDL.toLowerCase().includes(this.searchFilter)
-          || ord.cardCode.toLowerCase().includes(this.searchFilter)
-          || ord.cardName.toLowerCase().includes(this.searchFilter)
-          || ord.groupCardCode.toLowerCase().toString().includes(this.searchFilter)
-          || (ord.assignedPickingEmployee && ord.assignedPickingEmployee.toLowerCase().includes(this.searchFilter))) {
+        if (ord.docNum.includes(this.searchFilter)
+          || ord.docNumMDL.includes(this.searchFilter)
+          || (ord.cardCode || '').toLowerCase().includes(this.searchFilter)
+          || (ord.cardName || '').toLowerCase().includes(this.searchFilter)
+          || (ord.groupCardCode || '').toLowerCase().includes(this.searchFilter)
+          || (ord.assignedPickingEmployee || '').toLowerCase().includes(this.searchFilter)) {
           this.filteredOrders.push(ord);
         }
       }
