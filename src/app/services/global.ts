@@ -5,12 +5,14 @@ export let GLOBAL = {
   /*url: 'http://192.168.10.69:8080/igb/res/',
   urlShared: 'http://192.168.10.69:8080/shared/',
   urlManager: 'http://192.168.10.69:8080/manager/res/',
-  urlSpring: 'http://192.168.10.69:8080/apiRest/wali/'*/
+  urlSpring: 'http://192.168.10.69:8080/apiRest/wali/',
+  urlClaude: 'https://192.168.10.69:8080/apiRestClaude/wali/'*/
   //HTTPS
   url: 'https://wali.igbcolombia.com/api/igb/res/',
   urlShared: 'https://wali.igbcolombia.com/api/shared/',
   urlManager: 'https://wali.igbcolombia.com/api/manager/res/',
-  urlSpring: 'https://wali.igbcolombia.com/api/apiRest/wali/'
+  urlSpring: 'https://wali.igbcolombia.com/api/apiRest/wali/',
+  urlClaude: 'https://wali.igbcolombia.com/api/apiRestClaude/wali/'
 };
 
 export let AIGlobal = {
