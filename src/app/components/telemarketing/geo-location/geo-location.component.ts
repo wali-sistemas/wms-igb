@@ -174,15 +174,16 @@ export class GeoLocationComponent implements OnInit {
   public getListOfAdvisors(email: string) {
     this._businessPartnerService.listAdvisors(email).subscribe(
       response => {
-        this.advisors = response.map((item: any, index: number) => {
-          return new Advisor(item[0], item[1], item[2], item[3], item[4]);
-        });
-        this.filteredRegions = Array.from(new Set(this.advisors.map(advisor => advisor.region)));
-        if (this.region) {
-          this.filteredAdvisors = this.advisors.filter(advisor => advisor.region === this.region);
-        } else {
-          this.filteredAdvisors = [];
-        }
+        this.advisors = response
+          .map((item: any) => new Advisor(item[0], item[1], item[2], item[3], item[4]))
+          .filter((advisor: Advisor) =>
+            advisor.region &&
+            advisor.region.trim() !== ''
+          );
+
+        this.filteredRegions = Array.from(
+          new Set(this.advisors.map(advisor => advisor.region))
+        );
       },
       error => {
         console.error('Error al obtener la lista de asesores:', error);
