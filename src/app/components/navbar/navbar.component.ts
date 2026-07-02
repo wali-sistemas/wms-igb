@@ -9,10 +9,10 @@ import { UserService } from '../../services/user.service';
   providers: [UserService]
 })
 export class NavBarComponent implements OnInit {
-  public identity;
-  public logo;
-  public count: number;
-  public minWidth: number;
+  public identity: any;
+  public logo: string = '';
+  public count: number = 0;
+  public minWidth: number = 0;
   public ordersModuleAccesible: boolean = false;
   public pickingModuleAccesible: boolean = false;
   public resupplyModuleAccesible: boolean = false;
@@ -28,6 +28,7 @@ export class NavBarComponent implements OnInit {
   public employeeModuleAccesible: boolean = false;
   public fidelityProgramModuleAccesible: boolean = false;
   public geoLocationModuleAccesible: boolean = false;
+  public assistantAIModuleAccesible: boolean = false;
 
   constructor(private _userService: UserService, private _route: ActivatedRoute, private _router: Router, private renderer: Renderer2) { }
 
@@ -101,7 +102,8 @@ export class NavBarComponent implements OnInit {
 
   private initializeAccessParameters() {
     //valida si ya hay datos en sesion
-    let userAccess = JSON.parse(localStorage.getItem('igb.user.access'));
+    const storedUserAccess = localStorage.getItem('igb.user.access');
+    let userAccess = storedUserAccess ? JSON.parse(storedUserAccess) : null;
     if (userAccess) {
       this.ordersModuleAccesible = userAccess.ordersModuleAccesible;
       this.pickingModuleAccesible = userAccess.pickingModuleAccesible;
@@ -118,6 +120,7 @@ export class NavBarComponent implements OnInit {
       this.fidelityProgramModuleAccesible = userAccess.fidelityProgramModuleAccesible;
       this.employeeModuleAccesible = userAccess.employeeModuleAccesible;
       this.geoLocationModuleAccesible = userAccess.geoLocationModuleAccesible;
+      this.assistantAIModuleAccesible = userAccess.assistantAIModuleAccesible;
       return;
     }
 
@@ -136,7 +139,8 @@ export class NavBarComponent implements OnInit {
       collectionModuleAccesible: false,
       fidelityProgramModuleAccesible: false,
       employeeModuleAccesible: false,
-      geoLocationModuleAccesible: false
+      geoLocationModuleAccesible: false,
+      assistantAIModuleAccesible: false
     };
 
     localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
@@ -146,7 +150,8 @@ export class NavBarComponent implements OnInit {
       response => {
         if (response.code == 0) {
           this.ticketTIModuleAccesible = true;
-          userAccess = JSON.parse(localStorage.getItem('igb.user.access'));
+          const storedUserAccess = localStorage.getItem('igb.user.access');
+          let userAccess = storedUserAccess ? JSON.parse(storedUserAccess) : null;
           userAccess.ticketTIModuleAccesible = true;
           localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
         } else {
@@ -160,7 +165,8 @@ export class NavBarComponent implements OnInit {
       response => {
         if (response.code == 0) {
           this.ordersModuleAccesible = true;
-          userAccess = JSON.parse(localStorage.getItem('igb.user.access'));
+          const storedUserAccess = localStorage.getItem('igb.user.access');
+          let userAccess = storedUserAccess ? JSON.parse(storedUserAccess) : null;
           userAccess.ordersModuleAccesible = true;
           localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
         } else {
@@ -174,7 +180,8 @@ export class NavBarComponent implements OnInit {
       response => {
         if (response.code == 0) {
           this.pickingModuleAccesible = true;
-          userAccess = JSON.parse(localStorage.getItem('igb.user.access'));
+          const storedUserAccess = localStorage.getItem('igb.user.access');
+          let userAccess = storedUserAccess ? JSON.parse(storedUserAccess) : null;
           userAccess.pickingModuleAccesible = true;
           localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
         } else {
@@ -188,7 +195,8 @@ export class NavBarComponent implements OnInit {
       response => {
         if (response.code == 0) {
           this.packingModuleAccesible = true;
-          userAccess = JSON.parse(localStorage.getItem('igb.user.access'));
+          const storedUserAccess = localStorage.getItem('igb.user.access');
+          let userAccess = storedUserAccess ? JSON.parse(storedUserAccess) : null;
           userAccess.packingModuleAccesible = true;
           localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
         } else {
@@ -202,7 +210,8 @@ export class NavBarComponent implements OnInit {
       response => {
         if (response.code == 0) {
           this.shippingModuleAccesible = true;
-          userAccess = JSON.parse(localStorage.getItem('igb.user.access'));
+          const storedUserAccess = localStorage.getItem('igb.user.access');
+          let userAccess = storedUserAccess ? JSON.parse(storedUserAccess) : null;
           userAccess.shippingModuleAccesible = true;
           localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
         } else {
@@ -216,7 +225,8 @@ export class NavBarComponent implements OnInit {
       response => {
         if (response.code == 0) {
           this.inventoryModuleAccesible = true;
-          userAccess = JSON.parse(localStorage.getItem('igb.user.access'));
+          const storedUserAccess = localStorage.getItem('igb.user.access');
+          let userAccess = storedUserAccess ? JSON.parse(storedUserAccess) : null;
           userAccess.inventoryModuleAccesible = true;
           localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
         } else {
@@ -230,7 +240,8 @@ export class NavBarComponent implements OnInit {
       response => {
         if (response.code == 0) {
           this.resupplyModuleAccesible = true;
-          userAccess = JSON.parse(localStorage.getItem('igb.user.access'));
+          const storedUserAccess = localStorage.getItem('igb.user.access');
+          let userAccess = storedUserAccess ? JSON.parse(storedUserAccess) : null;
           userAccess.resupplyModuleAccesible = true;
           localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
         } else {
@@ -244,7 +255,8 @@ export class NavBarComponent implements OnInit {
       response => {
         if (response.code == 0) {
           this.receptionModuleAccesible = true;
-          userAccess = JSON.parse(localStorage.getItem('igb.user.access'));
+          const storedUserAccess = localStorage.getItem('igb.user.access');
+          let userAccess = storedUserAccess ? JSON.parse(storedUserAccess) : null;
           userAccess.receptionModuleAccesible = true;
           localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
         } else {
@@ -258,7 +270,8 @@ export class NavBarComponent implements OnInit {
       response => {
         if (response.code == 0) {
           this.transferModuleAccesible = true;
-          userAccess = JSON.parse(localStorage.getItem('igb.user.access'));
+          const storedUserAccess = localStorage.getItem('igb.user.access');
+          let userAccess = storedUserAccess ? JSON.parse(storedUserAccess) : null;
           userAccess.transferModuleAccesible = true;
           localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
         } else {
@@ -272,7 +285,8 @@ export class NavBarComponent implements OnInit {
       response => {
         if (response.code == 0) {
           this.pickingExpressModuleAccesible = true;
-          userAccess = JSON.parse(localStorage.getItem('igb.user.access'));
+          const storedUserAccess = localStorage.getItem('igb.user.access');
+          let userAccess = storedUserAccess ? JSON.parse(storedUserAccess) : null;
           userAccess.pickingExpressModuleAccesible = true;
           localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
         } else {
@@ -286,7 +300,8 @@ export class NavBarComponent implements OnInit {
       response => {
         if (response.code == 0) {
           this.employeeModuleAccesible = true;
-          userAccess = JSON.parse(localStorage.getItem('igb.user.access'));
+          const storedUserAccess = localStorage.getItem('igb.user.access');
+          let userAccess = storedUserAccess ? JSON.parse(storedUserAccess) : null;
           userAccess.employeeModuleAccesible = true;
           localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
         } else {
@@ -300,7 +315,8 @@ export class NavBarComponent implements OnInit {
       response => {
         if (response.code == 0) {
           this.compraTrackingModuleAccesible = true;
-          userAccess = JSON.parse(localStorage.getItem('igb.user.access'));
+          const storedUserAccess = localStorage.getItem('igb.user.access');
+          let userAccess = storedUserAccess ? JSON.parse(storedUserAccess) : null;
           userAccess.compraTrackingModuleAccesible = true;
           localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
         } else {
@@ -309,12 +325,13 @@ export class NavBarComponent implements OnInit {
       }, error => { console.error(error); }
     );
 
-    //validar si el usuario puede acceder al modulo de cartera, solo si es IGB
+    //validar si el usuario puede acceder al modulo de cartera
     this._userService.canAccess(this.identity.username, 'collection').subscribe(
       response => {
         if (response.code == 0) {
           this.collectionModuleAccesible = true;
-          userAccess = JSON.parse(localStorage.getItem('igb.user.access'));
+          const storedUserAccess = localStorage.getItem('igb.user.access');
+          let userAccess = storedUserAccess ? JSON.parse(storedUserAccess) : null;
           userAccess.collectionModuleAccesible = true;
           localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
         } else {
@@ -329,7 +346,8 @@ export class NavBarComponent implements OnInit {
         response => {
           if (response.code == 0) {
             this.fidelityProgramModuleAccesible = true;
-            userAccess = JSON.parse(localStorage.getItem('igb.user.access'));
+            const storedUserAccess = localStorage.getItem('igb.user.access');
+            let userAccess = storedUserAccess ? JSON.parse(storedUserAccess) : null;
             userAccess.fidelityProgramModuleAccesible = true;
             localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
           } else {
@@ -346,7 +364,8 @@ export class NavBarComponent implements OnInit {
       response => {
         if (response.code == 0) {
           this.geoLocationModuleAccesible = true;
-          userAccess = JSON.parse(localStorage.getItem('igb.user.access'));
+          const storedUserAccess = localStorage.getItem('igb.user.access');
+          let userAccess = storedUserAccess ? JSON.parse(storedUserAccess) : null;
           userAccess.geoLocationModuleAccesible = true;
           localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
         } else {
@@ -355,20 +374,46 @@ export class NavBarComponent implements OnInit {
       }, error => { console.error(error); }
     );
 
+    //validar si el usuario puede acceder al modulo de asistente de IA, solo si es IGB
+    if (this.getSelectedCompany() == "IGB") {
+      this._userService.canAccess(this.identity.username, 'assistantAI').subscribe(
+        response => {
+          if (response.code == 0) {
+            this.assistantAIModuleAccesible = true;
+            const storedUserAccess = localStorage.getItem('igb.user.access');
+            let userAccess = storedUserAccess ? JSON.parse(storedUserAccess) : null;
+            userAccess.assistantAIModuleAccesible = true;
+            localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
+          } else {
+            this.assistantAIModuleAccesible = false;
+          }
+        }, error => { console.error(error); }
+      );
+    } else {
+      this.assistantAIModuleAccesible = false;
+    }
+
     localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
   }
 
-  alternateNav() {
-    if (document.getElementById('myNav').style.width === '' || document.getElementById('myNav').style.width === '0%') {
-      document.getElementById('myNav').style.width = '100%';
+  public alternateNav() {
+    const myNav = document.getElementById('myNav');
+    const menuIcon = document.getElementById('menu-icon');
+
+    if (!myNav || !menuIcon) {
+      return;
+    }
+
+    if (myNav.style.width === '' || myNav.style.width === '0%') {
+      myNav.style.width = '100%';
       //Configura el icono para cerrar
-      document.getElementById('menu-icon').classList.remove('glyphicon-menu-hamburger');
-      document.getElementById('menu-icon').classList.add('glyphicon-remove');
+      menuIcon.classList.remove('glyphicon-menu-hamburger');
+      menuIcon.classList.add('glyphicon-remove');
     } else {
-      document.getElementById('myNav').style.width = '0%';
+      myNav.style.width = '0%';
       //configura el icono de hamburguesa
-      document.getElementById('menu-icon').classList.remove('glyphicon-remove');
-      document.getElementById('menu-icon').classList.add('glyphicon-menu-hamburger');
+      menuIcon.classList.remove('glyphicon-remove');
+      menuIcon.classList.add('glyphicon-menu-hamburger');
     }
   }
 
@@ -376,7 +421,7 @@ export class NavBarComponent implements OnInit {
     return localStorage.getItem('igb.selectedCompany');
   }
 
-  cerrarSesion() {
+  public cerrarSesion() {
     localStorage.removeItem('igb.identity');
     localStorage.removeItem('igb.selectedCompany');
     localStorage.removeItem('igb.user.access');

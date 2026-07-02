@@ -13,6 +13,7 @@
   <a *ngIf="pickingModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/picking']">Picking</a>
   <a *ngIf="packingModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/packing']">Packing</a>
   <a *ngIf="shippingModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/shipping']">Shipping</a>
+  <a *ngIf="assistantAIModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/ai-assistant']">Asistente IA</a>
   <span class="salir-desktop" (click)="cerrarSesion()">Salir <span class="icon-log-out"></span></span>
 </nav>
 <nav class="topnav" id="mobileNav">
@@ -35,6 +36,7 @@
     <a *ngIf="pickingModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/picking']">Picking</a>
     <a *ngIf="packingModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/packing']">Packing</a>
     <a *ngIf="shippingModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/shipping']">Shipping</a>
+    <a *ngIf="assistantAIModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/ai-assistant']">Asistente IA</a>
     <a href="#"><span (click)="cerrarSesion()">Salir <span class="icon-log-out"></span></span></a>
   </div>
 </div>

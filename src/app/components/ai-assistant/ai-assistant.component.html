@@ -1,0 +1,87 @@
+<igb-navbar></igb-navbar>
+
+<div class="ai-page">
+  <div class="ai-chat-container">
+    <div class="ai-header">
+      <div>
+        <h2>🤖 Asistente Gerencial IA</h2>
+        <p>Consulta información administrativa, comercial y gerencial desde SAP.</p>
+      </div>
+      <button class="clear-btn" (click)="clearChat()">
+        <span class="icon-refresh" style="font-size: 20px;"></span>
+      </button>
+    </div>
+    <div class="suggestions">
+      <button (click)="askExample('Cuál fue el cliente que más compró este mes')">
+        Cliente top del mes
+      </button>
+      <button (click)="askExample('Cuánto vendimos este mes en repuestos')">
+        Ventas del mes
+      </button>
+      <button (click)="askExample('Cuál fue el producto más vendido')">
+        Producto más vendido
+      </button>
+      <button (click)="askExample('Cuáles son los clientes top')">
+        Clientes top
+      </button>
+    </div>
+    <div class="chat-window" id="chatWindow">
+      <div *ngFor="let msg of messages" class="message-row"
+        [ngClass]="msg.role === 'user' ? 'user-row' : 'assistant-row'">
+        <div class="avatar" [ngClass]="msg.role === 'user' ? 'avatar-user' : 'avatar-ai'">
+          <img *ngIf="msg.role === 'user'" class="avatar" src="{{urlShared}}images/users/{{userName}}.jpg">
+          <span *ngIf="msg.role !== 'user'">🤖</span>
+        </div>
+        <div class="message-card" [ngClass]="msg.role === 'user' ? 'user-card' : 'assistant-card'">
+          <div class="message-text">
+            {{msg.text}}
+          </div>
+          <div *ngIf="msg.role === 'assistant' && msg.sql" class="actions">
+            <button (click)="toggleSql(msg)">
+              {{msg.showSql ? 'Ocultar SQL' : 'Ver SQL'}}
+            </button>
+            <button *ngIf="hasData(msg)" (click)="toggleData(msg)">
+              {{msg.showData ? 'Ocultar datos' : 'Ver datos'}}
+            </button>
+          </div>
+          <pre *ngIf="msg.showSql" class="sql-box">{{msg.sql}}</pre>
+          <div *ngIf="msg.showData && hasData(msg)" class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th *ngFor="let col of getColumns(msg.data)">
+                    {{col}}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of msg.data">
+                  <td *ngFor="let col of getColumns(msg.data)"
+                    [ngClass]="isNumericValue(row[col]) ? 'numeric-cell' : ''">
+                    {{formatTableValue(col, row[col])}}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="isLoading" class="message-row assistant-row">
+        <div class="avatar avatar-ai">🤖</div>
+        <div class="message-card assistant-card loading-card">
+          <span>Analizando información</span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+      </div>
+    </div>
+    <div class="chat-input-wrapper">
+      <input [(ngModel)]="userMessage" class="chat-input" placeholder="Escribe tu pregunta gerencial..."
+        (keyup.enter)="sendMessage()" />
+      <button class="send-btn" (click)="sendMessage()" [disabled]="isLoading">
+        <span class="icon-chevron-right" style="font-size: 20px;"></span>
+      </button>
+    </div>
+  </div>
+</div>

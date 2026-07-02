@@ -63,6 +63,7 @@ import { WalletIGBComponent } from './components/payments-microsite/igb/wallet-i
 import { WalletMTZComponent } from './components/payments-microsite/mtz/wallet-mtz.component';
 import { TrackingGuidesComponent } from './components/tracking-guides/tracking-guides.component';
 import { TelemarketingComponent } from './components/telemarketing/telemarketing.component';
+import { AiAssistantComponent } from './components/ai-assistant/ai-assistant.component';
 import { from } from 'rxjs/observable/from';
 
 @NgModule({
@@ -125,7 +126,8 @@ import { from } from 'rxjs/observable/from';
     WalletIGBComponent,
     WalletMTZComponent,
     TelemarketingComponent,
-    TrackingGuidesComponent
+    TrackingGuidesComponent,
+    AiAssistantComponent
   ],
   imports: [
     BrowserModule,

@@ -28,29 +28,29 @@ export class GeoLocationComponent implements OnInit {
   public filteredAdvisors: Advisor[] = [];
   public locations: GeoLocation[] = [];
   public salesData: GeoLocationSalesData = new GeoLocationSalesData();
-  public filteredRegions: string[];
+  public filteredRegions: string[] = [];
   public locationsToDraw: GeoLocation[] = [];
-  public selectedCompany: string;
+  public selectedCompany: string = '';
   public selectedAdvisor: string = '';
   public selectedRegion: string = '';
   public selectedZone: string = '';
-  public year: string;
-  public month: string;
-  public day: string;
+  public year: string = '';
+  public month: string = '';
+  public day: string = '';
   public region: string = '';
-  public changeLocationErrorMessage: string;
-  public firstRegister: string;
-  public lastSynchronizationAdvisor: string;
-  public time: string;
-  public distance: number;
-  public ordersUploads: number;
-  public savedOrders: number;
+  public changeLocationErrorMessage: string = '';
+  public firstRegister: string = '';
+  public lastSynchronizationAdvisor: string = '';
+  public time: string = '';
+  public distance: number = 0;
+  public ordersUploads: number = 0;
+  public savedOrders: number = 0;
   public adviserCard: number = 0;
-  public dateValue: Date;
+  public dateValue: Date = new Date();
   public enabledbutton: boolean = true;
   public tabActive: boolean = true;
   public tabInactive: boolean = false;
-  public email: string;
+  public email: string = '';
   public activeList = this.markersWithQuantityZero;
 
   constructor(private _router: Router, private _userService: UserService, private _businessPartnerService: BusinessPartnerService) { }
@@ -67,7 +67,7 @@ export class GeoLocationComponent implements OnInit {
     this.getDailyMarks(this.selectedCompany);
   }
 
-  private redirectIfSessionInvalid(error) {
+  private redirectIfSessionInvalid(error: any) {
     if (error && error.status && error.status == 401) {
       localStorage.removeItem('igb.identity');
       localStorage.removeItem('igb.selectedCompany');
@@ -105,11 +105,11 @@ export class GeoLocationComponent implements OnInit {
     this.directionsRenderer.setMap(this.googleMap);
   }
 
-  public getDateFormat(): void {
+  public getDateFormat() {
     const selectedDate = new Date(this.dateValue);
     this.year = selectedDate.getFullYear().toString();
-    this.month = (selectedDate.getMonth() + 1).toString();
-    this.day = (selectedDate.getDate() + 1).toString();
+    this.month = ('0' + (selectedDate.getMonth() + 1).toString()).slice(-2);
+    this.day = ('0' + selectedDate.getDate().toString()).slice(-2);
   }
 
   public getLocation() {
@@ -150,10 +150,10 @@ export class GeoLocationComponent implements OnInit {
     $('#modal_transfer_process').modal('hide');
   }
 
-  getDailyMarks(selectedCompany: string) {
+  public getDailyMarks(selectedCompany: string) {
     this._businessPartnerService.listDailyMarks(selectedCompany).subscribe(
       response => {
-        response.forEach(item => {
+        response.forEach((item: any) => {
           const marker = new DailyMarkers(item[0], item[1], item[2], item[3]);
           const quantity = parseInt(marker.quantity);
           if (quantity === 0) {
@@ -174,7 +174,7 @@ export class GeoLocationComponent implements OnInit {
   public getListOfAdvisors(email: string) {
     this._businessPartnerService.listAdvisors(email).subscribe(
       response => {
-        this.advisors = response.map((item, index) => {
+        this.advisors = response.map((item: any, index: number) => {
           return new Advisor(item[0], item[1], item[2], item[3], item[4]);
         });
         this.filteredRegions = Array.from(new Set(this.advisors.map(advisor => advisor.region)));
@@ -208,7 +208,7 @@ export class GeoLocationComponent implements OnInit {
     });
   }
 
-  private fixFormatTime(locations: GeoLocation[]): void {
+  private fixFormatTime(locations: GeoLocation[]) {
     for (const location of locations) {
       if (location.docTime.length < 4) {
         location.docTime = '0' + location.docTime;
@@ -246,7 +246,7 @@ export class GeoLocationComponent implements OnInit {
       optimizeWaypoints: true,
       travelMode: 'DRIVING'
     };
-    this.directionsService.route(request, (result, status) => {
+    this.directionsService.route(request, (result: any, status: string) => {
       if (status === 'OK') {
         this.directionsRenderer.setDirections(result);
         const startMarker = new google.maps.Marker({
@@ -289,7 +289,7 @@ export class GeoLocationComponent implements OnInit {
     });
   }
 
-  public countUploadedOrders(locations: GeoLocation[]): void {
+  public countUploadedOrders(locations: GeoLocation[]) {
     let ordersAssembled = 0;
     for (const location of locations) {
       if (location.docType === 'P') {
@@ -299,7 +299,7 @@ export class GeoLocationComponent implements OnInit {
     this.ordersUploads = ordersAssembled;
   }
 
-  public countSavedOrders(locations: GeoLocation[]): void {
+  public countSavedOrders(locations: GeoLocation[]) {
     let savedOrders = 0;
     for (const location of locations) {
       if (location.docType === 'G') {
@@ -309,8 +309,8 @@ export class GeoLocationComponent implements OnInit {
     this.savedOrders = savedOrders;
   }
 
-  public getFirstRecord(locations: GeoLocation[]): void {
-    let firstLogin: string = null;
+  public getFirstRecord(locations: GeoLocation[]) {
+    let firstLogin: string = '';
     for (const location of locations) {
       const timeDocument = this.parseTimestamp2(location.docTime);
       if (!firstLogin || timeDocument < firstLogin) {
@@ -320,8 +320,8 @@ export class GeoLocationComponent implements OnInit {
     this.firstRegister = firstLogin;
   }
 
-  public getLastSync(locations: GeoLocation[]): void {
-    let lastSync: string = null;
+  public getLastSync(locations: GeoLocation[]) {
+    let lastSync: string = '';
     for (const location of locations) {
       if (location.docType === 'S') {
         const timeSynchronization = this.parseTimestamp2(location.docTime);
@@ -333,8 +333,8 @@ export class GeoLocationComponent implements OnInit {
     this.lastSynchronizationAdvisor = lastSync;
   }
 
-  public getLastHour(locations: GeoLocation[]): void {
-    let lastHour: string = null;
+  public getLastHour(locations: GeoLocation[]) {
+    let lastHour: string = '';
     for (const location of locations) {
       if (!lastHour || location.docTime > lastHour) {
         lastHour = location.docTime;
@@ -343,9 +343,9 @@ export class GeoLocationComponent implements OnInit {
     this.time = this.parseTimestamp2(lastHour);
   }
 
-  public calculateDistance(locations: GeoLocation[]): number {
+  public calculateDistance(locations: GeoLocation[]) {
     let totalDistance = 0;
-    function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
       const R = 6371;
       const dLat = (lat2 - lat1) * Math.PI / 180;
       const dLon = (lon2 - lon1) * Math.PI / 180;
@@ -371,7 +371,7 @@ export class GeoLocationComponent implements OnInit {
     return totalDistance;
   }
 
-  private parseTimestamp2(timestamp: string): string {
+  private parseTimestamp2(timestamp: string) {
     const hour = timestamp.substring(0, 2);
     const minute = timestamp.substring(2, 4);
     return `${hour}:${minute}`;

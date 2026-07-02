@@ -20,7 +20,7 @@ declare var MediaRecorder: any;
 })
 
 export class TicketTIComponent implements OnInit {
-  public identity;
+  public identity: any;
   public urlShared: string = GLOBAL.urlShared;
   public msjNotes: string = '';
   public msjTicket: string = '';
@@ -35,8 +35,8 @@ export class TicketTIComponent implements OnInit {
   public empAdd: string = '';
   public companyName: string = '';
   public filter: string = '';
-  public idTicket: number;
-  public selectedIdTypeTicket: number = null;
+  public idTicket: number = 0;
+  public selectedIdTypeTicket: number = 0;
   public validAsunt: boolean = true;
   public validTypeTicket: boolean = true;
   public validSelectDep: boolean = true;
@@ -45,14 +45,14 @@ export class TicketTIComponent implements OnInit {
   public validNotes: boolean = true;
   public validSelectedAssigned: boolean = true;
   public tickets: Array<TicketTI>;
-  public filteredTicket: Array<TicketTI>;
+  public filteredTicket: Array<TicketTI> = new Array<TicketTI>();
   public ticketNotes: Array<TicketTINotes>;
   public ticketTypes: Array<any>;
-  public fileToUpload: File;
-  public nameUpload: string;
-  public sizeUpload: number;
-  public dateEnd: Date;
-  public authorizeAddProyect: boolean;
+  public fileToUpload: File | null = null;
+  public nameUpload: string = '';
+  public sizeUpload: number = 0;
+  public dateEnd: Date | null = null;
+  public authorizeAddProyect: boolean = false;
   //Variables OPEN IA
   public isRecording = false;
   public statusMessage = 'Presiona el botón para hablar';
@@ -60,11 +60,11 @@ export class TicketTIComponent implements OnInit {
   public mediaRecorder: any;
   public transcript: string = '';
   public audioChunks: any[] = [];
-  public email: string;
+  public email: string = '';
   public ticketSuggestion: string = '';
   public apiKey: string = "";
-  public showVoicePanel: boolean;
-  public stream: MediaStream;
+  public showVoicePanel: boolean = false;
+  public stream: MediaStream | null = null;
 
   constructor(private _ticketTIService: TicketTIService, private _userService: UserService, private _router: Router, private _binLocationService: BinLocationService, private _openAIService: OpenAIService) {
     this.tickets = new Array<TicketTI>();
@@ -99,7 +99,7 @@ export class TicketTIComponent implements OnInit {
     $('#filter').focus();
   }
 
-  private redirectIfSessionInvalid(error) {
+  private redirectIfSessionInvalid(error: any) {
     if (error && error.status && error.status == 401) {
       localStorage.removeItem('igb.identity');
       localStorage.removeItem('igb.selectedCompany');
@@ -189,7 +189,7 @@ export class TicketTIComponent implements OnInit {
 
     const ticketNotesDTO: TicketTINotes = new TicketTINotes();
     ticketNotesDTO.idTicket = idTicket;
-    ticketNotesDTO.dateNote = null;
+    ticketNotesDTO.dateNote = new Date();
     ticketNotesDTO.empNote = this.identity.username;
     ticketNotesDTO.note = this.notes;
 
@@ -253,7 +253,7 @@ export class TicketTIComponent implements OnInit {
         if (response.code == 0) {
           this.idTicket = response.content;
           //agregando adjunto
-          if (this.attached.length > 0) {
+          if (this.attached.length > 0 && this.fileToUpload != null) {
             this._ticketTIService.addFile(this.nameUpload, this.sizeUpload, this.idTicket, this.fileToUpload).subscribe(
               response => {
                 if (!response) {
@@ -270,7 +270,7 @@ export class TicketTIComponent implements OnInit {
           //Agregando comentario al ticket
           const ticketNotesDTO: TicketTINotes = new TicketTINotes();
           ticketNotesDTO.idTicket = this.idTicket;
-          ticketNotesDTO.dateNote = null;
+          ticketNotesDTO.dateNote = new Date();
           ticketNotesDTO.empNote = this.identity.username;
           ticketNotesDTO.note = this.newNotes;
 
@@ -332,7 +332,9 @@ export class TicketTIComponent implements OnInit {
     ticketDTO.empAdd = this.identity.username;
     ticketDTO.company = this.identity.selectedCompany;
     ticketDTO.type = 'PROYECTO';
-    ticketDTO.dateEnd = this.dateEnd;
+    if (this.dateEnd != null) {
+      ticketDTO.dateEnd = this.dateEnd;
+    }
 
     this._ticketTIService.addNewTicket(ticketDTO, this.newNotes).subscribe(
       response => {
@@ -341,7 +343,7 @@ export class TicketTIComponent implements OnInit {
           //Agregando comentario al proyecto
           const ticketNotesDTO: TicketTINotes = new TicketTINotes();
           ticketNotesDTO.idTicket = this.idTicket;
-          ticketNotesDTO.dateNote = null;
+          ticketNotesDTO.dateNote = new Date();
           ticketNotesDTO.empNote = this.identity.username;
           ticketNotesDTO.note = this.newNotes;
 
@@ -367,7 +369,7 @@ export class TicketTIComponent implements OnInit {
     );
   }
 
-  public handleFileInput(event) {
+  public handleFileInput(event: any) {
     this.fileToUpload = <File>event.target.files[0];
     this.nameUpload = this.fileToUpload.name;
     this.sizeUpload = this.fileToUpload.size;
@@ -515,7 +517,7 @@ export class TicketTIComponent implements OnInit {
 
   public clearFrom() {
     this.asunt = '';
-    this.selectedIdTypeTicket = null;
+    this.selectedIdTypeTicket = 0;
     this.selectedDepartament = '';
     this.selectedPriority = '';
     this.notes = '';
@@ -560,7 +562,7 @@ export class TicketTIComponent implements OnInit {
       this.isRecording = true;
       this.statusMessage = '🎙 Grabando...';
 
-      this.mediaRecorder.addEventListener('dataavailable', event => {
+      this.mediaRecorder.addEventListener('dataavailable', (event: any) => {
         this.audioChunks.push(event.data);
       });
 
@@ -707,7 +709,7 @@ export class TicketTIComponent implements OnInit {
     this.transcript = '';
     this.transcribedText = '';
     this.asunt = '';
-    this.selectedIdTypeTicket = null;
+    this.selectedIdTypeTicket = 0;
     this.selectedDepartament = '';
     this.selectedPriority = '';
     this.newNotes = '';

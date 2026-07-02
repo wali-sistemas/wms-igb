@@ -17,33 +17,33 @@ declare var $: any;
 })
 
 export class EmployeeCustodyComponent {
-  public identity;
+  public identity: any;
   public selectedCompany: string = '';
-  public filter: string;
-  public custodys: Array<CustodyEmployee>;
-  public employees: Array<Employee>;
-  public idAsset: string;
-  public typeAsset: string;
-  public brandAsset: string;
-  public refAsset: string;
-  public serialAsset: string;
-  public selectedCompanyAsset: string;
-  public datePurchaseAsset: Date;
-  public ccostoAsset: string;
-  public selectedStatusAsset: string;
-  public noteAsset: string;
-  public urlAsset: string;
-  public selectedIdEmployee: string;
-  public messageEmployee: string;
+  public filter: string = '';
+  public custodys: Array<CustodyEmployee> = new Array<CustodyEmployee>();
+  public employees: Array<Employee> = new Array<Employee>();
+  public idAsset: string = '';
+  public typeAsset: string = '';
+  public brandAsset: string = '';
+  public refAsset: string = '';
+  public serialAsset: string = '';
+  public selectedCompanyAsset: string = '';
+  public datePurchaseAsset: Date = new Date();
+  public ccostoAsset: string = '';
+  public selectedStatusAsset: string = '';
+  public noteAsset: string = '';
+  public urlAsset: string = '';
+  public selectedIdEmployee: string = '';
+  public messageEmployee: string = '';
   public urlShared: string = GLOBAL.urlShared;
-  public userAssign: string;
-  public document: string;
-  public fullName: string;
-  public selectedDepartament: string;
-  public selectedCompanyEmpl: string;
-  public ccosto: string;
-  public selectedStatusEmpl: string;
-  public messageNewEmployee: string;
+  public userAssign: string = '';
+  public document: string = '';
+  public fullName: string = '';
+  public selectedDepartament: string = '';
+  public selectedCompanyEmpl: string = '';
+  public ccosto: string = '';
+  public selectedStatusEmpl: string = '';
+  public messageNewEmployee: string = '';
   public validDoc: boolean = true;
   public validFullName: boolean = true;
   public validSelectDep: boolean = true;
@@ -62,12 +62,12 @@ export class EmployeeCustodyComponent {
   public validSelectIdEmployee: boolean = true;
   public bottonAction: string = 'Crear';
   public messageNewAsset: string = '';
-  public datePurchase: string;
-  public companyPurchase: string;
-  public messageCustodyPrint: string;
-  public messageAssetRegister: string;
-  public responsible: string;
-  public comments: string;
+  public datePurchase: string = '';
+  public companyPurchase: string = '';
+  public messageCustodyPrint: string = '';
+  public messageAssetRegister: string = '';
+  public responsible: string = '';
+  public comments: string = '';
 
   constructor(private _router: Router, private _userService: UserService, private _employeeService: EmployeeService, private _binLocationService: BinLocationService, private _reportService: ReportService) {
   }
@@ -83,7 +83,7 @@ export class EmployeeCustodyComponent {
     }
   }
 
-  private redirectIfSessionInvalid(error) {
+  private redirectIfSessionInvalid(error: any) {
     if (error && error.status && error.status == 401) {
       localStorage.removeItem('igb.identity');
       localStorage.removeItem('igb.selectedCompany');
@@ -198,7 +198,7 @@ export class EmployeeCustodyComponent {
           this.refAsset = '';
           this.serialAsset = '';
           this.selectedCompanyAsset = '';
-          this.datePurchaseAsset = null;
+          this.datePurchaseAsset = new Date();
           this.ccostoAsset = '';
           this.selectedStatusAsset = '';
           this.noteAsset = '';
@@ -349,7 +349,7 @@ export class EmployeeCustodyComponent {
     this.refAsset = '';
     this.serialAsset = '';
     this.selectedCompanyAsset = '';
-    this.datePurchaseAsset = null;
+    this.datePurchaseAsset = new Date();
     this.ccostoAsset = '';
     this.selectedStatusAsset = '';
     this.noteAsset = '';
@@ -369,7 +369,7 @@ export class EmployeeCustodyComponent {
     window.open(url, "_blank");
   }
 
-  public showModalInfo(custody) {
+  public showModalInfo(custody: any) {
     this.idAsset = custody.idAsset;
     this.userAssign = custody.userAssign;
     this.datePurchase = custody.datePurchase == null ? "SIN DEFINIR" : custody.datePurchase;
@@ -377,7 +377,7 @@ export class EmployeeCustodyComponent {
     $('#modal_info_custody').modal('show');
   }
 
-  public editModalAsset(custody) {
+  public editModalAsset(custody: any) {
     this.idAsset = custody.idAsset;
     this.typeAsset = custody.type;
     this.brandAsset = custody.brand;

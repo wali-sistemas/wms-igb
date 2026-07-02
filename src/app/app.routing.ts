@@ -56,6 +56,7 @@ import { WalletRedplasComponent } from './components/payments-microsite/redplas/
 import { WalletIGBComponent } from './components/payments-microsite/igb/wallet-igb.component';
 import { WalletMTZComponent } from './components/payments-microsite/mtz/wallet-mtz.component';
 import { TrackingGuidesComponent } from './components/tracking-guides/tracking-guides.component';
+import { AiAssistantComponent } from './components/ai-assistant/ai-assistant.component';
 import { from } from 'rxjs/observable/from';
 
 const appRoutes: Routes = [
@@ -116,6 +117,7 @@ const appRoutes: Routes = [
   { path: 'wallet-redplas', component: WalletRedplasComponent },
   { path: 'wallet-igb', component: WalletIGBComponent },
   { path: 'wallet-mtz', component: WalletMTZComponent },
+  { path: 'ai-assistant', component: AiAssistantComponent }
 ];
 
 export const appRoutingProviders: any[] = [];
