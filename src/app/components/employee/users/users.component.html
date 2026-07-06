@@ -1,0 +1,350 @@
+<igb-navbar></igb-navbar>
+
+<div class="page-content">
+  <div class="container content userswali-page">
+    <div class="row">
+      <div class="col-xs-12">
+        <h2 class="page-title">Usuarios</h2>
+      </div>
+    </div>
+    <div class="row search-row">
+      <div class="col-xs-12">
+        <div class="search-wrapper">
+          <button type="button" class="btn btn-default btn-Addemploye btn-search-left" (click)="openCreate()">
+            <span class="icon-search"></span>
+          </button>
+          <input type="text" class="search-input search-input-right" placeholder="Buscar empleado por nombre de usuario"
+            [(ngModel)]="searchText" (input)="searchByUsername()" />
+        </div>
+      </div>
+    </div>
+    <div id="modalEmpleado" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalEmpleadoLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              &times;
+            </button>
+            <h4 class="modal-title" id="modalEmpleadoLabel">
+              Registrar usuario WALI
+            </h4>
+          </div>
+          <div class="modal-body">
+            <form #empForm="ngForm" (ngSubmit)="saveUser(empForm)">
+              <div class="form-group">
+                <label>Nombres</label>
+                <input type="text" class="form-control" placeholder="Ingrese nombres" name="name"
+                  [(ngModel)]="newUser.name" required />
+              </div>
+              <div class="form-group">
+                <label>Apellidos</label>
+                <input type="text" class="form-control" placeholder="Ingrese apellidos" name="surname"
+                  [(ngModel)]="newUser.surname" required />
+              </div>
+              <div class="form-group">
+                <label>Nombre de usuario</label>
+                <input type="text" class="form-control" placeholder="Usuario" name="username"
+                  [(ngModel)]="newUser.username" required />
+              </div>
+              <div class="form-group">
+                <label>Correo corporativo</label>
+                <input type="email" class="form-control" placeholder="correo@empresa.com" name="email"
+                  [(ngModel)]="newUser.email" required />
+              </div>
+              <div class="form-group">
+                <label>Contraseña</label>
+                <input type="password" class="form-control" placeholder="********" name="password"
+                  [(ngModel)]="newUser.password" required />
+              </div>
+              <div class="form-group">
+                <label>Rol</label>
+                <input type="text" class="form-control" placeholder="Rol en la empresa" name="rol"
+                  [(ngModel)]="newUser.rol" required />
+              </div>
+              <div class="form-group">
+                <label>Empresa</label>
+                <select class="form-control" name="companyName" [(ngModel)]="newUser.companyName" required>
+                  <option value="">Seleccione empresa</option>
+                  <option value="IGB">IGB</option>
+                  <option value="VARROC">VARROC</option>
+                  <option value="VELEZ">VELEZ</option>
+                  <option value="REDPLAS">REDPLAS</option>
+                  <option value="INVERSUR">INVERSUR</option>
+                </select>
+              </div>
+              <div class="panel panel-default panel-multi">
+                <div class="panel-heading">
+                  <h4 class="panel-title">Acceso a módulos en WALI</h4>
+                </div>
+                <div class="panel-body">
+                  <div class="checkbox">
+                    <label>
+                      <input type="checkbox" [checked]="membersSelected.includes('WMS.ticket')"
+                        (change)="toggleMember('WMS.ticket', $event.target.checked)" />
+                      Ticket
+                    </label>
+                  </div>
+                  <div class="checkbox">
+                    <label>
+                      <input type="checkbox" [checked]="membersSelected.includes('WMS.emp')"
+                        (change)="toggleMember('WMS.emp', $event.target.checked)" />
+                      Empleado
+                    </label>
+                  </div>
+                  <div class="checkbox">
+                    <label>
+                      <input type="checkbox" [checked]="membersSelected.includes('WMS.merc')"
+                        (change)="toggleMember('WMS.merc', $event.target.checked)" />
+                      Telemercadeo
+                    </label>
+                  </div>
+                  <div class="checkbox">
+                    <label>
+                      <input type="checkbox" [checked]="membersSelected.includes('WMS.cart')"
+                        (change)="toggleMember('WMS.cart', $event.target.checked)" />
+                      Cartera
+                    </label>
+                  </div>
+                  <div class="checkbox">
+                    <label>
+                      <input type="checkbox" [checked]="membersSelected.includes('WMS.coord')"
+                        (change)="toggleMember('WMS.coord', $event.target.checked)" />
+                      Logística
+                    </label>
+                  </div>
+                  <div class="checkbox">
+                    <label>
+                      <input type="checkbox" [checked]="membersSelected.includes('WMS.admin')"
+                        (change)="toggleMember('WMS.admin', $event.target.checked)" />
+                      Administrador
+                    </label>
+                  </div>
+                </div>
+              </div>
+               ESTADO
+              <div class="form-group">
+                <label>Estado</label>
+                <div class="estado-switch">
+                  <span class="estado-text">Inactivo</span>
+                  <label class="switch">
+                    <input type="checkbox" [checked]="newUser.status === 'activo'"
+                      (change)="newUser.status = $event.target.checked ? 'activo' : 'inactivo'" />
+                    <span class="slider"></span>
+                  </label>
+                  <span class="estado-text">Activo</span>
+                </div>
+              </div>
+              Mensaje de error
+              <div class="alert alert-danger" *ngIf="createUserError">
+                <strong>Error:</strong>{{createUserError}}
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                  Cancelar
+                </button>
+                <button type="submit" class="btn btn-success" [disabled]="empForm.invalid">
+                  Guardar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row" *ngIf="filteredUsers.length > 0">
+      <div class="col-xs-6" *ngFor="let user of filteredUsers">
+        <div class="user-card user-card-v2">
+          HEADER
+          <div class="user-card-header">
+            <div class="user-card-title">
+              <h4 class="username">{{user.username}}</h4>
+              <small class="user-sub">
+                {{user.rol}}.{{user.companyName}}
+              </small>
+            </div>
+            <div class="avatar" [ngStyle]="user.PhotoUrl ? { 'background-image': 'url(' + user.PhotoUrl + ')' } : null">
+              <span class="avatar-initials" *ngIf="!user.PhotoUrl">
+                {{getInitials(user)}}
+              </span>
+            </div>
+          </div>
+          <div class="user-card-body">
+            <p><strong>Nombre:</strong>{{user.name}} {{user.surname}}</p>
+            <p><strong>Correo:</strong>{{user.email}}</p>
+            <p>
+              <strong>Estado:</strong>
+              <span class="estado-pill" [ngClass]="user.status === 'activo' ? 'pill-activo' : 'pill-inactivo'">
+                {{user.status}}
+              </span>
+            </p>
+          </div>
+          <div class="user-card-footer">
+            <button type="button" class="btn btn-card" (click)="openView(user)">
+              <span class="icon-eye"></span>
+            </button>
+            <button type="button" class="btn btn-card btn-card-right" (click)="openEdit(user)">
+              <span class="icon-edit-3"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="modalViewUser" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalViewUserLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              &times;
+            </button>
+            <h4 class="modal-title" id="modalViewUserLabel">
+              Detalle del usuario
+            </h4>
+          </div>
+          <div class="modal-body" *ngIf="selectedUser">
+            <p><strong>Usuario:</strong>{{selectedUser.username}}</p>
+            <p>
+              <strong>Nombre:</strong>{{selectedUser.name}}
+              {{selectedUser.surname}}
+            </p>
+            <p><strong>Correo:</strong>{{selectedUser.email}}</p>
+            <p><strong>Rol:</strong>{{selectedUser.rol}}</p>
+            <p><strong>Empresa:</strong>{{selectedUser.companyName}}</p>
+            <p><strong>Miembros:</strong>{{selectedUser.memberOf}}</p>
+            <p><strong>Estado:</strong>{{selectedUser.status}}</p>
+            <p>
+              <strong>Última visita:</strong>
+              {{selectedUser.lastUpdate | date: "dd/MM/yyyy HH:mm:ss"}}
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="modalEditUser" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalEditUserLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              &times;
+            </button>
+            <h4 class="modal-title" id="modalEditUserLabel">Editar usuario</h4>
+          </div>
+          <div class="modal-body">
+            <form #editForm="ngForm" (ngSubmit)="updateUser(editForm)" *ngIf="editUser">
+              <div class="form-group">
+                <label>Nombres</label>
+                <input type="text" class="form-control" name="editName" [(ngModel)]="editUser.name" required />
+              </div>
+              <div class="form-group">
+                <label>Apellidos</label>
+                <input type="text" class="form-control" name="editSurname" [(ngModel)]="editUser.surname" required />
+              </div>
+              <div class="form-group">
+                <label>Nombre de usuario</label>
+                <input type="text" class="form-control" name="editUsername" [(ngModel)]="editUser.username" required />
+              </div>
+              <div class="form-group">
+                <label>Correo corporativo</label>
+                <input type="email" class="form-control" name="editEmail" [(ngModel)]="editUser.email" required />
+              </div>
+              <div class="form-group">
+                <label>Contraseña</label>
+                <input type="text" class="form-control" name="editPassword" [(ngModel)]="editUser.password" required />
+              </div>
+              <div class="form-group">
+                <label>Rol</label>
+                <input type="text" class="form-control" name="editRol" [(ngModel)]="editUser.rol" required />
+              </div>
+              <div class="form-group">
+                <label>Empresa</label>
+                <select class="form-control" name="editCompanyName" [(ngModel)]="editUser.companyName" required>
+                  <option value="IGB">IGB</option>
+                  <option value="VARROC">VARROC</option>
+                  <option value="VELEZ">VELEZ</option>
+                  <option value="REDPLAS">REDPLAS</option>
+                  <option value="INVERSUR">INVERSUR</option>
+                </select>
+              </div>
+              <div class="panel panel-default panel-multi">
+                <div class="panel-heading">
+                  <h4 class="panel-title">Acceso a modulos en Wali</h4>
+                </div>
+                <div class="panel-body">
+                  <div class="checkbox">
+                    <label>
+                      <input type="checkbox" [checked]="membersSelected.includes('WMS.ticket')"
+                        (change)="toggleMember('WMS.ticket', $event.target.checked)" />
+                      Ticket
+                    </label>
+                  </div>
+                  <div class="checkbox">
+                    <label>
+                      <input type="checkbox" [checked]="membersSelected.includes('WMS.emp')"
+                        (change)="toggleMember('WMS.emp', $event.target.checked)" />
+                      Empleado
+                    </label>
+                  </div>
+                  <div class="checkbox">
+                    <label>
+                      <input type="checkbox" [checked]="membersSelected.includes('WMS.merc')"
+                        (change)="toggleMember('WMS.merc', $event.target.checked)" />
+                      Telemercadeo
+                    </label>
+                  </div>
+                  <div class="checkbox">
+                    <label>
+                      <input type="checkbox" [checked]="membersSelected.includes('WMS.cart')"
+                        (change)="toggleMember('WMS.cart', $event.target.checked)" />
+                      Cartera
+                    </label>
+                  </div>
+                  <div class="checkbox">
+                    <label>
+                      <input type="checkbox" [checked]="membersSelected.includes('WMS.coord')"
+                        (change)="toggleMember('WMS.coord', $event.target.checked)" />
+                      Logística
+                    </label>
+                  </div>
+                  <div class="checkbox">
+                    <label>
+                      <input type="checkbox" [checked]="membersSelected.includes('WMS.admin')"
+                        (change)="toggleMember('WMS.admin', $event.target.checked)" />
+                      Administrador
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Estado</label>
+                <div class="estado-switch">
+                  <span class="estado-text">Inactivo</span>
+                  <label class="switch">
+                    <input type="checkbox" [checked]="editUser.status === 'activo'"
+                      (change)="editUser.status = $event.target.checked ? 'activo' : 'inactivo'" />
+                    <span class="slider"></span>
+                  </label>
+                  <span class="estado-text">Activo</span>
+                </div>
+              </div>
+              <div class="alert alert-danger" *ngIf="editUserError">
+                <strong>Error:</strong>{{editUserError}}
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                  Cancelar
+                </button>
+                <button type="submit" class="btn btn-success" [disabled]="editForm.invalid">
+                  Guardar cambios
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

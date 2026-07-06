@@ -107,9 +107,9 @@ export class GeoLocationComponent implements OnInit {
 
   public getDateFormat() {
     const selectedDate = new Date(this.dateValue);
-    this.year = selectedDate.getFullYear().toString();
-    this.month = ('0' + (selectedDate.getMonth() + 1).toString()).slice(-2);
-    this.day = ('0' + selectedDate.getDate().toString()).slice(-2);
+    this.year = selectedDate.getUTCFullYear().toString();
+    this.month = ('0' + (selectedDate.getUTCMonth() + 1)).slice(-2);
+    this.day = ('0' + selectedDate.getUTCDate()).slice(-2);
   }
 
   public getLocation() {

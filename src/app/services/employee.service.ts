@@ -20,7 +20,7 @@ export class EmployeeService {
       .map(res => res.json());
   }
 
-  public addOrRefrescEmployee(employeeDTO, bottonAction: string) {
+  public addOrRefrescEmployee(employeeDTO: any, bottonAction: string) {
     return this._http.post(this.urlManager + 'employee/add-refresh-employee?bottonAction=' + bottonAction, employeeDTO, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
@@ -35,7 +35,7 @@ export class EmployeeService {
       .map(res => res.json());
   }
 
-  public addOrRefrescAsset(assetMasterDTO, bottonAction: string) {
+  public addOrRefrescAsset(assetMasterDTO: any, bottonAction: string) {
     return this._http.post(this.urlManager + 'employee/add-refresh-asset?bottonAction=' + bottonAction, assetMasterDTO, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
@@ -45,7 +45,7 @@ export class EmployeeService {
       .map(res => res.json());
   }
 
-  public addAfiliadoFemprobien(afiliado) {
+  public addAfiliadoFemprobien(afiliado: any) {
     return this._http.post(this.urlManager + 'employee/femprobien/add-associated', afiliado, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }

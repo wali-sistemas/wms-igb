@@ -11,36 +11,53 @@ export class UserService {
     this.url = GLOBAL.url;
   }
 
-  public signIn(userToLogin, selectedCompany) {
+  public signIn(userToLogin: any, selectedCompany: string) {
     const params = '{"username":"' + userToLogin.username + '","password":"' + userToLogin.password + '", "selectedCompany":"' + selectedCompany + '"}';
     return this._http.post(this.url + 'user/login', params, { headers: CONTENT_TYPE_JSON })
       .map(res => res.json());
   }
 
   public getItentity() {
-    return JSON.parse(localStorage.getItem('igb.identity'));
+    const identity = localStorage.getItem('igb.identity');
+    return identity ? JSON.parse(identity) : null;
   }
 
   public getWarehouseCode() {
-    return JSON.parse(localStorage.getItem('igb.identity')).warehouseCode;
+    const identity = localStorage.getItem('igb.identity');
+    return identity ? JSON.parse(identity).warehouseCode : null;
   }
 
-  public listUsersByGroup(groupName) {
+  public listUsersByGroup(groupName: string) {
     return this._http.get(this.url + 'user/list/' + groupName, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 
-  private validateToken(igbHeaders) {
+  /*private validateToken(igbHeaders: IGBHeaders) {
     return this._http.get(this.url + 'user/validate', { headers: igbHeaders }).map(res => res.json());
-  }
+  }*/
 
-  public validateUserAdmin(user) {
+  public validateUserAdmin(user: string) {
     return this._http.get(this.url + 'user/validate-user-admin/' + user, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 
-  public canAccess(user, module) {
+  public canAccess(user: string, module: string) {
     return this._http.get(this.url + 'user/access/' + user + '/' + module, { headers: new IGBHeaders().loadHeaders() })
-    .map(res => res.json());
+      .map(res => res.json());
+  }
+
+  public listUsers() {
+    return this._http.get(this.url + "user/list-wali", { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
+
+  public createUserWali(user: any) {
+    return this._http.post(this.url + "user/create-wali", JSON.stringify(user), { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
+
+  public updateUserWali(user: any) {
+    return this._http.put(this.url + 'user/update-wali', JSON.stringify(user), { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
   }
 }

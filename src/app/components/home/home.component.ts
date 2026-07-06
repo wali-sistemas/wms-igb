@@ -5,20 +5,17 @@ import { GenericService } from '../../services/generic';
 import { Warehouse } from '../../models/warehouse';
 
 @Component({
-  // selector: 'home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
   providers: [UserService, GenericService]
 })
 export class HomeComponent implements OnInit {
-  public errorMessage: string;
-  public identity;
-  public selectedWarehouse: string;
+  public errorMessage: string = "";
+  public identity: any;
+  public selectedWarehouse: string = "";
   public warehouses: Array<Warehouse>;
 
-  constructor(private _userService: UserService,
-    private _genericService: GenericService,
-    private _router: Router) {
+  constructor(private _userService: UserService, private _genericService: GenericService, private _router: Router) {
     this.warehouses = new Array<Warehouse>();
   }
 
@@ -30,20 +27,22 @@ export class HomeComponent implements OnInit {
     }
     this.selectedWarehouse = this.identity.warehouseCode;
     this.listAvailableWarehouses();
-    this.updateWarehouseCode(); 
+    this.updateWarehouseCode();
   }
 
   private listAvailableWarehouses() {
     this._genericService.listAvailableWarehouses().subscribe(
-      result => {
-        this.warehouses = result.content;
+      response => {
+        this.warehouses = response.content;
       }, error => { console.error(error); }
     );
   }
 
   private validateStatus() {
     this._genericService.validateStatus().subscribe(
-      response => {  },
+      response => {
+        console.log("Status de la aplicación:", response);
+      },
       error => {
         console.error(error);
         this.redirectIfSessionInvalid(error);
@@ -59,7 +58,7 @@ export class HomeComponent implements OnInit {
     this._router.navigate(['/']);
   }
 
-  private redirectIfSessionInvalid(error) {
+  private redirectIfSessionInvalid(error: any) {
     if (error && error.status && error.status == 401) {
       localStorage.removeItem('igb.identity');
       localStorage.removeItem('igb.selectedCompany');
@@ -75,7 +74,6 @@ export class HomeComponent implements OnInit {
       }
     }
 
-    console.log(this.selectedWarehouse);
     this.identity.warehouseCode = this.selectedWarehouse;
     localStorage.setItem('igb.identity', JSON.stringify(this.identity));
   }

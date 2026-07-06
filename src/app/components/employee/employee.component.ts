@@ -11,12 +11,11 @@ declare var $: any;
 })
 
 export class EmployeeComponent {
-  public identity;
-  public selectedCompany: string;
+  public identity: any;
+  public selectedCompany: string = '';
   public custodyEmployeeModuleAccesible: boolean = false;
 
-  constructor(private _router: Router, private _userService: UserService) {
-  }
+  constructor(private _router: Router, private _userService: UserService) { }
 
   ngOnInit() {
     this.identity = this._userService.getItentity();

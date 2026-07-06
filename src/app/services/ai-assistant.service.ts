@@ -20,10 +20,7 @@ export class AiAssistantService {
       'Content-Type': 'application/json'
     });
 
-    return this._http.post(
-      this.urlClaude + 'bot/ai/analyze',
-      body,
-      { headers: headers }
-    ).map(res => res.json());
+    return this._http.post(this.urlClaude + 'bot/ai/analyze', body, { headers: headers })
+      .map(res => res.json());
   }
 }

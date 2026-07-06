@@ -44,6 +44,7 @@ import { EmployeeJobCertifyComponent } from './components/employee/jobcertify/jo
 import { EmployeePaystubComponent } from './components/employee/paystub/paystub.component';
 import { EmployeeVacationComponent } from './components/employee/vacation/vacation.component';
 import { EmployeeFemprobienComponent } from './components/employee/femprobien/femprobien.component';
+import { EmployeeUsersComponent } from './components/employee/users/users.component';
 import { FidelityProgramComponent } from './components/fidelity-program/fidelity-program.component';
 import { RedeemCapsComponent } from './components/fidelity-program/redeem-caps/redeem-caps.component';
 import { RedeemPointsComponent } from './components/fidelity-program/redeem-points/redeem-points.component';
@@ -108,6 +109,7 @@ const appRoutes: Routes = [
   { path: 'employee/employee-paystub', component: EmployeePaystubComponent },
   { path: 'employee/employee-vacation', component: EmployeeVacationComponent },
   { path: 'employee/employee-femprobien', component: EmployeeFemprobienComponent },
+  { path: 'employee/employee-users', component: EmployeeUsersComponent },
   { path: 'program-fidelity', component: FidelityProgramComponent },
   { path: 'program-fidelity/redeem-caps', component: RedeemCapsComponent },
   { path: 'program-fidelity/redeem-points', component: RedeemPointsComponent },
