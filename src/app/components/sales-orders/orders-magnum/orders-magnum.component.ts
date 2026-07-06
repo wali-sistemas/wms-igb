@@ -19,8 +19,8 @@ declare var $: any;
 })
 export class OrdersMagnumComponent implements OnInit {
   public urlShared: string = GLOBAL.urlShared;
-  public identity;
-  public token;
+  public identity: any;
+  public token: any;
   public orders: Array<SalesOrder>;
   public filteredOrders: Array<SalesOrder>;
   public selectedOrders: Map<string, string>;
@@ -28,32 +28,32 @@ export class OrdersMagnumComponent implements OnInit {
   public salesOrderMessage: string = '';
   public pickExpressErrorMessage: string = '';
   public filter: string = '';
-  public searchFilter: string;
+  public searchFilter: string = '';
   public processDeliveryStatus: string = 'none';
   public processInvoiceStatus: string = 'none';
-  public docEntryDelivery: number;
-  public docEntryInvoice: number;
+  public docEntryDelivery: number = 0;
+  public docEntryInvoice: number = 0;
   public deliveryErrorMessage: string = '';
-  public order: string;
-  public transport: string;
-  public whsName: string;
-  public whsCode: string;
+  public order: string = '';
+  public transport: string = '';
+  public whsName: string = '';
+  public whsCode: string = '';
   public transports: Array<any>;
   public selectedTransp: string = '';
   public selectedStatusOrder: string = '';
-  public subTotal: number;
+  public subTotal: number = 0;
   public address: string = '';
   public comments: string = '';
-  public valorDeclPack: number;
-  public pesoPack: number;
-  public flete: number;
-  public lio: number;
+  public valorDeclPack: number = 0;
+  public pesoPack: number = 0;
+  public flete: number = 0;
+  public lio: number = 0;
   public validTransp: boolean = true;
   public validLio: boolean = true;
   public validStatusOrder: boolean = true;
   public validFlete: boolean = true;
   public invoiceErrorMessage: string = '';
-  public qtyUnd: number;
+  public qtyUnd: number = 0;
 
   constructor(private _userService: UserService, private _salesOrdersService: SalesOrdersService, private _deliveryService: DeliveryService, private _route: ActivatedRoute, private _router: Router, private _healthchekService: HealthchekService, private _genericService: GenericService, private _invoiceService: InvoiceService) {
     this.orders = new Array<SalesOrder>();
@@ -69,10 +69,11 @@ export class OrdersMagnumComponent implements OnInit {
     }
     this.listTransport();
     this.listOpenOrders();
-    this.pickingExpressModuleAccesible = JSON.parse(localStorage.getItem('igb.user.access')).pickingExpressModuleAccesible;
+    const igbUserAccess = localStorage.getItem('igb.user.access');
+    this.pickingExpressModuleAccesible = igbUserAccess ? JSON.parse(igbUserAccess).pickingExpressModuleAccesible : false;
   }
 
-  private redirectIfSessionInvalid(error) {
+  private redirectIfSessionInvalid(error: any) {
     if (error && error.status && error.status === 401) {
       localStorage.removeItem('igb.identity');
       localStorage.removeItem('igb.selectedCompany');
@@ -124,7 +125,7 @@ export class OrdersMagnumComponent implements OnInit {
     );
   }
 
-  public calculateVrlDeclarad(order) {
+  public calculateVrlDeclarad(order: SalesOrder) {
     this.invoiceErrorMessage = '';
     if (this.lio === 0) {
       this.invoiceErrorMessage = 'Lios debe ser mayor a 0.';
@@ -133,7 +134,7 @@ export class OrdersMagnumComponent implements OnInit {
 
     for (let i = 0; i < this.orders.length; i++) {
       const ord = this.orders[i];
-      if (ord.docNum == order) {
+      if (ord.docNum == order.docNum) {
         this.pesoPack = (ord.undEmpStand * this.lio);
         this.valorDeclPack = (ord.vlrDeclarStand * this.lio);
         break;
@@ -156,7 +157,7 @@ export class OrdersMagnumComponent implements OnInit {
     this.comments = order.comments;
     this.selectedTransp = order.transp;
 
-    if (order.promotion == "COMBO") {
+    if (order.promotion == 'COMBO') {
       this.qtyUnd = order.qty * 2;
     } else {
       this.qtyUnd = order.qty;
@@ -191,6 +192,7 @@ export class OrdersMagnumComponent implements OnInit {
         if (ord.docNum.toLowerCase().includes(this.searchFilter)
           || ord.cardCode.toLowerCase().includes(this.searchFilter)
           || ord.cardName.toLowerCase().includes(this.searchFilter)
+          || (ord.groupCardCode || '').toLowerCase().includes(this.searchFilter)
           || (ord.assignedPickingEmployee && ord.assignedPickingEmployee.toLowerCase().includes(this.searchFilter))
           || ord.address.toLowerCase().includes(this.searchFilter)
           || (ord.whsCode == '05' ? 'CARTAGENA' : (ord.whsCode == '26' ? 'CALI' : (ord.whsCode == '60' ? 'MEDELLÍN' : 'BOGOTÁ'))).toLowerCase().includes(this.searchFilter)
@@ -223,14 +225,14 @@ export class OrdersMagnumComponent implements OnInit {
           $('#process_invoice_express').modal('hide');
           this.getScrollTop();
           this.selectedOrders.delete(this.order);
-          this.pickExpressErrorMessage = "La orden " + this.order + " no está autorizada o aprobada por comercial.";
+          this.pickExpressErrorMessage = 'La orden ' + this.order + ' no está autorizada o aprobada por comercial.';
         } else {
           this.addPickingExpress();
         }
       }, error => {
         $('#process_invoice_express').modal('hide');
         this.getScrollTop();
-        this.pickExpressErrorMessage = "Lo sentimos. Se produjo un error interno.";
+        this.pickExpressErrorMessage = 'Lo sentimos. Se produjo un error interno.';
         console.error(error);
         this.redirectIfSessionInvalid(error);
       }
@@ -238,7 +240,7 @@ export class OrdersMagnumComponent implements OnInit {
   }
 
   public createInvoice() {
-    this.deliveryErrorMessage = "";
+    this.deliveryErrorMessage = '';
     this.processInvoiceStatus = 'inprogress';
 
     const invoiceExpressDTO = {
@@ -254,13 +256,13 @@ export class OrdersMagnumComponent implements OnInit {
           this.order = '';
         } else {
           this.processInvoiceStatus = 'error';
-          this.deliveryErrorMessage = response.content + ". Inténtelo creandola desde SAP.";
+          this.deliveryErrorMessage = response.content + '. Inténtelo creandola desde SAP.';
         }
       },
       error => {
         this.processInvoiceStatus = 'error';
-        this.deliveryErrorMessage = "Error creando factura por favor inténtelo mas tarde.";
-        console.error("Ocurrio un error al crear la factura.", error);
+        this.deliveryErrorMessage = 'Error creando factura por favor inténtelo mas tarde.';
+        console.error('Ocurrio un error al crear la factura.', error);
       }
     );
   }
@@ -300,14 +302,14 @@ export class OrdersMagnumComponent implements OnInit {
 
   private addPickingExpress() {
     let deliveryNoteMagnumDTO = {
-      "docNum": this.order,
-      "whsCode": this.whsCode,
-      "transport": this.selectedTransp,
-      "lioQty": this.lio,
-      "pesoQty": this.pesoPack,
-      "vrlDeclarad": this.valorDeclPack,
-      "statusOrder": this.selectedStatusOrder,
-      "vlrFlete": this.flete
+      'docNum': this.order,
+      'whsCode': this.whsCode,
+      'transport': this.selectedTransp,
+      'lioQty': this.lio,
+      'pesoQty': this.pesoPack,
+      'vrlDeclarad': this.valorDeclPack,
+      'statusOrder': this.selectedStatusOrder,
+      'vlrFlete': this.flete
     }
 
     this._deliveryService.createDeliveryMagnum(deliveryNoteMagnumDTO).subscribe(
@@ -348,7 +350,7 @@ export class OrdersMagnumComponent implements OnInit {
 
   public resetSesionId() {
     $('#process_status').modal('hide');
-    this.deliveryErrorMessage = "";
+    this.deliveryErrorMessage = '';
     $('#modal_transfer_process').modal({
       backdrop: 'static',
       keyboard: false,
@@ -361,8 +363,8 @@ export class OrdersMagnumComponent implements OnInit {
       },
       error => {
         $('#modal_transfer_process').modal('hide');
-        console.error("Ocurrio un error al reiniciar los sesion Id", error);
-        this.deliveryErrorMessage = "Ocurrio un error al reiniciar los sesion Id";
+        console.error('Ocurrio un error al reiniciar los sesion Id', error);
+        this.deliveryErrorMessage = 'Ocurrio un error al reiniciar los sesion Id';
       }
     );
   }

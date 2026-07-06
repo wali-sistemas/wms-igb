@@ -143,7 +143,8 @@
   border-color: #E5BE01;
 }
 
-.order.warning .assigned-employee, .order.warning .glyphicon-warning-sign{
+.order.warning .assigned-employee,
+.order.warning .glyphicon-warning-sign {
   color: #f0ad4e;
 }
 
@@ -211,12 +212,11 @@
   border-radius: 4px;
 }
 
-.box-printer{
+.box-printer {
   height: 175px;
   margin-bottom: 10px;
   background-color: #333;
   color: #ddd;
-  /*font-size: 100px;*/
   text-align: center;
 }
 
@@ -238,21 +238,27 @@
   top: 14px;
 }
 
-.ng-valid[required], .ng-valid.required {
+.ng-valid[required],
+.ng-valid.required {
   border-color: #6D9197
 }
 
-.ng-touched.ng-invalid[required], .ng-untouched.ng-pristine.ng-invalid[required].required-field {
+.ng-touched.ng-invalid[required],
+.ng-untouched.ng-pristine.ng-invalid[required].required-field {
   border-color: #da0611;
 }
 
-.box-invoice{
+.box-invoice {
   height: 175px;
   margin-bottom: 10px;
   background-color: #333;
   color: #ddd;
-  /*font-size: 100px;*/
   text-align: center;
+}
+
+.order.identity-taller {
+  background-color: #5abbb3;
+  border-color: #012728;
 }
 
 .box-invoice:hover {
@@ -264,6 +270,7 @@
   .date {
     text-align: center;
   }
+
   .assigned-employee {
     text-align: center;
   }
