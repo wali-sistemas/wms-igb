@@ -125,7 +125,7 @@ export class OrdersMagnumComponent implements OnInit {
     );
   }
 
-  public calculateVrlDeclarad(order: SalesOrder) {
+  public calculateVrlDeclarad(order: string) {
     this.invoiceErrorMessage = '';
     if (this.lio === 0) {
       this.invoiceErrorMessage = 'Lios debe ser mayor a 0.';
@@ -134,7 +134,7 @@ export class OrdersMagnumComponent implements OnInit {
 
     for (let i = 0; i < this.orders.length; i++) {
       const ord = this.orders[i];
-      if (ord.docNum == order.docNum) {
+      if (ord.docNum == order) {
         this.pesoPack = (ord.undEmpStand * this.lio);
         this.valorDeclPack = (ord.vlrDeclarStand * this.lio);
         break;
