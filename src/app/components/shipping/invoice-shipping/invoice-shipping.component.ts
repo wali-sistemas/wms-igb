@@ -17,7 +17,7 @@ declare var $: any;
 })
 
 export class InvoiceShippingComponent implements OnInit {
-  public identity;
+  public identity: any;
   public urlShared: string = GLOBAL.urlShared;
   public warningMessage: string = '';
   public errorMessage: string = '';
@@ -29,7 +29,7 @@ export class InvoiceShippingComponent implements OnInit {
   public docNumPayroll: string = '';
   public transportPayroll: string = '';
   public selectBox: number = 0;
-  public qtyPack: number;
+  public qtyPack: number = 0;
   public fullShipping: boolean = false;
   public validQtyPack: boolean = true;
   public validPesoPack: boolean = true;
@@ -39,15 +39,15 @@ export class InvoiceShippingComponent implements OnInit {
   public validSelectedTypePack: boolean = true;
   public validDepartamentReceive: boolean = true;
   public invoicesShipping: Array<ShippingInvoice>;
-  public selectedInvoices: Map<String, ShippingInvoice>;
+  public selectedInvoices: Map<String, ShippingInvoice> = new Map<String, ShippingInvoice>();
   public transports: Array<any>;
   public transPayroll: Array<any>;
-  public detailContainer: Array<any>;
+  public detailContainer: Array<any> = new Array<any>();
   public listContainers: Array<string>;
   public selectInvoicesPack: Array<ShippingInvoice>;
   public selectedTypePack: string = '';
-  public pesoPack: number;
-  public valorDeclPack: number;
+  public pesoPack: number = 0;
+  public valorDeclPack: number = 0;
   public addressReceive: string = '';
   public cityReceive: string = '';
   public departamentReceive: string = '';
@@ -57,17 +57,17 @@ export class InvoiceShippingComponent implements OnInit {
   public urlRotulo: string = '';
   public selectedTypeProduct: string = '';
   public validSelectedTypeProduct: boolean = true;
-  public listDestinations: Array<Cities>;
-  public listDestinationsByDep: Array<Cities>;
+  public listDestinations: Array<Cities> = new Array<Cities>();
+  public listDestinationsByDep: Array<Cities> = new Array<Cities>();
   public selectedCityDest: string = '';
   public selectedCityOrig: string = '';
   public validSelectedCityDest: boolean = true;
   public validSelectedCity: boolean = true;
   public checkSede: boolean = false;
-  public valStandDeclMTZ: number;
-  public unidEmpStandMTZ: number;
-  public guia: string;
-  public selectedCompany: string;
+  public valStandDeclMTZ: number = 0;
+  public unidEmpStandMTZ: number = 0;
+  public guia: string = '';
+  public selectedCompany: string = '';
 
   constructor(private _userService: UserService, private _router: Router, private _shippingService: ShippingService, private _reportService: ReportService) {
     this.invoicesShipping = new Array<ShippingInvoice>();
@@ -89,7 +89,7 @@ export class InvoiceShippingComponent implements OnInit {
     this.listCitiesDestinationsOla();
   }
 
-  private redirectIfSessionInvalid(error) {
+  private redirectIfSessionInvalid(error: any) {
     if (error && error.status && error.status == 401) {
       localStorage.removeItem('igb.identity');
       localStorage.removeItem('igb.selectedCompany');

@@ -156,7 +156,7 @@ export class EmployeeUsersComponent implements OnInit {
     }
   }
 
-  publicpublicgetInitials(user: UserWali) {
+  public getInitials(user: UserWali) {
     if (!user) {
       return "U"
     };
