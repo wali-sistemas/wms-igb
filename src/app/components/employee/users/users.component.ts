@@ -1,6 +1,10 @@
 import { Component, OnInit } from "@angular/core";
 import { UserService } from "../../../services/user.service";
 import { UserWali } from "../../../models/user-wali.model";
+import { GLOBAL } from "app/services/global";
+import { Router } from "@angular/router";
+
+declare var $: any;
 
 @Component({
   templateUrl: './users.component.html',
@@ -9,6 +13,7 @@ import { UserWali } from "../../../models/user-wali.model";
 })
 
 export class EmployeeUsersComponent implements OnInit {
+  public urlShared: string = GLOBAL.urlShared;
   public users: UserWali[] = [];
   public filteredUsers: UserWali[] = [];
   public searchText: string = "";
@@ -20,10 +25,18 @@ export class EmployeeUsersComponent implements OnInit {
   public membersSelected: string[] = [];
   public newUser: UserWali = this.getEmptyUser();
 
-  constructor(private userService: UserService) { }
+  constructor(private _userService: UserService, private _router: Router) { }
 
   ngOnInit() {
     this.loadUsers();
+  }
+
+  private redirectIfSessionInvalid(error: any) {
+    if (error && error.status && error.status == 401) {
+      localStorage.removeItem('igb.identity');
+      localStorage.removeItem('igb.selectedCompany');
+      this._router.navigate(['/']);
+    }
   }
 
   private getEmptyUser() {
@@ -31,13 +44,24 @@ export class EmployeeUsersComponent implements OnInit {
   }
 
   public loadUsers() {
-    this.userService.listUsers().subscribe(
+    $('#modal_userswali_process').modal({
+      backdrop: 'static',
+      keyboard: false,
+      show: true
+    });
+
+    this._userService.listUsers().subscribe(
       response => {
         this.users = response || [];
         this.filteredUsers = this.users;
-        console.log("Usuarios WALI:", this.users);
+
+        $('#modal_userswali_process').modal('hide');
       },
-      error => { console.error("Error consultando usuarios WALI", error); },
+      error => {
+        this.redirectIfSessionInvalid(error);
+        console.error("Error consultando usuarios WALI", error);
+        $('#modal_userswali_process').modal('hide');
+      },
     );
   }
 
@@ -63,36 +87,50 @@ export class EmployeeUsersComponent implements OnInit {
 
   public openView(user: UserWali) {
     this.selectedUser = user;
-    (window as any).$("#modalViewUser").modal("show");
+    $('#modalViewUser').modal({
+      backdrop: 'static',
+      keyboard: false,
+      show: true
+    });
   }
 
   public openEdit(user: UserWali) {
     this.editIndex = this.users.indexOf(user);
     this.editUser = Object.assign({}, user);
-    this.editUser.oldUsername = user.username;
-    this.membersSelected = this.parseMembers(user.memberOf);
+    this.membersSelected = this.parseMembers(user.memberOf || "");
     this.editUserError = "";
 
-    (window as any).$("#modalEditUser").modal("show");
+    $('#modalEditUser').modal({
+      backdrop: 'static',
+      keyboard: false,
+      show: true
+    });
   }
 
   public openCreate() {
     this.newUser = this.getEmptyUser();
     this.membersSelected = [];
     this.createUserError = "";
-    (window as any).$("#modalEmpleado").modal("show");
+
+    $('#modalEmpleado').modal({
+      backdrop: 'static',
+      keyboard: false,
+      show: true
+    });
   }
 
   public updateUser(form: any) {
-    if (this.editIndex < 0 || !this.editUser) return;
+    if (this.editIndex < 0 || !this.editUser) {
+      return;
+    }
 
     this.editUser.memberOf = this.membersSelected.join("");
     this.editUserError = "";
 
-    this.userService.updateUserWali(this.editUser).subscribe(
-      (updatedUser: UserWali) => {
-        if (updatedUser) {
-          this.users[this.editIndex] = updatedUser;
+    this._userService.updateUserWali(this.editUser).subscribe(
+      response => {
+        if (response) {
+          this.users[this.editIndex] = response;
           this.searchByUsername();
 
           this.editUser = null;
@@ -104,12 +142,14 @@ export class EmployeeUsersComponent implements OnInit {
             form.resetForm();
           }
 
-          (window as any).$("#modalEditUser").modal("hide");
+          this.loadUsers();
+          $('#modalEditUser').modal('hide');
         } else {
           this.editUserError = "No fue posible actualizar el usuario.";
         }
       },
       error => {
+        this.redirectIfSessionInvalid(error);
         console.error("Error actualizando usuario WALI:", error);
         this.editUserError = error._body || "No fue posible actualizar el usuario.";
       },
@@ -120,10 +160,10 @@ export class EmployeeUsersComponent implements OnInit {
     this.createUserError = "";
     this.newUser.memberOf = this.membersSelected.join("");
 
-    this.userService.createUserWali(this.newUser).subscribe(
-      (createdUser: UserWali) => {
-        if (createdUser) {
-          this.users.push(createdUser);
+    this._userService.createUserWali(this.newUser).subscribe(
+      response => {
+        if (response) {
+          this.users.push(response);
           this.filteredUsers = this.users;
 
           this.newUser = this.getEmptyUser();
@@ -134,12 +174,14 @@ export class EmployeeUsersComponent implements OnInit {
             form.resetForm(this.newUser);
           }
 
-          (window as any).$("#modalEmpleado").modal("hide");
+          this.loadUsers();
+          $('#modalEmpleado').modal('hide');
         } else {
           this.createUserError = "No fue posible crear el usuario.";
         }
       },
       error => {
+        this.redirectIfSessionInvalid(error);
         console.error("Error creando usuario WALI:", error);
         this.createUserError = error._body || "El nombre de usuario ya se encuentra registrado.";
       },
@@ -156,18 +198,6 @@ export class EmployeeUsersComponent implements OnInit {
     }
   }
 
-  public getInitials(user: UserWali) {
-    if (!user) {
-      return "U"
-    };
-
-    const n1 = (user.name || "").trim().charAt(0);
-    const n2 = (user.surname || "").trim().charAt(0);
-    const ini = (n1 + n2).toUpperCase();
-
-    return ini || "U";
-  }
-
   private parseMembers(memberOf: string) {
     const known = [
       "WMS.ticket",
@@ -179,5 +209,14 @@ export class EmployeeUsersComponent implements OnInit {
     ];
 
     return known.filter((k) => (memberOf || "").includes(k));
+  }
+
+  public normalizeUsername(value: string) {
+    return (value || "").toLowerCase().replace(/\s+/g, "").replace(/[^a-z0-9]/g, "");
+  }
+
+  public getScrollTop() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
   }
 }

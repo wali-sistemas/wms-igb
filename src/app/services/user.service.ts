@@ -32,10 +32,6 @@ export class UserService {
       .map(res => res.json());
   }
 
-  /*private validateToken(igbHeaders: IGBHeaders) {
-    return this._http.get(this.url + 'user/validate', { headers: igbHeaders }).map(res => res.json());
-  }*/
-
   public validateUserAdmin(user: string) {
     return this._http.get(this.url + 'user/validate-user-admin/' + user, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
@@ -52,12 +48,12 @@ export class UserService {
   }
 
   public createUserWali(user: any) {
-    return this._http.post(this.url + "user/create-wali", JSON.stringify(user), { headers: new IGBHeaders().loadHeaders() })
+    return this._http.post(this.url + "user/create-wali", user, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 
   public updateUserWali(user: any) {
-    return this._http.put(this.url + 'user/update-wali', JSON.stringify(user), { headers: new IGBHeaders().loadHeaders() })
+    return this._http.put(this.url + 'user/update-wali', user, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 }

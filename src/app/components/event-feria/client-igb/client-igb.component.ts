@@ -13,18 +13,18 @@ const MicRecorder = require('mic-recorder-to-mp3');
   providers: [EventService, OpenAIService]
 })
 export class ClientIgbComponent implements OnInit {
-  public identity;
-  public contact: string;
-  public whsName: string;
-  public document: string;
-  public departamento: string = "";
-  public selectedAsesor: string = "";
-  public city: string;
-  public phone: string;
-  public mail: string;
-  public warningMessage: string;
-  public exitMessage: string;
-  public errorMessage: string;
+  public identity: any;
+  public contact: string = '';
+  public whsName: string = '';
+  public document: string = '';
+  public departamento: string = '';
+  public selectedAsesor: string = '';
+  public city: string = '';
+  public phone: string = '';
+  public mail: string = '';
+  public warningMessage: string = '';
+  public exitMessage: string = '';
+  public errorMessage: string = '';
   public selected: Map<number, string>;
   public validContact: boolean = true;
   public validPhone: boolean = true;
@@ -40,7 +40,7 @@ export class ClientIgbComponent implements OnInit {
   public audioChunks: any[] = [];
   public apiKey: string = '';
   public recorder = new MicRecorder({ bitRate: 128 });
-  public stream: MediaStream;
+  public stream: MediaStream = new MediaStream();
 
   constructor(private _eventService: EventService, private _openAIService: OpenAIService) {
     this.selected = new Map<number, string>();
@@ -166,7 +166,7 @@ export class ClientIgbComponent implements OnInit {
           .then(() => {
             this.isRecording = true;
           })
-          .catch(error => {
+          .catch((error: any) => {
             this.errorMessage = "Ocurrió un error al acceder al micrófono en iphone.";
             $('#modal_voice_ai').modal('hide');
             console.error('Ocurrió un error al acceder al micrófono en iphone ', error);
@@ -179,10 +179,10 @@ export class ClientIgbComponent implements OnInit {
           this.mediaRecorder.start();
           this.isRecording = true;
 
-          this.mediaRecorder.addEventListener('dataavailable', event => {
+          this.mediaRecorder.addEventListener('dataavailable', (event: any) => {
             this.audioChunks.push(event.data);
           });
-        }).catch(error => {
+        }).catch((error: any) => {
           this.errorMessage = "Ocurrió un error al acceder el micrófono.";
           $('#modal_voice_ai').modal('hide');
           console.error('Error MediaRecorder:', error);
@@ -204,8 +204,8 @@ export class ClientIgbComponent implements OnInit {
     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
     if (isIOS && isSafari) {
-      this.recorder.stop().getMp3().then(([buffer, blob]) => {
-        const file = new File(buffer, 'voice.mp3', {
+      this.recorder.stop().getMp3().then(([buffer, blob]: [ArrayBuffer, Blob]) => {
+        const file = new File([buffer], 'voice.mp3', {
           type: blob.type,
           lastModified: Date.now()
         });
@@ -214,9 +214,9 @@ export class ClientIgbComponent implements OnInit {
 
         if (this.stream) {
           this.stream.getTracks().forEach(track => track.stop());
-          this.stream = null;
+          this.stream = new MediaStream();
         }
-      }).catch(error => {
+      }).catch((error: any) => {
         console.error('Error al detener grabación Safari:', error);
       });
     } else {
@@ -231,7 +231,7 @@ export class ClientIgbComponent implements OnInit {
 
       if (this.stream) {
         this.stream.getTracks().forEach(track => track.stop());
-        this.stream = null;
+        this.stream = new MediaStream();
       }
     }
   }
@@ -320,7 +320,7 @@ export class ClientIgbComponent implements OnInit {
     }`;
 
     const formData = {
-      model: "gpt-4",
+      model: "gpt-5.4",
       messages: [{ role: 'user', content: prompt }],
       temperature: 0.2
     };
@@ -376,7 +376,7 @@ export class ClientIgbComponent implements OnInit {
   public closeModal() {
     if (this.stream) {
       this.stream.getTracks().forEach(track => track.stop());
-      this.stream = null;
+      this.stream = new MediaStream();
     }
 
     this.mediaRecorder.stop();
