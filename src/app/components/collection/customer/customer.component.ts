@@ -162,9 +162,11 @@ export class CustomerComponent implements OnInit {
   }
 
   // Método para eliminar espacios en el input cuando pierde el foco
-  public trimInput(field: string) {
-    if (this.client[field]) {
-      this.client[field] = this.client[field].trim();
+  public trimInput(field: keyof Client) {
+    const value = this.client[field];
+
+    if (typeof value === 'string') {
+      (this.client as any)[field] = value.trim();
     }
   }
 
@@ -285,7 +287,9 @@ export class CustomerComponent implements OnInit {
     ];
 
     const camposLlenos = camposModelo.filter(
-      campo => this.client.hasOwnProperty(campo) && this.client[campo] !== ''
+      campo =>
+        this.client.hasOwnProperty(campo) &&
+        this.client[campo as keyof Client] !== ''
     ).length;
     // ---- Retenciones ----
     let extrasLlenos = 0;
@@ -370,7 +374,7 @@ export class CustomerComponent implements OnInit {
 
   // Método para calcular el progreso de un tab específico
   private calculateProgressTab(campos: string[]): number {
-    const camposLlenos = campos.filter(campo => this.client.hasOwnProperty(campo) && this.client[campo] !== '');
+    const camposLlenos = campos.filter(campo => this.client.hasOwnProperty(campo) && this.client[campo as keyof Client] !== '');
     const progreso = (camposLlenos.length / campos.length) * 100;
     return Number(progreso.toFixed(0));
   }
@@ -589,11 +593,8 @@ export class CustomerComponent implements OnInit {
     let priceListValue: number;
     if (this.selectedCompany === 'IGB') {
       transpValue = '03';
-      //Asesores con lista de precios 9
-      const advisersPriceList9 = [6, 259, 210, 227, 209, 32, 285];
-      if (advisersPriceList9.includes(Number(this.client.selectedAdviser))) {
-        priceListValue = 9;
-      } else if (this.client.selectedGroup === '114') {
+      // Lista de precios según grupo del cliente
+      if (this.client.selectedGroup === '114') {
         priceListValue = 8;
       } else {
         priceListValue = 4;
@@ -606,12 +607,12 @@ export class CustomerComponent implements OnInit {
       priceListValue = 4;
     }
     const clientData = {
-      //Generales
+      // Generales
       typeTransaction: 'add',
       companyName: this.selectedCompany,
       acceptHabeasData: 'Y',
       priceList: priceListValue,
-      //Cliente
+      // Cliente
       cardCode: this.client.cardCode,
       cardName: this.client.cardName,
       licTradNum: this.client.licTradNum,
@@ -625,7 +626,7 @@ export class CustomerComponent implements OnInit {
       grupo: this.client.selectedGroup,
       codeResFis: this.client.selectedTaxResposabilitie,
       descResFis: this.client.nameResFis,
-      //Contacto
+      // Contacto
       contactPerson: this.client.idContactPerson,
       nameContactPerson: this.client.nameContactPerson,
       secondNamecontactPerson: this.client.secondNameContactPerson,
@@ -633,7 +634,7 @@ export class CustomerComponent implements OnInit {
       occupationContactPerson: this.client.occupationContactPerson,
       phoneContactPerson: this.client.phoneContactPerson,
       dateContactPerson: this.client.dateContactPerson,
-      //Ubicacion
+      // Ubicacion
       idAddress: this.client.idAdress,
       address: this.client.address,
       codDepartamento: this.client.codDepartamento,
@@ -641,7 +642,7 @@ export class CustomerComponent implements OnInit {
       taxAddress: this.client.selectedTaxAdrress,
       lengthMap: this.client.lengthMap,
       latitudeMap: this.client.latitudeMap,
-      //MM
+      // MM
       firstname: this.client.firstname,
       lastname1: this.client.lastname1,
       lastname2: this.client.lastname2,
@@ -654,7 +655,7 @@ export class CustomerComponent implements OnInit {
       mailFE: this.client.emailFE,
       transp: transpValue,
       typeSell: this.client.selectedTypeSell,
-      //Impuestos Y Finanzas
+      // Impuestos Y Finanzas
       paymentCondition: this.client.selectedPaymentCondition,
       discount: this.client.discount,
       taxType: this.client.taxType,

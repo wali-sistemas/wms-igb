@@ -28,7 +28,6 @@ export class SalesOrdersService {
       'X-Employee': identity.username,
       'X-Pruebas': localStorage.getItem('igb.pruebas') || ''
     });
-
     return this._http.get(this.url + 'salesorder/list/orders/' + !showApprovedOnly + '/' + filterGroup, { headers: igbHeaders })
       .map(res => res.json());
   }
@@ -94,6 +93,13 @@ export class SalesOrdersService {
   public updateOrders(action: string, selects: string[]) {
     let igbHeaders = new IGBHeaders().loadHeaders();
     return this._http.post(this.url + 'salesorder/update-status-order?status=' + action, selects, { headers: igbHeaders })
+      .map(res => res.json());
+  }
+
+  public listDetailItems(orderNumber: string) {
+    let igbHeaders = new IGBHeaders().loadHeaders();
+    console.log('orderNumber', orderNumber);
+    return this._http.get(this.url + 'salesorder/detail-items-order/' + orderNumber, { headers: igbHeaders })
       .map(res => res.json());
   }
 }

@@ -27,8 +27,8 @@ export class CustomerPnComponent {
   public tipoViv: string = '';
   public undDi: string = '';
   public numApto: string = '';
-  public changeCustomerPNMessage: string;
-  public changeCustomerPNErrorMessage: string;
+  public changeCustomerPNMessage: string = '';
+  public changeCustomerPNErrorMessage: string = '';
   public clientPn: PersonNatural = new PersonNatural();
   public municipalities: Municipality[] = [];
   public departments: Department[] = [];
@@ -65,12 +65,13 @@ export class CustomerPnComponent {
 
   // Método para eliminar espacios en el input cuando pierde el foco
   public trimInput(field: string) {
-    if (this.clientPn[field]) {
-      this.clientPn[field] = this.clientPn[field].trim();
+    const clientPn = this.clientPn as { [key: string]: any };
+    if (clientPn[field]) {
+      clientPn[field] = clientPn[field].trim();
     }
   }
 
-  private redirectIfSessionInvalid(error): void {
+  private redirectIfSessionInvalid(error: any): void {
     if (error && error.status && error.status == 401) {
       localStorage.removeItem('igb.identity');
       localStorage.removeItem('igb.selectedCompany');
@@ -154,7 +155,7 @@ export class CustomerPnComponent {
 
   // Método para calcular el progreso general del formulario
   public updateProgres() {
-    const camposModelo = [
+    const camposModelo: (keyof PersonNatural)[] = [
       'document',
       'firstname',
       'lastname1',
@@ -167,7 +168,10 @@ export class CustomerPnComponent {
       'address',
       'priceList'
     ];
-    const camposLlenos = camposModelo.filter(campo => this.clientPn.hasOwnProperty(campo) && this.clientPn[campo] && this.clientPn[campo].toString().trim() !== '');
+    const camposLlenos = camposModelo.filter(campo => {
+      const valor = this.clientPn[campo];
+      return valor !== undefined && valor !== null && valor.toString().trim() !== '';
+    });
     this.camposCompletados = (camposLlenos.length / camposModelo.length) * 100;
   }
 

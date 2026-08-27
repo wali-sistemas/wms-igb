@@ -22,6 +22,7 @@ export class OrdersMagnumComponent implements OnInit {
   public identity: any;
   public token: any;
   public orders: Array<SalesOrder>;
+  public detailsItems: Array<any> = [];
   public filteredOrders: Array<SalesOrder>;
   public selectedOrders: Map<string, string>;
   public pickingExpressModuleAccesible: boolean = false;
@@ -365,6 +366,27 @@ export class OrdersMagnumComponent implements OnInit {
         $('#modal_transfer_process').modal('hide');
         console.error('Ocurrio un error al reiniciar los sesion Id', error);
         this.deliveryErrorMessage = 'Ocurrio un error al reiniciar los sesion Id';
+      }
+    );
+  }
+
+  public showItems(docNum: string) {
+    $('#modal_detail_items').modal({
+      backdrop: 'static',
+      keyboard: false,
+      show: true
+    });
+
+    this._salesOrdersService.listDetailItems(docNum).subscribe(
+      response => {
+        if (response && response.content) {
+          this.detailsItems = response.content;
+        } else {
+          this.detailsItems = [];
+        }
+      },
+      error => {
+        this.redirectIfSessionInvalid(error);
       }
     );
   }
