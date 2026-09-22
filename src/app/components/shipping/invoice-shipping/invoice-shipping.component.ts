@@ -792,6 +792,9 @@ export class InvoiceShippingComponent implements OnInit {
             if (response.code == 0) {
               //Registramos shipping en tablas temporales
               this.addShipping();
+
+              this.urlGuia = response.content[0];
+              this.urlRotulo = response.content[1];
             }
           },
           error => {
