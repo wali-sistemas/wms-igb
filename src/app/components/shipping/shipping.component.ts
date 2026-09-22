@@ -11,8 +11,8 @@ declare var $: any;
 })
 
 export class ShippingComponent {
-  public identity;
-  public selectedCompany: string;
+  public identity: any;
+  public selectedCompany: string = '';
 
   constructor(private _router: Router, private _userService: UserService) {
   }

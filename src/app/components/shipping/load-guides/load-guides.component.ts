@@ -36,7 +36,7 @@ export class LoadGuidesComponent implements OnInit {
   public maxSizeBytes = 10 * 1024 * 1024; // 10 MB
   public requiredHeaders: string[] = ['carrier', 'guide', 'status', 'shipped_at', 'delivered_at', 'city', 'invoice'];
   public identity: any;
-  public selectedCompany: string;
+  public selectedCompany: string = '';
 
   constructor(private _router: Router, private _uploadGuidesService: UploadGuideService, private _userService: UserService) { }
 
@@ -67,10 +67,12 @@ export class LoadGuidesComponent implements OnInit {
     ev.preventDefault();
     this.dragOver = true;
   }
+
   public onDragLeave(ev: DragEvent) {
     ev.preventDefault();
     this.dragOver = false;
   }
+
   public onDrop(ev: DragEvent) {
     ev.preventDefault();
     this.dragOver = false;
@@ -207,10 +209,10 @@ export class LoadGuidesComponent implements OnInit {
       return { guides: [], errors: [`Faltan columnas requeridas: ${missingReq.join(', ')}`] };
     }
 
-    const toIso = (s?: string): string | null => {
-      if (!s) return null;
+    const toIso = (s?: string): string | undefined => {
+      if (!s) return undefined;
       const t = s.trim();
-      if (!t) return null;
+      if (!t) return undefined;
 
       const isoMatch = /^(\d{4})-(\d{2})-(\d{2})/.exec(t);
       if (isoMatch) {
@@ -233,7 +235,7 @@ export class LoadGuidesComponent implements OnInit {
         return `${year}-${month}-${day}`;
       }
 
-      return null;
+      return undefined;
     };
 
     const guides: GuideUpload[] = [];
@@ -264,10 +266,10 @@ export class LoadGuidesComponent implements OnInit {
         invoice,
         guide,
         status.toUpperCase(),
-        carrier ? carrier.toUpperCase() : null,
+        carrier ? carrier.toUpperCase() : undefined,
         toIso(shipped_at),
         toIso(delivered_at),
-        city ? city.toUpperCase() : null
+        city ? city.toUpperCase() : undefined
       );
 
       guides.push(dto);

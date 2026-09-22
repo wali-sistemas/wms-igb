@@ -271,7 +271,7 @@
             </select>
           </div>
         </div>
-        <div class="row" *ngIf="selectedTransp=='TRANSPRENSA'">
+        <div class="row" *ngIf="selectedTransp=='TRANSPRENSA' || selectedTransp=='ENVIA'">
           <div class="col-xs-12">
             <select id="origen" class="form-control input-lg" [(ngModel)]="selectedCityOrig" name="selectedCityOrig">
               <option value="" disabled>Seleccione ciudad de origen</option>

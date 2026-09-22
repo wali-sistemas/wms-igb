@@ -761,6 +761,45 @@ export class InvoiceShippingComponent implements OnInit {
           }
         );
         break;
+      case "ENVIA":
+        const apiEnviaDTO = {
+          "ciudadOrigen": this.selectedCityOrig,
+          "ciudadDestino": this.selectInvoicesPack[0].codCity,
+          "numUnidades": this.qtyPack,
+          "mpesorealK": this.pesoPack,
+          "mpesovolumenK": 22,
+          "valorDeclarado": this.valorDeclPack,
+          "mcaNoSabado": 1,
+          //Origen
+          "nomRemitente": localStorage.getItem('igb.selectedCompany') == 'IGB' ? "IGB MOTORCYCLE PARTS S.A.S" : "MOTOZONE S.A.S",
+          "dirRemitente": "CALLE 98 SUR N 48-225 BOD 114",
+          "telRemitente": "4442025",
+          "cedRemitente": localStorage.getItem('igb.selectedCompany') == 'IGB' ? "811011909" : "900255414",
+          //Destino
+          "nomDestinatario": this.selectInvoicesPack[0].cardName,
+          "dirDestinatario": this.addressReceive,
+          "telDestinatario": this.selectInvoicesPack[0].phone,
+          "cedDestinatario": this.selectInvoicesPack[0].cardCode.replace('C', ''),
+          //contenido
+          "diceContener": this.selectedTypeProduct,
+          "textoGuia": this.selectedTypePack,
+          "accionNotaGuia": "PRUEBA SISTEMAS IGB - POR FAVOR CANCELAR GUIA",
+          "numDocumentos": "FV-" + invoices
+        }
+
+        this._shippingService.createGuiaEnvia(apiEnviaDTO, invoices).subscribe(
+          response => {
+            if (response.code == 0) {
+              //Registramos shipping en tablas temporales
+              this.addShipping();
+            }
+          },
+          error => {
+            console.error(error);
+            this.redirectIfSessionInvalid(error);
+          }
+        );
+        break;
       default:
         this.clean();
         this.warningMessage = "Lo sentimos. Actualmente no esta integrada la transportadora.";
