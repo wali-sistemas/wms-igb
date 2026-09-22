@@ -780,10 +780,10 @@ export class InvoiceShippingComponent implements OnInit {
           "dirDestinatario": this.addressReceive,
           "telDestinatario": this.selectInvoicesPack[0].phone,
           "cedDestinatario": this.selectInvoicesPack[0].cardCode.replace('C', ''),
-          //contenido
+          //Contenido
           "diceContener": this.selectedTypeProduct,
           "textoGuia": this.selectedTypePack,
-          "accionNotaGuia": "PRUEBA SISTEMAS IGB - POR FAVOR CANCELAR GUIA",
+          "accionNotaGuia": "PRODUCTO DELICADO",
           "numDocumentos": "FV-" + invoices
         }
 
