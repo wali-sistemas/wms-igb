@@ -1,18 +1,14 @@
 import { Headers } from '@angular/http';
 
 export let GLOBAL = {
-  //HTTP
-  /*url: 'http://192.168.10.69:8080/igb/res/',
-  urlShared: 'http://192.168.10.69:8080/shared/',
-  urlManager: 'http://192.168.10.69:8080/manager/res/',
-  urlSpring: 'http://192.168.10.69:8080/apiRest/wali/',
-  urlClaude: 'https://192.168.10.69:8080/apiRestClaude/wali/'*/
   //HTTPS
   url: 'https://wali.igbcolombia.com/api/igb/res/',
   urlShared: 'https://wali.igbcolombia.com/api/shared/',
   urlManager: 'https://wali.igbcolombia.com/api/manager/res/',
   urlSpring: 'https://wali.igbcolombia.com/api/apiRest/wali/',
-  urlClaude: 'https://wali.igbcolombia.com/api/apiRestClaude/wali/'
+  urlClaude: 'https://wali.igbcolombia.com/api/apiRestClaude/wali/',
+  urlMeta: 'https://wali.igbcolombia.com/api/apiRestMeta/wali/',
+  urlMtr: 'https://wali.igbcolombia.com/api/apiRestMtr/wali/'
 };
 
 export let AIGlobal = {

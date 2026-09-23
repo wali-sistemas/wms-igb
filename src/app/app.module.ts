@@ -62,6 +62,7 @@ import { GeoLocationComponent } from './components/telemarketing/geo-location/ge
 import { WalletRedplasComponent } from './components/payments-microsite/redplas/wallet-redplas.component';
 import { WalletIGBComponent } from './components/payments-microsite/igb/wallet-igb.component';
 import { WalletMTZComponent } from './components/payments-microsite/mtz/wallet-mtz.component';
+import { WalletMTRComponent } from './components/payments-microsite/mtr/wallet-mtr.component';
 import { TrackingGuidesComponent } from './components/tracking-guides/tracking-guides.component';
 import { TelemarketingComponent } from './components/telemarketing/telemarketing.component';
 import { AiAssistantComponent } from './components/ai-assistant/ai-assistant.component';
@@ -127,6 +128,7 @@ import { from } from 'rxjs/observable/from';
     WalletRedplasComponent,
     WalletIGBComponent,
     WalletMTZComponent,
+    WalletMTRComponent,
     TelemarketingComponent,
     TrackingGuidesComponent,
     AiAssistantComponent

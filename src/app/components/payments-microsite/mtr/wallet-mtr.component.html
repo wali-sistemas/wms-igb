@@ -1,0 +1,395 @@
+<!-- MODAL PROCESANDO PAGO -->
+<div id="modal_transfer_process" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content payment-processing-modal">
+      <div class="modal-body">
+        <div class="processing-content">
+          <div class="processing-spinner"></div>
+          <h3>Preparando tu pago</h3>
+          <p>Estamos conectando tu compra con la pasarela segura de pagos.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- MODAL CONFIRMACIÓN DE PAGO -->
+<div *ngIf="showPaymentConfirmation" class="modal-overlay">
+  <div class="modal-content-custom payment-confirmation-modal">
+    <button type="button" class="modal-close-button" (click)="cancelPayment()">&times;</button>
+    <div class="confirmation-icon">
+      <span class="glyphicon glyphicon-credit-card"></span>
+    </div>
+    <h3>Confirmar pago</h3>
+    <p class="confirmation-text">
+      Revisa el valor de tu compra antes de continuar.
+    </p>
+    <div class="confirmation-breakdown">
+      <div class="confirmation-breakdown-row">
+        <span>Total productos</span>
+        <strong>{{subtotal | currency:'COP':'symbol':'1.2-2'}}</strong>
+      </div>
+      <div class="confirmation-breakdown-row">
+        <span>Flete</span>
+        <strong>{{freight | currency:'COP':'symbol':'1.2-2'}}</strong>
+      </div>
+    </div>
+    <div class="confirmation-total-label">Total a pagar</div>
+    <div class="confirmation-total">
+      {{totalToPay | currency:'COP':'symbol':'1.2-2'}}
+    </div>
+    <p class="confirmation-note">
+      Se abrirá la ventana segura de Wompi para completar la transacción sin salir del sitio.
+    </p>
+    <div class="modal-buttons">
+      <button type="button" class="btn-modal-secondary" (click)="cancelPayment()">
+        Cancelar
+      </button>
+      <button type="button" class="btn-modal-primary" [disabled]="isCreatingPayment" (click)="confirmPayment()">
+        Continuar
+      </button>
+    </div>
+  </div>
+</div>
+<!-- MODAL SESIÓN EXPIRADA -->
+<div *ngIf="showAlert" class="custom-alert">
+  <div class="alert-content">
+    <div class="alert-icon">
+      <span class="glyphicon glyphicon-time"></span>
+    </div>
+    <h3>Sesión expirada</h3>
+    <p>
+      La sesión ha expirado por inactividad.
+      Puedes ingresar nuevamente tu documento para consultar tu compra.
+    </p>
+    <button type="button" class="alert-button" (click)="closeAlert()">
+      Aceptar
+    </button>
+  </div>
+</div>
+<!-- MODAL PREGUNTAS FRECUENTES -->
+<div *ngIf="showFAQModal" class="modal-overlay">
+  <div class="modal-content-custom faq-modal">
+    <button type="button" class="modal-close-button" (click)="closeFAQModal()">
+      &times;
+    </button>
+    <div class="faq-header">
+      <h2>Preguntas frecuentes</h2>
+      <p>
+        Información sobre el proceso de pago de tu compra.
+      </p>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <h3>¿Qué estoy pagando?</h3>
+        <p>
+          Estás pagando el total de la compra pendiente asociada a tu documento,
+          incluyendo productos con IVA incluido y flete.
+        </p>
+      </div>
+      <div class="faq-item">
+        <h3>¿El pago es seguro?</h3>
+        <p>
+          Sí. Al continuar se abrirá la ventana segura de Wompi para completar la transacción.
+        </p>
+      </div>
+      <div class="faq-item">
+        <h3>¿Puedo cambiar productos o cantidades aquí?</h3>
+        <p>
+          No. Esta pantalla es únicamente de consulta y pago de la compra previamente confirmada.
+        </p>
+      </div>
+      <div class="faq-item">
+        <h3>¿Qué ocurre cuando el pago es aprobado?</h3>
+        <p>
+          Una vez confirmado el pago, tu compra continuará con el proceso correspondiente
+          para la creación del pedido, preparación y envío.
+        </p>
+      </div>
+      <div class="faq-item">
+        <h3>¿Qué pasa si cierro esta página?</h3>
+        <p>
+          Puedes volver a ingresar utilizando tu documento para consultar nuevamente
+          tu compra pendiente, siempre que todavía no haya sido pagada.
+        </p>
+      </div>
+      <div class="faq-item">
+        <h3>¿La compra desaparece cuando termina el contador?</h3>
+        <p>
+          No. El contador corresponde únicamente a tu sesión actual dentro del portal de pagos.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- LOGIN -->
+<div class="mtr-page" *ngIf="!checkoutLoaded">
+  <header class="mtr-header">
+    <img src="assets/images/banner-mtr.png" alt="Motorepuestos - Pago seguro" class="mtr-banner" />
+  </header>
+  <main class="login-shell">
+    <section class="login-information">
+      <div class="brand-pill">
+        Pago seguro
+      </div>
+      <h1>
+        Finaliza tu compra
+        <span>de forma segura</span>
+      </h1>
+      <p class="login-description">
+        Ingresa tu documento para consultar el detalle de tu compra pendiente
+        y continuar con el proceso de pago.
+      </p>
+      <div class="benefits">
+        <div class="benefit-card">
+          <div class="benefit-icon">
+            <span class="glyphicon glyphicon-lock"></span>
+          </div>
+          <div>
+            <strong>Pago seguro</strong>
+            <span>Tu información se procesa de forma protegida.</span>
+          </div>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">
+            <span class="glyphicon glyphicon-ok-circle"></span>
+          </div>
+          <div>
+            <strong>Confirmación inmediata</strong>
+            <span>Conocerás el resultado de tu transacción al finalizar.</span>
+          </div>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">
+            <span class="glyphicon glyphicon-send"></span>
+          </div>
+          <div>
+            <strong>Continúa tu compra</strong>
+            <span>Después del pago tu compra continúa su proceso.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="login-form-section">
+      <div class="login-card">
+        <div class="login-card-header">
+          <span class="login-small-title">
+            Consulta tu compra
+          </span>
+          <h2>Ingresa tu documento</h2>
+          <p>
+            Digita tu cédula o NIT sin puntos, espacios ni dígito de verificación.
+          </p>
+        </div>
+        <div class="document-field">
+          <label for="document">
+            Documento *
+          </label>
+          <div class="document-input-wrapper">
+            <span class="glyphicon glyphicon-user input-icon"></span>
+            <input type="text" id="document" name="document" class="form-control document-input" [(ngModel)]="document"
+              (input)="checkInput()" (keydown.enter)="getCheckout()" autocomplete="off" inputmode="numeric"
+              maxlength="20" placeholder="Ej. 1030539283" />
+          </div>
+        </div>
+        <div class="privacy-message">
+          <span class="glyphicon glyphicon-lock"></span>
+          <span>
+            Al continuar aceptas las políticas aplicables para el tratamiento
+            de tus datos personales.
+          </span>
+        </div>
+        <div *ngIf="errorMessage" class="login-error">
+          <span class="glyphicon glyphicon-exclamation-sign"></span>
+          <span>{{errorMessage}}</span>
+        </div>
+        <button type="button" class="login-button" [disabled]="!isButtonEnabled || isLoading" (click)="getCheckout()">
+          <span *ngIf="!isLoading">
+            Consultar compra
+          </span>
+          <span *ngIf="isLoading" class="login-loading">
+            <span class="small-spinner"></span>
+            Consultando...
+          </span>
+        </button>
+        <div class="secure-payment-note">
+          <span class="glyphicon glyphicon-lock"></span>
+          Pago electrónico seguro
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="mtr-footer">
+    <div class="footer-content">
+      <div class="footer-company">
+        Motorepuestos.com.co
+      </div>
+      <div class="footer-security">
+        <span class="glyphicon glyphicon-lock"></span>
+        Transacción protegida
+      </div>
+    </div>
+  </footer>
+</div>
+<!-- DETALLE DE COMPRA -->
+<div class="mtr-page checkout-page" *ngIf="checkoutLoaded">
+  <header class="mtr-header checkout-header">
+    <img src="assets/images/banner-mtr.png" alt="Motorepuestos - Pago seguro" class="mtr-banner" />
+  </header>
+  <main class="checkout-shell">
+    <div class="checkout-topbar">
+      <div class="customer-information">
+        <span class="customer-label">Hola,</span>
+        <strong class="customer-name">{{customerName}}</strong>
+      </div>
+      <button type="button" class="logout-button" (click)="clearInput()">
+        <span class="glyphicon glyphicon-log-out"></span>
+        <span>Salir</span>
+      </button>
+    </div>
+    <div class="checkout-introduction">
+      <div>
+        <span class="checkout-pill">Tu compra</span>
+        <h1>Revisa el detalle antes de pagar</h1>
+        <p>
+          Verifica tus productos y el valor final de tu compra. Los precios ya incluyen IVA.
+          Esta pantalla es únicamente de consulta y pago.
+        </p>
+      </div>
+    </div>
+    <div class="checkout-grid">
+      <section class="products-section">
+        <div class="section-heading">
+          <div>
+            <h2>Detalle de productos</h2>
+            <p>
+              {{items.length}}
+              {{items.length === 1 ? 'producto en tu compra' : 'productos en tu compra'}}
+            </p>
+          </div>
+        </div>
+        <div class="orders-container">
+          <div class="order-group">
+            <div class="order-reference">
+              <div>
+                <span class="order-reference-label">Compra</span>
+                <strong>{{checkoutCode}}</strong>
+              </div>
+              <div class="order-date" *ngIf="city">
+                <span class="glyphicon glyphicon-map-marker"></span>
+                {{city}}
+              </div>
+            </div>
+            <div class="products-list">
+              <article class="product-card checkout-product-card" *ngFor="let item of items">
+                <div class="product-code">
+                  {{item.itemCode}}
+                </div>
+                <div class="product-information">
+                  <h3>{{item.description}}</h3>
+                  <div class="product-meta">
+                    <div class="product-meta-item">
+                      <span class="meta-label">Cantidad</span>
+                      <strong>{{item.quantity | number:'1.0-2'}}</strong>
+                    </div>
+                    <div class="product-meta-item">
+                      <span class="meta-label">Precio unitario</span>
+                      <strong>{{item.price | currency:'COP':'symbol':'1.2-2'}}</strong>
+                    </div>
+                    <div class="product-meta-item">
+                      <span class="meta-label">Subtotal</span>
+                      <strong>{{item.subtotal | currency:'COP':'symbol':'1.2-2'}}</strong>
+                    </div>
+                  </div>
+                </div>
+                <div class="product-subtotal">
+                  <span>Total línea</span>
+                  <strong>{{item.total | currency:'COP':'symbol':'1.2-2'}}</strong>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+      <aside class="checkout-sidebar">
+        <div class="checkout-summary-card">
+          <div class="summary-title">
+            <span class="glyphicon glyphicon-shopping-cart"></span>
+            <span>Resumen de pago</span>
+          </div>
+          <div class="summary-customer">
+            <span>Documento</span>
+            <strong>{{document}}</strong>
+          </div>
+          <div class="summary-customer">
+            <span>Cliente</span>
+            <strong>{{customerName}}</strong>
+          </div>
+          <div class="summary-customer" *ngIf="city">
+            <span>Ciudad</span>
+            <strong>{{city}}</strong>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-breakdown">
+            <div class="summary-breakdown-row">
+              <span>Total productos</span>
+              <strong>{{subtotal | currency:'COP':'symbol':'1.2-2'}}</strong>
+            </div>
+            <div class="summary-breakdown-row">
+              <span>Flete</span>
+              <strong>{{freight | currency:'COP':'symbol':'1.2-2'}}</strong>
+            </div>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-total">
+            <span class="summary-total-label">Total a pagar</span>
+            <strong class="summary-total-value">
+              {{totalToPay | currency:'COP':'symbol':'1.2-2'}}
+            </strong>
+          </div>
+          <button type="button" class="pay-button" [disabled]="isCreatingPayment" (click)="openPaymentConfirmation()">
+            <span class="glyphicon glyphicon-lock"></span>
+            Pagar ahora
+          </button>
+          <div class="session-counter">
+            <span class="glyphicon glyphicon-time"></span>
+            <div>
+              <span class="session-label">Tiempo restante</span>
+              <strong>{{formatTime(timeLeft)}}</strong>
+            </div>
+          </div>
+          <div class="payment-security">
+            <div class="security-item">
+              <span class="glyphicon glyphicon-ok-circle"></span>
+              <span>Pago seguro</span>
+            </div>
+            <div class="security-item">
+              <span class="glyphicon glyphicon-lock"></span>
+              <span>Información protegida</span>
+            </div>
+          </div>
+        </div>
+        <div class="help-card">
+          <div class="help-icon">
+            <span class="glyphicon glyphicon-question-sign"></span>
+          </div>
+          <div class="help-information">
+            <strong>¿Necesitas ayuda?</strong>
+            <span>Consulta las preguntas frecuentes sobre el proceso.</span>
+          </div>
+          <button type="button" class="help-button" (click)="openFAQModal()">
+            Ver ayuda
+          </button>
+        </div>
+      </aside>
+    </div>
+  </main>
+  <div class="mobile-payment-bar">
+    <div class="mobile-total">
+      <span>Total</span>
+      <strong>{{totalToPay | currency:'COP':'symbol':'1.2-2'}}</strong>
+    </div>
+    <button type="button" class="mobile-pay-button" [disabled]="isCreatingPayment" (click)="openPaymentConfirmation()">
+      Pagar ahora
+    </button>
+  </div>
+</div>
