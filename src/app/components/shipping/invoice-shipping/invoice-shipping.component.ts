@@ -795,6 +795,9 @@ export class InvoiceShippingComponent implements OnInit {
 
               this.urlGuia = response.content[0];
               this.urlRotulo = response.content[1];
+
+              $('#modal_transfer_process').modal('hide');
+              $('#print_document').modal('show');
             }
           },
           error => {
