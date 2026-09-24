@@ -5,6 +5,7 @@ import { HttpModule } from '@angular/http';
 import { ChartsModule } from 'ng2-charts';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './components/login/login.component';
+import { RecoverPasswordComponent } from './components/recover-password/recover-password.component';
 import { HomeComponent } from './components/home/home.component';
 import { NavBarComponent } from './components/navbar/navbar.component';
 import { PurchaseOrdersComponent } from './components/purchase-orders/purchase-orders.component';
@@ -72,6 +73,7 @@ import { from } from 'rxjs/observable/from';
   declarations: [
     AppComponent,
     LoginComponent,
+    RecoverPasswordComponent,
     HomeComponent,
     NavBarComponent,
     PurchaseOrdersComponent,

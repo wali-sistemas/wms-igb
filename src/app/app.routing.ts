@@ -1,6 +1,7 @@
 import { ModuleWithProviders } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { LoginComponent } from './components/login/login.component';
+import { RecoverPasswordComponent } from './components/recover-password/recover-password.component';
 import { HomeComponent } from './components/home/home.component';
 import { PurchaseOrdersComponent } from './components/purchase-orders/purchase-orders.component';
 import { PurchaseOrderComponent } from './components/purchase-orders/purchase-order.component';
@@ -63,6 +64,7 @@ import { from } from 'rxjs/observable/from';
 
 const appRoutes: Routes = [
   { path: '', component: LoginComponent },
+  { path: 'recover-password', component: RecoverPasswordComponent },
   { path: 'home', component: HomeComponent },
   { path: 'purchase-orders', component: PurchaseOrdersComponent },
   { path: 'purchase-order/:docNum', component: PurchaseOrderComponent },

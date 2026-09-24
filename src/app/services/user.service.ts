@@ -52,8 +52,23 @@ export class UserService {
       .map(res => res.json());
   }
 
+  public requestRecoveryCode(user: any) {
+    return this._http.post(this.url + 'user/recover-password/request-code', user, { headers: CONTENT_TYPE_JSON })
+      .map(res => res.json());
+  }
+
+  public verifyRecoveryCode(user: any) {
+    return this._http.post(this.url + 'user/recover-password/verify-code', user, { headers: CONTENT_TYPE_JSON })
+      .map(res => res.json());
+  }
+
   public updateUserWali(user: any) {
     return this._http.put(this.url + 'user/update-wali', user, { headers: new IGBHeaders().loadHeaders() })
+      .map(res => res.json());
+  }
+
+  public changeRecoveryPassword(user: any) {
+    return this._http.put(this.url + 'user/recover-password/change-password', user, { headers: CONTENT_TYPE_JSON })
       .map(res => res.json());
   }
 }

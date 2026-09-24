@@ -1,5 +1,5 @@
 .modal-content {
-  background-color: rgba(50,50,50,0.8);
+  background-color: rgba(50, 50, 50, 0.8);
 }
 
 .center {
@@ -31,6 +31,13 @@ select {
   font-size: 18px;
   width: 100%;
   margin-bottom: 15px;
+}
+
+.change-password-link {
+  color: #f5f1f1;
+  text-decoration: underline;
+  cursor: pointer;
+  font-style: italic;
 }
 
 select[disabled] {

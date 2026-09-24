@@ -11,10 +11,11 @@ import { GenericService } from '../../services/generic';
   styleUrls: ['./login.component.css'],
   providers: [UserService, GenericService]
 })
+
 export class LoginComponent implements OnInit {
-  public errorMessage: string;
-  public identity;
-  public token;
+  public errorMessage: string = '';
+  public identity: any;
+  public token: any;
   public user: User;
   public companies: Array<Company>;
   public selectedCompany: string = '';
@@ -41,7 +42,7 @@ export class LoginComponent implements OnInit {
   }
 
   public onSubmit() {
-    this.errorMessage = null;
+    this.errorMessage = '';
     this._userService.signIn(this.user, this.selectedCompany).subscribe(
       response => {
         if (response.code === 0) {
@@ -68,5 +69,9 @@ export class LoginComponent implements OnInit {
         console.error(error);
       }
     );
+  }
+
+  public recoverPassword() {
+    this._router.navigate(['/recover-password']);
   }
 }
