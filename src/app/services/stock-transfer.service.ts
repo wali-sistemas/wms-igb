@@ -10,32 +10,32 @@ export class StockTransferService {
     this.url = GLOBAL.url;
   }
 
-  public cleanLocation(warehouse, location) {
+  public cleanLocation(warehouse: string, location: string) {
     return this._http.get(this.url + 'stocktransfer/clean-location' + '/' + warehouse + '/' + location, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 
-  public finishInventory(idInventory) {
+  public finishInventory(idInventory: number) {
     return this._http.get(this.url + 'stocktransfer/finish-inventory/' + idInventory, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 
-  public transferSingleItem(itemTransfer) {
+  public transferSingleItem(itemTransfer: any) {
     return this._http.post(this.url + 'stocktransfer/picking', itemTransfer, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 
-  public transferResupply(itemTransfer) {
+  public transferResupply(itemTransfer: any) {
     return this._http.post(this.url + 'stocktransfer/resupply-location', itemTransfer, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 
-  public stockTransfer(stockTransfer) {
+  public stockTransfer(stockTransfer: any) {
     return this._http.post(this.url + 'stocktransfer/stock-transfer', stockTransfer, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 
-  public stockTransferBetweenWarehouse(stockTransfer) {
+  public stockTransferBetweenWarehouse(stockTransfer: any) {
     return this._http.post(this.url + 'stocktransfer/stock-transfer/between-warehouses', stockTransfer, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }

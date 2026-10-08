@@ -12,19 +12,19 @@ declare var $: any;
   providers: [StockTransferService, InventoryService, UserService]
 })
 export class InventoryComponent implements OnInit {
-  public identity;
-  public idInventory: number;
-  public quantity: number;
-  public messageError: string;
-  public messageInfo: string;
-  public messageProgress: string;
-  public location: string;
-  public item: string;
+  public identity: any;
+  public idInventory: number = 0;
+  public quantity: number = 0;
+  public messageError: string = '';
+  public messageInfo: string = '';
+  public messageProgress: string = '';
+  public location: string = '';
+  public item: string = '';
   public itemTmp: any;
   public itemVisible: any;
   public differences: Array<any>;
   public history: Array<any>;
-  public selectedCompany: string;
+  public selectedCompany: string = '';
   public resupplyModuleAccesible: boolean = false;
 
   constructor(private _stockTransferService: StockTransferService,
@@ -54,7 +54,8 @@ export class InventoryComponent implements OnInit {
     //Buscar si hay un conteo iniciado
     this.validateInventoryOpen();
 
-    this.resupplyModuleAccesible = JSON.parse(localStorage.getItem('igb.user.access')).resupplyModuleAccesible;
+    const userAccess = localStorage.getItem('igb.user.access');
+    this.resupplyModuleAccesible = userAccess ? JSON.parse(userAccess).resupplyModuleAccesible : false;
   }
 
   public validateInventoryOpen() {
@@ -119,8 +120,8 @@ export class InventoryComponent implements OnInit {
   }
 
   public addItem() {
-    this.messageError = null;
-    this.messageInfo = null;
+    this.messageError = '';
+    this.messageInfo = '';
     if (!this.item || this.item === null || this.item.length === 0) {
       this.messageError = 'Debe escanear un ítem para agregarlo al inventario';
       return;
@@ -136,7 +137,7 @@ export class InventoryComponent implements OnInit {
     }
 
     this.item = '';
-    this.quantity = null;
+    this.quantity = 0;
     this.itemTmp = this.itemVisible;
 
     this.saveAddItem();
@@ -191,12 +192,12 @@ export class InventoryComponent implements OnInit {
   }
 
   public cleanData() {
-    this.idInventory = null;
-    this.quantity = null;
-    this.messageError = null;
-    this.messageInfo = null;
-    this.location = null;
-    this.item = null;
+    this.idInventory = 0;
+    this.quantity = 0;
+    this.messageError = '';
+    this.messageInfo = '';
+    this.location = '';
+    this.item = '';
     this.itemTmp = null;
     this.itemVisible = null;
     this.differences = new Array<any>();
@@ -206,7 +207,7 @@ export class InventoryComponent implements OnInit {
     this.validateInventoryOpen();
   }
 
-  private redirectIfSessionInvalid(error) {
+  private redirectIfSessionInvalid(error: any) {
     if (error && error.status && error.status == 401) {
       localStorage.removeItem('igb.identity');
       localStorage.removeItem('igb.selectedCompany');

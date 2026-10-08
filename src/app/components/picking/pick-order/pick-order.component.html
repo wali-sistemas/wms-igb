@@ -234,7 +234,8 @@
       <form (submit)="scanBinLocation()">
         <div class="row">
           <div class="col-xs-12">
-            <label *ngIf="selectedCompany=='REDPLAS' && !confirmingItemQuantity && nextBinLocationCode"
+            <label
+              *ngIf="selectedCompany=='REDPLAS' && !confirmingItemQuantity && nextBinLocationCode && nextItemCodeF != nextItemCode"
               for="itemFather">
               Item Principal {{nextItemCodeF}} ({{nextItemNameF}})
             </label>
@@ -243,6 +244,11 @@
         <hr *ngIf="selectedCompany=='REDPLAS' && !confirmingItemQuantity && nextBinLocationCode">
         <div class="row">
           <div class="col-xs-12">
+            <ng-container
+              *ngIf="selectedCompany=='REDPLAS' && !confirmingItemQuantity && nextBinLocationCode && nextItemCodeF != nextItemCode">
+              <label for="itemFather">Lista de materiales del ítem principal</label>
+              <br />
+            </ng-container>
             <label *ngIf="!confirmingItemQuantity && nextBinLocationCode" for="binLocation">
               Procesando {{nextItemQuantity}} unidades del ítem {{nextItemCode}} ({{nextItemName}})
             </label>

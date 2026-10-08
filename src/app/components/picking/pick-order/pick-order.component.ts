@@ -279,7 +279,8 @@ export class PickOrderComponent implements OnInit {
       itemCode: this.nextItemCode.trim(),
       orderNumber: (this.selectedOrder == null || this.selectedOrder.length === 0) ? this.nextOrderNumber : this.selectedOrder,
       username: this.identity.username,
-      warehouseCode: this._userService.getWarehouseCode()
+      warehouseCode: this._userService.getWarehouseCode(),
+      itemCodeFather: this.nextItemCodeF.trim()
     }
 
     $('#modal_transfer_process').modal({
@@ -287,6 +288,7 @@ export class PickOrderComponent implements OnInit {
       keyboard: false,
       show: true
     });
+
     console.log('itemTransfer: ', itemTransfer);
     this.errorMessageBinTransfer = '';
     this._stockTransferService.transferSingleItem(itemTransfer).subscribe(
@@ -417,13 +419,16 @@ export class PickOrderComponent implements OnInit {
       orderNumber: (this.selectedOrder == null || this.selectedOrder.length === 0) ? this.nextOrderNumber : this.selectedOrder,
       username: this.identity.username,
       temporary: true,
-      warehouseCode: this._userService.getWarehouseCode()
+      warehouseCode: this._userService.getWarehouseCode(),
+      itemCodeFather: this.nextItemCodeF.trim()
     }
+
     $('#modal_transfer_process').modal({
       backdrop: 'static',
       keyboard: false,
       show: true
     });
+
     console.log('itemTransfer: ', itemTransfer);
     this.errorMessageBinLocation = '';
     this._stockTransferService.transferSingleItem(itemTransfer).subscribe(

@@ -15,7 +15,7 @@ export class BinLocationService {
             .map(res => res.json());
     }
 
-    public transferSingleItem(itemTransfer) {
+    public transferSingleItem(itemTransfer: any) {
         return this._http.post(this.url + 'binlocation/pick-item', itemTransfer, { headers: new IGBHeaders().loadHeaders() })
             .map(res => res.json());
     }
