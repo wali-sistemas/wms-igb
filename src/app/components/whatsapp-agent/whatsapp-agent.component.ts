@@ -1,0 +1,38 @@
+import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute, Params } from '@angular/router';
+import { UserService } from '../../services/user.service'
+
+declare var $: any;
+
+@Component({
+  templateUrl: './whatsapp-agent.component.html',
+  styleUrls: ['./whatsapp-agent.component.css'],
+  providers: [UserService]
+})
+
+export class WhatsappAgentComponent {
+  public identity: any;
+  public selectedCompany: string = '';
+  public custodyEmployeeModuleAccesible: boolean = false;
+  public UserWaliModuleAccesible: boolean = false;
+
+  constructor(private _router: Router, private _userService: UserService) { }
+
+  ngOnInit() {
+    this.identity = this._userService.getItentity();
+    if (this.identity === null) {
+      this._router.navigate(['/']);
+    }
+    this.selectedCompany = this.identity.selectedCompany;
+
+    //TODO: Se debe definir que usuarios pueden asignar y cambiar la prioridad.
+    /*if (this.identity.username !== "rmoncada" && this.identity.username !== "jguisao" && this.identity.username !== "rzapata" && this.identity.username !== "mmurillo" && this.identity.username !== "jvelasquez" && this.identity.username !== "aarboleda") {
+      this.custodyEmployeeModuleAccesible = false;
+      this.UserWaliModuleAccesible = false;
+    } else {
+      //Autorizados para ver modulo de custodias
+      this.custodyEmployeeModuleAccesible = true;
+      this.UserWaliModuleAccesible = true;
+    }*/
+  }
+}

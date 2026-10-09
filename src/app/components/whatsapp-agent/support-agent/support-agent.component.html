@@ -1,0 +1,320 @@
+<igb-navbar></igb-navbar>
+<div class="container content whatsapp-page">
+  <div class="whatsapp-shell">
+    <header class="module-header">
+      <div class="brand-block">
+        <div class="brand-icon">
+          <span class="text-icon">💬</span>
+        </div>
+        <div class="brand-copy">
+          <h2>Atención Soporte WhatsApp</h2>
+          <p>
+            <span class="online-dot"></span>
+            {{agentName}}
+          </p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="header-stat">
+          <span class="stat-value">
+            {{waitingConversations.length}}
+          </span>
+          <span class="stat-label">En espera</span>
+        </div>
+        <div class="header-stat">
+          <span class="stat-value">
+            {{assignedConversations.length}}
+          </span>
+          <span class="stat-label">Asignadas</span>
+        </div>
+        <button class="icon-btn refresh-btn" type="button" title="Actualizar conversaciones" (click)="refreshNow()">
+          <span class="text-icon refresh-symbol">↻</span>
+        </button>
+      </div>
+    </header>
+    <div *ngIf="errorMessage" class="alert-message alert-error">
+      <span class="text-icon">⚠</span>
+      <span>{{errorMessage}}</span>
+    </div>
+    <div *ngIf="successMessage" class="alert-message alert-success">
+      <span class="text-icon">✓</span>
+      <span>{{successMessage}}</span>
+    </div>
+    <div class="workspace">
+      <aside class="conversation-sidebar">
+        <div class="sidebar-heading">
+          <div>
+            <span class="eyebrow">Centro de mensajes</span>
+            <h3>Bandeja de atención</h3>
+          </div>
+          <span class="live-pill">
+            <span class="live-dot"></span>
+            Activo
+          </span>
+        </div>
+        <section class="conversation-section">
+          <div class="section-title">
+            <span>
+              <span class="text-icon">⏱</span>
+              Conversaciones en espera
+            </span>
+            <span class="counter-badge">
+              {{waitingConversations.length}}
+            </span>
+          </div>
+          <div *ngIf="loadingQueue" class="section-loading">
+            <span class="text-icon spin-symbol">⟳</span>
+            Consultando cola...
+          </div>
+          <div *ngIf="!loadingQueue && waitingConversations.length === 0" class="empty-list">
+            <span class="text-icon empty-symbol">📭</span>
+            <span>No hay conversaciones en espera.</span>
+          </div>
+          <div *ngFor="let conversation of waitingConversations" class="conversation-card waiting-card">
+            <div class="conversation-avatar waiting-avatar">
+              {{getInitials(conversation)}}
+            </div>
+            <div class="conversation-summary">
+              <div class="conversation-topline">
+                <div class="conversation-name">
+                  {{getConversationName(conversation)}}
+                </div>
+                <span class="waiting-label">Nueva</span>
+              </div>
+              <div class="conversation-message">
+                {{conversation.ultimoMensaje}}
+              </div>
+              <div class="conversation-meta">
+                <span class="text-icon">⏱</span>
+                {{formatConversationDate(conversation)}}
+              </div>
+            </div>
+            <button class="take-btn" type="button" title="Tomar conversación" [disabled]="assigningConversation"
+              (click)="takeConversation(conversation)">
+              <span class="text-icon">→</span>
+            </button>
+          </div>
+        </section>
+        <section class="conversation-section assigned-section">
+          <div class="section-title">
+            <span>
+              <span class="text-icon">👤</span>
+              Mis conversaciones
+            </span>
+            <span class="counter-badge">
+              {{assignedConversations.length}}
+            </span>
+          </div>
+          <div *ngIf="loadingAssigned" class="section-loading">
+            <span class="text-icon spin-symbol">⟳</span>
+            Consultando conversaciones...
+          </div>
+          <div *ngIf="!loadingAssigned && assignedConversations.length === 0" class="empty-list">
+            <span class="text-icon empty-symbol">💬</span>
+            <span>No tienes conversaciones asignadas.</span>
+          </div>
+          <button *ngFor="let conversation of assignedConversations" type="button"
+            class="conversation-card assigned-card" [ngClass]="{
+              'selected-card':
+                selectedConversation
+                && selectedConversation.code === conversation.code
+            }" (click)="openConversation(conversation)">
+            <div class="conversation-avatar assigned-avatar">
+              {{getInitials(conversation)}}
+            </div>
+            <div class="conversation-summary">
+              <div class="conversation-topline">
+                <div class="conversation-name">
+                  {{getConversationName(conversation)}}
+                </div>
+                <span class="active-status">
+                  <span class="active-status-dot"></span>
+                  Activa
+                </span>
+              </div>
+              <div class="conversation-message">
+                {{conversation.ultimoMensaje}}
+              </div>
+              <div class="conversation-meta">
+                {{conversation.telefono}}
+              </div>
+            </div>
+            <span *ngIf="conversation.noLeidos > 0" class="unread-badge">
+              {{conversation.noLeidos}}
+            </span>
+          </button>
+        </section>
+      </aside>
+      <main class="chat-panel">
+        <div *ngIf="!selectedConversation" class="chat-placeholder">
+          <div class="placeholder-mark">
+            <div class="placeholder-icon">
+              <span class="text-icon">💬</span>
+            </div>
+          </div>
+          <span class="eyebrow">Panel de conversación</span>
+          <h3>Selecciona un chat para comenzar</h3>
+          <p>
+            Toma una conversación nueva o abre una atención
+            asignada para consultar el historial y responder.
+          </p>
+        </div>
+        <ng-container *ngIf="selectedConversation">
+          <div class="chat-header">
+            <div class="chat-customer">
+              <div class="conversation-avatar chat-avatar">
+                {{getInitials(selectedConversation)}}
+              </div>
+              <div class="customer-copy">
+                <div class="customer-title-line">
+                  <h3>
+                    {{getConversationName(selectedConversation)}}
+                  </h3>
+                  <span class="chat-status-pill">
+                    <span class="active-status-dot"></span>
+                    En atención
+                  </span>
+                </div>
+                <p>
+                  <span>
+                    <span class="text-icon">📱</span>
+                    {{selectedConversation.telefono}}
+                  </span>
+                  <span *ngIf="selectedConversation.cardCode">
+                    <span class="text-icon">🪪</span>
+                    {{selectedConversation.cardCode}}
+                  </span>
+                </p>
+              </div>
+            </div>
+            <button class="close-chat-btn" type="button" [disabled]="closingConversation"
+              (click)="closeSelectedConversation()">
+              <span class="text-icon">✓</span>
+              <span>Finalizar</span>
+            </button>
+          </div>
+          <div id="whatsappChatWindow" class="chat-window">
+            <div *ngIf="loadingMessages" class="chat-loading">
+              <span class="text-icon spin-symbol">⟳</span>
+              Cargando mensajes...
+            </div>
+            <div *ngIf="!loadingMessages && messages.length === 0" class="empty-chat">
+              <span class="text-icon empty-symbol">💬</span>
+              <span>No hay mensajes registrados.</span>
+            </div>
+            <div *ngFor="let message of messages" class="message-row" [ngClass]="getMessageClass(message)">
+              <div *ngIf="isSystemMessage(message)" class="system-bubble">
+                <span class="text-icon">ℹ</span>
+                {{message.body}}
+              </div>
+              <div *ngIf="!isSystemMessage(message)" class="message-bubble">
+                <div *ngIf="message.agentName" class="message-author">
+                  {{message.agentName}}
+                </div>
+                <div *ngIf="message.body" class="message-body">
+                  {{message.body}}
+                </div>
+                <div *ngIf="(isImageMessage(message) || isAudioMessage(message)) && message.mediaLoading"
+                  class="message-media-loading">
+                  <span class="text-icon spin-symbol">⟳</span>
+                  {{isAudioMessage(message) ? 'Cargando audio...' : 'Cargando imagen...'}}
+                </div>
+                <img *ngIf="isImageMessage(message) && message.resolvedMediaUrl" class="message-image"
+                  [src]="message.resolvedMediaUrl" alt="Imagen de WhatsApp" title="Ver imagen"
+                  (click)="openImage(message)">
+                <audio *ngIf="isAudioMessage(message) && message.resolvedMediaUrl" class="message-audio"
+                  [src]="message.resolvedMediaUrl" controls preload="metadata">
+                </audio>
+                <a *ngIf="message.mediaUrl && !isImageMessage(message) && !isAudioMessage(message)" class="media-link"
+                  [href]="message.mediaUrl" target="_blank">
+                  <span class="text-icon">📎</span>
+                  Abrir archivo adjunto
+                </a>
+                <div class="message-footer">
+                  <span>
+                    {{formatMessageTime(message)}}
+                  </span>
+                  <span *ngIf="message.status" class="message-status">
+                    {{message.status}}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="chat-input-area">
+            <input id="whatsappMediaInput" #whatsappMediaInput class="hidden-file-input" type="file"
+              accept="image/jpeg,image/png,audio/ogg,audio/mpeg,audio/mp3,audio/mp4,audio/3gpp,audio/aac,audio/amr,audio/ac3,.jpg,.jpeg,.png,.ogg,.opus,.mp3,.mp4,.3gp,.aac,.amr,.ac3"
+              (change)="onMediaSelected($event)">
+            <button class="attach-btn" type="button" title="Adjuntar imagen o audio"
+              [disabled]="sendingMessage || sendingMedia" (click)="whatsappMediaInput.click()">
+              <span class="text-icon">📎</span>
+            </button>
+            <div class="composer">
+              <div *ngIf="selectedMediaPreview" class="selected-media-preview">
+                <img *ngIf="selectedMediaType === 'IMAGE'" [src]="selectedMediaPreview" alt="Vista previa de la imagen">
+                <div *ngIf="selectedMediaType === 'AUDIO'" class="selected-audio-preview">
+                  <span class="text-icon">🎤</span>
+                  <audio [src]="selectedMediaPreview" controls preload="metadata">
+                  </audio>
+                </div>
+                <div class="selected-media-info">
+                  <strong>{{selectedMediaFile?.name}}</strong>
+                  <span *ngIf="selectedMediaType === 'IMAGE'">Lista para enviar</span>
+                  <span *ngIf="selectedMediaType === 'AUDIO'">
+                    Audio listo · el texto se enviará por separado
+                  </span>
+                </div>
+                <button class="remove-media-btn" type="button" title="Quitar archivo" [disabled]="sendingMedia"
+                  (click)="clearSelectedMedia()">×</button>
+              </div>
+              <textarea [(ngModel)]="newMessage" class="chat-input" rows="2" maxlength="1500"
+                placeholder="Escribe una respuesta..." [disabled]="sendingMessage || sendingMedia"
+                (keydown.enter)="handleEnterKey($event)"></textarea>
+              <div class="composer-footer">
+                <span>
+                  Enter para enviar · Shift + Enter para salto de línea
+                </span>
+                <span>
+                  {{newMessage.length || 0}}/1500
+                </span>
+              </div>
+            </div>
+            <button class="send-btn" type="button" title="Enviar mensaje"
+              [disabled]="sendingMessage || sendingMedia || (!newMessage.trim() && !selectedMediaFile)"
+              (click)="sendCurrent()">
+              <span class="text-icon" [ngClass]="{'spin-symbol': sendingMessage || sendingMedia}">
+                {{(sendingMessage || sendingMedia) ? '⟳' : '➤'}}
+              </span>
+            </button>
+          </div>
+        </ng-container>
+      </main>
+    </div>
+  </div>
+  <div *ngIf="showCloseConfirmation" class="close-confirm-overlay" (click)="cancelCloseConversation()">
+    <div class="close-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="closeConfirmTitle"
+      aria-describedby="closeConfirmDescription" (click)="$event.stopPropagation()">
+      <div class="close-confirm-heading">
+        <span class="close-confirm-icon" aria-hidden="true">✓</span>
+        <h3 id="closeConfirmTitle">Finalizar atención</h3>
+      </div>
+      <p id="closeConfirmDescription">
+        ¿Deseas finalizar esta atención? El cliente volverá al bot cuando escriba nuevamente.
+      </p>
+      <div class="close-confirm-actions">
+        <button type="button" class="close-confirm-cancel" [disabled]="closingConversation"
+          (click)="cancelCloseConversation()">Cancelar</button>
+        <button type="button" class="close-confirm-submit" [disabled]="closingConversation"
+          (click)="confirmCloseConversation()">
+          {{closingConversation ? 'Finalizando...' : 'Sí, finalizar'}}
+        </button>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="expandedImageUrl" class="image-viewer-overlay" (click)="closeImage()">
+    <div class="image-viewer-card" (click)="$event.stopPropagation()">
+      <button class="image-viewer-close" type="button" title="Cerrar" (click)="closeImage()">×</button>
+      <img [src]="expandedImageUrl" alt="Imagen ampliada de WhatsApp">
+    </div>
+  </div>
+</div>

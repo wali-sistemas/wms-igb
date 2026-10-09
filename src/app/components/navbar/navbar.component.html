@@ -14,6 +14,7 @@
   <a *ngIf="packingModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/packing']">Packing</a>
   <a *ngIf="shippingModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/shipping']">Shipping</a>
   <a *ngIf="assistantAIModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/ai-assistant']">Asistente IA</a>
+  <a *ngIf="whatsappAgentModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/whatsapp-agent']">CRM</a>
   <span class="salir-desktop" (click)="cerrarSesion()">Salir <span class="icon-log-out"></span></span>
 </nav>
 <nav class="topnav" id="mobileNav">
@@ -37,6 +38,7 @@
     <a *ngIf="packingModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/packing']">Packing</a>
     <a *ngIf="shippingModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/shipping']">Shipping</a>
     <a *ngIf="assistantAIModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/ai-assistant']">Asistente IA</a>
+    <a *ngIf="whatsappAgentModuleAccesible" href="#" routerLinkActive="active" [routerLink]="['/whatsapp-agent']">CRM</a>
     <a href="#"><span (click)="cerrarSesion()">Salir <span class="icon-log-out"></span></span></a>
   </div>
 </div>

@@ -29,6 +29,7 @@ export class NavBarComponent implements OnInit {
   public fidelityProgramModuleAccesible: boolean = false;
   public geoLocationModuleAccesible: boolean = false;
   public assistantAIModuleAccesible: boolean = false;
+  public whatsappAgentModuleAccesible: boolean = false;
 
   constructor(private _userService: UserService, private _route: ActivatedRoute, private _router: Router, private renderer: Renderer2) { }
 
@@ -121,6 +122,7 @@ export class NavBarComponent implements OnInit {
       this.employeeModuleAccesible = userAccess.employeeModuleAccesible;
       this.geoLocationModuleAccesible = userAccess.geoLocationModuleAccesible;
       this.assistantAIModuleAccesible = userAccess.assistantAIModuleAccesible;
+      this.whatsappAgentModuleAccesible = userAccess.whatsappAgentModuleAccesible;
       return;
     }
 
@@ -140,7 +142,8 @@ export class NavBarComponent implements OnInit {
       fidelityProgramModuleAccesible: false,
       employeeModuleAccesible: false,
       geoLocationModuleAccesible: false,
-      assistantAIModuleAccesible: false
+      assistantAIModuleAccesible: false,
+      whatsappAgentModuleAccesible: false
     };
 
     localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
@@ -391,6 +394,25 @@ export class NavBarComponent implements OnInit {
       );
     } else {
       this.assistantAIModuleAccesible = false;
+    }
+
+    //validar si el usuario puede acceder al modulo de CRM, solo si es VELEZ
+    if (this.getSelectedCompany() == "VELEZ") {
+      this._userService.canAccess(this.identity.username, 'whatsappAgent').subscribe(
+        response => {
+          if (response.code == 0) {
+            this.whatsappAgentModuleAccesible = true;
+            const storedUserAccess = localStorage.getItem('igb.user.access');
+            let userAccess = storedUserAccess ? JSON.parse(storedUserAccess) : null;
+            userAccess.whatsappAgentModuleAccesible = true;
+            localStorage.setItem('igb.user.access', JSON.stringify(userAccess));
+          } else {
+            this.whatsappAgentModuleAccesible = false;
+          }
+        }, error => { console.error(error); }
+      );
+    } else {
+      this.whatsappAgentModuleAccesible = false;
     }
 
     localStorage.setItem('igb.user.access', JSON.stringify(userAccess));

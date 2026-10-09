@@ -1,0 +1,40 @@
+.content {
+  margin-top: 60px;
+}
+
+.box {
+  margin-bottom: 10px;
+  background-color: #333;
+  color: #ddd;
+  text-align: center;
+  overflow: hidden;
+}
+
+.box:hover {
+  color: #ddd;
+  background-color: #da0611;
+}
+
+.title {
+  font-size: 17px;
+  font-family: sans-serif;
+  margin: 0;
+  padding-bottom: 12px;
+}
+
+.icon-wrap {
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-wrap .glyphicon {
+  font-size: 110px;
+  line-height: 1;
+}
+
+.icon-wrap .icon-container-truck {
+  font-size: 120px;
+  line-height: 1;
+}

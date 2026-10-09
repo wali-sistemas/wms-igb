@@ -67,6 +67,9 @@ import { WalletMTRComponent } from './components/payments-microsite/mtr/wallet-m
 import { TrackingGuidesComponent } from './components/tracking-guides/tracking-guides.component';
 import { TelemarketingComponent } from './components/telemarketing/telemarketing.component';
 import { AiAssistantComponent } from './components/ai-assistant/ai-assistant.component';
+import { WhatsappAgentComponent } from './components/whatsapp-agent/whatsapp-agent.component';
+import { ComercialAgentComponent } from './components/whatsapp-agent/comercial-agent/comercial-agent.component';
+import { SupportAgentComponent } from './components/whatsapp-agent/support-agent/support-agent.component';
 import { from } from 'rxjs/observable/from';
 
 @NgModule({
@@ -133,7 +136,10 @@ import { from } from 'rxjs/observable/from';
     WalletMTRComponent,
     TelemarketingComponent,
     TrackingGuidesComponent,
-    AiAssistantComponent
+    AiAssistantComponent,
+    WhatsappAgentComponent,
+    ComercialAgentComponent,
+    SupportAgentComponent
   ],
   imports: [
     BrowserModule,

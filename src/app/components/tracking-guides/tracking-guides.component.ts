@@ -26,7 +26,7 @@ type InvoiceRow = PublicInvoiceRow;
 export class TrackingGuidesComponent implements OnInit {
   public phase: 'lookup' | 'list' | 'detail' = 'lookup';
   public identity: any;
-  public selectedCompany: string;
+  public selectedCompany: string = '';
   public isPublic = true;
   public idNumber: string = '';
   public loading: boolean = false;
@@ -118,7 +118,7 @@ export class TrackingGuidesComponent implements OnInit {
       response => {
         this.loading = false;
         if (response && response.code === 0) {
-          const list = (response.content || []).map((it) => {
+          const list = (response.content || []).map((it: any) => {
             const anyIt: any = it || {};
             if (anyIt.city) anyIt.city = this.cleanQuotes(anyIt.city);
             if (anyIt.status) anyIt.status = this.normalizeStatus(anyIt.status);

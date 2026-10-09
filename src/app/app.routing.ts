@@ -60,6 +60,9 @@ import { WalletMTZComponent } from './components/payments-microsite/mtz/wallet-m
 import { WalletMTRComponent } from './components/payments-microsite/mtr/wallet-mtr.component';
 import { TrackingGuidesComponent } from './components/tracking-guides/tracking-guides.component';
 import { AiAssistantComponent } from './components/ai-assistant/ai-assistant.component';
+import { WhatsappAgentComponent } from './components/whatsapp-agent/whatsapp-agent.component';
+import { ComercialAgentComponent } from './components/whatsapp-agent/comercial-agent/comercial-agent.component';
+import { SupportAgentComponent } from './components/whatsapp-agent/support-agent/support-agent.component';
 import { from } from 'rxjs/observable/from';
 
 const appRoutes: Routes = [
@@ -123,7 +126,10 @@ const appRoutes: Routes = [
   { path: 'wallet-igb', component: WalletIGBComponent },
   { path: 'wallet-mtz', component: WalletMTZComponent },
   { path: 'wallet-mtr', component: WalletMTRComponent },
-  { path: 'ai-assistant', component: AiAssistantComponent }
+  { path: 'ai-assistant', component: AiAssistantComponent },
+  { path: 'whatsapp-agent', component: WhatsappAgentComponent },
+  { path: 'whatsapp-agent/comercial', component: ComercialAgentComponent },
+  { path: 'whatsapp-agent/support', component: SupportAgentComponent }
 ];
 
 export const appRoutingProviders: any[] = [];
