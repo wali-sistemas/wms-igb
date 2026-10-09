@@ -8,7 +8,7 @@ export let GLOBAL = {
   urlSpring: 'https://wali.igbcolombia.com/api/apiRest/wali/',
   urlClaude: 'https://wali.igbcolombia.com/api/apiRestClaude/wali/',
   urlMeta: 'https://wali.igbcolombia.com/api/apiRestMeta/wali/',
-  urlMtr: 'https://wali.igbcolombia.com/api/apiRestMtr/wali/'
+  urlMtrAgents: 'https://wali.igbcolombia.com/api/apiRestMtr/'
 };
 
 export let AIGlobal = {

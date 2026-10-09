@@ -138,9 +138,6 @@ export class EmployeeUsersComponent implements OnInit {
           this.membersSelected = [];
           this.editUserError = "";
 
-          if (form) {
-            form.resetForm();
-          }
 
           this.loadUsers();
           $('#modalEditUser').modal('hide');
@@ -200,12 +197,15 @@ export class EmployeeUsersComponent implements OnInit {
 
   private parseMembers(memberOf: string) {
     const known = [
-      "WMS.ticket",
+      "WMS.admin",
+      "WMS.cart",
+      "WMS.claude",
+      "WMS.comp",
+      "WMS.coord",
+      "WMS.crm",
       "WMS.emp",
       "WMS.merc",
-      "WMS.cart",
-      "WMS.coord",
-      "WMS.admin",
+      "WMS.ticket"
     ];
 
     return known.filter((k) => (memberOf || "").includes(k));

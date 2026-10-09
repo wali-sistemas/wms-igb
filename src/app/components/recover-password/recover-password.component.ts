@@ -16,7 +16,7 @@ export class RecoverPasswordComponent {
   public newPassword: string = '';
   public confirmPassword: string = '';
   public recoveryError: string = '';
-  public user: any;
+  public user: any = { username: '', email: '' };
 
   constructor(private _userService: UserService, private _router: Router) { }
 
@@ -174,6 +174,10 @@ export class RecoverPasswordComponent {
         console.error('Error al actualizar contraseña:', error);
       }
     );
+  }
+
+  public login() {
+    this._router.navigate(['/']);
   }
 
   private validatePassword(password: string): string {
