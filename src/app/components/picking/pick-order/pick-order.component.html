@@ -70,9 +70,9 @@
       <form>
         <div class="modal-body">
           <h4>Selecciona la forma de picking que prefieras</h4>
-          <input id="radio_multiple" type="radio" name="selectedPickingMethod" [(ngModel)]="selectedPickingMethod"
-            value="multiple">
-          <label for="radio_multiple"> Múltiple</label><br />
+          <input *ngIf="selectedCompany != 'REDPLAS'" id="radio_multiple" type="radio" name="selectedPickingMethod"
+            [(ngModel)]="selectedPickingMethod" value="multiple">
+          <label *ngIf="selectedCompany != 'REDPLAS'" for="radio_multiple"> Múltiple</label><br />
           <input id="radio_single" type="radio" name="selectedPickingMethod" [(ngModel)]="selectedPickingMethod"
             value="single">
           <label for="radio_single"> Por órden</label><br />
@@ -136,6 +136,41 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!--Modal consulta otras ubicaciones-->
+<div id="modal_checkother_locations" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form>
+        <div class="modal-body text-center">
+          <h4>Ubicaciones disponibles ítem {{nextItemCode}}</h4>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th style="text-align: center;">Ubicación</th>
+                <th style="text-align: center;">Cant</th>
+                <th style="text-align: center;">Tipo</th>
+                <th style="text-align: center;">Cliente</th>
+              </tr>
+            </thead>
+            <tbody style="text-align: center;">
+              <tr *ngFor="let loc of locationsCheck">
+                <td>{{loc[2]}}</td>
+                <td>{{loc[1]}}</td>
+                <td>{{loc[3]}}</td>
+                <td>{{loc[4]}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">
+            Cerrar
+          </button>
         </div>
       </form>
     </div>
@@ -251,6 +286,7 @@
             </ng-container>
             <label *ngIf="!confirmingItemQuantity && nextBinLocationCode" for="binLocation">
               Procesando {{nextItemQuantity}} unidades del ítem {{nextItemCode}} ({{nextItemName}})
+              <span class="icon-info" (click)="checkOtherLocations(nextItemCode)"></span>
             </label>
           </div>
         </div>
@@ -288,7 +324,7 @@
             </span>
             <input id="binLoc" name="binLocation" class="form-control input-lg"
               [ngClass]="{ 'radioLoc': !confirmingItemQuantity }" type="text" [(ngModel)]="confirmBinCode"
-              placeholder="escanea aquí" autocomplete="off" [disabled]="confirmingItemQuantity">
+              placeholder="escanea aquí ubicación" autocomplete="off" [disabled]="confirmingItemQuantity">
             <span class="input-group-btn">
               <button class="btn btn-danger btn-lg danger" type="button" (click)="resetForm()"
                 *ngIf="confirmingItemQuantity">

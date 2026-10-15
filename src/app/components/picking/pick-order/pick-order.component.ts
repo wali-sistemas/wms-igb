@@ -16,6 +16,7 @@ declare var $: any;
   styleUrls: ['./pick-order.component.css'],
   providers: [UserService, SalesOrdersService, BinLocationService, StockTransferService, PickingService, HealthchekService]
 })
+
 export class PickOrderComponent implements OnInit {
   public identity: any;
   public pickingMethod: string = 'multiple';
@@ -51,6 +52,7 @@ export class PickOrderComponent implements OnInit {
   public position: number = 0;
   public countLineNum: number = 0;
   public selectedCompany: string = '';
+  public locationsCheck: Array<any> = new Array<any>();
 
   constructor(private _userService: UserService, private _salesOrderService: SalesOrdersService, private _binLocationService: BinLocationService, private _stockTransferService: StockTransferService, private _pickingService: PickingService, private _route: ActivatedRoute, private _router: Router, private _healthchekService: HealthchekService) {
     this.availableCarts = new Array<BinLocation>();
@@ -498,6 +500,25 @@ export class PickOrderComponent implements OnInit {
         $('#modal_transfer_process').modal('hide');
         console.error("Ocurrio un error al reiniciar los sesion Id", error);
         this.errorMessageBinLocation = "Ocurrio un error al reiniciar los sesion Id";
+      }
+    );
+  }
+
+  public checkOtherLocations(itemCode: string) {
+    this._pickingService.checkOtherLocationsByItemAndOrder(this.selectedOrder, itemCode).subscribe(
+      response => {
+        this.locationsCheck = response;
+        console.log("Consulta otras ubicaciones: ", this.locationsCheck);
+
+        $('#modal_checkother_locations').modal({
+          backdrop: 'static',
+          keyboard: false,
+          show: true
+        });
+      },
+      error => {
+        console.error(error);
+        this.redirectIfSessionInvalid(error);
       }
     );
   }

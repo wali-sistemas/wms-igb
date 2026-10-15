@@ -37,4 +37,10 @@ export class PickingService {
     return this._http.put(this.url + 'picking/v2/close/' + username + orderNumberFilter, null, { headers: igbHeaders })
       .map(res => res.json());
   }
+
+  public checkOtherLocationsByItemAndOrder(orderNumber: string, itemCode: string) {
+    let igbHeaders = new IGBHeaders().loadHeaders();
+    return this._http.get(this.url + 'picking/v2/checkother-locations/redplas/' + orderNumber + '/' + itemCode, { headers: igbHeaders })
+      .map(res => res.json());
+  }
 }

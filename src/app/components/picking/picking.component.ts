@@ -5,22 +5,22 @@ import { UserService } from '../../services/user.service'
 declare var $: any;
 
 @Component({
-    templateUrl: './picking.component.html',
-    styleUrls: ['./picking.component.css'],
-    providers: [UserService]
+  templateUrl: './picking.component.html',
+  styleUrls: ['./picking.component.css'],
+  providers: [UserService]
 })
+
 export class PickingComponent implements OnInit {
-    public identity;
-    public selectedCompany: String;
+  public identity: any;
+  public selectedCompany: String = '';
 
-    constructor(private _router: Router, private _userService: UserService) {
+  constructor(private _router: Router, private _userService: UserService) { }
+
+  ngOnInit() {
+    this.identity = this._userService.getItentity();
+    if (this.identity === null) {
+      this._router.navigate(['/']);
     }
-
-    ngOnInit() {
-      this.identity = this._userService.getItentity();
-      if (this.identity === null) {
-          this._router.navigate(['/']);
-      }
-      this.selectedCompany = this.identity.selectedCompany;
+    this.selectedCompany = this.identity.selectedCompany;
   }
 }
