@@ -116,13 +116,6 @@
                   Administrador
                 </label>
               </div>
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" [checked]="membersSelected.includes('WMS.claude')"
-                    (change)="toggleMember('WMS.claude', $event.target.checked)" />
-                  Claude
-                </label>
-              </div>
             </div>
           </div>
           <div class="form-group">
@@ -274,27 +267,6 @@
                   <input type="checkbox" [checked]="membersSelected.includes('WMS.admin')"
                     (change)="toggleMember('WMS.admin', $event.target.checked)" />
                   Administrador
-                </label>
-              </div>
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" [checked]="membersSelected.includes('WMS.claude')"
-                    (change)="toggleMember('WMS.claude', $event.target.checked)" />
-                  Claude
-                </label>
-              </div>
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" [checked]="membersSelected.includes('WMS.comp')"
-                    (change)="toggleMember('WMS.comp', $event.target.checked)" />
-                  Compras
-                </label>
-              </div>
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" [checked]="membersSelected.includes('WMS.crm')"
-                    (change)="toggleMember('WMS.crm', $event.target.checked)" />
-                  Crm
                 </label>
               </div>
             </div>

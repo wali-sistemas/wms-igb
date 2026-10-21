@@ -46,39 +46,19 @@
   padding-bottom: 10px;
 }
 
-.estado-switch {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 8px;
-}
-
-.estado-text {
-  font-size: 14px;
-  color: #333;
-  line-height: 24px;
-}
-
 .switch {
   position: relative;
   display: inline-block;
   width: 50px;
   height: 24px;
-  min-width: 50px;
-  margin: 0;
-  padding: 0;
-  flex-shrink: 0;
-  vertical-align: middle;
+  margin-right: 10px;
 }
 
 .switch input {
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
+  display: none;
 }
 
-.switch .slider {
+.slider {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -86,33 +66,33 @@
   right: 0;
   bottom: 0;
   background-color: #ccc;
+  transition: .4s;
   border-radius: 24px;
-  transition: background-color 0.3s ease;
 }
 
-.switch .slider:before {
-  content: "";
+.slider:before {
   position: absolute;
-  width: 18px;
   height: 18px;
+  width: 18px;
   left: 3px;
   bottom: 3px;
   background-color: #fff;
+  transition: .4s;
   border-radius: 50%;
-  transition: transform 0.3s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-.switch input:checked+.slider {
+input:checked+.slider {
   background-color: #da0611;
 }
 
-.switch input:checked+.slider:before {
+input:checked+.slider:before {
   transform: translateX(26px);
 }
 
-.switch input:focus+.slider {
-  box-shadow: 0 0 0 2px rgba(218, 6, 17, 0.2);
+.estado-switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .user-card {

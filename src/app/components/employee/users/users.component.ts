@@ -138,6 +138,9 @@ export class EmployeeUsersComponent implements OnInit {
           this.membersSelected = [];
           this.editUserError = "";
 
+          if (form) {
+            form.resetForm();
+          }
 
           this.loadUsers();
           $('#modalEditUser').modal('hide');

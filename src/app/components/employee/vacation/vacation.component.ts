@@ -16,19 +16,19 @@ declare var $: any;
 export class EmployeeVacationComponent {
   public selectedCompany: string = '';
   public identity: any;
-  public cedula: number;
+  public cedula: number = 0;
   public jefeInmediato: string = '';
   public logo: string = '';
   public fechaInicio: string = '';
   public fechaFin: string = '';
   public fechaReintegro: string = '';
-  public diasSolicitados: number;
-  public vacacionesDinero: number;
+  public diasSolicitados: number = 0;
+  public vacacionesDinero: number = 0;
   public ultimoPeriodo: string = '';
   public fecha1: string = '';
   public fecha2: string = '';
-  public diasDisfrutados: number;
-  public diasPendientes: number;
+  public diasDisfrutados: number = 0;
+  public diasPendientes: number = 0;
   public comentarios: string = '';
   public url: string;
   public showErrorModal = false;
@@ -85,9 +85,9 @@ export class EmployeeVacationComponent {
       this.fechaInicio = '';
       this.fechaFin = '';
       this.fechaReintegro = '';
-      this.diasSolicitados = null;
+      this.diasSolicitados = 0;
     } else if (this.isTiempo()) {
-      this.vacacionesDinero = null;
+      this.vacacionesDinero = 0;
     }
   }
 
@@ -110,19 +110,19 @@ export class EmployeeVacationComponent {
   }
 
   private resetFormFields() {
-    this.cedula = null;
+    this.cedula = 0;
     this.jefeInmediato = '';
     this.logo = '';
     this.fechaInicio = '';
     this.fechaFin = '';
     this.fechaReintegro = '';
-    this.diasSolicitados = null;
-    this.vacacionesDinero = null;
+    this.diasSolicitados = 0;
+    this.vacacionesDinero = 0;
     this.ultimoPeriodo = '';
     this.fecha1 = '';
     this.fecha2 = '';
-    this.diasDisfrutados = null;
-    this.diasPendientes = null;
+    this.diasDisfrutados = 0;
+    this.diasPendientes = 0;
     this.comentarios = '';
     this.selectedCompany = '';
     this.tipoVacaciones = '';
