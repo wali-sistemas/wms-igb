@@ -9,7 +9,7 @@ export let GLOBAL = {
   urlClaude: 'https://wali.igbcolombia.com/api/apiRestClaude/wali/',
   urlMeta: 'https://wali.igbcolombia.com/api/apiRestMeta/wali/',
   urlMtrAgents: 'https://wali.igbcolombia.com/api/apiRestMtr/',
-  urlBridge: 'https://wali.igbcolombia.com/api/BridgeApi'
+  urlBridge: 'https://wali.igbcolombia.com/api/bridgeApi'
 };
 
 export let AIGlobal = {
