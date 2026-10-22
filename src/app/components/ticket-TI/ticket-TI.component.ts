@@ -506,7 +506,7 @@ export class TicketTIComponent implements OnInit {
           (ticket.status || '').toLowerCase().includes(this.filter.toLowerCase()) ||
           (ticket.type || '').toLowerCase().includes(this.filter.toLowerCase()) ||
           (ticket.priority || '').toLowerCase().includes(this.filter.toLowerCase()) ||
-          ticket.idTicket?.toString().includes(this.filter)) {
+          (ticket.idTicket || '').toString().includes(this.filter)) {
           this.tickets.push(ticket);
         }
       }
