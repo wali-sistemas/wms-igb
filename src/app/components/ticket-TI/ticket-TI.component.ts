@@ -82,7 +82,7 @@ export class TicketTIComponent implements OnInit {
       this.validateInactiveSession();
     }
     //TODO: Se debe definir que usuarios pueden asignar y cambiar la prioridad.
-    if (this.identity.username !== "rmoncada" && this.identity.username !== "jguisao" && this.identity.username !== "rzapata" && this.identity.username !== "mmurillo" && this.identity.username != "jvelasquez" && this.identity.username != "aarboleda") {
+    if (this.identity.username !== "rmoncada" && this.identity.username !== "jguisao" && this.identity.username !== "rzapata" && this.identity.username !== "mmurillo" && this.identity.username != "jvelasquez" && this.identity.username != "ymoreno") {
       this.authorizeAddProyect = false;
     } else {
       //Autorizados para crear proyectos y tickets.
@@ -166,8 +166,8 @@ export class TicketTIComponent implements OnInit {
       keyboard: false,
       show: true
     });
-    this.idTicket = ticketDTO.idTicket;
-    this.statusTicket = ticketDTO.status;
+    this.idTicket = ticketDTO.idTicket != null ? ticketDTO.idTicket : 0;
+    this.statusTicket = ticketDTO.status || '';
 
     this.listNotesTicket();
   }
@@ -385,12 +385,12 @@ export class TicketTIComponent implements OnInit {
       show: true
     });
     this.selectedAssigned = '';
-    this.selectedPriority = ticketDTO.priority;
-    this.idTicket = ticketDTO.idTicket;
-    this.asunt = ticketDTO.asunt;
-    this.selectedDepartament = ticketDTO.department;
-    this.empAdd = ticketDTO.empAdd;
-    this.companyName = ticketDTO.company;
+    this.selectedPriority = ticketDTO.priority || '';
+    this.idTicket = ticketDTO.idTicket != null ? ticketDTO.idTicket : 0;
+    this.asunt = ticketDTO.asunt  || '';
+    this.selectedDepartament = ticketDTO.department || '';
+    this.empAdd = ticketDTO.empAdd || '';
+    this.companyName = ticketDTO.company || '';
   }
 
   public assignTicket(idTicket: number, selectedPriority: string) {
@@ -501,12 +501,12 @@ export class TicketTIComponent implements OnInit {
       this.tickets = new Array<TicketTI>();
       for (let i = 0; i < this.filteredTicket.length; i++) {
         const ticket = this.filteredTicket[i];
-        if (ticket.empAdd.toLowerCase().includes(this.filter.toLowerCase()) ||
-          ticket.company.toLowerCase().includes(this.filter.toLowerCase()) ||
-          ticket.status.toLowerCase().includes(this.filter.toLowerCase()) ||
-          ticket.type.toLowerCase().includes(this.filter.toLowerCase()) ||
-          ticket.priority.toLowerCase().includes(this.filter.toLowerCase()) ||
-          ticket.idTicket.toString().includes(this.filter)) {
+        if ((ticket.empAdd || '').toLowerCase().includes(this.filter.toLowerCase()) ||
+          (ticket.company || '').toLowerCase().includes(this.filter.toLowerCase()) ||
+          (ticket.status || '').toLowerCase().includes(this.filter.toLowerCase()) ||
+          (ticket.type || '').toLowerCase().includes(this.filter.toLowerCase()) ||
+          (ticket.priority || '').toLowerCase().includes(this.filter.toLowerCase()) ||
+          ticket.idTicket?.toString().includes(this.filter)) {
           this.tickets.push(ticket);
         }
       }
