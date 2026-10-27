@@ -1,206 +1,162 @@
 <igb-navbar></igb-navbar>
-<!--Modal procesando-->
-<div id="modal_transfer_process" class="modal fade" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        <div class="progress">
-          <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100"
-            aria-valuemin="0" aria-valuemax="100" style="width: 100%">
-            <span class="sr-only">Procesando transferencia</span>
-          </div>
+<main class="geo-shell" [class.container]="!expandedView" [class.content]="!expandedView"
+  [class.geo-expanded]="expandedView">
+  <header class="page-header-modern">
+    <div>
+      <span class="eyebrow">WALI · SEGUIMIENTO COMERCIAL</span>
+      <h1>Recorridos del equipo</h1>
+      <p>Marcaciones, actividad y resultados del día.</p>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="secondary-button" (click)="toggleExpandedView()" [attr.aria-pressed]="expandedView">
+        <span class="glyphicon" [class.glyphicon-resize-full]="!expandedView"
+          [class.glyphicon-resize-small]="expandedView" aria-hidden="true"></span>
+        {{expandedView ? 'Vista normal' : 'Ampliar vista'}}
+      </button>
+      <button type="button" class="secondary-button" (click)="openModal()"><span
+          class="glyphicon glyphicon-user"></span> Actividad diaria</button>
+    </div>
+  </header>
+  <section class="filter-card" aria-label="Filtros del recorrido">
+    <div class="filter-field" *ngIf="selectedCompany == 'IGB' || selectedCompany == 'VARROC'">
+      <label for="geo-region">Región</label>
+      <select id="geo-region" *ngIf="selectedCompany == 'IGB'" class="form-control" [(ngModel)]="selectedRegion"
+        (change)="onRegionChange()" [disabled]="isLoading || !enabledbutton">
+        <option value="">Selecciona una región</option>
+        <option *ngFor="let r of filteredRegions" [value]="r">{{r}}</option>
+      </select>
+      <select id="geo-region" *ngIf="selectedCompany == 'VARROC'" class="form-control" [(ngModel)]="selectedZone"
+        (change)="onRegionChange()" [disabled]="isLoading || !enabledbutton">
+        <option value="">Selecciona una región</option>
+        <option *ngFor="let r of filteredRegions" [value]="r">{{r}}</option>
+      </select>
+    </div>
+    <div class="filter-field">
+      <label for="geo-advisor">Asesor</label>
+      <select id="geo-advisor" class="form-control" [(ngModel)]="selectedAdvisor"
+        [disabled]="isLoading || !enabledbutton">
+        <option value="">Selecciona un asesor</option>
+        <option *ngFor="let a of (selectedCompany == 'REDPLAS' ? advisors : filteredAdvisors)" [value]="a.id">{{a.name}}
+        </option>
+      </select>
+    </div>
+    <div class="filter-field">
+      <label for="geo-date">Fecha del recorrido</label>
+      <input id="geo-date" type="date" class="form-control" [(ngModel)]="dateValue" (ngModelChange)="getDateFormat()"
+        [disabled]="isLoading || !enabledbutton">
+    </div>
+    <div class="filter-actions">
+      <button class="primary-button" (click)="getLocation()"
+        [disabled]="isLoading || routeLoading || !mapReady || !selectedAdvisor || !dateValue">{{isLoading ?
+        'Consultando…' : 'Consultar recorrido'}}</button>
+      <button class="icon-button" (click)="clear()" title="Limpiar consulta" aria-label="Limpiar consulta"><span
+          class="glyphicon glyphicon-refresh"></span></button>
+    </div>
+  </section>
+  <div class="notice error" *ngIf="changeLocationErrorMessage" role="alert">{{changeLocationErrorMessage}}</div>
+  <div class="notice" *ngIf="salesError" role="status">{{salesError}}</div>
+  <section class="metrics" *ngIf="locations.length">
+    <article class="metric"><span>Visitas registradas</span><strong>{{visitCount}}</strong><small>Actividad en campo ·
+        tipo V</small></article>
+    <article class="metric"><span>Pedidos montados</span><strong>{{ordersUploads}}</strong><small>Actividad
+        comercial</small></article>
+    <article class="metric"><span>Pedidos guardados</span><strong>{{savedOrders}}</strong><small>Registros del
+        día</small></article>
+    <article class="metric"><span>Distancia estimada</span><strong>{{distance | number:'1.2-2'}}
+        <em>km</em></strong><small>En línea recta entre marcaciones</small></article>
+    <article class="metric"><span>Pendiente por facturar</span><strong>{{salesData.totalOrders |
+        number}}</strong><small>Según reporte comercial</small></article>
+    <article class="metric"><span>Total facturado</span><strong>{{salesData.totalInvoiced |
+        number}}</strong><small>Según reporte comercial</small></article>
+  </section>
+  <section class="workspace">
+    <article class="map-card">
+      <div class="card-heading">
+        <div>
+          <h2>Mapa del recorrido</h2><span>{{selectedCompany}} <span *ngIf="locations.length">·
+              {{locationsToDraw.length}} puntos de ruta</span></span>
+        </div>
+        <button class="secondary-button small" (click)="fitRoute()" [disabled]="!locations.length">Ver
+          recorrido</button>
+      </div>
+      <div class="map-stage">
+        <div id="google-map"></div>
+        <div class="map-overlay" *ngIf="isLoading || routeLoading || !mapReady"><span class="spinner"></span>{{!mapReady
+          ? 'Preparando mapa…' : isLoading ? 'Cargando marcaciones…' : 'Calculando ruta…'}}</div>
+      </div>
+      <div class="map-footer">
+        <span><i class="dot purple"></i>Visita</span>
+        <span><i class="dot green"></i>Pedido</span>
+        <span><i class="dot amber"></i>Guardado</span>
+        <span><i class="dot blue"></i>Marcación / sincronización</span>
+        <span>I: inicio · F: fin · Número: orden del registro</span>
+      </div>
+      <p class="map-note">Ruta estimada por vías entre marcaciones, en orden horario. Se utilizan las primeras 26
+        ubicaciones válidas.</p>
+      <div class="notice" *ngIf="routeMessage" role="status">{{routeMessage}}</div>
+    </article>
+    <aside class="timeline-card">
+      <div class="advisor-summary" *ngIf="locations.length">
+        <img [src]="'https://wali.igbcolombia.com/api/shared/images/users/seller/' + adviserCard + '.jpg'"
+          alt="Foto del asesor" onerror="this.onerror=null;this.src='assets/images/logo-igb.png'">
+        <div><span class="eyebrow">RECORRIDO CONSULTADO</span>
+          <h2>{{advisorName}}</h2>
+          <p>{{dateValue}} · {{selectedRegion || selectedZone || selectedCompany}}</p>
         </div>
       </div>
-    </div>
-  </div>
-</div>
-<!-- Modal registro diario -->
-<div class="modal fade" id="modalActive" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-  aria-hidden="true" data-backdrop="static">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-            aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="exampleModalLabel">Reporte de actividad diaria</h4>
+      <div class="schedule" *ngIf="locations.length">
+        <div><span>Primer registro</span><b>{{firstRegister || '—'}}</b></div>
+        <div><span>Último registro</span><b>{{time || '—'}}</b></div>
+        <div><span>Última sincronización</span><b>{{lastSynchronizationAdvisor || '—'}}</b></div>
       </div>
-      <div class="modal-body">
-        <div class="tabgroup">
-          <button class="btn btn-default col-md-6 col-xs-6" [class.btn-danger]="tabActive"
-            (click)="setInactives()">Inactivos ({{markersWithQuantityZero.length}})</button>
-          <button class="btn btn-default col-md-6 col-xs-6" [class.btn-danger]="tabInactive"
-            (click)="setAssets()">Activos ({{markersWithQuantityGreaterThanZero.length}})</button>
-        </div>
-        <ul class="list-group">
-          <li class="list-group-item" *ngFor="let marker of activeList">
-            <img class="avatar"
-              [src]="'https://wali.igbcolombia.com/api/shared/images/users/seller/' + marker.card + '.jpg'" />
-            <span class="person-name">{{marker.name}}</span>
-          </li>
-        </ul>
+      <div class="card-heading">
+        <h2>Actividad del recorrido</h2><span>{{locations.length}} registros</span>
       </div>
-      <div class="modal-footer">
+      <div class="empty-state" *ngIf="!locations.length">
+        <span class="glyphicon glyphicon-map-marker"></span>
+        <h3>{{searched ? 'Sin marcaciones' : 'Explora un recorrido'}}</h3>
+        <p>{{searched ? 'Revisa el asesor y la fecha seleccionados.' : 'Selecciona un asesor y una fecha para consultar
+          su actividad.'}}</p>
       </div>
-    </div>
-  </div>
-</div>
-<!-- Titulo - icono -->
-<div class="container content">
-  <div class="row">
-    <div class="col-md-8 col-xs-8">
-      <h3>Geolocalización</h3>
-    </div>
-    <div class="col-md-2 col-xs-2">
-      <div class="reload">
-        <span class="glyphicon glyphicon-phone" (click)="openModal()" style="font-size: 32px;"
-          title="Ver marcación diaria"></span>
-      </div>
-    </div>
-    <div class="col-md-2 col-xs-2">
-      <div class="reload">
-        <span class="icon-refresh" (click)="clear()" title="Refrescar busqueda"></span>
-      </div>
-    </div>
-  </div>
-  <!-- Alerta error -->
-  <div class="row" *ngIf="changeLocationErrorMessage" role="alert" style="padding-bottom: 0;">
-    <div class="col-xs-12">
-      <div class="alert alert-danger" style="margin-bottom: 0;">
-        {{changeLocationErrorMessage}}
-      </div>
-    </div>
-  </div>
-  <!--  Filtros Select & Botón -->
-  <div class="row">
-    <div class="col-xs-12 col-md-4" *ngIf="selectedCompany=='IGB'">
-      <div class="seccion">
-        <select class="form-control input-lg" (change)="onRegionChange()" [(ngModel)]="selectedRegion"
-          [disabled]="!enabledbutton">
-          <option value="" disabled>Selecciona una región</option>
-          <option *ngFor="let region of filteredRegions" [value]="region">{{region}}</option>
-        </select>
-      </div>
-    </div>
-    <div class="col-xs-12 col-md-3" *ngIf="selectedCompany=='IGB'">
-      <div class="seccion">
-        <select class="form-control input-lg" [(ngModel)]="selectedAdvisor" [disabled]="!enabledbutton">
-          <option value="" disabled>Selecciona un asesor</option>
-          <option *ngFor="let adviser of filteredAdvisors" [value]="adviser.id">{{adviser.name}}</option>
-        </select>
-      </div>
-    </div>
-    <div class="col-xs-12 col-md-4" *ngIf="selectedCompany=='VARROC'">
-      <div class="seccion">
-        <select class="form-control input-lg" (change)="onRegionChange()" [(ngModel)]="selectedZone"
-          [disabled]="!enabledbutton">
-          <option value="" disabled>Selecciona una Región</option>
-          <option *ngFor="let region of filteredRegions" [value]="region">{{region}}</option>
-        </select>
-      </div>
-    </div>
-    <div class="col-xs-12 col-md-3" *ngIf="selectedCompany=='VARROC'">
-      <div class="seccion">
-        <select class="form-control input-lg" [(ngModel)]="selectedAdvisor" [disabled]="!enabledbutton">
-          <option value="" disabled>Selecciona un asesor</option>
-          <option *ngFor="let adviser of filteredAdvisors" [value]="adviser.id">{{adviser.name}}</option>
-        </select>
-      </div>
-    </div>
-    <div class="col-xs-12 col-md-7" *ngIf="selectedCompany=='REDPLAS'">
-      <div class="seccion">
-        <select class="form-control input-lg" [(ngModel)]="selectedAdvisor" [disabled]="!enabledbutton">
-          <option value="" disabled>Selecciona un asesor</option>
-          <option *ngFor="let adviser of advisors" [value]="adviser.id">{{adviser.name}}</option>
-        </select>
-      </div>
-    </div>
-    <div class="col-xs-12 col-md-3">
-      <div class="seccion">
-        <input class="form-control input-lg" type="date" [(ngModel)]="dateValue" (ngModelChange)="getDateFormat()"
-          [disabled]="!enabledbutton">
-      </div>
-    </div>
-    <div class="col-xs-12 col-md-2">
-      <div class="seccion">
-        <button type="button" data-toggle="modal" data-target="#modal_new_asset" class="form-control input-lg"
-          (click)="getLocation()" [disabled]="!enabledbutton">
-          <span class="glyphicon glyphicon-screenshot"></span> Ver
+      <div class="timeline" *ngIf="locations.length">
+        <button class="timeline-item" *ngFor="let l of locations; let i = index"
+          [class.selected]="selectedLocationIndex == i" (click)="focusLocation(l, i)">
+          <span class="timeline-number">{{i + 1}}</span>
+          <span
+            class="timeline-text"><b>{{locationTime(l.docTime)}}</b><span>{{locationLabel(l.docType)}}</span><small>{{l.latitude}},
+              {{l.longitude}}</small></span>
+          <span class="glyphicon glyphicon-chevron-right"></span>
         </button>
       </div>
-    </div>
-  </div>
-  <!-- Mapa -->
-  <div class="row">
-    <div class="col-md-12 col-xs-12">
-      <div class="seccion">
-        <div id="google-map" style="height: 350px;"></div>
+    </aside>
+  </section>
+</main>
+<div class="modal fade" id="modalActive" tabindex="-1" role="dialog" aria-labelledby="activity-title">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content activity-modal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span
+            aria-hidden="true">&times;</span></button>
+        <h2 id="activity-title">Actividad diaria del equipo</h2>
+        <p>Asesores con y sin marcaciones.</p>
       </div>
-    </div>
-  </div>
-  <!-- Estadística recorrido -->
-  <div class="row">
-    <div class="col-md-8 col-xs-12" *ngIf="locations && locations.length > 0">
-      <div class="seccion">
-        <p style="text-align: center; border: 1px solid #D7DBDD; border-radius: 5px;"><b>Info Ruta - Asesor</b></p>
-        <div class="report">
-          <img [src]="'https://wali.igbcolombia.com/api/shared/images/users/seller/' + adviserCard + '.jpg'"
-            alt="Asesor" class="image-advisor d-none d-sm-block" onerror="this.src='assets/images/logo-igb.png'">
-          <div class="row">
-            <div class="col-md-6 col-xs-12">
-              <div class="info-personal-left">
-                <p><b><span class="glyphicon glyphicon-open-file"
-                      style="font-size: 18px;position:relative; top: 3px;"></span> Pedidos montados:
-                  </b>{{ordersUploads}}</p>
-                <p><b><span class="glyphicon glyphicon-floppy-save"
-                      style="font-size: 18px;position:relative; top: 3px;"></span> Pedidos guardados:
-                  </b>{{savedOrders}}</p>
-                <p><b><span class="glyphicon glyphicon-road"
-                      style="font-size: 18px;position:relative; top: 4px;"></span>
-                    Distancia recorrida: </b>{{distance | number:'1.2-2'}} Kms</p>
-                <p><b><span class="glyphicon glyphicon-align-left"
-                      style="font-size: 18px;position:relative; top: 3px;"></span> Pendientes facturar:
-                  </b>{{ salesData.totalOrders | number }}</p>
-              </div>
-            </div>
-            <div class="col-md-6 col-xs-12">
-              <div class="info-personal-right">
-                <p><b><span class="glyphicon glyphicon-log-in"
-                      style="font-size: 18px;position:relative; top: 4px;"></span> Primer registro:
-                  </b>{{firstRegister}}
-                </p>
-                <p><b><span class="glyphicon glyphicon-ok-circle"
-                      style="font-size: 18px;position:relative; top: 4px;"></span> Ultima sincronización:
-                  </b>{{lastSynchronizationAdvisor}}</p>
-                <p><b><span class="glyphicon glyphicon-time"
-                      style="font-size: 18px; position:relative; top: 3px;"></span>
-                    Ultimo registro: </b>{{time}}</p>
-                <p><b><span class="glyphicon glyphicon-align-justify"
-                      style="font-size: 18px;position:relative; top: 4px;"></span> Total facturado:
-                  </b>{{ salesData.totalInvoiced | number }}
-                </p>
-              </div>
-            </div>
-          </div>
+      <div class="modal-body">
+        <div class="activity-tabs">
+          <button [class.active]="tabInactive" (click)="setAssets()">Con marcaciones
+            <b>{{markersWithQuantityGreaterThanZero.length}}</b></button>
+          <button [class.active]="tabActive" (click)="setInactives()">Sin marcaciones
+            <b>{{markersWithQuantityZero.length}}</b></button>
         </div>
-      </div>
-    </div>
-    <!-- Región Pais -->
-    <div class="col-md-4 col-xs-12" *ngIf="locations && locations.length > 0 && selectedCompany=='IGB'">
-      <div class="seccionIMG">
-        <p style="text-align: center; border: 1px solid #D7DBDD; border-radius: 5px;"><b>Región</b></p>
-        <img [src]="'assets/images/' + selectedRegion + '.png'" alt="Zone Country" class="image-zone-country">
-      </div>
-    </div>
-    <div class="col-md-4 col-xs-12" *ngIf="locations && locations.length > 0 && selectedCompany=='VARROC'">
-      <div class="seccionIMG">
-        <p style="text-align: center; border: 1px solid #D7DBDD; border-radius: 5px;"><b>Región</b></p>
-        <img [src]="'assets/images/' + selectedZone + '.png'" alt="Zone Country" class="image-zone-country">
-      </div>
-    </div>
-    <div class="col-md-4 col-xs-12" *ngIf="locations && locations.length > 0 && selectedCompany=='REDPLAS'">
-      <div class="seccionIMG">
-        <p style="text-align: center; border: 1px solid #D7DBDD; border-radius: 5px;"><b>Región</b></p>
-        <img [src]="'assets/images/REGION ANTIOQUIA.png'" alt="Zone Country" class="image-zone-country">
+        <label class="sr-only" for="activity-search">Buscar asesor</label>
+        <input id="activity-search" class="form-control" placeholder="Buscar asesor…" [(ngModel)]="activitySearch">
+        <div class="activity-list">
+          <div class="activity-person" *ngFor="let m of filteredActivity">
+            <img [src]="'https://wali.igbcolombia.com/api/shared/images/users/seller/' + m.card + '.jpg'" alt=""
+              onerror="this.onerror=null;this.src='assets/images/logo-igb.png'">
+            <span>{{m.name}}</span><b>{{m.quantity}} registros</b>
+          </div>
+          <p class="empty-state" *ngIf="!filteredActivity.length">No hay asesores para mostrar.</p>
+        </div>
       </div>
     </div>
   </div>
