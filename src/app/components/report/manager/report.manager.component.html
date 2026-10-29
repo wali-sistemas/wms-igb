@@ -13,6 +13,50 @@
     </div>
   </div>
 </div>
+<!--Modal sales by brand-->
+<div id="modal_sales_by_brand" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalOrderDetailTitle">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title sales-modal-title" id="modalOrderDetailTitle">
+          <i class="fa fa-bar-chart"></i>
+          <span>Ventas diarias por marca</span>
+          <span class="sales-modal-date">
+            <i class="fa fa-calendar"></i>
+            {{docDate}}
+          </span>
+        </h4>
+      </div>
+      <div class="modal-body">
+        <table class="table table-bordered table-striped table-hover table-condensed" style="width: 100%;">
+          <thead style="background-color: #333; color: white;">
+            <tr>
+              <th>Marca</th>
+              <th class="text-right">Venta</th>
+              <th class="text-center">Participación</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let detail of salesBrandOfDay">
+              <td>
+                {{detail[0]}}
+              </td>
+              <td class="text-right">
+                $ {{detail[1] | number:'1.0-0'}}
+              </td>
+              <td class="text-center">
+                {{detail[2] | number:'1.2-2'}} %
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 
 <nav class="topnav visible-md visible-lg">
   <a class="topnav-logo"><img src="/assets/images/{{logo}}" /></a>
@@ -23,10 +67,8 @@
   <h4 class="title">DASHBOARD</h4>
 </nav>
 <br />
-
 <button type="button" class="scrollTop" id="btnScrollTop" (click)="getScrollTop();" title="Arriba"><span
     class="icon-chevron-up"></span></button>
-
 <!--Gerencia-->
 <div class="gerencia">
   <div class="container">
@@ -55,7 +97,6 @@
                   </label>
                 </div>
               </li>
-
             </ul>
             <!-- Tab panel -->
             <div class="tab-content">
@@ -333,19 +374,19 @@
             </td>
           </tr>
           <tr *ngFor="let orderOfDay of ordersOfDay">
-            <td style="border: solid 1px; border-color: #828282; width: 25%;">
+            <td style="border: solid 1px; border-color: #828282; width: 25%;" (click)="openSalesByBrand(orderOfDay)">
               {{orderOfDay[0]}}
             </td>
-            <td style="border: solid 1px; border-color: #828282; width: 15%;">
+            <td style="border: solid 1px; border-color: #828282; width: 15%;" (click)="openSalesByBrand(orderOfDay)">
               {{orderOfDay[1]}}
             </td>
-            <td style="border: solid 1px; border-color: #828282; width: 15%;">
+            <td style="border: solid 1px; border-color: #828282; width: 15%;" (click)="openSalesByBrand(orderOfDay)">
               {{orderOfDay[2]}}
             </td>
-            <td style="border: solid 1px; border-color: #828282; width: 15%;">
+            <td style="border: solid 1px; border-color: #828282; width: 15%;" (click)="openSalesByBrand(orderOfDay)">
               {{orderOfDay[3]}}
             </td>
-            <td style="border: solid 1px; border-color: #828282; width: 30%;">
+            <td style="border: solid 1px; border-color: #828282; width: 30%;" (click)="openSalesByBrand(orderOfDay)">
               $ {{orderOfDay[4] | number}}
             </td>
           </tr>
@@ -371,19 +412,19 @@
             </td>
           </tr>
           <tr *ngFor="let orderOfDay of ordersOfDay">
-            <td style="border: solid 1px; border-color: #828282; width: 40%;">
+            <td style="border: solid 1px; border-color: #828282; width: 40%;" (click)="openSalesByBrand(orderOfDay)">
               {{orderOfDay[0]}}
             </td>
-            <td style="border: solid 1px; border-color: #828282; width: 5%;">
+            <td style="border: solid 1px; border-color: #828282; width: 5%;" (click)="openSalesByBrand(orderOfDay)">
               {{orderOfDay[1]}}
             </td>
-            <td style="border: solid 1px; border-color: #828282; width: 5%;">
+            <td style="border: solid 1px; border-color: #828282; width: 5%;" (click)="openSalesByBrand(orderOfDay)">
               {{orderOfDay[2]}}
             </td>
-            <td style="border: solid 1px; border-color: #828282; width: 5%;">
+            <td style="border: solid 1px; border-color: #828282; width: 5%;" (click)="openSalesByBrand(orderOfDay)">
               {{orderOfDay[3]}}
             </td>
-            <td style="border: solid 1px; border-color: #828282; width: 45%;">
+            <td style="border: solid 1px; border-color: #828282; width: 45%;" (click)="openSalesByBrand(orderOfDay)">
               $ {{orderOfDay[4] | number}}
             </td>
           </tr>

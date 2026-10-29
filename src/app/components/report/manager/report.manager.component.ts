@@ -9,7 +9,6 @@ import { TimeOperation } from '../../../models/time-operation';
 import { TimeLiquid } from '../../../models/time-liquid';
 import { Booking } from '../../../models/booking';
 
-import { UserService } from '../../../services/user.service';
 import { ReportService } from '../../../services/report.service';
 import { GLOBAL } from '../../../services/global';
 
@@ -22,8 +21,9 @@ declare var $: any;
 @Component({
   templateUrl: './report.manager.component.html',
   styleUrls: ['./report.manager.component.css'],
-  providers: [UserService, ReportService]
+  providers: [ReportService]
 })
+
 export class ReportManagerComponent implements OnInit {
   public identity: any;
   public queryParam: any;
@@ -91,6 +91,8 @@ export class ReportManagerComponent implements OnInit {
   public barChartTypeOrderOfDay: string = 'doughnut';
   public barChartDataOrderOfDay: number[] = [0, 0, 0, 0, 0];
   public barChartLabelsOrderOfDay: string[] = ['Día -5', 'Día -4', 'Día -3', 'Ayer', 'Hoy'];
+  public salesBrandOfDay: Array<any> = [];
+  public docDate: String = '';
   /***COMEX Costo compra***/
   public activeCostoCompra: boolean = false;
   public barChartTypeCostoCompra: string = 'bar';
@@ -149,7 +151,7 @@ export class ReportManagerComponent implements OnInit {
   /***COMEX Inhabilitar opcion taller***/
   public activeComex: boolean = false;
 
-  constructor(private _userService: UserService, private _router: Router, private _reportService: ReportService, private _routerParam: ActivatedRoute) {
+  constructor(private _router: Router, private _reportService: ReportService, private _routerParam: ActivatedRoute) {
     this.byCollect = new Array<ByCollect>();
   }
 
@@ -995,6 +997,25 @@ export class ReportManagerComponent implements OnInit {
     this.getCostoCompra();
     this.getImportCompra();
     this.getFactorCompra();
+  }
+
+  public openSalesByBrand(orderOfDay: any) {
+    this.docDate = orderOfDay[0];
+    this._reportService.getSalesByBrandOfDay(this.docDate, this.isTaller, this.queryParam.id, false).subscribe(
+      response => {
+        this.salesBrandOfDay = response;
+        $('#modal_sales_by_brand').modal({
+          backdrop: 'static',
+          keyboard: false,
+          show: true
+        });
+      },
+      error => {
+        console.error("Ocurrio un error al obtener las ventas por marcar del dia.", error);
+        $('#modal_transfer_process').modal('hide');
+        this.redirectIfSessionInvalid(error);
+      }
+    );
   }
 
   public getScrollTop() {

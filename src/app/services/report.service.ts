@@ -186,4 +186,14 @@ export class ReportService {
     return this._http.post(this.urlSpring + 'reports/job-certify?schema=' + companyName, jobCertifyData, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
+
+  public getSalesByBrandOfDay(docDate: String, isTaller: boolean, companyName: string, testing: boolean) {
+    let igbHeaders = new Headers({
+      'Content-Type': 'application/json',
+      'X-Company-Name': companyName,
+      'X-Pruebas': testing
+    });
+    return this._http.get(this.url + 'report/sales-brand-of-day?isTaller=' + isTaller + '&docDate=' + docDate, { headers: igbHeaders })
+      .map(res => res.json());
+  }
 }
