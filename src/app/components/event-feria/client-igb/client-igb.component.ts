@@ -80,12 +80,12 @@ export class ClientIgbComponent implements OnInit {
       $('#modal_transfer_process').modal('hide');
       return;
     }
-    if (this.document == null || this.document.length <= 0) {
+    /*if (this.document == null || this.document.length <= 0) {
       this.validDocument = false;
       this.getScrollTop();
       $('#modal_transfer_process').modal('hide');
       return;
-    }
+    }*/
     if (this.phone == null || this.phone.length <= 0) {
       this.validPhone = false;
       this.getScrollTop();
@@ -116,7 +116,7 @@ export class ClientIgbComponent implements OnInit {
     }
 
     let clientFeriaDTO = {
-      "documento": this.document,
+      "documento": this.document == null ? Math.floor(Math.random() * 100) + 1 : this.document,
       "nombreCompleto": this.contact.toUpperCase(),
       "telefono": this.phone,
       "correo": this.mail.toUpperCase(),

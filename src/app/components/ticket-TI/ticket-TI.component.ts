@@ -82,7 +82,7 @@ export class TicketTIComponent implements OnInit {
       this.validateInactiveSession();
     }
     //TODO: Se debe definir que usuarios pueden asignar y cambiar la prioridad.
-    if (this.identity.username !== "rmoncada" && this.identity.username !== "jguisao" && this.identity.username !== "rzapata" && this.identity.username != "jvelasquez" && this.identity.username != "ymoreno") {
+    if (this.identity.username !== "rmoncada" && this.identity.username !== "jguisao" && this.identity.username !== "rzapata" && this.identity.username != "jvelasquez" && this.identity.username != "ymoreno" && this.identity.username != "bperez") {
       this.authorizeAddProyect = false;
     } else {
       //Autorizados para crear proyectos y tickets.
@@ -387,7 +387,7 @@ export class TicketTIComponent implements OnInit {
     this.selectedAssigned = '';
     this.selectedPriority = ticketDTO.priority || '';
     this.idTicket = ticketDTO.idTicket != null ? ticketDTO.idTicket : 0;
-    this.asunt = ticketDTO.asunt  || '';
+    this.asunt = ticketDTO.asunt || '';
     this.selectedDepartament = ticketDTO.department || '';
     this.empAdd = ticketDTO.empAdd || '';
     this.companyName = ticketDTO.company || '';
