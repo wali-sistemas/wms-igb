@@ -425,7 +425,7 @@ export class InvoiceShippingComponent implements OnInit {
           "dsNombreDestinatario": this.selectInvoicesPack[0].cardName,
           "dsDireccionDestinatario": this.addressReceive,
           "dsTelefonoDestinatario": "4442025",
-          "dsDocReferencia": invoices,
+          "dsDocReferencia": "0" + invoices,
           "dsDiceContener": this.selectedTypeProduct,
           "cdTipoDniDestinatario": "Cedula",
           "vmValorOtros": "0",
