@@ -455,41 +455,45 @@ export class PackingComponent implements OnInit {
   }
 
   public showAllItems() {
+    this.errorMessage = '';
+
+    // Validar antes de mostrar el modal
+    if (this.idPackingOrder <= 0 || this.selectedOrder <= 0) {
+      return;
+    }
+
+    // Mostrar modal de procesamiento
     $('#modal_transfer_process').modal({
       backdrop: 'static',
       keyboard: false,
       show: true
     });
 
-    this.getUsedBoxesList();
     this.orderItemsList = new Array<any>();
 
-    if (this.idPackingOrder <= 0 || this.selectedOrder <= 0) {
-      return;
-    }
-
-    this._packingService.listOrderItems(this.idPackingOrder, this.selectedOrder).subscribe(
-      response => {
-        console.log('response', response);
-        if (response.code === 0) {
-          this.start();
-          this.exitMessage = response.content;
-          this.loadCustomers();
-          $('#modal_transfer_process').modal('hide');
-        } else if (response.code === 1) {
-          this.orderItemsList = response.content;
-          $('#modal_transfer_process').modal('hide');
-        } else {
-          this.errorMessage = response.content;
-          this.loadCustomers();
-          $('#modal_transfer_process').modal('hide');
+    // Consultar artículos de la orden
+    this._packingService.listOrderItems(this.idPackingOrder, this.selectedOrder).finally(
+      () => { $('#modal_transfer_process').modal('hide'); }).subscribe(
+        response => {
+          if (response.code === 0) {
+            this.exitMessage = response.content;
+            this.start();
+            this.loadCustomers();
+          } else if (response.code === 1) {
+            this.orderItemsList = response.content;
+            // Actualizar listado de cajas utilizadas
+            this.getUsedBoxesList();
+          } else {
+            this.errorMessage = response.content;
+            this.loadCustomers();
+          }
+        },
+        error => {
+          console.error('Error consultando artículos:', error);
+          this.errorMessage = 'Lo sentimos. Se produjo un error al consultar los artículos.';
+          this.redirectIfSessionInvalid(error);
         }
-      }, error => {
-        $('#modal_transfer_process').modal('hide');
-        console.error(error);
-        this.redirectIfSessionInvalid(error);
-      }
-    );
+      );
   }
 
   public createDelivery() {
