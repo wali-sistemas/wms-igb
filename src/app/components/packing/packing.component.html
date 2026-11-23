@@ -1,5 +1,4 @@
 <igb-navbar></igb-navbar>
-
 <!--Modal confirmacion-->
 <div id="close_confirmation" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false"
   data-backdrop="static">
@@ -141,48 +140,43 @@
   </div>
 </div>
 <!--Modal confirmar cantidad por item-->
-<div id="cantidad" class="modal slide" tabindex="-1" role="dialog" data-backdrop="static">
-  <div class="modal-dialog" role="document">
+<div id="cantidad" class="modal fade packing-qty-modal" tabindex="-1" role="dialog" data-backdrop="static">
+  <div class="modal-dialog modal-sm" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
           <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title">{{itemCode}}</h4>
-        <p style="font-size: 10px; font-style: italic;">{{dscripction}}</p>
-      </div>
-      <br />
-      <div class="row" *ngIf="errorMessageModal != null && errorMessageModal.length > 0">
-        <div class="col-xs-12">
-          <div class="alert alert-danger" role="alert">
-            <p>{{errorMessageModal}}</p>
-          </div>
+        <div class="packing-modal-title text-center">
+          <span style="font-weight: bold;">
+            <small *ngIf="itemCodeFather && itemCodeFather !== itemCode">{{itemCodeFather}} / </small>{{itemCode}}
+          </span>
+          <span class="qty">Picked<span class="icon-chevrons-right"></span>{{picked}}</span>
         </div>
       </div>
       <div class="modal-body">
-        <div class="row">
-          <div class="col-xs-12">
-            <form (submit)="validateItemQuantity()">
-              <input id="input_packedQuantity" type="number" class="form-control input-lg" name="itemQuantity"
-                placeholder="Confirme cantidad" [(ngModel)]="itemQuantity" autocomplete="off">
-            </form>
-            <br />
-            <form (submit)="validateItemQuantity()">
-              <select class="form-control input-lg" [(ngModel)]="qtyBox" name="qtyBox"
-                (change)="confirmAddToBox(qtyBox)">
-                <option style="display:none" disabled value="null">Selecciona caja a empacar</option>
-                <option value="0">Nueva caja</option>
-                <ng-container *ngFor="let usedBox of usedBoxesList">
-                  <option value="{{usedBox.boxNumber}}">{{usedBox.boxDisplayName}}</option>
-                </ng-container>
-              </select>
-            </form>
+        <div *ngIf="errorMessageModal && errorMessageModal.length > 0" class="alert alert-danger packing-modal-error">
+          {{errorMessageModal}}</div>
+        <form (ngSubmit)="validateItemQuantity()">
+          <div class="form-group">
+            <label for="input_packedQuantity">Cantidad a empacar</label>
+            <input id="input_packedQuantity" type="number" class="form-control packing-quantity-input"
+              name="itemQuantity" placeholder="Ingrese cantidad" [(ngModel)]="itemQuantity" autocomplete="off" min="1">
           </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-primary btn-lg" (click)="validateItemQuantity()">Confirmar</button>
+          <div class="form-group packing-box-group">
+            <label for="packingBoxSelect">Caja de destino</label>
+            <select id="packingBoxSelect" class="form-control packing-box-select" [(ngModel)]="qtyBox" name="qtyBox"
+              (change)="confirmAddToBox(qtyBox)">
+              <option [ngValue]="0">+ Nueva caja</option>
+              <ng-container *ngFor="let usedBox of usedBoxesList">
+                <option [ngValue]="usedBox.boxNumber">{{usedBox.boxDisplayName}}</option>
+              </ng-container>
+            </select>
+          </div>
+          <div class="packing-modal-actions text-center">
+            <button type="submit" class="btn btn-danger btn-lg">Confirmar</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -644,19 +638,25 @@
   <br>
   <div class="row">
     <div class="col-xs-12 col-md-3" *ngFor="let row of orderItemsList">
-      <div class="packing-box nnew-box" (click)="selectItem(row)" [class.unauthorized]="row[5] > 0">
+      <div class="packing-box nnew-box" (click)="selectItem(row)" [class.unauthorized]="row[2] == 0">
         <div class="col-xs-6">
-          <div class="row">
+          <div class="row" *ngIf="schema != 'REDPLAS'">
             <img class="photo" src="{{urlShared}}images/mtz/{{row[3]}}.jpg">
+          </div>
+          <div class="row" *ngIf="schema == 'REDPLAS'">
+            <img class="photo" src="{{urlShared}}images/mtz/{{row[7]}}.jpg">
           </div>
         </div>
         <div class="col-xs-6">
-          <div class="row">
+          <div class="row" *ngIf="schema != 'REDPLAS'">
             <span>{{row[3]}}</span>
           </div>
+          <div class="row" *ngIf="schema == 'REDPLAS'">
+            <span style="font-size: 12px;">{{row[3] !== row[7] ? row[3] : ''}}<br
+                *ngIf="row[3] !== row[7]" />{{row[7]}}</span>
+          </div>
           <div class="row">
-            <span class="qty" [class.unauthorized]="row[5] > 0">Picked<span
-                class="icon-chevrons-right"></span>{{row[2]}}</span>
+            <span class="qty">Picked<span class="icon-chevrons-right"></span>{{row[2]}}</span>
           </div>
           <div class="row">
             <span>{{row[1]}}</span>
@@ -667,26 +667,44 @@
         </div>
       </div>
       <!--Desktop-->
-      <div class="overlay visible-lg">
-        <div class="col-xs-12">
-          <div class="row" *ngIf="row[5] > 0" [class.box-unauthorized-desktop]="row[5] > 0">
-            <span>Caja #{{row[6]}}</span>
+      <div class="overlay visible-lg" *ngIf="row[5] > 0">
+        <div class="overlay-content">
+          <div class="overlay-icon icon-package">
+            <i class="fa fa-cube"></i>
+          </div>
+          <div class="overlay-quantity">
+            {{row[6]}}
+          </div>
+          <div class="overlay-label">
+            Caja
           </div>
         </div>
       </div>
       <!--tablet-->
-      <div class="overlay visible-md">
-        <div class="col-xs-12">
-          <div class="row" *ngIf="row[5] > 0" [class.box-unauthorized-tablet]="row[5] > 0">
-            <span>Caja #{{row[6]}}</span>
+      <div class="overlay visible-md" *ngIf="row[5] > 0">
+        <div class="overlay-content">
+          <div class="overlay-icon icon-package">
+            <i class="fa fa-cube"></i>
+          </div>
+          <div class="overlay-quantity">
+            {{row[6]}}
+          </div>
+          <div class="overlay-label">
+            Caja
           </div>
         </div>
       </div>
       <!--mobile-->
-      <div class="overlay visible-xs visible-sm">
-        <div class="col-xs-12">
-          <div class="row" *ngIf="row[5] > 0" [class.box-unauthorized-mobile]="row[5] > 0">
-            <span>Caja #{{row[6]}}</span>
+      <div class="overlay visible-xs visible-sm" *ngIf="row[5] > 0">
+        <div class="overlay-content">
+          <div class="overlay-icon icon-package">
+            <i class="fa fa-cube"></i>
+          </div>
+          <div class="overlay-quantity">
+            {{row[6]}}
+          </div>
+          <div class="overlay-label">
+            Caja
           </div>
         </div>
       </div>

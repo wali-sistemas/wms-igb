@@ -12,7 +12,7 @@ export class PackingBox {
         this.items = new Map<string, number>();
     }
 
-    public addItem(itemCode: string, qty: number) {
+    public addItem(itemCode: string, qty: number | null) {
         if (this.items.has(itemCode.trim())) {
             this.items.set(itemCode.trim(), this.items.get(itemCode.trim()) + qty);
         } else {

@@ -63,12 +63,12 @@ export class PackingService {
       .map(res => res);
   }
 
-  public closeOrder(idPackingOrder) {
+  public closeOrder(idPackingOrder: number) {
     return this._http.put(this.url + 'salesorder/close/', idPackingOrder, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
 
-  public cleanPackingOrder(idPackingOrder) {
+  public cleanPackingOrder(idPackingOrder: number) {
     return this._http.put(this.url + 'packing/cancel/' + idPackingOrder, null, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }
@@ -103,7 +103,7 @@ export class PackingService {
       .map(res => res.json());
   }
 
-  public addCheckOutOrder(checkOutDTO) {
+  public addCheckOutOrder(checkOutDTO: any) {
     return this._http.post(this.url + 'packing/add-checkout-order', checkOutDTO, { headers: new IGBHeaders().loadHeaders() })
       .map(res => res.json());
   }

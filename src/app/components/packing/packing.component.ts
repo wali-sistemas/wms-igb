@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { GLOBAL } from '../../services/global';
+import { Observable } from 'rxjs/Observable';
 import { PackingBox } from '../../models/packing-box';
 import { PackingRecord } from '../../models/packing-record';
 import { Printer } from '../../models/printer';
@@ -15,6 +16,7 @@ import { HealthchekService } from '../../services/healthchek.service';
 import { CubicService } from '../../services/cubic.service';
 import { MotorepuestoService } from '../../services/motorepuesto.service';
 import 'rxjs/Rx'
+import 'rxjs/add/observable/forkJoin';
 
 declare var $: any;
 
@@ -37,45 +39,46 @@ export class PackingComponent implements OnInit {
   public binErrorMessage: string = '';
   public binCode: string = '';
   public itemCode: string = '';
+  public itemCodeFather: string = '';
   public itemName: string = '';
   public dscripction: string = '';
   public selectedCustomer: string = '';
   public selectedOrderByInvoice: string = '';
-  public errorMessage: string;
-  public errorMessageModal: string;
-  public warnMessageOrdersByInvoice: string;
-  public exitMessage: string;
+  public errorMessage: string = '';
+  public errorMessageModal: string = '';
+  public warnMessageOrdersByInvoice: string = '';
+  public exitMessage: string = '';
   public selectedOrder: number = 0;
-  public qtyBox: number = null;
+  public qtyBox: number = 0;
   public boxTotal: number = 0;
-  public expectedItemQuantity: number;
-  public itemQuantity: number;
-  public orderNumber: number;
-  public idPackingList: number;
-  public idPackingOrder: number;
-  public picked: number;
-  public docEntryDelivery: number;
-  public docEntryInvoice: number;
-  public idCubic: number;
+  public expectedItemQuantity: number = 0;
+  public itemQuantity: number | null = null;
+  public orderNumber: number = 0;
+  public idPackingList: number = 0;
+  public idPackingOrder: number = 0;
+  public picked: number = 0;
+  public docEntryDelivery: number = 0;
+  public docEntryInvoice: number = 0;
+  public idCubic: number = 0;
   public isVisibleItemCode: boolean = false;
   public addNewBoxEnabled: boolean = false;
   public customersListDisabled: boolean = false;
   public packingOrdersComplete: boolean = false;
   public autoBox: boolean = false;
   public disabledAutoBox: boolean = false;
-  public ordersList: Array<number>;
-  public customersList: Array<any>;
-  public orderItemsList: Array<any>;
-  public specialPacking: Array<any>;
-  public ordersByInvoice: Array<any>;
-  public usedBoxesList: Array<PackingBox>;
-  public boxes: Array<PackingBox>;
-  public printersList: Array<Printer>;
+  public ordersList: Array<any> = [];
+  public customersList: Array<any> = [];
+  public orderItemsList: Array<any> = [];
+  public specialPacking: Array<any> = [];
+  public ordersByInvoice: Array<any> = [];
+  public usedBoxesList: Array<PackingBox> = [];
+  public boxes: Array<PackingBox> = [];
+  public printersList: Array<Printer> = [];
   public selectedBox: PackingBox = new PackingBox();
   public selectedBoxItems: Map<string, number> = this.selectedBox.items;
-  public selectedSalesPerson: string;
-  public salesPersonList: Array<any>;
-  public identity;
+  public selectedSalesPerson: string = '';
+  public salesPersonList: Array<any> = [];
+  public identity: any;
   //Variables creadas para la session de impresión
   public schema: string = '';
   public currentUser: string = '';
@@ -86,10 +89,10 @@ export class PackingComponent implements OnInit {
   public prevLastAt = '';
   public prevLastUser = '';
   public prevLastPrinter = '';
-  public lastHistoryForOrder: number = null;
+  public lastHistoryForOrder: number = 0;
   //Variables creadas para la impresión de facturas
-  public orderLookupNumber: string;
-  public orderDocResult: OrderDoc;
+  public orderLookupNumber: string = '';
+  public orderDocResult: OrderDoc = new OrderDoc();
   public orderDocError: string = '';
   public orderDocLoading: boolean = false;
 
@@ -128,7 +131,7 @@ export class PackingComponent implements OnInit {
     this.currentUser = this.identity.username;
   }
 
-  private redirectIfSessionInvalid(error) {
+  private redirectIfSessionInvalid(error: any) {
     if (error && error.status && error.status == 401) {
       localStorage.removeItem('igb.identity');
       localStorage.removeItem('igb.selectedCompany');
@@ -145,7 +148,7 @@ export class PackingComponent implements OnInit {
     this.prevLastUser = '';
     this.prevLastPrinter = '';
     if (typeof this.lastHistoryForOrder !== 'undefined') {
-      this.lastHistoryForOrder = null;
+      this.lastHistoryForOrder = 0;
     }
 
     if (this.orderNumber == null || this.orderNumber <= 0) {
@@ -275,7 +278,10 @@ export class PackingComponent implements OnInit {
           this.loadCustomerOrders();
         }
         this.showAllItems();
-      }, error => { console.error('Ocurrio un error procesando ítems para packing.', error); }
+      },
+      error => {
+        console.error('Ocurrio un error procesando ítems para packing.', error);
+      }
     );
   }
 
@@ -327,29 +333,25 @@ export class PackingComponent implements OnInit {
   }
 
   public addBox() {
-    if (!this.addNewBoxEnabled) {
-      return;
-    }
     const newBox: PackingBox = new PackingBox();
-    if (this.boxes.length == 0 || this.qtyBox == 0) {
-      let box = 0;
-      for (let i = 0; i < this.boxes.length; i++) {
-        box = this.boxes[i].boxNumber;
-      }
-      newBox.boxDisplayName = 'Caja #' + (box + 1);
-      newBox.boxNumber = box + 1;
-      newBox.addItem(this.itemCode, this.itemQuantity);
-      this.boxes.push(newBox);
-      return;
+
+    let maxBox = 0;
+    for (let i = 0; i < this.boxes.length; i++) {
+      maxBox = Math.max(maxBox, this.boxes[i].boxNumber);
     }
-    newBox.boxDisplayName = 'Caja #' + this.qtyBox;
-    newBox.boxNumber = +this.qtyBox;
-    newBox.addItem(this.itemCode, this.itemQuantity);
+    //Nueva caja: generar el siguiente consecutivo
+    const boxNumber = this.qtyBox == 0 ? maxBox + 1 : Number(this.qtyBox);
+
+    newBox.boxDisplayName = 'Caja #' + boxNumber;
+    newBox.boxNumber = boxNumber;
+    newBox.addItem(this.itemCode, this.itemQuantity === null ? 0 : this.itemQuantity);
+
     this.boxes.push(newBox);
   }
 
   private getUsedBoxesList() {
     this.usedBoxesList = new Array<PackingBox>();
+
     this._packingService.getBoxPackingList(this.identity.username).subscribe(
       response => {
         for (let i = 0; i < response.content.length; i++) {
@@ -358,14 +360,15 @@ export class PackingComponent implements OnInit {
           box.boxDisplayName = 'Caja #' + response.content[i];
           this.usedBoxesList.push(box);
         }
-      }, error => {
+      },
+      error => {
         console.error(error);
         this.redirectIfSessionInvalid(error);
       }
     );
   }
 
-  public confirmAddToBox(idx) {
+  public confirmAddToBox(idx: number) {
     this.errorMessage = '';
     this.errorMessageModal = '';
     if (idx >= 0) {
@@ -380,14 +383,10 @@ export class PackingComponent implements OnInit {
     packingRecord.idPackingList = this.idPackingList;
     packingRecord.binCode = this.binCode;
     packingRecord.itemCode = this.itemCode;
+    packingRecord.itemCodeFather = this.itemCodeFather;
     packingRecord.itemName = this.itemName;
-    packingRecord.quantity = this.itemQuantity;
-
-    let countBox = 0;
-    for (let i = 0; i < this.boxes.length; i++) {
-      countBox = this.boxes[i].boxNumber;
-    }
-    packingRecord.boxNumber = countBox;
+    packingRecord.quantity = this.itemQuantity === null ? 0 : this.itemQuantity;
+    packingRecord.boxNumber = this.boxes[this.boxes.length - 1].boxNumber;
     packingRecord.customerId = this.selectedCustomer;
     packingRecord.orderNumber = this.selectedOrder;
     packingRecord.employee = this.identity.username;
@@ -402,6 +401,7 @@ export class PackingComponent implements OnInit {
         } else {
           this.processDeliveryStatus = 'error';
           this.deliveryErrorMessage = response.content;
+
           if (response.code == -2) {
             $('#clean_confirmation').modal({
               backdrop: 'static',
@@ -410,8 +410,9 @@ export class PackingComponent implements OnInit {
             });
           }
         }
-      }, error => {
-        console.error('Ocurrio un error creando el packing record. ', error);
+      },
+      error => {
+        console.error('Ocurrio un error creando el packing record.', error);
         this.redirectIfSessionInvalid(error);
       }
     );
@@ -420,14 +421,15 @@ export class PackingComponent implements OnInit {
   private reset() {
     this.binCode = '';
     this.itemCode = '';
+    this.itemCodeFather = '';
     this.itemName = '';
     this.itemQuantity = null;
     this.isVisibleItemCode = false;
     this.exitMessage = '';
     this.errorMessage = '';
     this.errorMessageModal = '';
-    this.orderNumber = null;
-    this.qtyBox = null;
+    this.orderNumber = 0;
+    this.qtyBox = 0;
     this.clearSessionHistory()
   }
 
@@ -458,10 +460,17 @@ export class PackingComponent implements OnInit {
       keyboard: false,
       show: true
     });
+
     this.getUsedBoxesList();
     this.orderItemsList = new Array<any>();
+
+    if (this.idPackingOrder <= 0 || this.selectedOrder <= 0) {
+      return;
+    }
+
     this._packingService.listOrderItems(this.idPackingOrder, this.selectedOrder).subscribe(
       response => {
+        console.log('response', response);
         if (response.code === 0) {
           this.start();
           this.exitMessage = response.content;
@@ -490,13 +499,14 @@ export class PackingComponent implements OnInit {
     this.processPrintLabelsStatus = 'none';
     this.processInvoiceStatus = 'none';
     this.processOrderLinkStatus = 'none';
+    this.deliveryErrorMessage = '';
+    localStorage.setItem('selectedOrder', JSON.stringify(this.selectedOrder));
+
     $('#process_status').modal({
       backdrop: 'static',
       keyboard: false,
       show: true
     });
-    this.deliveryErrorMessage = '';
-    localStorage.setItem('selectedOrder', JSON.stringify(this.selectedOrder));
 
     this._packingService.createDelivery(this.idPackingOrder).subscribe(
       response => {
@@ -504,7 +514,7 @@ export class PackingComponent implements OnInit {
           this.processDeliveryStatus = 'done';
           //cerrando packing
           this.closePackingOrder(this.idPackingOrder, this.identity.username);
-          this.idPackingOrder = null;
+          this.idPackingOrder = 0;
           this.customersListDisabled = true;
           this.docEntryDelivery = response.content;
           this.closePackingOrder(this.idPackingOrder, this.identity.username);
@@ -567,7 +577,7 @@ export class PackingComponent implements OnInit {
     );
   }
 
-  private closePackingOrder(idPackingOrder, username) {
+  private closePackingOrder(idPackingOrder: number, username: string) {
     this.processClosePackingOrderStatus = 'inprogress';
     this._packingService.closePackingOrder(idPackingOrder, username).subscribe(
       response => {
@@ -589,13 +599,14 @@ export class PackingComponent implements OnInit {
       keyboard: false,
       show: true
     });
+    const selectedOrder = JSON.parse(localStorage.getItem('selectedOrder') || 'null');
     let printReportDTO = {
-      "id": JSON.parse(localStorage.getItem('selectedOrder')), "copias": 0, "documento": documento, "companyName": this.identity.selectedCompany, "origen": origen, "imprimir": false
+      "id": selectedOrder, "copias": 0, "documento": documento, "companyName": this.identity.selectedCompany, "origen": origen, "imprimir": false
     }
     this._reportService.generateReport(printReportDTO).subscribe(
       response => {
         if (response.code == 0) {
-          let landingUrl = this.urlShared + this.identity.selectedCompany + "/" + documento + "/" + JSON.parse(localStorage.getItem('selectedOrder')) + ".pdf";
+          const landingUrl = this.urlShared + this.identity.selectedCompany + "/" + documento + "/" + selectedOrder + ".pdf";
           window.open(landingUrl);
         }
         $('#modal_transfer_process').modal('hide');
@@ -691,7 +702,7 @@ export class PackingComponent implements OnInit {
     );
   }
 
-  public createPurchaseInvoice(docNum) {
+  public createPurchaseInvoice(docNum: number) {
     this._motorepuestoService.postCreatePurchaseInvoice(docNum).subscribe(
       response => {
         console.log(response);
@@ -713,14 +724,21 @@ export class PackingComponent implements OnInit {
   public selectItem(orderList: any) {
     this.errorMessage = '';
     this.errorMessageModal = '';
-    this.itemCode = orderList[3];
+    if (this.schema == 'REDPLAS') {
+      this.itemCodeFather = orderList[3];
+      this.itemCode = orderList[7];
+    } else {
+      this.itemCodeFather = orderList[3];
+      this.itemCode = orderList[3];
+    }
+
     this.binCode = orderList[0];
     this.picked = orderList[2];
     this.dscripction = orderList[7];
 
     if (this.picked > 0) {
       this.itemQuantity = null;
-      this.qtyBox = null;
+      this.qtyBox = 0;
       $('#cantidad').modal('show');
       $('#input_packedQuantity').focus();
     }
@@ -730,12 +748,13 @@ export class PackingComponent implements OnInit {
   }
 
   public cleanItemTable() {
-    this.itemCode = null;
-    this.itemName = null;
-    this.binCode = null;
+    this.itemCode = '';
+    this.itemCodeFather = '';
+    this.itemName = '';
+    this.binCode = '';
     this.itemQuantity = null;
     this.isVisibleItemCode = false;
-    this.qtyBox = null;
+    this.qtyBox = 0;
     this.customersListDisabled = false;
     this.exitMessage = '';
     this.errorMessage = '';
@@ -787,52 +806,137 @@ export class PackingComponent implements OnInit {
   }
 
   public expressPack() {
+    if (!this.orderItemsList || this.orderItemsList.length === 0) {
+      this.errorMessage = 'La orden no contiene artículos para empacar.';
+      return;
+    }
+    console.log('Express Pack - orderItemsList:', this.orderItemsList);
+
+    // Filtrar artículos pendientes por empacar
+    const pendingItems = this.orderItemsList.filter(item =>
+      Number(item[6]) === 0 && Number(item[2]) > 0
+    );
+
+    console.log('Artículos pendientes:', pendingItems.length);
+
+    // Si todos los artículos ya fueron empacados,
+    // permitir continuar con la confirmación
+    if (pendingItems.length === 0) {
+      this.errorMessage = '';
+      $('#close_confirmation').modal('show');
+      return;
+    }
+
+    // Mostrar modal de procesamiento
     $('#modal_transfer_process').modal({
       backdrop: 'static',
       keyboard: false,
       show: true
     });
-    this._packingService.listOrderItems(this.idPackingOrder, this.selectedOrder).subscribe(
-      response => {
-        if (response.content.length > 0) {
-          for (let i = 0; i < response.content.length; i++) {
-            const packingRecord = new PackingRecord();
-            packingRecord.idPackingList = this.idPackingList;
-            packingRecord.binCode = response.content[i][0];
-            packingRecord.itemCode = response.content[i][3];
-            packingRecord.itemName = this.itemName;
-            packingRecord.quantity = response.content[i][2];
-            packingRecord.boxNumber = 0;/*this.qtyBox;*/
-            packingRecord.customerId = this.selectedCustomer;
-            packingRecord.orderNumber = this.selectedOrder;
-            packingRecord.employee = this.identity.username;
-            packingRecord.idPackingOrder = this.idPackingOrder;
 
-            this._packingService.createPackingRecord(packingRecord).subscribe(
-              response => {
-                if (response.code < 0) {
-                  $('#modal_transfer_process').modal('hide');
-                  this.errorMessage = "Lo sentimos. Se produjo un error interno."
-                  return;
-                }
-              },
-              error => {
-                $('#modal_transfer_process').modal('hide');
-                this.errorMessage = "Lo sentimos. Se produjo un error interno."
-                console.error("Ocurrio un error creando el expressPack.", error);
-              }
-            );
-          }
-        } else {
-          $('#modal_transfer_process').modal('hide');
-          this.errorMessage = 'No hay items pendientes por empacar.';
-        }
-      }, error => {
+    const requests = [];
+
+    for (let i = 0; i < pendingItems.length; i++) {
+      const item = pendingItems[i];
+
+      const packingRecord = new PackingRecord();
+
+      packingRecord.idPackingList = this.idPackingList;
+      packingRecord.binCode = item[0];
+
+      if (this.schema === 'REDPLAS') {
+        packingRecord.itemCode = item[7];
+        packingRecord.itemCodeFather = item[3];
+      } else {
+        packingRecord.itemCode = item[3];
+        packingRecord.itemCodeFather = item[3];
+      }
+
+      packingRecord.itemName = this.itemName;
+      packingRecord.quantity = Number(item[2]);
+      packingRecord.boxNumber = 1;
+      packingRecord.customerId = this.selectedCustomer;
+      packingRecord.orderNumber = this.selectedOrder;
+      packingRecord.employee = this.identity.username;
+      packingRecord.idPackingOrder = this.idPackingOrder;
+
+      requests.push(
+        this._packingService.createPackingRecord(packingRecord)
+      );
+    }
+
+    // Ejecutar todas las solicitudes y esperar su finalización
+    Observable.forkJoin(requests).subscribe(
+      responses => {
+        const hasErrors = responses.some((response: any) => response.code < 0);
         $('#modal_transfer_process').modal('hide');
-        console.error("Ocurrio un error listando los ítems para expressPack.", error);
-        this.redirectIfSessionInvalid(error);
+        if (hasErrors) {
+          this.errorMessage = 'Algunos artículos no pudieron ser empacados.';
+          return;
+        }
+        // Mostrar confirmación solamente cuando finalicen las solicitudes
+        $('#close_confirmation').modal('show');
+      },
+      error => {
+        $('#modal_transfer_process').modal('hide');
+        this.errorMessage = 'Lo sentimos. Se produjo un error interno.';
+        console.error('Ocurrió un error creando el expressPack.', error);
       }
     );
+
+  }
+
+  /*public expressPack() {
+    $('#modal_transfer_process').modal({
+      backdrop: 'static',
+      keyboard: false,
+      show: true
+    });
+
+    console.log('Express Pack - orderItemsList:', this.orderItemsList);
+
+    if (this.orderItemsList.length > 0) {
+      for (let i = 0; i < this.orderItemsList.length; i++) {
+        const packingRecord = new PackingRecord();
+        packingRecord.idPackingList = this.idPackingList;
+        packingRecord.binCode = this.orderItemsList[i][0];
+
+        if (this.schema == 'REDPLAS') {
+          packingRecord.itemCode = this.orderItemsList[i][7];
+          packingRecord.itemCodeFather = this.orderItemsList[i][3];
+        } else {
+          packingRecord.itemCode = this.orderItemsList[i][3];
+          packingRecord.itemCodeFather = this.orderItemsList[i][3];
+        }
+
+        packingRecord.itemName = this.itemName;
+        packingRecord.quantity = this.orderItemsList[i][2];
+        packingRecord.boxNumber = 1;
+        packingRecord.customerId = this.selectedCustomer;
+        packingRecord.orderNumber = this.selectedOrder;
+        packingRecord.employee = this.identity.username;
+        packingRecord.idPackingOrder = this.idPackingOrder;
+
+        this._packingService.createPackingRecord(packingRecord).subscribe(
+          response => {
+            if (response.code < 0) {
+              $('#modal_transfer_process').modal('hide');
+              this.errorMessage = "Lo sentimos. Se produjo un error interno."
+              return;
+            }
+          },
+          error => {
+            $('#modal_transfer_process').modal('hide');
+            this.errorMessage = "Lo sentimos. Se produjo un error interno."
+            console.error("Ocurrio un error creando el expressPack.", error);
+          }
+        );
+      }
+    } else {
+      $('#modal_transfer_process').modal('hide');
+      this.errorMessage = 'No hay items pendientes por empacar.';
+    }
+
     //TODO: Temporizador temportal de modal en packing
     if (this.orderItemsList.length <= 10) {
       setTimeout(() => {
@@ -845,7 +949,7 @@ export class PackingComponent implements OnInit {
         $('#close_confirmation').modal('show');
       }, 10000);//10seg
     }
-  }
+  }*/
 
   public getReprintOrder() {
     this.reset();
@@ -987,7 +1091,7 @@ export class PackingComponent implements OnInit {
     );
   }
 
-  public createInvoiceByDelivery(i) {
+  public createInvoiceByDelivery(i: number) {
     $('#modal_transfer_process').modal({
       backdrop: 'static',
       keyboard: false,
@@ -1024,7 +1128,7 @@ export class PackingComponent implements OnInit {
 
   public fetchOrderDocsByOrder() {
     this.orderDocError = '';
-    this.orderDocResult = null;
+    this.orderDocResult = new OrderDoc();
     const order = Number(this.orderLookupNumber);
     if (!order || order <= 0) {
       this.orderDocError = 'Ingresa un número de pedido válido.';
@@ -1061,7 +1165,7 @@ export class PackingComponent implements OnInit {
   public clearOrderDocsModal() {
     this.orderLookupNumber = '';
     this.orderDocError = '';
-    this.orderDocResult = null;
+    this.orderDocResult = new OrderDoc();
     this.orderDocLoading = false;
   }
 
@@ -1073,6 +1177,6 @@ export class PackingComponent implements OnInit {
     this.prevLastAt = '';
     this.prevLastUser = '';
     this.prevLastPrinter = '';
-    this.lastHistoryForOrder = null;
+    this.lastHistoryForOrder = 0;
   }
 }
