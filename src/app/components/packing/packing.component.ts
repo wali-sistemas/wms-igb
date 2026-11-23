@@ -814,14 +814,11 @@ export class PackingComponent implements OnInit {
       this.errorMessage = 'La orden no contiene artículos para empacar.';
       return;
     }
-    console.log('Express Pack - orderItemsList:', this.orderItemsList);
 
     // Filtrar artículos pendientes por empacar
     const pendingItems = this.orderItemsList.filter(item =>
       Number(item[6]) === 0 && Number(item[2]) > 0
     );
-
-    console.log('Artículos pendientes:', pendingItems.length);
 
     // Si todos los artículos ya fueron empacados,
     // permitir continuar con la confirmación
@@ -889,71 +886,6 @@ export class PackingComponent implements OnInit {
     );
 
   }
-
-  /*public expressPack() {
-    $('#modal_transfer_process').modal({
-      backdrop: 'static',
-      keyboard: false,
-      show: true
-    });
-
-    console.log('Express Pack - orderItemsList:', this.orderItemsList);
-
-    if (this.orderItemsList.length > 0) {
-      for (let i = 0; i < this.orderItemsList.length; i++) {
-        const packingRecord = new PackingRecord();
-        packingRecord.idPackingList = this.idPackingList;
-        packingRecord.binCode = this.orderItemsList[i][0];
-
-        if (this.schema == 'REDPLAS') {
-          packingRecord.itemCode = this.orderItemsList[i][7];
-          packingRecord.itemCodeFather = this.orderItemsList[i][3];
-        } else {
-          packingRecord.itemCode = this.orderItemsList[i][3];
-          packingRecord.itemCodeFather = this.orderItemsList[i][3];
-        }
-
-        packingRecord.itemName = this.itemName;
-        packingRecord.quantity = this.orderItemsList[i][2];
-        packingRecord.boxNumber = 1;
-        packingRecord.customerId = this.selectedCustomer;
-        packingRecord.orderNumber = this.selectedOrder;
-        packingRecord.employee = this.identity.username;
-        packingRecord.idPackingOrder = this.idPackingOrder;
-
-        this._packingService.createPackingRecord(packingRecord).subscribe(
-          response => {
-            if (response.code < 0) {
-              $('#modal_transfer_process').modal('hide');
-              this.errorMessage = "Lo sentimos. Se produjo un error interno."
-              return;
-            }
-          },
-          error => {
-            $('#modal_transfer_process').modal('hide');
-            this.errorMessage = "Lo sentimos. Se produjo un error interno."
-            console.error("Ocurrio un error creando el expressPack.", error);
-          }
-        );
-      }
-    } else {
-      $('#modal_transfer_process').modal('hide');
-      this.errorMessage = 'No hay items pendientes por empacar.';
-    }
-
-    //TODO: Temporizador temportal de modal en packing
-    if (this.orderItemsList.length <= 10) {
-      setTimeout(() => {
-        $('#modal_transfer_process').modal('hide');
-        $('#close_confirmation').modal('show');
-      }, 5000);//5seg
-    } else {
-      setTimeout(() => {
-        $('#modal_transfer_process').modal('hide');
-        $('#close_confirmation').modal('show');
-      }, 10000);//10seg
-    }
-  }*/
 
   public getReprintOrder() {
     this.reset();
