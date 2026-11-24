@@ -50,7 +50,7 @@ export class HomeComponent implements OnInit {
     );
   }
 
-  cerrarSesion() {
+  public cerrarSesion() {
     localStorage.removeItem('igb.identity');
     localStorage.removeItem('igb.selectedCompany');
     localStorage.clear();
