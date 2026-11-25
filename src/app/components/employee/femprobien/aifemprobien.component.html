@@ -1,0 +1,2188 @@
+<button *ngIf="!abierto" type="button" class="ia-fab" (click)="abrir()" title="Abrir agente financiero">
+  <span class="ia-fab-simbolo">✦</span>
+  <span>IA</span>
+</button>
+<section *ngIf="abierto" class="ia-panel" [class.ia-expandido]="maximizado" aria-label="Agente financiero FEMPROBIEN">
+  <header class="ia-cabecera">
+    <div>
+      <strong>✦ Agente financiero</strong>
+      <small>
+        FEMPROBIEN · Estudio financiero preliminar
+      </small>
+    </div>
+    <div class="ia-controles">
+      <button type="button" class="ia-btn-control" (click)="actualizar()"
+        [disabled]="!tieneSolicitud() || estaProcesando()" title="Actualizar información financiera"
+        aria-label="Actualizar información financiera">
+        <svg class="ia-icono-control" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M20 11a8 8 0 1 0-2.1 6.1"></path>
+          <path d="M20 4v7h-7"></path>
+        </svg>
+      </button>
+      <button type="button" class="ia-btn-control" (click)="reiniciar()" title="Nueva conversación"
+        aria-label="Nueva conversación">
+        <svg class="ia-icono-control" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M12 5v14"></path>
+          <path d="M5 12h14"></path>
+        </svg>
+      </button>
+      <button type="button" class="ia-btn-control" (click)="cambiarTamano()"
+        [title]="maximizado ? 'Restaurar ventana' : 'Expandir ventana'"
+        [attr.aria-label]="maximizado ? 'Restaurar ventana' : 'Expandir ventana'">
+        <svg *ngIf="!maximizado" class="ia-icono-control" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3"></path>
+          <path d="M16 3h3a2 2 0 0 1 2 2v3"></path>
+          <path d="M3 16v3a2 2 0 0 0 2 2h3"></path>
+          <path d="M21 16v3a2 2 0 0 1-2 2h-3"></path>
+        </svg>
+        <svg *ngIf="maximizado" class="ia-icono-control" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <rect x="7" y="7" width="14" height="14" rx="2"></rect>
+          <path d="M17 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2"></path>
+        </svg>
+      </button>
+      <button type="button" class="ia-btn-control ia-btn-cerrar" (click)="cerrar()" title="Cerrar"
+        aria-label="Cerrar agente financiero">
+        <svg class="ia-icono-control" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M18 6 6 18"></path>
+          <path d="M6 6 18 18"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+  <div *ngIf="tieneSolicitud()" class="ia-solicitud">
+    <div class="ia-solicitud-identidad">
+      <strong>Solicitud #{{solicitudId}}</strong>
+      <span *ngIf="nombreAsociado" class="ia-solicitud-asociado">{{nombreAsociado}}</span>
+    </div>
+    <div class="ia-solicitud-detalles">
+      <span *ngIf="montoSolicitado != null">
+        <b>Monto:</b> {{montoSolicitado | currency:'COP':true:'1.0-0'}}
+      </span>
+      <span *ngIf="plazoMeses != null">
+        <b>Plazo:</b> {{plazoMeses}} meses
+      </span>
+      <span *ngIf="evaluacion && evaluacion.nomina">
+        <b>Nómina:</b> {{evaluacion.nomina.empresa}} ·
+        {{evaluacion.nomina.fechaNominaMasReciente || 'Fecha no disponible'}}
+      </span>
+    </div>
+    <div class="ia-simulador-acciones" *ngIf="evaluacion">
+      <button type="button" class="ia-ver-estudio" [disabled]="descargandoEstudiosExcel || estaProcesando()"
+        (click)="descargarEstudiosExcel([solicitudId])">
+        {{descargandoEstudiosExcel ? 'Generando Excel...' : 'Descargar estudio Excel'}}
+      </button>
+    </div>
+  </div>
+  <main class="ia-mensajes" #historialMensajes aria-live="polite">
+    <div *ngFor="let m of mensajes" [class.ia-linea-propia]="m.rol === 'usuario'" [class.ia-fila]="m.rol !== 'usuario'">
+      <div *ngIf="m.rol === 'usuario'" class="ia-pregunta-propia">
+        <div class="ia-propio-contenido">{{m.contenido}}</div>
+        <small class="ia-propio-meta">
+          Tú · {{m.fecha | date:'HH:mm'}}
+        </small>
+      </div>
+      <div *ngIf="m.rol === 'asistente'" class="ia-burbuja" [class.ia-burbuja-datos]="m.datos">
+        <div class="ia-mensaje-texto">{{m.contenido}}</div>
+        <div
+          *ngIf="m.tipo === 'simulacion_masiva' && m.datos && m.datos.id === simMensajeActual && simulacionIntegralVisible"
+          class="ia-reporte ia-integral ia-masiva">
+          <div class="ia-reporte-titulo">
+            <strong>Simular varias solicitudes</strong>
+            <button type="button" class="ia-masiva-btn-outline" (click)="alternarPanelSimulacionMasiva()"
+              [attr.aria-expanded]="simPanelExpandido">{{simPanelExpandido ? 'Contraer configuración' : 'Mostrar
+              configuración'}}
+            </button>
+          </div>
+          <ng-container *ngIf="simPanelExpandido">
+            <div class="ia-vista-descripcion">
+              Configura cada solicitud por separado. Los escenarios son preliminares y no modifican
+              las solicitudes ni representan una aprobación.
+            </div>
+            <form *ngIf="simFormulario" class="ia-int-form ia-masiva-form" (ngSubmit)="ejecutarSimulacionMasiva()"
+              novalidate>
+              <div *ngIf="simSeleccionadas && simSeleccionadas.length > 0" class="ia-int-wide">
+                <div class="ia-int-subtitulo ia-asociados-titulo">
+                  Solicitudes seleccionadas ({{simSeleccionadas.length}})
+                  <button type="button" class="ia-int-cerrar" (click)="cambiarAsociadosSimulacion()"
+                    [disabled]="estaProcesando()">Cambiar solicitudes</button>
+                </div>
+                <div class="ia-vista-descripcion">
+                  Selecciona <strong>Configurar</strong> para ajustar monto, tasa, plazo y frecuencia
+                  con el mismo formato del simulador individual. Solo se edita una solicitud a la vez.
+                </div>
+                <div class="ia-int-tabla-scroll ia-masiva-solicitudes-scroll">
+                  <table class="ia-tabla ia-masiva-solicitudes-tabla">
+                    <thead>
+                      <tr>
+                        <th>Solicitud / asociado</th>
+                        <th class="ia-numero">Monto registrado</th>
+                        <th>Condiciones</th>
+                        <th class="ia-centrado">Acción</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let s of simSeleccionadas">
+                        <td>
+                          <strong>#{{s.numeroSolicitud}} · {{s.nombre}}</strong>
+                          <small class="ia-subdato">{{s.documento || 'Sin documento'}} · {{s.empresa || 'Sin empresa'
+                            }}</small>
+                          <small class="ia-subdato">{{s.estadoOriginal || 'Sin estado'}}
+                            <span *ngIf="s.estadoOriginal !== 'PENDIENTE'"> · Escenario hipotético</span>
+                          </small>
+                        </td>
+                        <td class="ia-numero">
+                          {{s.montoRegistrado != null ? (s.montoRegistrado | currency:'COP':true:'1.0-0') : '—'}}
+                        </td>
+                        <td>
+                          <span [class.ia-masiva-personalizada]="tieneAjustesSolicitudMasiva(s)">
+                            {{tieneAjustesSolicitudMasiva(s) ? 'Personalizadas' : 'Registradas / comunes'}}
+                          </span>
+                        </td>
+                        <td class="ia-centrado">
+                          <button type="button" class="ia-masiva-btn-outline" [disabled]="estaProcesando()"
+                            (click)="alternarConfiguracionSolicitudMasiva(s.numeroSolicitud)">
+                            {{simSolicitudActiva === s.numeroSolicitud ? 'Ocultar' : 'Configurar'}}
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <ng-container *ngFor="let s of simSeleccionadas; let i = index">
+                <div *ngIf="simSolicitudActiva === s.numeroSolicitud" class="ia-int-wide ia-masiva-editor">
+                  <div class="ia-seccion-titulo">Configuración de crédito · Solicitud #{{s.numeroSolicitud}}</div>
+                  <div class="ia-masiva-editor-meta">
+                    <strong>{{s.nombre}}</strong> · {{s.estadoOriginal || 'Sin estado'}}
+                    <span *ngIf="s.estadoOriginal !== 'PENDIENTE'"> · Simulación hipotética</span>
+                  </div>
+                  <div class="ia-vista-descripcion">
+                    Los campos vacíos utilizan los parámetros comunes, si fueron definidos;
+                    en caso contrario, se mantienen los registrados en esta solicitud.
+                  </div>
+                  <div class="ia-simulador-grid">
+                    <label>
+                      Valor del préstamo (COP)
+                      <input type="number" min="0.01" step="0.01" [name]="'simMontoSolicitud' + i" [(ngModel)]="s.monto"
+                        (ngModelChange)="invalidarResultadosSimulacionMasiva()" [disabled]="estaProcesando()"
+                        placeholder="Usar monto registrado">
+                      <small *ngIf="s.montoRegistrado != null">Registrado:
+                        {{s.montoRegistrado | currency:'COP':true:'1.0-0'}}</small>
+                    </label>
+                    <label>
+                      {{simFormulario.tipoTasa === 'MENSUAL' ? 'Tasa mensual (%)' : 'TNA (30/360) %'}}
+                      <input type="number" min="0" max="100" step="0.000001" [name]="'simTasaSolicitud' + i"
+                        [(ngModel)]="s.tasaPorcentaje" (ngModelChange)="invalidarResultadosSimulacionMasiva()"
+                        [disabled]="estaProcesando()" placeholder="Usar tasa registrada / común">
+                    </label>
+                    <label>
+                      Frecuencia de pago
+                      <select [name]="'simFrecuenciaSolicitud' + i" [(ngModel)]="s.frecuenciaPago"
+                        (ngModelChange)="invalidarResultadosSimulacionMasiva()" [disabled]="estaProcesando()">
+                        <option value="">Registrada / común</option>
+                        <option value="MENSUAL">Mensual (12)</option>
+                        <option value="QUINCENAL">Quincenal (24)</option>
+                      </select>
+                    </label>
+                    <label>
+                      Plazo (meses)
+                      <input type="number" min="1" max="120" step="1" [name]="'simPlazoSolicitud' + i"
+                        [(ngModel)]="s.plazoMeses" (ngModelChange)="invalidarResultadosSimulacionMasiva()"
+                        [disabled]="estaProcesando()" placeholder="Usar plazo registrado / común">
+                    </label>
+                    <label>
+                      Fecha primera cuota (individual)
+                      <input type="date" [name]="'simFechaSolicitud' + i" [(ngModel)]="s.fechaPrimeraCuota"
+                        (ngModelChange)="invalidarResultadosSimulacionMasiva()" [disabled]="estaProcesando()">
+                      <small>Si se deja vacía, utiliza la fecha común.</small>
+                    </label>
+                  </div>
+                  <div class="ia-simulador-acciones">
+                    <button type="button" [disabled]="estaProcesando()"
+                      (click)="alternarConfiguracionSolicitudMasiva(s.numeroSolicitud)">Listo</button>
+                    <span>Se conserva la configuración de esta solicitud al cerrar el formulario.</span>
+                  </div>
+                </div>
+              </ng-container>
+              <label *ngIf="!simSeleccionadas || simSeleccionadas.length === 0" class="ia-int-wide">
+                Solicitudes (1 a 100): números separados por coma o filas individuales
+                <textarea class="form-control" name="simIds" [(ngModel)]="simSolicitudesTexto"
+                  (ngModelChange)="invalidarResultadosSimulacionMasiva()" rows="3"
+                  placeholder="1, 2, 3  o  1|10000000|24|16.2|MENSUAL"></textarea>
+                <small>Formato: solicitud | monto | meses | tasa (%) | frecuencia.</small>
+              </label>
+              <details class="ia-int-wide ia-masiva-comunes">
+                <summary>Aplicar condiciones comunes (opcional)</summary>
+                <div class="ia-vista-descripcion">
+                  Se aplican solo cuando una solicitud no tenga ese campo personalizado.
+                  Si todo está vacío, se utilizan los datos registrados de cada crédito.
+                </div>
+                <div class="ia-simulador-grid">
+                  <label>
+                    Plazo común (meses)
+                    <input type="number" min="1" max="120" step="1" name="simMeses"
+                      [(ngModel)]="simFormulario.plazoMeses" (ngModelChange)="invalidarResultadosSimulacionMasiva()"
+                      [disabled]="estaProcesando()" placeholder="Usar plazo registrado">
+                  </label>
+                  <label>
+                    Convención de tasa (para todas las solicitudes)
+                    <select name="simTipoTasa" [(ngModel)]="simFormulario.tipoTasa"
+                      (ngModelChange)="cambiarTipoTasaIntegral($event)" [disabled]="estaProcesando()">
+                      <option value="TNA_30_360">TNA 30/360</option>
+                      <option value="MENSUAL">Tasa mensual existente</option>
+                    </select>
+                  </label>
+                  <label>
+                    Tasa común (%)
+                    <input type="number" min="0" max="100" step="0.000001" name="simTasa"
+                      [(ngModel)]="simFormulario.tasaPorcentaje" (ngModelChange)="invalidarResultadosSimulacionMasiva()"
+                      [disabled]="estaProcesando()" placeholder="Usar tasa registrada">
+                  </label>
+                  <label>
+                    Frecuencia común
+                    <select name="simFrecuencia" [(ngModel)]="simFormulario.frecuenciaPago"
+                      (ngModelChange)="invalidarResultadosSimulacionMasiva()" [disabled]="estaProcesando()">
+                      <option value="">Usar frecuencia registrada</option>
+                      <option value="MENSUAL">Mensual</option>
+                      <option value="QUINCENAL">Quincenal</option>
+                    </select>
+                  </label>
+                  <label>
+                    Fecha primera cuota (común)
+                    <input type="date" name="simFecha" [(ngModel)]="simFormulario.fechaPrimeraCuota"
+                      (ngModelChange)="invalidarResultadosSimulacionMasiva()" [disabled]="estaProcesando()">
+                    <small>Obligatoria si alguna solicitud no tiene fecha individual.</small>
+                  </label>
+                </div>
+              </details>
+              <div class="ia-int-wide ia-precaucion">
+                Nómina y deducciones se consultan por asociado desde NovaWEB y FEMPROBIEN.
+                No se mezclan ingresos entre personas ni se registran cambios en las solicitudes.
+              </div>
+              <div *ngIf="hayNegadasSimulacion()" class="ia-int-wide ia-precaucion">
+                <strong>Atención: hay solicitudes NEGADAS.</strong>
+                Solo se simulan como escenarios hipotéticos; su estado no cambia.
+                <label class="ia-general-confirmacion">
+                  <input type="checkbox" name="simConfirmarNegadas" [(ngModel)]="simConfirmarNegadas"
+                    [disabled]="estaProcesando()">
+                  Confirmo la simulación hipotética de estas solicitudes negadas.
+                </label>
+              </div>
+              <div class="ia-int-wide ia-int-botones">
+                <button type="submit" [disabled]="estaProcesando() || (hayNegadasSimulacion() && !simConfirmarNegadas)">
+                  {{cargandoSimulacionIntegral ? 'Calculando...' : 'Simular solicitudes (' + simSeleccionadas.length +
+                  ')'}}
+                </button>
+              </div>
+            </form>
+            <div *ngIf="simError" class="ia-error-simulador">{{simError}}</div>
+            <div *ngIf="simMasiva" class="ia-int-resultados ia-masiva-resultados">
+              <div class="ia-seccion-titulo">Resultados de la simulación</div>
+              <div class="ia-vista-descripcion">
+                {{simMasiva.simuladas}} de {{simMasiva.total}} solicitudes simuladas.
+                Selecciona <strong>Ver detalle</strong> para consultar los cálculos de cada solicitud.
+                Puedes escribir en el chat para preguntarle al agente sobre este lote.
+              </div>
+              <div class="ia-int-tabla-scroll ia-masiva-resultados-scroll">
+                <table class="ia-tabla ia-masiva-resultados-tabla">
+                  <thead>
+                    <tr>
+                      <th>Solicitud / asociado</th>
+                      <th>Estado solicitud</th>
+                      <th class="ia-numero">Cuota</th>
+                      <th class="ia-centrado">Plazo</th>
+                      <th class="ia-numero">TOPE proyectado</th>
+                      <th>Estado cálculo</th>
+                      <th class="ia-centrado">Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody *ngFor="let item of simMasiva.resultados">
+                    <tr>
+                      <td><strong>#{{item.numeroSolicitud}}</strong>
+                        <small class="ia-subdato">{{nombreDeAsociadoSimulado(item.numeroSolicitud)}}</small>
+                      </td>
+                      <td>{{estadoDeSolicitudPorNumero(item.numeroSolicitud)}}
+                        <small *ngIf="estadoDeSolicitudPorNumero(item.numeroSolicitud) !== 'PENDIENTE'"
+                          class="ia-subdato">Hipotética</small>
+                      </td>
+                      <td class="ia-numero">{{item.simulacion ?
+                        (item.simulacion.cuotaPorPeriodo | currency:'COP':true:'1.2-2') : '—'}}</td>
+                      <td class="ia-centrado">{{item.simulacion ? item.simulacion.plazoMeses : '—'}}</td>
+                      <td class="ia-numero">{{item.capacidadPago &&
+                        item.capacidadPago.topeProyectadoPorcentaje != null ?
+                        (item.capacidadPago.topeProyectadoPorcentaje | number:'1.2-2') + '%' : 'No informado'}}</td>
+                      <td>{{item.estado}}</td>
+                      <td class="ia-centrado">
+                        <button type="button" class="ia-masiva-btn-outline"
+                          (click)="alternarAmortizacionIntegral(item)">
+                          {{item.mostrarAmortizacion ? 'Ocultar detalle' : 'Ver detalle'}}
+                        </button>
+                      </td>
+                    </tr>
+                    <tr *ngIf="item.mostrarAmortizacion">
+                      <td colspan="7" class="ia-masiva-detalle-celda">
+                        <div class="ia-masiva-detalle">
+                          <div class="ia-seccion-titulo">Resultado · Solicitud #{{item.numeroSolicitud}}</div>
+                          <div class="ia-masiva-detalle-resumen">
+                            <div><small>Estado del cálculo</small><strong>{{item.estado}}</strong></div>
+                            <div><small>Cuota simulada</small><strong>{{item.simulacion ?
+                                (item.simulacion.cuotaPorPeriodo | currency:'COP':true:'1.2-2') : 'Sin cálculo'
+                                }}</strong></div>
+                            <div><small>TOPE proyectado</small><strong>{{item.capacidadPago &&
+                                item.capacidadPago.topeProyectadoPorcentaje != null ?
+                                (item.capacidadPago.topeProyectadoPorcentaje | number:'1.2-2') + '%' : 'No informado'
+                                }}</strong></div>
+                            <div><small>Plazo reglamentario</small><strong>{{item.validacionReglamentaria &&
+                                item.validacionReglamentaria.plazoCumple === true
+                                ? 'Cumple plazo' : item.validacionReglamentaria &&
+                                item.validacionReglamentaria.plazoCumple === false
+                                ? 'No cumple plazo' : 'Información insuficiente'}}</strong></div>
+                          </div>
+                          <div *ngIf="item.mensaje" class="ia-precaucion">{{item.mensaje}}</div>
+                          <div
+                            *ngIf="item.simulacion && (!item.capacidadPago || item.capacidadPago.topeProyectadoPorcentaje == null)"
+                            class="ia-precaucion">
+                            El cálculo financiero no devolvió un TOPE para este escenario.
+                            Verifica la disponibilidad de ingresos y deducciones de esta solicitud.
+                          </div>
+                          <div *ngIf="item.simulacion && item.simulacion.tablaAmortizacion &&
+                                item.simulacion.tablaAmortizacion.length" class="ia-masiva-amortizacion">
+                            <div class="ia-masiva-detalle-encabezado">
+                              <strong>Tabla de amortización</strong>
+                            </div>
+                            <div class="ia-int-tabla-scroll ia-masiva-amort-scroll">
+                              <table class="ia-tabla">
+                                <thead>
+                                  <tr>
+                                    <th class="ia-centrado">N.º</th>
+                                    <th>Fecha</th>
+                                    <th class="ia-numero">Cuota</th>
+                                    <th class="ia-numero">Interés</th>
+                                    <th class="ia-numero">Capital</th>
+                                    <th class="ia-numero">Saldo</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr *ngFor="let f of item.simulacion.tablaAmortizacion">
+                                    <td class="ia-centrado">{{f.numeroCuota}}</td>
+                                    <td>{{f.fechaVencimiento || '—'}}</td>
+                                    <td class="ia-numero">{{f.cuotaAPagar | number:'1.2-2'}}</td>
+                                    <td class="ia-numero">{{f.interes | number:'1.2-2'}}</td>
+                                    <td class="ia-numero">{{f.capitalAmortizado | number:'1.2-2'}}</td>
+                                    <td class="ia-numero">{{f.capitalVivo | number:'1.2-2'}}</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                          <div
+                            *ngIf="!item.simulacion || !item.simulacion.tablaAmortizacion || !item.simulacion.tablaAmortizacion.length"
+                            class="ia-vista-descripcion">
+                            No hay tabla de amortización disponible para esta solicitud.
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="ia-int-nota">
+                Las simulaciones no verifican automáticamente solvencia externa, garantías, seguros
+                ni gastos de desembolso. Las fechas son referenciales si se informa fecha inicial.
+              </div>
+            </div>
+          </ng-container>
+        </div>
+        <div *ngIf="m.tipo === 'resumen' && m.datos && m.datos.resumenFinancieroAgente"
+          class="ia-reporte ia-reporte-especializado">
+          <div class="ia-reporte-titulo">
+            <strong>Resumen ejecutivo · Solicitud #{{m.datos.solicitud.numeroSolicitud}}</strong>
+            <span class="ia-etiqueta">Preliminar</span>
+          </div>
+          <div class="ia-vista-descripcion">
+            Situación general del asociado. Para evaluar los topes y la cuota
+            utiliza <strong>Capacidad de pago</strong>; para ver los conceptos
+            de nómina utiliza <strong>Nómina</strong>.
+          </div>
+          <div class="ia-ficha-grid">
+            <div class="ia-ficha-dato">
+              <small
+                *ngIf="m.datos.resumenFinancieroAgente.ingresos && m.datos.resumenFinancieroAgente.ingresos.totalIngresosEstimados != null">
+                Ingresos mensuales estimados
+              </small>
+              <small
+                *ngIf="!m.datos.resumenFinancieroAgente.ingresos || m.datos.resumenFinancieroAgente.ingresos.totalIngresosEstimados == null">
+                Salario básico mensual registrado
+              </small>
+              <strong
+                *ngIf="m.datos.resumenFinancieroAgente.ingresos && m.datos.resumenFinancieroAgente.ingresos.totalIngresosEstimados != null">
+                {{m.datos.resumenFinancieroAgente.ingresos.totalIngresosEstimados | currency:'COP':true:'1.0-0'}}
+              </strong>
+              <ng-container
+                *ngIf="!m.datos.resumenFinancieroAgente.ingresos || m.datos.resumenFinancieroAgente.ingresos.totalIngresosEstimados == null">
+                <strong *ngIf="m.datos.nomina && m.datos.nomina.salarioBasicoMensual != null">
+                  {{m.datos.nomina.salarioBasicoMensual | currency:'COP':true:'1.0-0'}}
+                </strong>
+                <strong *ngIf="!m.datos.nomina || m.datos.nomina.salarioBasicoMensual == null">
+                  Información no disponible
+                </strong>
+                <small class="ia-subdato" *ngIf="m.datos.nomina && m.datos.nomina.salarioBasicoMensual != null">
+                  Salario registrado en NovaWEB; total de ingresos mensuales pendiente de validar.
+                </small>
+                <ng-container
+                  *ngIf="m.datos.nomina && m.datos.nomina.comisionesConsolidadasDetalle && m.datos.nomina.comisionesConsolidadasDetalle.length > 0">
+                  <small *ngFor="let c of m.datos.nomina.comisionesConsolidadasDetalle" class="ia-subdato">
+                    {{c.concepto || 'Comisión / hora extra'}} observada:
+                    {{c.valor != null ? (c.valor | currency:'COP':true:'1.0-0') : 'Sin valor'}}.
+                    No incorporada automáticamente al ingreso mensual validado.
+                  </small>
+                </ng-container>
+              </ng-container>
+            </div>
+            <div class="ia-ficha-dato">
+              <small>Deducciones observadas (períodos consultados)</small>
+              <strong *ngIf="m.datos.resumenFinancieroAgente.totalDeduccionesObservadas != null">
+                {{m.datos.resumenFinancieroAgente.totalDeduccionesObservadas | currency:'COP':true:'1.0-0'}}
+              </strong>
+              <ng-container *ngIf="m.datos.resumenFinancieroAgente.totalDeduccionesObservadas == null">
+                <strong *ngIf="m.datos.nomina && m.datos.nomina.totalDeduccionesPeriodosEncontrados != null">
+                  {{m.datos.nomina.totalDeduccionesPeriodosEncontrados | currency:'COP':true:'1.0-0'}}
+                </strong>
+                <strong *ngIf="!m.datos.nomina || m.datos.nomina.totalDeduccionesPeriodosEncontrados == null">
+                  Información no disponible
+                </strong>
+                <small class="ia-subdato"
+                  *ngIf="m.datos.nomina && m.datos.nomina.totalDeduccionesPeriodosEncontrados != null">
+                  Total histórico observado; puede incluir conceptos pendientes de clasificar.
+                  No representa deducciones mensuales verificadas.
+                </small>
+              </ng-container>
+            </div>
+            <div class="ia-ficha-dato">
+              <small>Ahorro permanente consolidado</small>
+              <strong
+                *ngIf="m.datos.cartera && m.datos.cartera.aportes && m.datos.cartera.aportes.SaldoAhorroPermanenteConsolidado_3AniosNuevoCiclo != null">
+                {{m.datos.cartera.aportes.SaldoAhorroPermanenteConsolidado_3AniosNuevoCiclo |
+                currency:'COP':true:'1.0-0'}}
+              </strong>
+              <strong
+                *ngIf="!m.datos.cartera || !m.datos.cartera.aportes || m.datos.cartera.aportes.SaldoAhorroPermanenteConsolidado_3AniosNuevoCiclo == null">
+                Sin información
+              </strong>
+            </div>
+            <div class="ia-ficha-dato">
+              <small>Monto solicitado</small>
+              <strong *ngIf="m.datos.solicitud && m.datos.solicitud.montoSolicitado != null">
+                {{m.datos.solicitud.montoSolicitado | currency:'COP':true:'1.0-0'}}
+              </strong>
+              <strong *ngIf="!m.datos.solicitud || m.datos.solicitud.montoSolicitado == null">Sin información</strong>
+            </div>
+          </div>
+          <div class="ia-seccion-titulo">Información de la solicitud</div>
+          <div class="ia-tabla-scroll">
+            <table class="ia-tabla">
+              <tbody>
+                <tr>
+                  <td>Plazo solicitado</td>
+                  <td class="ia-numero">
+                    {{m.datos.solicitud && m.datos.solicitud.plazoMeses != null ? m.datos.solicitud.plazoMeses + '
+                    meses' : 'Sin información'}}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Estado de la solicitud</td>
+                  <td class="ia-numero">
+                    {{m.datos.solicitud && m.datos.solicitud.estadoSolicitud ? m.datos.solicitud.estadoSolicitud : 'Sin
+                    información'}}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Empresa de nómina</td>
+                  <td class="ia-numero">
+                    {{m.datos.nomina && m.datos.nomina.empresa ? m.datos.nomina.empresa : 'Sin información'}}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Dos quincenas de nómina</td>
+                  <td class="ia-numero">
+                    {{m.datos.resumenFinancieroAgente.nominaMensualCompleta === true ? 'Completas' : 'Información
+                    incompleta'}}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="ia-precaucion">
+            Esta es una ficha de consulta, no una recomendación de aprobación.
+            Los ingresos variables, la cartera y las deducciones pueden requerir validación.
+            El ahorro permanente no equivale a cupo de crédito disponible.
+          </div>
+        </div>
+        <div *ngIf="m.tipo === 'deducciones' && m.datos && m.datos.resumenFinancieroAgente"
+          class="ia-reporte ia-reporte-especializado">
+          <div class="ia-reporte-titulo">
+            <strong>Detalle de nómina</strong>
+            <span class="ia-etiqueta">Dos quincenas</span>
+          </div>
+          <div class="ia-vista-descripcion">
+            Conceptos y movimientos realmente observados en NovaWEB.
+            La clasificación y periodicidad describen los movimientos observados;
+            no certifican automáticamente su continuidad futura.
+            Esta vista no calcula la capacidad de pago ni proyecta cuotas.
+          </div>
+          <ng-container
+            *ngIf="m.datos.nomina && m.datos.nomina.comisionesConsolidadasDetalle && m.datos.nomina.comisionesConsolidadasDetalle.length > 0">
+            <div class="ia-seccion-titulo">Comisiones y horas extras</div>
+            <div class="ia-tabla-scroll">
+              <table class="ia-tabla">
+                <thead>
+                  <tr>
+                    <th>Concepto y clasificación</th>
+                    <th class="ia-numero">Valor observado</th>
+                    <th class="ia-centrado">Quincenas</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let c of m.datos.nomina.comisionesConsolidadasDetalle">
+                    <td>
+                      <strong>{{c.concepto}}</strong>
+                      <small class="ia-subdato">
+                        Código: {{c.codigo || 'N/D'}} · Grupo: {{c.grupo || 'INGRESO_VARIABLE'}}
+                      </small>
+                    </td>
+                    <td class="ia-numero">
+                      <span *ngIf="c.valor != null">
+                        {{c.valor | currency:'COP':true:'1.0-0'}}
+                      </span>
+                      <span *ngIf="c.valor == null">Sin verificar</span>
+                    </td>
+                    <td class="ia-centrado">
+                      {{c.quincenasConMovimiento != null ? c.quincenasConMovimiento + '/2' : 'N/D'}}
+                    </td>
+                  </tr>
+                  <tr class="ia-total">
+                    <td>Total comisiones y horas extras observadas</td>
+                    <td class="ia-numero">
+                      <span *ngIf="m.datos.nomina.comisionesHorasExtrasMensuales != null">
+                        {{m.datos.nomina.comisionesHorasExtrasMensuales | currency:'COP':true:'1.0-0'}}
+                      </span>
+                      <span *ngIf="m.datos.nomina.comisionesHorasExtrasMensuales == null">
+                        No consolidado
+                      </span>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="ia-precaucion">
+              Las comisiones y horas extras son ingresos variables observados en NovaWEB.
+              Su recurrencia y tratamiento para capacidad de pago requieren validación.
+            </div>
+          </ng-container>
+          <div class="ia-seccion-titulo">Descuentos y deducciones</div>
+          <div
+            *ngIf="!m.datos.resumenFinancieroAgente.deducciones || m.datos.resumenFinancieroAgente.deducciones.length === 0"
+            class="ia-estudio-sin-dato">
+            No se encontraron deducciones detalladas en las quincenas consultadas.
+          </div>
+          <div
+            *ngIf="m.datos.resumenFinancieroAgente.deducciones && m.datos.resumenFinancieroAgente.deducciones.length > 0"
+            class="ia-tabla-scroll">
+            <table class="ia-tabla">
+              <thead>
+                <tr>
+                  <th>Concepto y clasificación</th>
+                  <th class="ia-numero">Valor observado</th>
+                  <th class="ia-centrado">Quincenas</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let d of m.datos.resumenFinancieroAgente.deducciones">
+                  <td>
+                    <strong>{{d.concepto}}</strong>
+                    <small class="ia-subdato">
+                      Código: {{d.codigo || 'N/D'}} · Grupo: {{d.grupo || 'Sin clasificar'}}
+                    </small>
+                    <small class="ia-subdato">
+                      Periodicidad: {{d.periodicidad === 'NO_DETERMINADA'
+                      ? 'Por confirmar' : (d.periodicidad || 'Información no disponible')}}
+                    </small>
+                  </td>
+                  <td class="ia-numero">
+                    <span *ngIf="d.valorObservado != null">
+                      {{d.valorObservado | currency:'COP':true:'1.0-0'}}
+                    </span>
+                    <span *ngIf="d.valorObservado == null">Sin verificar</span>
+                  </td>
+                  <td class="ia-centrado">
+                    {{d.quincenasConMovimiento != null ? d.quincenasConMovimiento + '/2' : 'N/D'}}
+                  </td>
+                </tr>
+                <tr class="ia-total">
+                  <td>Total de deducciones observadas (períodos consultados)</td>
+                  <td class="ia-numero">
+                    <span *ngIf="m.datos.resumenFinancieroAgente.totalDeduccionesObservadas != null">
+                      {{m.datos.resumenFinancieroAgente.totalDeduccionesObservadas | currency:'COP':true:'1.0-0'}}
+                    </span>
+                    <span
+                      *ngIf="m.datos.resumenFinancieroAgente.totalDeduccionesObservadas == null && m.datos.nomina && m.datos.nomina.totalDeduccionesPeriodosEncontrados != null">
+                      {{m.datos.nomina.totalDeduccionesPeriodosEncontrados | currency:'COP':true:'1.0-0'}}
+                    </span>
+                    <span
+                      *ngIf="m.datos.resumenFinancieroAgente.totalDeduccionesObservadas == null && (!m.datos.nomina || m.datos.nomina.totalDeduccionesPeriodosEncontrados == null)">
+                      Sin verificar
+                    </span>
+                  </td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <ng-container *ngIf="m.datos.nomina && m.datos.nomina.deduccionesConsolidadasDetalle">
+            <ng-container *ngFor="let pendiente of m.datos.nomina.deduccionesConsolidadasDetalle">
+              <div
+                *ngIf="pendiente.codigoReconocido === false || pendiente.tipoMovimiento === 'DESCONOCIDO' || pendiente.grupo === 'SIN_CLASIFICAR'"
+                class="ia-precaucion">
+                <strong>Concepto por identificar:</strong>
+                {{pendiente.concepto || 'Sin identificar'}}
+                ({{pendiente.codigo || 'Sin código'}})
+                <span *ngIf="pendiente.valor != null">
+                  · {{pendiente.valor | currency:'COP':true:'1.0-0'}} observado
+                </span>.
+                Requiere confirmar su naturaleza antes de utilizarlo en el cálculo financiero.
+              </div>
+            </ng-container>
+          </ng-container>
+          <div class="ia-precaucion">
+            Estos valores se observaron en los períodos de nómina recuperados,
+            que no necesariamente son dos quincenas consecutivas. El total histórico
+            puede incluir conceptos pendientes de clasificar; no equivale a descuentos
+            mensuales verificados ni prueba que sean obligaciones futuras.
+          </div>
+        </div>
+        <div *ngIf="m.tipo === 'formulario_simulacion' && m.datos" class="ia-reporte">
+          <div class="ia-seccion-titulo">Simulador de crédito (TNA 30/360)</div>
+          <div class="ia-vista-descripcion">
+            Los escenarios son preliminares y no modifican la solicitud.
+          </div>
+          <div class="ia-acciones ia-modos-simulador" role="group" aria-label="Modalidad de simulación">
+            <button type="button" [disabled]="estaProcesando()" [class.ia-modo-activo]="m.datos.modo === 'individual'"
+              [attr.aria-pressed]="m.datos.modo === 'individual'" (click)="cambiarModoSimulador(m.datos, 'individual')">
+              Simulación individual
+            </button>
+            <button type="button" [disabled]="estaProcesando()" [class.ia-modo-activo]="m.datos.modo === 'comparacion'"
+              [attr.aria-pressed]="m.datos.modo === 'comparacion'"
+              (click)="cambiarModoSimulador(m.datos, 'comparacion')">
+              Comparar plazos
+            </button>
+          </div>
+          <form class="ia-simulador" (ngSubmit)="ejecutarSimuladorUnificado(m.datos)" novalidate>
+            <div class="ia-simulador-grid">
+              <label>
+                Valor del préstamo (COP)
+                <input type="number" min="0.01" step="0.01" [(ngModel)]="m.datos.monto"
+                  (ngModelChange)="invalidarParametrosSimulador(m.datos)" [ngModelOptions]="{standalone:true}"
+                  [disabled]="estaProcesando()" required>
+              </label>
+              <label>
+                TNA (30/360) %
+                <input type="number" min="0" max="100" step="0.01" [(ngModel)]="m.datos.tna"
+                  (ngModelChange)="invalidarParametrosSimulador(m.datos)" [ngModelOptions]="{standalone:true}"
+                  [disabled]="estaProcesando()" required>
+              </label>
+              <label>
+                Frecuencia de pago
+                <select [(ngModel)]="m.datos.frecuencia" (ngModelChange)="invalidarParametrosSimulador(m.datos)"
+                  [ngModelOptions]="{standalone:true}" [disabled]="estaProcesando()">
+                  <option value="MENSUAL">Mensual (12)</option>
+                  <option value="QUINCENAL">Quincenal (24)</option>
+                  <option value="BIMESTRAL">Bimestral (6)</option>
+                  <option value="TRIMESTRAL">Trimestral (4)</option>
+                  <option value="CUATRIMESTRAL">Cuatrimestral (3)</option>
+                  <option value="SEMESTRAL">Semestral (2)</option>
+                  <option value="ANUAL">Anual (1)</option>
+                </select>
+              </label>
+            </div>
+            <div *ngIf="m.datos.modo === 'individual'">
+              <div class="ia-seccion-titulo">Plazo de la simulación</div>
+              <div class="ia-simulador-grid">
+                <label>
+                  Plazo (años)
+                  <input type="number" min="0.041667" max="40" step="any" [(ngModel)]="m.datos.simulacion.anios"
+                    (ngModelChange)="invalidarSimulacion(m.datos)" [ngModelOptions]="{standalone:true}"
+                    [disabled]="estaProcesando()" required>
+                </label>
+              </div>
+            </div>
+            <div *ngIf="m.datos.modo === 'comparacion'">
+              <div class="ia-seccion-titulo">Tres plazos (años)</div>
+              <div class="ia-vista-descripcion">
+                Se comparan alternativas del mismo crédito: las cuotas no se suman.
+              </div>
+              <div class="ia-simulador-grid">
+                <label *ngFor="let plazo of m.datos.comparacion.plazos; let i = index">
+                  Alternativa {{i + 1}}
+                  <input type="number" min="0.041667" max="40" step="any" [(ngModel)]="plazo.anios"
+                    (ngModelChange)="invalidarComparacion(m.datos)" [ngModelOptions]="{standalone:true}"
+                    [disabled]="estaProcesando()" required>
+                </label>
+              </div>
+            </div>
+            <div class="ia-simulador-acciones">
+              <button type="submit" [disabled]="estaProcesando()">
+                {{m.datos.modo === 'comparacion'
+                ? (m.datos.comparacion.enviando ? 'Comparando...' : 'Calcular comparación')
+                : (m.datos.simulacion.enviando ? 'Calculando...' : 'Calcular cuota')}}
+              </button>
+              <span>Solo escenario de prueba.</span>
+            </div>
+          </form>
+          <div *ngIf="m.datos.modo === 'individual'">
+            <div *ngIf="m.datos.simulacion.error" class="ia-error-simulador">
+              {{m.datos.simulacion.error}}
+            </div>
+            <div *ngIf="m.datos.simulacion.resultado" class="ia-resultado-simulacion">
+              <div class="ia-seccion-titulo">
+                Resultado calculado por BridgeApi
+              </div>
+              <div class="ia-tabla-scroll">
+                <table class="ia-tabla">
+                  <tbody>
+                    <tr>
+                      <td>Valor del préstamo</td>
+                      <td class="ia-numero">
+                        {{m.datos.simulacion.resultado.monto | currency:'COP':true:'1.2-2'}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>TNA (30/360)</td>
+                      <td class="ia-numero">
+                        {{m.datos.simulacion.resultado.tnaPorcentaje | number:'1.2-2'}}%
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Interés equivalente por período</td>
+                      <td class="ia-numero">
+                        {{m.datos.simulacion.resultado.tasaPeriodoPorcentaje | number:'1.4-4'}}%
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>N.º de pagos al año</td>
+                      <td class="ia-numero">
+                        {{m.datos.simulacion.resultado.pagosPorAnio}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>N.º total de cuotas</td>
+                      <td class="ia-numero">
+                        {{m.datos.simulacion.resultado.cantidadCuotas}}
+                      </td>
+                    </tr>
+                    <tr class="ia-total">
+                      <td>Cuota ordinaria calculada</td>
+                      <td class="ia-numero">
+                        {{m.datos.simulacion.resultado.cuota | currency:'COP':true:'1.2-2'}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Total estimado a pagar</td>
+                      <td class="ia-numero">
+                        {{m.datos.simulacion.resultado.total | currency:'COP':true:'1.2-2'}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Intereses estimados</td>
+                      <td class="ia-numero">
+                        {{m.datos.simulacion.resultado.interesesTotales | currency:'COP':true:'1.2-2'}}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div *ngIf="m.datos.simulacion.interpretando" class="ia-precaucion">
+                Calculando indicadores financieros e interpretando resultados...
+              </div>
+              <div *ngIf="m.datos.simulacion.analisis" class="ia-analisis-lista">
+                <div class="ia-seccion-titulo">Interpretación financiera preliminar</div>
+                <p *ngFor="let conclusion of m.datos.simulacion.analisis.conclusiones">
+                  {{conclusion}}
+                </p>
+                <div *ngIf="m.datos.simulacion.analisis.escenarios && m.datos.simulacion.analisis.escenarios.length"
+                  class="ia-tabla-scroll">
+                  <table class="ia-tabla">
+                    <thead>
+                      <tr>
+                        <th>Plazo</th>
+                        <th class="ia-numero">Cuota mensual equivalente</th>
+                        <th class="ia-numero">TOPE actual</th>
+                        <th class="ia-numero">TOPE proyectado</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let e of m.datos.simulacion.analisis.escenarios">
+                        <td>{{e.plazoMeses}} meses</td>
+                        <td class="ia-numero">
+                          {{e.cuotaMensualEquivalente | currency:'COP':true:'1.2-2'}}
+                        </td>
+                        <td class="ia-numero">
+                          {{e.topeActual != null ? (e.topeActual | number:'1.2-2') + '%' : 'Por confirmar'}}
+                        </td>
+                        <td class="ia-numero">
+                          {{e.topeProyectado != null ? (e.topeProyectado | number:'1.2-2') + '%' : 'Por confirmar'}}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div *ngIf="m.datos.simulacion.interpretacionIA" class="ia-interpretacion-ia">
+                  <div class="ia-seccion-titulo">Interpretación del agente IA</div>
+                  <div class="ia-interpretacion-contenido"
+                    [innerHTML]="formatearInterpretacionIA(m.datos.simulacion.interpretacionIA)"></div>
+                </div>
+              </div>
+              <div *ngIf="m.datos.simulacion.interpretacionAviso" class="ia-precaucion">
+                {{m.datos.simulacion.interpretacionAviso}}
+              </div>
+              <div
+                *ngIf="m.datos.simulacion.resultado.tablaAmortizacion && m.datos.simulacion.resultado.tablaAmortizacion.length > 0"
+                class="ia-amortizacion">
+                <div class="ia-seccion-titulo">
+                  Tabla de amortización ({{m.datos.simulacion.resultado.cantidadRealCuotas}} cuotas)
+                </div>
+                <div class="ia-tabla-scroll ia-amortizacion-scroll">
+                  <table class="ia-tabla ia-tabla-amortizacion">
+                    <thead>
+                      <tr>
+                        <th class="ia-centrado">N.º</th>
+                        <th class="ia-numero">Cuota a pagar</th>
+                        <th class="ia-numero">Pago anticipado</th>
+                        <th class="ia-numero">Total pagado</th>
+                        <th class="ia-numero">Interés</th>
+                        <th class="ia-numero">Capital amortizado</th>
+                        <th class="ia-numero">Capital vivo</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let pago of m.datos.simulacion.resultado.tablaAmortizacion"
+                        [class.ia-fila-inicial]="pago.numeroCuota === 0"
+                        [class.ia-ultima-cuota]="pago.numeroCuota === m.datos.simulacion.resultado.cantidadRealCuotas">
+                        <td class="ia-centrado">
+                          {{pago.numeroCuota}}
+                        </td>
+                        <td class="ia-numero">
+                          <span *ngIf="pago.cuotaAPagar != null">
+                            {{pago.cuotaAPagar | currency:'COP':true:'1.2-2'}}
+                          </span>
+                          <span *ngIf="pago.cuotaAPagar == null">—</span>
+                        </td>
+                        <td class="ia-numero">
+                          <span *ngIf="pago.pagoAnticipado != null">
+                            {{pago.pagoAnticipado | currency:'COP':true:'1.2-2'}}
+                          </span>
+                          <span *ngIf="pago.pagoAnticipado == null">—</span>
+                        </td>
+                        <td class="ia-numero">
+                          <span *ngIf="pago.totalPagado != null">
+                            {{pago.totalPagado | currency:'COP':true:'1.2-2'}}
+                          </span>
+                          <span *ngIf="pago.totalPagado == null">—</span>
+                        </td>
+                        <td class="ia-numero">
+                          <span *ngIf="pago.interes != null">
+                            {{pago.interes | currency:'COP':true:'1.2-2'}}
+                          </span>
+                          <span *ngIf="pago.interes == null">—</span>
+                        </td>
+                        <td class="ia-numero">
+                          <span *ngIf="pago.capitalAmortizado != null">
+                            {{pago.capitalAmortizado | currency:'COP':true:'1.2-2'}}
+                          </span>
+                          <span *ngIf="pago.capitalAmortizado == null">—</span>
+                        </td>
+                        <td class="ia-numero">
+                          {{pago.capitalVivo | currency:'COP':true:'1.2-2'}}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="ia-precaucion">
+                  Los pagos anticipados todavía no son editables.
+                  La tabla presenta el plan de cuota fija.
+                </div>
+              </div>
+              <div class="ia-precaucion">
+                No incluye gastos de primera cuota,
+                seguros ni 4 × 1.000.
+              </div>
+            </div>
+            <div *ngIf="m.datos.simulacion.registrada && m.datos.simulacion.registrada.cuotaRegistrada != null"
+              class="ia-registrada">
+              <small>
+                Cuota de la solicitud original (sin modificar):
+              </small>
+              <span>
+                {{m.datos.simulacion.registrada.cuotaRegistrada | currency:'COP':true:'1.2-2'}}
+              </span>
+            </div>
+          </div>
+          <div *ngIf="m.datos.modo === 'comparacion'">
+            <div *ngIf="m.datos.comparacion.error" class="ia-error-simulador">
+              {{m.datos.comparacion.error}}
+            </div>
+            <div *ngIf="m.datos.comparacion.resultados && m.datos.comparacion.resultados.length > 0"
+              class="ia-resultado-simulacion">
+              <div class="ia-seccion-titulo">
+                Resultados de los tres plazos
+              </div>
+              <div class="ia-vista-descripcion">
+                Selecciona «Ver amortización» en la alternativa que desees revisar.
+                El detalle se despliega debajo del plazo seleccionado.
+              </div>
+              <div class="ia-tabla-scroll ia-comparacion-resumen-scroll">
+                <table class="ia-tabla ia-comparacion-resumen">
+                  <thead>
+                    <tr>
+                      <th>Plazo</th>
+                      <th class="ia-centrado">Cuotas</th>
+                      <th class="ia-numero">Cuota</th>
+                      <th class="ia-numero">Intereses</th>
+                      <th class="ia-numero">Total</th>
+                      <th class="ia-centrado">Plazo general</th>
+                      <th class="ia-centrado">Detalle</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ng-container *ngFor="let r of m.datos.comparacion.resultados">
+                      <tr [class.ia-comparacion-activa]="m.datos.comparacion.plazoVisible === r.plazoMeses">
+                        <td>{{r.plazoMeses}} meses</td>
+                        <td class="ia-centrado">{{r.cantidadCuotas}}</td>
+                        <td class="ia-numero">{{r.cuota | currency:'COP':true:'1.2-2'}}</td>
+                        <td class="ia-numero">{{r.interesesTotales | currency:'COP':true:'1.2-2'}}</td>
+                        <td class="ia-numero">{{r.total | currency:'COP':true:'1.2-2'}}</td>
+                        <td class="ia-centrado">
+                          <span [class.ia-plazo-excede]="r.plazoMeses > 24">
+                            {{r.plazoMeses > 24 ? 'Supera 24 meses' : 'Hasta 24 meses'}}
+                          </span>
+                        </td>
+                        <td class="ia-centrado">
+                          <button type="button" class="ia-comparacion-accion"
+                            [disabled]="estaProcesando() || !r.tablaAmortizacion || !r.tablaAmortizacion.length"
+                            [attr.aria-expanded]="m.datos.comparacion.plazoVisible === r.plazoMeses"
+                            (click)="alternarAmortizacionComparacion(m.datos.comparacion, r)">
+                            {{m.datos.comparacion.plazoVisible === r.plazoMeses ? 'Ocultar amortización' : 'Ver
+                            amortización'}}
+                          </button>
+                        </td>
+                      </tr>
+                      <tr
+                        *ngIf="m.datos.comparacion.plazoVisible === r.plazoMeses && r.tablaAmortizacion && r.tablaAmortizacion.length"
+                        class="ia-comparacion-detalle-fila">
+                        <td colspan="7">
+                          <div class="ia-comparacion-detalle">
+                            <div class="ia-comparacion-detalle-cabecera">
+                              <strong>Amortización · {{r.plazoMeses}} meses</strong>
+                              <button type="button" class="ia-comparacion-accion"
+                                (click)="exportarAmortizacionComparacion(r)">
+                                Exportar CSV
+                              </button>
+                            </div>
+                            <div class="ia-tabla-scroll ia-comparacion-detalle-scroll">
+                              <table class="ia-tabla ia-comparacion-tabla">
+                                <thead>
+                                  <tr>
+                                    <th class="ia-centrado">N.º</th>
+                                    <th class="ia-numero">Cuota</th>
+                                    <th class="ia-numero">Interés</th>
+                                    <th class="ia-numero">Capital</th>
+                                    <th class="ia-numero">Saldo</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr *ngFor="let f of r.tablaAmortizacion">
+                                    <td class="ia-centrado">{{f.numeroCuota}}</td>
+                                    <td class="ia-numero">{{f.cuotaAPagar != null ? (f.cuotaAPagar |
+                                      currency:'COP':true:'1.2-2') : '—'}}</td>
+                                    <td class="ia-numero">{{f.interes != null ? (f.interes |
+                                      currency:'COP':true:'1.2-2') : '—'}}</td>
+                                    <td class="ia-numero">{{f.capitalAmortizado != null ? (f.capitalAmortizado |
+                                      currency:'COP':true:'1.2-2') : '—'}}</td>
+                                    <td class="ia-numero">{{f.capitalVivo | currency:'COP':true:'1.2-2'}}</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                            <div *ngIf="r.plazoMeses > 24" class="ia-precaucion">
+                              Este plazo supera el máximo general de 24 meses y requiere revisión reglamentaria.
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    </ng-container>
+                  </tbody>
+                </table>
+              </div>
+              <div *ngIf="m.datos.comparacion.interpretando" class="ia-precaucion">
+                Calculando indicadores financieros e interpretando resultados...
+              </div>
+              <div *ngIf="m.datos.comparacion.analisis" class="ia-analisis-lista">
+                <div class="ia-seccion-titulo">Análisis comparativo y conclusiones</div>
+                <p *ngFor="let conclusion of m.datos.comparacion.analisis.conclusiones">
+                  {{conclusion}}
+                </p>
+                <div *ngIf="m.datos.comparacion.analisis.escenarios && m.datos.comparacion.analisis.escenarios.length"
+                  class="ia-tabla-scroll">
+                  <table class="ia-tabla">
+                    <thead>
+                      <tr>
+                        <th>Plazo</th>
+                        <th class="ia-numero">Cuota mensual equivalente</th>
+                        <th class="ia-numero">TOPE actual</th>
+                        <th class="ia-numero">TOPE proyectado</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let e of m.datos.comparacion.analisis.escenarios">
+                        <td>{{e.plazoMeses}} meses</td>
+                        <td class="ia-numero">
+                          {{e.cuotaMensualEquivalente | currency:'COP':true:'1.2-2'}}
+                        </td>
+                        <td class="ia-numero">
+                          {{e.topeActual != null ? (e.topeActual | number:'1.2-2') + '%' : 'Por confirmar'}}
+                        </td>
+                        <td class="ia-numero">
+                          {{e.topeProyectado != null ? (e.topeProyectado | number:'1.2-2') + '%' : 'Por confirmar'}}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div *ngIf="m.datos.comparacion.interpretacionIA" class="ia-interpretacion-ia">
+                  <div class="ia-seccion-titulo">Interpretación del agente IA</div>
+                  <div class="ia-interpretacion-contenido"
+                    [innerHTML]="formatearInterpretacionIA(m.datos.comparacion.interpretacionIA)"></div>
+                </div>
+              </div>
+              <div *ngIf="m.datos.comparacion.interpretacionAviso" class="ia-precaucion">
+                {{m.datos.comparacion.interpretacionAviso}}
+              </div>
+              <div class="ia-precaucion">
+                Los plazos son alternativas independientes.
+                No se suman las cuotas entre sí ni se
+                consideran automáticamente autorizados.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="m.tipo === 'multiples' && m.datos" class="ia-reporte ia-multiples">
+          <div class="ia-seccion-titulo">
+            Simulación conjunta de créditos
+          </div>
+          <form class="ia-simulador" (ngSubmit)="ejecutarSimulacionMultiple(m.datos)" novalidate>
+            <div *ngFor="let credito of m.datos.creditos;let i = index" class="ia-multiple-credito">
+              <div class="ia-multiple-cabecera">
+                <strong>Crédito {{i + 1}}</strong>
+                <button *ngIf="m.datos.creditos.length > 2" type="button" class="ia-multiple-eliminar"
+                  [disabled]="estaProcesando()" (click)="eliminarCreditoMultiple(m.datos, credito.id)">
+                  Quitar
+                </button>
+              </div>
+              <div class="ia-simulador-grid">
+                <label>
+                  Valor del préstamo (COP)
+                  <input type="number" min="0.01" step="0.01" [(ngModel)]="credito.monto"
+                    (ngModelChange)="invalidarMultiples(m.datos)" [ngModelOptions]="{standalone:true}"
+                    [disabled]="estaProcesando()" required>
+                </label>
+                <label>
+                  TNA (30/360) %
+                  <input type="number" min="0" max="100" step="0.01" [(ngModel)]="credito.tna"
+                    (ngModelChange)="invalidarMultiples(m.datos)" [ngModelOptions]="{standalone:true}"
+                    [disabled]="estaProcesando()" required>
+                </label>
+                <label>
+                  Plazo (años)
+                  <input type="number" min="0.041667" max="40" step="any" [(ngModel)]="credito.anios"
+                    (ngModelChange)="invalidarMultiples(m.datos)" [ngModelOptions]="{standalone:true}"
+                    [disabled]="estaProcesando()" required>
+                </label>
+                <label>
+                  Frecuencia
+                  <select [(ngModel)]="credito.frecuencia" (ngModelChange)="invalidarMultiples(m.datos)"
+                    [ngModelOptions]="{standalone:true}" [disabled]="estaProcesando()">
+                    <option value="MENSUAL">Mensual</option>
+                    <option value="QUINCENAL">Quincenal</option>
+                    <option value="BIMESTRAL">Bimestral</option>
+                    <option value="TRIMESTRAL">Trimestral</option>
+                    <option value="CUATRIMESTRAL">Cuatrimestral</option>
+                    <option value="SEMESTRAL">Semestral</option>
+                    <option value="ANUAL">Anual</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+            <div class="ia-multiple-agregar">
+              <button type="button" [disabled]="estaProcesando() || m.datos.creditos.length >= 6"
+                (click)="agregarCreditoMultiple(m.datos)">
+                + Agregar crédito
+              </button>
+              <small>
+                {{m.datos.creditos.length}} de 6 créditos
+              </small>
+            </div>
+            <div class="ia-simulador-acciones">
+              <button type="submit" [disabled]="estaProcesando()">{{m.datos.enviando ? 'Calculando créditos...' :
+                'Simular todos los créditos'}}
+              </button>
+              <span>
+                No se guardan cambios en la solicitud.
+              </span>
+            </div>
+          </form>
+          <div *ngIf="m.datos.error" class="ia-error-simulador">
+            {{m.datos.error}}
+          </div>
+          <div *ngIf="m.datos.resultados && m.datos.consolidado" class="ia-resultado-simulacion">
+            <div class="ia-seccion-titulo">
+              Resultados individuales
+            </div>
+            <div class="ia-tabla-scroll ia-multiples-scroll">
+              <table class="ia-tabla ia-tabla-multiples">
+                <thead>
+                  <tr>
+                    <th>Crédito</th>
+                    <th class="ia-numero">Monto</th>
+                    <th class="ia-numero">TNA</th>
+                    <th class="ia-centrado">Plazo</th>
+                    <th>Frecuencia</th>
+                    <th class="ia-numero">Cuota por período</th>
+                    <th class="ia-numero">Cuota mensual equivalente</th>
+                    <th class="ia-numero">Intereses totales</th>
+                    <th class="ia-numero">Total a pagar</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let r of m.datos.resultados">
+                    <td>Crédito {{r.numeroCredito}}</td>
+                    <td class="ia-numero">
+                      {{r.monto | currency:'COP':true:'1.2-2'}}
+                    </td>
+                    <td class="ia-numero">
+                      {{r.tna | number:'1.2-2'}}%
+                    </td>
+                    <td class="ia-centrado">
+                      {{r.plazoMeses}} meses
+                    </td>
+                    <td>{{r.frecuencia}}</td>
+                    <td class="ia-numero">
+                      {{r.cuota | currency:'COP':true:'1.2-2'}}
+                    </td>
+                    <td class="ia-numero">
+                      {{r.cuotaMensualEquivalente | currency:'COP':true:'1.2-2'}}
+                    </td>
+                    <td class="ia-numero">
+                      {{r.interesesTotales | currency:'COP':true:'1.2-2'}}
+                    </td>
+                    <td class="ia-numero">
+                      {{r.totalPagar | currency:'COP':true:'1.2-2'}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="ia-seccion-titulo">
+              Consolidado general
+            </div>
+            <div class="ia-tabla-scroll">
+              <table class="ia-tabla">
+                <tbody>
+                  <tr>
+                    <td>Cantidad de créditos</td>
+                    <td class="ia-numero">
+                      {{m.datos.consolidado.cantidadCreditos}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Total solicitado</td>
+                    <td class="ia-numero">
+                      {{m.datos.consolidado.totalSolicitado | currency:'COP':true:'1.2-2'}}
+                    </td>
+                  </tr>
+                  <tr class="ia-total">
+                    <td>
+                      Suma mensual equivalente
+                    </td>
+                    <td class="ia-numero">
+                      {{m.datos.consolidado.cuotaMensualEquivalente | currency:'COP':true:'1.2-2'}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Intereses totales</td>
+                    <td class="ia-numero">
+                      {{m.datos.consolidado.totalIntereses | currency:'COP':true:'1.2-2'}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Total estimado a pagar</td>
+                    <td class="ia-numero">
+                      {{m.datos.consolidado.totalPagar | currency:'COP':true:'1.2-2'}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="ia-precaucion">
+              La suma mensual equivalente es un promedio
+              de referencia. No representa necesariamente
+              el descuento exacto de cada mes, pues los
+              créditos pueden tener distintas frecuencias,
+              fechas de inicio y vencimientos.
+            </div>
+            <div class="ia-precaucion">
+              Esta simulación no incorpora obligaciones
+              vigentes ni determina capacidad de pago
+              aprobada. Los plazos deben verificarse
+              según el reglamento de FEMPROBIEN.
+            </div>
+          </div>
+        </div>
+        <div *ngIf="m.tipo === 'seleccion_multiple' && m.datos" class="ia-reporte ia-evaluacion-multiple">
+          <div class="ia-seccion-titulo">
+            Análisis general de solicitudes
+          </div>
+          <div class="ia-general-pestanas" role="tablist" aria-label="Modalidad de análisis de solicitudes">
+            <button type="button" role="tab" [class.ia-general-activa]="m.datos.modo === 'evaluar'"
+              [attr.aria-selected]="m.datos.modo === 'evaluar'"
+              [disabled]="estaProcesando() || descargandoEstudiosExcel"
+              (click)="cambiarModoAnalisisGeneral(m.datos, 'evaluar')">
+              Evaluar solicitudes
+            </button>
+            <button type="button" role="tab" [class.ia-general-activa]="m.datos.modo === 'simular'"
+              [attr.aria-selected]="m.datos.modo === 'simular'"
+              [disabled]="estaProcesando() || descargandoEstudiosExcel"
+              (click)="cambiarModoAnalisisGeneral(m.datos, 'simular')">
+              Simular solicitudes
+            </button>
+            <button type="button" role="tab" [class.ia-general-activa]="m.datos.modo === 'descargar'"
+              [attr.aria-selected]="m.datos.modo === 'descargar'"
+              [disabled]="estaProcesando() || descargandoEstudiosExcel"
+              (click)="cambiarModoAnalisisGeneral(m.datos, 'descargar')">
+              Descargar créditos
+            </button>
+          </div>
+          <div class="ia-vista-descripcion" *ngIf="m.datos.modo === 'evaluar'">
+            Consulta la situación financiera registrada de cada asociado:
+            ingresos, deducciones, cartera y validaciones pendientes.
+          </div>
+          <div class="ia-vista-descripcion" *ngIf="m.datos.modo === 'simular'">
+            Configura un escenario independiente por solicitud. No se mezclan
+            ingresos ni deducciones entre asociados y no se modifica el crédito original.
+          </div>
+          <div class="ia-vista-descripcion" *ngIf="m.datos.modo === 'descargar'">
+            Selecciona los créditos que deseas exportar. Se descargará un único Excel
+            con una hoja por solicitud, utilizando el formato oficial de FEMPROBIEN.
+            No necesitas evaluarlos ni simularlos previamente.
+          </div>
+          <div class="ia-general-filtros">
+            <div id="filtroEstadoGeneralTitulo" class="ia-general-filtros-titulo">Mostrar solicitudes</div>
+            <div class="ia-general-filtros-opciones" role="radiogroup" aria-labelledby="filtroEstadoGeneralTitulo">
+              <label class="ia-general-filtro-opcion" for="filtroEstadoTodas">
+                <input type="radio" id="filtroEstadoTodas" name="filtroEstadoGeneral" value="TODAS"
+                  [checked]="m.datos.filtroEstado === 'TODAS'" (change)="cambiarFiltroEstadoGeneral(m.datos, 'TODAS')"
+                  [disabled]="estaProcesando() || descargandoEstudiosExcel">
+                <span>Todas</span>
+              </label>
+              <label class="ia-general-filtro-opcion" for="filtroEstadoPendiente">
+                <input type="radio" id="filtroEstadoPendiente" name="filtroEstadoGeneral" value="PENDIENTE"
+                  [checked]="m.datos.filtroEstado === 'PENDIENTE'"
+                  (change)="cambiarFiltroEstadoGeneral(m.datos, 'PENDIENTE')"
+                  [disabled]="estaProcesando() || descargandoEstudiosExcel">
+                <span>Pendientes</span>
+              </label>
+              <label class="ia-general-filtro-opcion" for="filtroEstadoEnEstudio">
+                <input type="radio" id="filtroEstadoEnEstudio" name="filtroEstadoGeneral" value="EN ESTUDIO"
+                  [checked]="m.datos.filtroEstado === 'EN ESTUDIO'"
+                  (change)="cambiarFiltroEstadoGeneral(m.datos, 'EN ESTUDIO')"
+                  [disabled]="estaProcesando() || descargandoEstudiosExcel">
+                <span>En estudio</span>
+              </label>
+              <label class="ia-general-filtro-opcion" for="filtroEstadoAprobada">
+                <input type="radio" id="filtroEstadoAprobada" name="filtroEstadoGeneral" value="APROBADA"
+                  [checked]="m.datos.filtroEstado === 'APROBADA'"
+                  (change)="cambiarFiltroEstadoGeneral(m.datos, 'APROBADA')"
+                  [disabled]="estaProcesando() || descargandoEstudiosExcel">
+                <span>Aprobadas</span>
+              </label>
+              <label class="ia-general-filtro-opcion" for="filtroEstadoAplazada">
+                <input type="radio" id="filtroEstadoAplazada" name="filtroEstadoGeneral" value="APLAZADA"
+                  [checked]="m.datos.filtroEstado === 'APLAZADA'"
+                  (change)="cambiarFiltroEstadoGeneral(m.datos, 'APLAZADA')"
+                  [disabled]="estaProcesando() || descargandoEstudiosExcel">
+                <span>Aplazadas</span>
+              </label>
+              <label class="ia-general-filtro-opcion" for="filtroEstadoNegada">
+                <input type="radio" id="filtroEstadoNegada" name="filtroEstadoGeneral" value="NEGADA"
+                  [checked]="m.datos.filtroEstado === 'NEGADA'" (change)="cambiarFiltroEstadoGeneral(m.datos, 'NEGADA')"
+                  [disabled]="estaProcesando() || descargandoEstudiosExcel">
+                <span>Negadas</span>
+              </label>
+            </div>
+          </div>
+          <form class="ia-simulador"
+            (ngSubmit)="m.datos.modo === 'simular' ? prepararSimulacionVariasSolicitudes(m.datos) : (m.datos.modo === 'descargar' ? descargarExcelSeleccionGeneral(m.datos) : ejecutarEvaluacionSeleccionada(m.datos))"
+            novalidate>
+            <label class="ia-evaluacion-label">
+              Buscar por solicitud, asociado, documento o empresa
+              <input type="text" name="busquedaCreditoEvaluacion" [(ngModel)]="m.datos.busqueda"
+                [disabled]="estaProcesando() || descargandoEstudiosExcel" placeholder="Buscar solicitudes..."
+                autocomplete="off">
+            </label>
+            <div class="ia-general-seleccion">
+              <span>Seleccionadas:
+                <strong>{{m.datos.idsSeleccionados.length}} / 100</strong>
+                · Visibles: {{obtenerSolicitudesParaAnalisis(m.datos).length}}
+              </span>
+              <button type="button" (click)="seleccionarTodasVisiblesGeneral(m.datos)"
+                [disabled]="estaProcesando() || descargandoEstudiosExcel || obtenerSolicitudesParaAnalisis(m.datos).length === 0">
+                Seleccionar todas las visibles
+              </button>
+            </div>
+            <div class="ia-tabla-scroll"
+              style="max-height:290px;overflow-y:auto;border:1px solid #ddd;border-radius:6px">
+              <table class="ia-tabla">
+                <tbody>
+                  <tr *ngFor="let s of obtenerSolicitudesParaAnalisis(m.datos)">
+                    <td style="width:32px;text-align:center;vertical-align:middle">
+                      <input type="checkbox" [checked]="estaSolicitudMarcada(m.datos, s.numero_solicitud)"
+                        [disabled]="estaProcesando() || descargandoEstudiosExcel || (m.datos.idsSeleccionados.length >= 100 && !estaSolicitudMarcada(m.datos, s.numero_solicitud))"
+                        (change)="cambiarSolicitudMarcada(m.datos, s.numero_solicitud, $event.target.checked)"
+                        [attr.aria-label]="'Seleccionar solicitud ' + s.numero_solicitud">
+                    </td>
+                    <td style="white-space:normal">
+                      <strong>#{{s.numero_solicitud}}</strong>
+                      · {{s.nombre_completo_solicitante || s.nom_aso || 'Asociado sin nombre'}}
+                      <small class="ia-subdato">
+                        Documento:
+                        {{s.numero_documento_solicitante || s.cod_asp || '-'}}
+                        · {{s.empresa_grupo || '-'}}
+                      </small>
+                      <small class="ia-subdato">
+                        {{s.monto_solicitado | currency:'COP':true:'1.0-0'}}
+                        · Estado: {{estadoSolicitudGeneral(s)}}
+                        <span *ngIf="m.datos.modo === 'simular' && estadoSolicitudGeneral(s) !== 'PENDIENTE'">
+                          · Escenario hipotético
+                        </span>
+                      </small>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="ia-simulador-acciones">
+              <button type="submit"
+                [disabled]="estaProcesando() || descargandoEstudiosExcel || m.datos.idsSeleccionados.length < 1">
+                {{m.datos.modo === 'simular' ? 'Configurar simulación' : (m.datos.modo === 'descargar' ?
+                (descargandoEstudiosExcel ? 'Generando Excel...' : 'Descargar Excel') : 'Evaluar')}}
+                ({{m.datos.idsSeleccionados.length}})
+              </button>
+              <button type="button"
+                [disabled]="estaProcesando() || descargandoEstudiosExcel || m.datos.idsSeleccionados.length === 0"
+                (click)="limpiarSeleccionGeneral(m.datos)">
+                Limpiar
+              </button>
+            </div>
+            <div *ngIf="m.datos.modo === 'descargar' && m.datos.excelEstado" class="ia-vista-descripcion" role="status"
+              aria-live="polite">
+              {{m.datos.excelEstado}}
+            </div>
+          </form>
+          <div *ngIf="m.datos.error" class="ia-error-simulador" role="alert">
+            {{m.datos.error}}
+          </div>
+          <div class="ia-precaucion">
+            <div>
+              <span *ngIf="m.datos.modo !== 'descargar'">
+                Cada solicitud se procesa por separado. La evaluación no constituye
+                aprobación y la simulación necesita condiciones financieras verificables
+                antes de concluir sobre la capacidad de pago.
+                <span *ngIf="m.datos.modo === 'simular'">
+                  Los estados diferentes de Pendiente se simulan como escenarios
+                  hipotéticos y no cambian el estado original.
+                </span>
+              </span>
+              <span *ngIf="m.datos.modo === 'descargar'">
+                La descarga contiene los estudios registrados de las solicitudes marcadas,
+                no los escenarios hipotéticos. BridgeApi consulta cada crédito por separado
+                y crea un libro con una hoja por solicitud (máximo 100).
+              </span>
+            </div>
+            <div *ngIf="contarSeleccionadasFueraFiltro(m.datos) > 0" style="margin-top:8px">
+              <strong>Atención:</strong>
+              Hay {{contarSeleccionadasFueraFiltro(m.datos)}} solicitud(es)
+              seleccionada(s) fuera del filtro actual. Elige "Todas" o ajusta la selección
+              antes de continuar.
+              <span *ngIf="m.datos.modo !== 'descargar'">
+                No se {{m.datos.modo === 'simular' ? 'simularán' : 'evaluarán'}}
+                solicitudes ocultas por el filtro.
+              </span>
+              <span *ngIf="m.datos.modo === 'descargar'">
+                La descarga incluirá todas las marcadas, aunque algunas estén ocultas por el filtro.
+              </span>
+            </div>
+            <div *ngIf="!solicitudesCredito || solicitudesCredito.length === 0" style="margin-top:8px">
+              No hay solicitudes cargadas. Abre o actualiza la pestaña
+              Solicitudes de crédito y vuelve a intentarlo.
+            </div>
+            <div
+              *ngIf="solicitudesCredito && solicitudesCredito.length > 0 && obtenerSolicitudesParaAnalisis(m.datos).length === 0"
+              style="margin-top:8px">
+              No hay solicitudes que coincidan con el filtro y la búsqueda.
+            </div>
+          </div>
+        </div>
+        <div *ngIf="m.tipo === 'evaluacion_multiple' && m.datos" class="ia-reporte ia-evaluacion-multiple">
+          <div class="ia-seccion-titulo">
+            Análisis financiero de varias solicitudes
+          </div>
+          <div class="ia-simulador-acciones" *ngIf="m.datos.correctos >= 1">
+            <small>Cada asociado conserva sus propios datos y condiciones, salvo los cambios que ingreses para el
+              lote.</small>
+          </div>
+          <div class="ia-evaluacion-conteo">
+            {{m.datos.correctos}} de {{m.datos.total}}
+            solicitudes consultadas correctamente.
+            <span *ngIf="m.datos.fallidas > 0">
+              {{m.datos.fallidas}} con novedad.
+            </span>
+          </div>
+          <div class="ia-tabla-scroll ia-evaluacion-scroll">
+            <table class="ia-tabla ia-tabla-evaluacion">
+              <thead>
+                <tr>
+                  <th>Solicitud</th>
+                  <th>Asociado</th>
+                  <th class="ia-numero">Monto solicitado</th>
+                  <th class="ia-numero">Ingresos estimados</th>
+                  <th class="ia-numero">Deducciones</th>
+                  <th class="ia-numero">TOPE actual</th>
+                  <th class="ia-numero">Cuota mensual equivalente</th>
+                  <th class="ia-numero">TOPE proyectado</th>
+                  <th>Resultado del estudio</th>
+                  <th>Detalle</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of m.datos.resultados">
+                  <td>#{{item.numeroSolicitud}}</td>
+                  <ng-container *ngIf="item.correcto">
+                    <td>{{item.datos.asociado.nombre || 'Sin nombre'}}</td>
+                    <td class="ia-numero">
+                      <span *ngIf="item.datos.solicitud.montoSolicitado != null">
+                        {{item.datos.solicitud.montoSolicitado | currency:'COP':true:'1.0-0'}}
+                      </span>
+                      <span *ngIf="item.datos.solicitud.montoSolicitado == null">—</span>
+                    </td>
+                    <td class="ia-numero">
+                      <span
+                        *ngIf="item.datos.resumenFinancieroAgente.ingresos && item.datos.resumenFinancieroAgente.ingresos.totalIngresosEstimados != null">
+                        {{item.datos.resumenFinancieroAgente.ingresos.totalIngresosEstimados |
+                        currency:'COP':true:'1.0-0'}}
+                      </span>
+                      <span
+                        *ngIf="!item.datos.resumenFinancieroAgente.ingresos || item.datos.resumenFinancieroAgente.ingresos.totalIngresosEstimados == null">—</span>
+                    </td>
+                    <td class="ia-numero">
+                      <span *ngIf="item.datos.resumenFinancieroAgente.totalDeduccionesObservadas != null">
+                        {{item.datos.resumenFinancieroAgente.totalDeduccionesObservadas | currency:'COP':true:'1.0-0'}}
+                      </span>
+                      <span *ngIf="item.datos.resumenFinancieroAgente.totalDeduccionesObservadas == null">—</span>
+                    </td>
+                    <td class="ia-numero">
+                      <span *ngIf="item.datos.resumenFinancieroAgente.porcentajeDeduccionesObservadas != null">
+                        {{item.datos.resumenFinancieroAgente.porcentajeDeduccionesObservadas | number:'1.2-2'}}%
+                      </span>
+                      <span *ngIf="item.datos.resumenFinancieroAgente.porcentajeDeduccionesObservadas == null">—</span>
+                    </td>
+                    <td class="ia-numero">
+                      <span *ngIf="item.datos.simulacion && item.datos.simulacion.cuotaMensualEquivalente != null">
+                        {{item.datos.simulacion.cuotaMensualEquivalente | currency:'COP':true:'1.2-2'}}
+                      </span>
+                      <span
+                        *ngIf="!item.datos.simulacion || item.datos.simulacion.cuotaMensualEquivalente == null">—</span>
+                    </td>
+                    <td class="ia-numero">
+                      <span *ngIf="item.datos.resumenFinancieroAgente.porcentajeConNuevaCuotaIlustrativo != null">
+                        {{item.datos.resumenFinancieroAgente.porcentajeConNuevaCuotaIlustrativo | number:'1.2-2'}}%
+                      </span>
+                      <span
+                        *ngIf="item.datos.resumenFinancieroAgente.porcentajeConNuevaCuotaIlustrativo == null">—</span>
+                    </td>
+                    <td><span *ngIf="item.datos.resultadoEstudio">{{item.datos.resultadoEstudio}}</span>
+                      <span *ngIf="!item.datos.resultadoEstudio">{{(item.datos.estadoEstudio ===
+                        'PRELIMINAR_REQUIERE_VALIDACION' || item.datos.estadoEstudio === 'REQUIERE_VALIDACION') ?
+                        'Estudio pendiente de verificación' : item.datos.estadoEstudio === 'CUMPLE' ? 'Cumple criterios
+                        evaluados' : item.datos.estadoEstudio === 'NO_CUMPLE' ? 'No cumple criterios evaluados' :
+                        item.datos.estadoEstudio === 'PRELIMINAR' ? 'Estudio preliminar' : item.datos.estadoEstudio ==
+                        null ? 'Información insuficiente' : 'Estado por confirmar'}}</span>
+                    </td>
+                    <td>
+                      <button type="button" class="ia-ver-estudio"
+                        (click)="alternarDetalleEvaluacion(m.datos, item.numeroSolicitud)">
+                        {{m.datos.detalleActivo === item.numeroSolicitud ? 'Ocultar detalle' : 'Ver estudio completo'}}
+                      </button>
+                      <button type="button" class="ia-ver-estudio"
+                        [disabled]="descargandoEstudiosExcel || estaProcesando()"
+                        (click)="descargarEstudiosExcel([item.numeroSolicitud])">
+                        Descargar Excel
+                      </button>
+                    </td>
+                  </ng-container>
+                  <td *ngIf="!item.correcto" colspan="9" class="ia-evaluacion-error">
+                    {{item.error}}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <ng-container *ngFor="let item of m.datos.resultados">
+            <div *ngIf="item.correcto && m.datos.detalleActivo === item.numeroSolicitud" class="ia-estudio-detalle">
+              <div class="ia-estudio-detalle-cabecera">
+                <strong>Estudio completo · Solicitud #{{item.numeroSolicitud}}</strong>
+                <button type="button" class="ia-ver-estudio"
+                  (click)="alternarDetalleEvaluacion(m.datos, item.numeroSolicitud)">
+                  Cerrar detalle
+                </button>
+              </div>
+              <div class="ia-estudio-fichas">
+                <div>
+                  <small>Asociado</small>
+                  <strong>{{item.datos.asociado.nombre || 'No informado'}}</strong>
+                </div>
+                <div>
+                  <small>Documento</small>
+                  <strong>{{item.datos.asociado.documento || item.datos.asociado.numeroDocumento ||
+                    item.datos.asociado.identificacion || 'No informado'}}</strong>
+                </div>
+                <div>
+                  <small>Empresa / origen de nómina</small>
+                  <strong>{{(item.datos.nomina && item.datos.nomina.empresa) || 'No informado'}}</strong>
+                </div>
+                <div>
+                  <small>Fecha de nómina más reciente</small>
+                  <strong>{{(item.datos.nomina && item.datos.nomina.fechaNominaMasReciente) || 'No informada'
+                    }}</strong>
+                </div>
+              </div>
+              <div class="ia-seccion-titulo">1. Crédito solicitado</div>
+              <div class="ia-tabla-scroll">
+                <table class="ia-tabla">
+                  <tbody>
+                    <tr>
+                      <td>Valor solicitado</td>
+                      <td class="ia-numero">
+                        <span *ngIf="item.datos.solicitud.montoSolicitado != null">
+                          {{item.datos.solicitud.montoSolicitado | currency:'COP':true:'1.2-2'}}
+                        </span>
+                        <span *ngIf="item.datos.solicitud.montoSolicitado == null">No informado</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Plazo solicitado</td>
+                      <td class="ia-numero">
+                        {{item.datos.solicitud.plazoMeses != null ? item.datos.solicitud.plazoMeses + ' meses' : 'No
+                        informado'}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Frecuencia de pago registrada</td>
+                      <td class="ia-numero">
+                        {{item.datos.solicitud.frecuenciaPagoRegistrada || (item.datos.simulacion &&
+                        item.datos.simulacion.frecuencia) || 'No informada'}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Tasa mensual registrada</td>
+                      <td class="ia-numero">
+                        <span *ngIf="item.datos.solicitud.tasaInteresMensualRegistrada != null">
+                          {{item.datos.solicitud.tasaInteresMensualRegistrada | number:'1.2-4'}}%
+                        </span>
+                        <span *ngIf="item.datos.solicitud.tasaInteresMensualRegistrada == null">No informada</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Cuota mensual equivalente</td>
+                      <td class="ia-numero">
+                        <span *ngIf="item.datos.simulacion && item.datos.simulacion.cuotaMensualEquivalente != null">
+                          {{item.datos.simulacion.cuotaMensualEquivalente | currency:'COP':true:'1.2-2'}}
+                        </span>
+                        <span *ngIf="!item.datos.simulacion || item.datos.simulacion.cuotaMensualEquivalente == null">No
+                          informada</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="ia-seccion-titulo">2. Desglose de ingresos</div>
+              <div class="ia-tabla-scroll" *ngIf="item.datos.resumenFinancieroAgente.ingresos">
+                <table class="ia-tabla">
+                  <thead>
+                    <tr>
+                      <th>Concepto</th>
+                      <th class="ia-numero">Valor estimado (COP)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Salario básico</td>
+                      <td class="ia-numero">
+                        <span *ngIf="item.datos.resumenFinancieroAgente.ingresos.salario != null">
+                          {{item.datos.resumenFinancieroAgente.ingresos.salario | currency:'COP':true:'1.0-0'}}
+                        </span>
+                        <span *ngIf="item.datos.resumenFinancieroAgente.ingresos.salario == null">
+                          Información no disponible
+                        </span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Comisiones / horas extras</td>
+                      <td class="ia-numero">
+                        <span *ngIf="item.datos.resumenFinancieroAgente.ingresos.comisionesHorasExtras != null">
+                          {{item.datos.resumenFinancieroAgente.ingresos.comisionesHorasExtras |
+                          currency:'COP':true:'1.0-0'}}
+                        </span>
+                        <ng-container *ngIf="item.datos.resumenFinancieroAgente.ingresos.comisionesHorasExtras == null">
+                          <ng-container *ngIf="ingresosVariablesObservados(item.datos.nomina) != null">
+                            {{ingresosVariablesObservados(item.datos.nomina) | currency:'COP':true:'1.0-0'}}
+                          </ng-container>
+                          <span *ngIf="ingresosVariablesObservados(item.datos.nomina) == null">Información no
+                            disponible</span>
+                        </ng-container>
+                      </td>
+                    </tr>
+                    <tr class="ia-total">
+                      <td>Total ingresos estimados</td>
+                      <td class="ia-numero">
+                        <span *ngIf="item.datos.resumenFinancieroAgente.ingresos.totalIngresosEstimados != null">
+                          {{item.datos.resumenFinancieroAgente.ingresos.totalIngresosEstimados |
+                          currency:'COP':true:'1.0-0'}}
+                        </span>
+                        <ng-container
+                          *ngIf="item.datos.resumenFinancieroAgente.ingresos.totalIngresosEstimados == null">
+                          <ng-container *ngIf="item.datos.resumenFinancieroAgente.ingresos.salario != null &&
+                                 ingresosVariablesObservados(item.datos.nomina) != null">
+                            {{(item.datos.resumenFinancieroAgente.ingresos.salario * 1 +
+                            ingresosVariablesObservados(item.datos.nomina)) | currency:'COP':true:'1.0-0'}}
+                          </ng-container>
+                          <span *ngIf="item.datos.resumenFinancieroAgente.ingresos.salario == null ||
+                         ingresosVariablesObservados(item.datos.nomina) == null">
+                            Información insuficiente
+                          </span>
+                        </ng-container>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div *ngIf="!item.datos.resumenFinancieroAgente.ingresos" class="ia-estudio-sin-dato">
+                BridgeApi no entregó un desglose de ingresos.
+              </div>
+              <div class="ia-seccion-titulo">3. Desglose de deducciones de nómina</div>
+              <div class="ia-tabla-scroll">
+                <table class="ia-tabla">
+                  <thead>
+                    <tr>
+                      <th>Concepto</th>
+                      <th>Código</th>
+                      <th>Periodicidad</th>
+                      <th class="ia-centrado">Quincenas</th>
+                      <th class="ia-numero">Valor observado</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let d of item.datos.resumenFinancieroAgente.deducciones">
+                      <td>{{d.concepto || 'No informado'}}</td>
+                      <td>{{d.codigo || '—'}}</td>
+                      <td>{{d.periodicidad === 'NO_DETERMINADA' ? 'Por confirmar' : (d.periodicidad || 'Información no
+                        disponible')}}</td>
+                      <td class="ia-centrado">
+                        {{d.quincenasConMovimiento != null ? d.quincenasConMovimiento + '/2' : 'No informado'}}
+                      </td>
+                      <td class="ia-numero">
+                        <span *ngIf="d.valorObservado != null">
+                          {{d.valorObservado | currency:'COP':true:'1.0-0'}}
+                        </span>
+                        <span *ngIf="d.valorObservado == null">—</span>
+                      </td>
+                    </tr>
+                    <tr
+                      *ngIf="!item.datos.resumenFinancieroAgente.deducciones || item.datos.resumenFinancieroAgente.deducciones.length === 0">
+                      <td colspan="5">No se entregaron deducciones desglosadas.</td>
+                    </tr>
+                    <tr class="ia-total">
+                      <td colspan="4">Total deducciones observadas</td>
+                      <td class="ia-numero">
+                        <span *ngIf="item.datos.resumenFinancieroAgente.totalDeduccionesObservadas != null">
+                          {{item.datos.resumenFinancieroAgente.totalDeduccionesObservadas |
+                          currency:'COP':true:'1.0-0'}}
+                        </span>
+                        <span *ngIf="item.datos.resumenFinancieroAgente.totalDeduccionesObservadas == null">No
+                          disponible</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="ia-seccion-titulo">4. Capacidad de pago (preliminar)</div>
+              <div class="ia-tabla-scroll">
+                <table class="ia-tabla">
+                  <tbody>
+                    <tr>
+                      <td>TOPE actual</td>
+                      <td class="ia-numero">
+                        <span *ngIf="item.datos.resumenFinancieroAgente.porcentajeDeduccionesObservadas != null">
+                          {{item.datos.resumenFinancieroAgente.porcentajeDeduccionesObservadas | number:'1.2-2'}}%
+                        </span>
+                        <span *ngIf="item.datos.resumenFinancieroAgente.porcentajeDeduccionesObservadas == null">No
+                          disponible</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>TOPE proyectado</td>
+                      <td class="ia-numero">
+                        <span *ngIf="item.datos.resumenFinancieroAgente.porcentajeConNuevaCuotaIlustrativo != null">
+                          {{item.datos.resumenFinancieroAgente.porcentajeConNuevaCuotaIlustrativo | number:'1.2-2'}}%
+                        </span>
+                        <span *ngIf="item.datos.resumenFinancieroAgente.porcentajeConNuevaCuotaIlustrativo == null">No
+                          disponible</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Límite reglamentario de descuentos</td>
+                      <td class="ia-numero">50,00 %</td>
+                    </tr>
+                    <tr>
+                      <td>Margen al límite (orientativo)</td>
+                      <td class="ia-numero">
+                        <span *ngIf="item.datos.resumenFinancieroAgente.porcentajeConNuevaCuotaIlustrativo != null">
+                          {{(50 - item.datos.resumenFinancieroAgente.porcentajeConNuevaCuotaIlustrativo) |
+                          number:'1.2-2'}} p.p.
+                        </span>
+                        <span *ngIf="item.datos.resumenFinancieroAgente.porcentajeConNuevaCuotaIlustrativo == null">No
+                          disponible</span>
+                      </td>
+                    </tr>
+                    <tr
+                      *ngIf="item.datos.indicadoresFinancieros && item.datos.indicadoresFinancieros.limiteDescuentosMensuales != null">
+                      <td>Límite de descuentos en pesos reportado por la API</td>
+                      <td class="ia-numero">
+                        {{item.datos.indicadoresFinancieros.limiteDescuentosMensuales | currency:'COP':true:'1.0-0'}}
+                      </td>
+                    </tr>
+                    <tr
+                      *ngIf="item.datos.indicadoresFinancieros && item.datos.indicadoresFinancieros.escenarioObservado && item.datos.indicadoresFinancieros.escenarioObservado.deduccionesConNuevaCuota != null">
+                      <td>Deducciones con la nueva cuota (escenario API)</td>
+                      <td class="ia-numero">
+                        {{item.datos.indicadoresFinancieros.escenarioObservado.deduccionesConNuevaCuota |
+                        currency:'COP':true:'1.0-0'}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Resultado del estudio</td>
+                      <td class="ia-numero">
+                        <span *ngIf="item.datos.resultadoEstudio">{{item.datos.resultadoEstudio}}</span>
+                        <span *ngIf="!item.datos.resultadoEstudio">{{(item.datos.estadoEstudio ===
+                          'PRELIMINAR_REQUIERE_VALIDACION' || item.datos.estadoEstudio === 'REQUIERE_VALIDACION') ?
+                          'Estudio pendiente de verificación'
+                          : item.datos.estadoEstudio === 'CUMPLE' ? 'Cumple criterios evaluados'
+                          : item.datos.estadoEstudio === 'NO_CUMPLE' ? 'No cumple criterios evaluados'
+                          : item.datos.estadoEstudio === 'PRELIMINAR' ? 'Estudio preliminar'
+                          : item.datos.estadoEstudio == null ? 'Información insuficiente' : 'Estado por confirmar'
+                          }}</span>
+                      </td>
+                    </tr>
+                    <tr
+                      *ngIf="item.datos.avanceVerificacion || (item.datos.estadoEstudio !== 'CUMPLE' && item.datos.estadoEstudio !== 'NO_CUMPLE')">
+                      <td>Estado de validación</td>
+                      <td class="ia-numero">
+                        <span *ngIf="item.datos.avanceVerificacion">
+                          {{item.datos.avanceVerificacion.resumen}}
+                        </span>
+                        <span *ngIf="!item.datos.avanceVerificacion">
+                          Pendiente de verificación
+                        </span>
+                      </td>
+                    </tr>
+                    <tr
+                      *ngIf="item.datos.diagnosticoEstadoEstudio && item.datos.diagnosticoEstadoEstudio.excesoEstimadoPesos != null">
+                      <td>Exceso frente al límite (estimado)</td>
+                      <td class="ia-numero">
+                        {{item.datos.diagnosticoEstadoEstudio.excesoEstimadoPesos | currency:'COP':true:'1.0-0'}}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="ia-seccion-titulo">5. Ahorros acumulados FEMPROBIEN</div>
+              <div class="ia-tabla-scroll" *ngIf="item.datos.cartera && item.datos.cartera.aportes">
+                <table class="ia-tabla">
+                  <tbody>
+                    <tr class="ia-total">
+                      <td>Saldo total acumulado del ahorro permanente FEMPROBIEN</td>
+                      <td class="ia-numero">
+                        <span
+                          *ngIf="item.datos.cartera.aportes.SaldoAhorroPermanenteConsolidado_3AniosNuevoCiclo != null">
+                          {{item.datos.cartera.aportes.SaldoAhorroPermanenteConsolidado_3AniosNuevoCiclo |
+                          currency:'COP':true:'1.2-2'}}
+                        </span>
+                        <span
+                          *ngIf="item.datos.cartera.aportes.SaldoAhorroPermanenteConsolidado_3AniosNuevoCiclo == null">Sin
+                          información</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Aportes sociales consolidados (información separada)</td>
+                      <td class="ia-numero">
+                        <span *ngIf="item.datos.cartera.aportes.SaldoAporteSocialConsolidado_3AniosNuevoCiclo != null">
+                          {{item.datos.cartera.aportes.SaldoAporteSocialConsolidado_3AniosNuevoCiclo |
+                          currency:'COP':true:'1.2-2'}}
+                        </span>
+                        <span
+                          *ngIf="item.datos.cartera.aportes.SaldoAporteSocialConsolidado_3AniosNuevoCiclo == null">Sin
+                          información</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Rendimientos del ahorro permanente (información separada)</td>
+                      <td class="ia-numero">
+                        <span
+                          *ngIf="item.datos.cartera.aportes.SaldoRendimientoAhorroPermanenteConsolidado_3AniosNuevoCiclo != null">
+                          {{item.datos.cartera.aportes.SaldoRendimientoAhorroPermanenteConsolidado_3AniosNuevoCiclo |
+                          currency:'COP':true:'1.2-2'}}
+                        </span>
+                        <span
+                          *ngIf="item.datos.cartera.aportes.SaldoRendimientoAhorroPermanenteConsolidado_3AniosNuevoCiclo == null">Sin
+                          información</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Ahorro navideño (información separada)</td>
+                      <td class="ia-numero">
+                        <span *ngIf="item.datos.cartera.aportes.SaldoAhorroNavideno != null">
+                          {{item.datos.cartera.aportes.SaldoAhorroNavideno | currency:'COP':true:'1.2-2'}}
+                        </span>
+                        <span *ngIf="item.datos.cartera.aportes.SaldoAhorroNavideno == null">Sin información</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div *ngIf="!item.datos.cartera || !item.datos.cartera.aportes" class="ia-estudio-sin-dato">
+                BridgeApi no entregó información de ahorros y aportes de este asociado.
+              </div>
+              <small class="ia-subdato">
+                El saldo destacado corresponde al ahorro permanente consolidado.
+                Los demás conceptos se muestran aparte y no se suman automáticamente.
+              </small>
+              <div class="ia-precaucion">
+                Este estudio utiliza la información suministrada por BridgeApi y NovaWEB.
+                Los descuentos pueden no ser recurrentes. El saldo de nómina no es
+                automáticamente capacidad de endeudamiento. La cartera vigente,
+                las políticas y los soportes deben validarse por el funcionario.
+                Este reporte no aprueba ni rechaza el crédito.
+              </div>
+            </div>
+          </ng-container>
+          <div class="ia-precaucion">
+            Los asociados se analizan por separado: no se suman ingresos,
+            cuotas ni deudas de diferentes personas. Pulsa
+            <strong>Ver estudio completo</strong> para consultar los valores
+            individuales sin salir de la comparación.
+          </div>
+        </div>
+        <div *ngIf="m.tipo === 'capacidad' && m.datos && m.datos.indicadoresFinancieros"
+          class="ia-reporte ia-reporte-especializado">
+          <div class="ia-reporte-titulo">
+            <strong>Capacidad de pago · Solicitud #{{m.datos.solicitud.numeroSolicitud}}</strong>
+            <span class="ia-etiqueta">Estimación</span>
+          </div>
+          <div class="ia-vista-descripcion">
+            Evalúa el impacto de la cuota solicitada y las restricciones
+            de cupo con la información disponible en BridgeApi y NovaWEB.
+          </div>
+          <div class="ia-estado-analisis"
+            [class.ia-estado-no-cumple]="m.datos.indicadoresFinancieros.estadoAnalisisFinanciero === 'NO_CUMPLE'"
+            [class.ia-estado-cumple]="m.datos.indicadoresFinancieros.estadoAnalisisFinanciero === 'CUMPLE'"
+            [class.ia-estado-pendiente]="m.datos.indicadoresFinancieros.estadoAnalisisFinanciero === 'REQUIERE_VALIDACION'">
+            <strong>Resultado del estudio</strong>
+            <strong [ngSwitch]="m.datos.indicadoresFinancieros.estadoAnalisisFinanciero">
+              <ng-container *ngSwitchCase="'CUMPLE'">Cumple</ng-container>
+              <ng-container *ngSwitchCase="'NO_CUMPLE'">No cumple</ng-container>
+              <ng-container *ngSwitchCase="'REQUIERE_VALIDACION'">Pendiente</ng-container>
+              <ng-container *ngSwitchDefault>Información insuficiente</ng-container>
+            </strong>
+            <div class="ia-resultado-detalle"
+              *ngIf="m.datos.indicadoresFinancieros.estadoAnalisisFinanciero === 'NO_CUMPLE'">
+              <div class="ia-resultado-detalle-titulo">
+                {{m.datos.indicadoresFinancieros.incumplimientos &&
+                m.datos.indicadoresFinancieros.incumplimientos.length > 1 ? 'Motivos del resultado' : 'Motivo del
+                resultado'}}
+              </div>
+              <ul
+                *ngIf="m.datos.indicadoresFinancieros.incumplimientos && m.datos.indicadoresFinancieros.incumplimientos.length > 0">
+                <li *ngFor="let texto of m.datos.indicadoresFinancieros.incumplimientos">{{texto}}</li>
+              </ul>
+              <div
+                *ngIf="!m.datos.indicadoresFinancieros.incumplimientos || m.datos.indicadoresFinancieros.incumplimientos.length === 0">
+                BridgeApi marcó la solicitud como «No cumple», pero no informó el motivo específico.
+              </div>
+            </div>
+            <div class="ia-resultado-detalle"
+              *ngIf="m.datos.indicadoresFinancieros.estadoAnalisisFinanciero === 'REQUIERE_VALIDACION'">
+              <div class="ia-resultado-detalle-titulo">Información necesaria para completar el estudio</div>
+              <div>El motor aún no dispone de todos los datos verificados para establecer el cumplimiento.</div>
+            </div>
+            <div class="ia-resultado-detalle"
+              *ngIf="m.datos.indicadoresFinancieros.estadoAnalisisFinanciero === 'CUMPLE'">
+              La solicitud cumple los criterios evaluados con la información disponible.
+              Este resultado no constituye una aprobación del crédito.
+            </div>
+          </div>
+          <div class="ia-seccion-titulo">Cuota e impacto en nómina</div>
+          <div class="ia-tabla-scroll">
+            <table class="ia-tabla">
+              <tbody>
+                <tr>
+                  <td>Cuota mensual estimada del crédito solicitado</td>
+                  <td class="ia-numero">
+                    <span *ngIf="m.datos.indicadoresFinancieros.cuotaNuevaMensual != null">
+                      {{m.datos.indicadoresFinancieros.cuotaNuevaMensual | currency:'COP':true:'1.2-2'}}
+                    </span>
+                    <span *ngIf="m.datos.indicadoresFinancieros.cuotaNuevaMensual == null">Información
+                      insuficiente</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Límite reglamentario de descuentos (50 %)</td>
+                  <td class="ia-numero">
+                    <span *ngIf="m.datos.indicadoresFinancieros.limiteDescuentosMensuales != null">
+                      {{m.datos.indicadoresFinancieros.limiteDescuentosMensuales | currency:'COP':true:'1.0-0'}}
+                    </span>
+                    <span *ngIf="m.datos.indicadoresFinancieros.limiteDescuentosMensuales == null">Información
+                      insuficiente</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Descuentos estimados con nueva cuota</td>
+                  <td class="ia-numero">
+                    <span
+                      *ngIf="m.datos.indicadoresFinancieros.escenarioObservado && m.datos.indicadoresFinancieros.escenarioObservado.deduccionesConNuevaCuota != null">
+                      {{m.datos.indicadoresFinancieros.escenarioObservado.deduccionesConNuevaCuota |
+                      currency:'COP':true:'1.2-2'}}
+                    </span>
+                    <span
+                      *ngIf="!m.datos.indicadoresFinancieros.escenarioObservado || m.datos.indicadoresFinancieros.escenarioObservado.deduccionesConNuevaCuota == null">Información
+                      insuficiente</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Margen restante estimado</td>
+                  <td class="ia-numero">
+                    <span
+                      *ngIf="m.datos.indicadoresFinancieros.escenarioObservado && m.datos.indicadoresFinancieros.escenarioObservado.diferenciaFrenteLimite != null">
+                      {{m.datos.indicadoresFinancieros.escenarioObservado.diferenciaFrenteLimite |
+                      currency:'COP':true:'1.2-2'}}
+                    </span>
+                    <span
+                      *ngIf="!m.datos.indicadoresFinancieros.escenarioObservado || m.datos.indicadoresFinancieros.escenarioObservado.diferenciaFrenteLimite == null">
+                      Sin información suficiente
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="ia-seccion-titulo">Indicadores del escenario</div>
+          <div class="ia-indicadores">
+            <div>
+              <small>TOPE actual</small>
+              <strong
+                *ngIf="m.datos.resumenFinancieroAgente && m.datos.resumenFinancieroAgente.porcentajeDeduccionesObservadas != null">
+                {{m.datos.resumenFinancieroAgente.porcentajeDeduccionesObservadas | number:'1.2-2'}}%
+              </strong>
+              <strong
+                *ngIf="!m.datos.resumenFinancieroAgente || m.datos.resumenFinancieroAgente.porcentajeDeduccionesObservadas == null">Información
+                insuficiente</strong>
+            </div>
+            <div>
+              <small>TOPE proyectado</small>
+              <strong
+                *ngIf="m.datos.indicadoresFinancieros.escenarioObservado && m.datos.indicadoresFinancieros.escenarioObservado.porcentajeConNuevaCuota != null">
+                {{m.datos.indicadoresFinancieros.escenarioObservado.porcentajeConNuevaCuota | number:'1.2-2'}}%
+              </strong>
+              <strong
+                *ngIf="!m.datos.indicadoresFinancieros.escenarioObservado || m.datos.indicadoresFinancieros.escenarioObservado.porcentajeConNuevaCuota == null">Información
+                insuficiente</strong>
+            </div>
+            <div>
+              <small>Límite reglamentario</small>
+              <strong *ngIf="m.datos.indicadoresFinancieros.porcentajeMaximoDeducciones != null">
+                {{m.datos.indicadoresFinancieros.porcentajeMaximoDeducciones | number:'1.2-2'}}%
+              </strong>
+              <strong *ngIf="m.datos.indicadoresFinancieros.porcentajeMaximoDeducciones == null">Información
+                insuficiente</strong>
+            </div>
+            <div>
+              <small>Margen al límite</small>
+              <strong
+                *ngIf="m.datos.indicadoresFinancieros.escenarioObservado && m.datos.indicadoresFinancieros.escenarioObservado.porcentajeConNuevaCuota != null && m.datos.indicadoresFinancieros.porcentajeMaximoDeducciones != null">
+                {{(m.datos.indicadoresFinancieros.porcentajeMaximoDeducciones -
+                m.datos.indicadoresFinancieros.escenarioObservado.porcentajeConNuevaCuota) | number:'1.2-2'}} p.p.
+              </strong>
+              <strong
+                *ngIf="!m.datos.indicadoresFinancieros.escenarioObservado || m.datos.indicadoresFinancieros.escenarioObservado.porcentajeConNuevaCuota == null || m.datos.indicadoresFinancieros.porcentajeMaximoDeducciones == null">Información
+                insuficiente</strong>
+            </div>
+          </div>
+          <div class="ia-seccion-titulo">Cupo y cartera FEMPROBIEN</div>
+          <div class="ia-tabla-scroll">
+            <table class="ia-tabla">
+              <tbody>
+                <tr>
+                  <td>Cupo máximo general</td>
+                  <td class="ia-numero">
+                    <span *ngIf="m.datos.indicadoresFinancieros.cupoGeneral != null">
+                      {{m.datos.indicadoresFinancieros.cupoGeneral | currency:'COP':true:'1.0-0'}}
+                    </span>
+                    <span *ngIf="m.datos.indicadoresFinancieros.cupoGeneral == null">Sin información</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Último corte de cartera disponible</td>
+                  <td class="ia-numero">
+                    {{m.datos.cartera && m.datos.cartera.fechaCorteUltimaImportacion
+                    ? m.datos.cartera.fechaCorteUltimaImportacion : 'Sin información'}}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Saldo de créditos FEMPROBIEN al corte</td>
+                  <td class="ia-numero">
+                    <span *ngIf="m.datos.cupoHistorico && m.datos.cupoHistorico.saldoCreditosAlCorte != null">
+                      {{m.datos.cupoHistorico.saldoCreditosAlCorte | currency:'COP':true:'1.0-0'}}
+                    </span>
+                    <span
+                      *ngIf="m.datos.cupoHistorico && m.datos.cupoHistorico.sinCreditosRegistrados === true && m.datos.cupoHistorico.saldoCreditosAlCorte == null">
+                      Sin créditos registrados (saldo no certificado)
+                    </span>
+                    <span
+                      *ngIf="!m.datos.cupoHistorico || (m.datos.cupoHistorico.saldoCreditosAlCorte == null && m.datos.cupoHistorico.sinCreditosRegistrados !== true)">
+                      Por confirmar
+                    </span>
+                  </td>
+                </tr>
+                <tr *ngIf="m.datos.cupoHistorico && m.datos.cupoHistorico.cupoPotencialSiNoHayDeuda != null">
+                  <td>Cupo potencial si no existen deudas (hipótesis)</td>
+                  <td class="ia-numero">
+                    {{m.datos.cupoHistorico.cupoPotencialSiNoHayDeuda | currency:'COP':true:'1.0-0'}}
+                  </td>
+                </tr>
+                <tr class="ia-total">
+                  <td>Cupo disponible FEMPROBIEN</td>
+                  <td class="ia-numero">
+                    <span *ngIf="m.datos.indicadoresFinancieros.cupoDisponible != null">
+                      {{m.datos.indicadoresFinancieros.cupoDisponible | currency:'COP':true:'1.0-0'}} (verificado al
+                      corte)
+                    </span>
+                    <span
+                      *ngIf="m.datos.indicadoresFinancieros.cupoDisponible == null && m.datos.cupoHistorico && m.datos.cupoHistorico.cupoEstimadoAlCorte != null">
+                      {{m.datos.cupoHistorico.cupoEstimadoAlCorte | currency:'COP':true:'1.0-0'}} (estimado al corte)
+                    </span>
+                    <span
+                      *ngIf="m.datos.indicadoresFinancieros.cupoDisponible == null && (!m.datos.cupoHistorico || m.datos.cupoHistorico.cupoEstimadoAlCorte == null)">
+                      Por confirmar
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="ia-precaucion">
+            <strong>Información preliminar</strong>
+            <div style="margin-top:6px">
+              Los valores de capacidad de pago y TOPE se estiman con los registros disponibles
+              y la cuota del crédito solicitado. El margen frente al límite del 50 % no
+              representa dinero disponible ni aprobación del crédito.
+            </div>
+            <ul *ngIf="obtenerObservacionesResultadoEstudio(m.datos).length > 0" style="margin-top:8px;margin-bottom:0">
+              <li *ngFor="let observacion of obtenerObservacionesResultadoEstudio(m.datos)">
+                {{observacion}}
+              </li>
+            </ul>
+          </div>
+        </div>
+        <small class="ia-hora">
+          {{m.fecha | date:'HH:mm'}}
+        </small>
+      </div>
+    </div>
+    <div *ngIf="cargando" class="ia-fila">
+      <div class="ia-burbuja ia-cargando">
+        Consultando BridgeApi y nómina NovaWEB...
+      </div>
+    </div>
+    <div *ngIf="cargandoSimulacion" class="ia-fila">
+      <div class="ia-burbuja ia-cargando">
+        Calculando tabla de amortización...
+      </div>
+    </div>
+    <div *ngIf="cargandoComparacion" class="ia-fila">
+      <div class="ia-burbuja ia-cargando">
+        Comparando los tres plazos...
+      </div>
+    </div>
+    <div *ngIf="cargandoMultiples" class="ia-fila">
+      <div class="ia-burbuja ia-cargando">
+        Calculando los créditos en BridgeApi...
+      </div>
+    </div>
+    <div *ngIf="cargandoEvaluacionMultiple" class="ia-fila">
+      <div class="ia-burbuja ia-cargando">
+        Consultando las solicitudes seleccionadas en BridgeApi...
+      </div>
+    </div>
+  </main>
+  <div *ngIf="!tieneSolicitud()" class="ia-acciones ia-acciones-multiples">
+    <button type="button" (click)="abrirAnalisisGeneral('evaluar')" [disabled]="estaProcesando()">
+      Análisis general de solicitudes
+    </button>
+  </div>
+  <div *ngIf="tieneSolicitud()" class="ia-acciones">
+    <button type="button" (click)="accionRapida('Resumen financiero')" [disabled]="estaProcesando()">
+      Resumen
+    </button>
+    <button type="button" (click)="accionRapida('Analizar capacidad de pago')" [disabled]="estaProcesando()">
+      Capacidad de pago
+    </button>
+    <button type="button" (click)="accionRapida('Simular crédito')" [disabled]="estaProcesando()">
+      Simular crédito
+    </button>
+    <button type="button" (click)="accionRapida('Simular varios créditos')" [disabled]="estaProcesando()">
+      Varios créditos
+    </button>
+    <button type="button" (click)="accionRapida('Consultar deducciones de nómina')" [disabled]="estaProcesando()">
+      Nómina
+    </button>
+  </div>
+  <form class="ia-entrada" (ngSubmit)="enviar()">
+    <input name="preguntaIa" type="text" [(ngModel)]="texto" [disabled]="estaProcesando()"
+      placeholder="Escribe tu consulta..." autocomplete="off">
+    <button type="submit" [disabled]="estaProcesando() || !texto.trim()">
+      Enviar
+    </button>
+  </form>
+  <footer class="ia-pie">
+    BridgeApi · Estudio preliminar ·
+    No autoriza créditos
+  </footer>
+</section>

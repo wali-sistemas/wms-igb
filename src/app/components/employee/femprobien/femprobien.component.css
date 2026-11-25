@@ -381,13 +381,6 @@ textarea.form-control:focus {
   background: #d6d6d6;
 }
 
-.botones-accion-formulario {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin-top: 10px;
-}
-
 .card-box {
   padding: 20px;
   flex: 1 1 500px;
@@ -526,7 +519,6 @@ textarea.form-control:focus {
   font-size: 14px;
   font-weight: 700;
   color: #000;
-  width: 100%;
   text-align: left;
 }
 
@@ -839,18 +831,10 @@ textarea.form-control:focus {
   border-color: #d9dddf;
 }
 
-.accordion-status.estado-si-aplica::before {
-  content: "—";
-}
-
 .accordion-status.estado-opcional {
   color: #777;
   background: #f7f7f7;
   border-color: #e1e1e1;
-}
-
-.accordion-status.estado-opcional::before {
-  content: "—";
 }
 
 .accordion-status.estado-no-requerida {
@@ -859,6 +843,8 @@ textarea.form-control:focus {
   border-color: #e4e4e4;
 }
 
+.accordion-status.estado-si-aplica::before,
+.accordion-status.estado-opcional::before,
 .accordion-status.estado-no-requerida::before {
   content: "—";
 }
@@ -882,7 +868,6 @@ textarea.form-control:focus {
 }
 
 @media (max-width: 600px) {
-
   .nuevo-afiliado-formulario .accordion-header {
     padding-left: 12px;
     padding-right: 12px;
@@ -1196,25 +1181,7 @@ hr {
   color: #31708f;
 }
 
-.credito-estado-aprobada {
-  background: #dff0d8;
-  color: #3c763d;
-}
-
-.credito-estado-negada {
-  background: #f2dede;
-  color: #a94442;
-}
-
-.credito-estado-aplazada {
-  background: #f7e6c4;
-  color: #8a5a00;
-}
-
 .credito-admin-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
   max-width: 1144px;
   margin: 0 auto 25px;
 }
@@ -1235,11 +1202,7 @@ hr {
 }
 
 @media (max-width: 900px) {
-
-  .credito-admin-grid,
-  .credito-identificacion,
-  .credito-detalle-resumen,
-  .credito-detalle-grid {
+  .credito-admin-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -1247,14 +1210,7 @@ hr {
 }
 
 @media (max-width: 600px) {
-
-  .acciones-asociado,
-  .credito-grid,
-  .credito-admin-grid,
-  .credito-identificacion,
-  .credito-detalle-resumen,
-  .credito-detalle-grid,
-  .credito-historial-item {
+  .credito-admin-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1343,8 +1299,6 @@ hr {
   text-align: center;
 }
 
-@media (max-width: 900px) {}
-
 .biometria-aviso {
   margin-bottom: 18px;
   line-height: 20px;
@@ -1354,7 +1308,8 @@ hr {
   margin-bottom: 18px;
 }
 
-.firma-huella-grid {
+.firma-huella-grid,
+.deudor-biometria-box .firma-huella-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
@@ -1368,13 +1323,15 @@ hr {
   border-radius: 7px;
 }
 
-.archivo-biometrico-box>label {
+.archivo-biometrico-box>label,
+.deudor-biometria-box .archivo-biometrico-box>label {
   display: block;
   margin-bottom: 9px;
   font-weight: 700;
 }
 
-.preview-biometrico {
+.preview-biometrico,
+.deudor-biometria-box .preview-biometrico {
   margin-top: 12px;
   padding: 12px;
   text-align: center;
@@ -1383,7 +1340,8 @@ hr {
   border-radius: 6px;
 }
 
-.preview-biometrico img {
+.preview-biometrico img,
+.deudor-biometria-box .preview-biometrico img {
   display: block;
   width: 100%;
   max-width: 360px;
@@ -1392,7 +1350,8 @@ hr {
   object-fit: contain;
 }
 
-.preview-huella img {
+.preview-huella img,
+.deudor-biometria-box .preview-huella img {
   max-width: 190px;
   max-height: 220px;
 }
@@ -1410,12 +1369,6 @@ hr {
 
 .solicitudes-credito-admin {
   width: 100%;
-}
-
-.btn-refrescar-creditos:hover:not(:disabled) {
-  background: #d9534f;
-  border-color: #d9534f;
-  color: #ffffff;
 }
 
 .ticket-credito-admin {
@@ -1746,48 +1699,12 @@ hr {
   font-size: 13px;
 }
 
-.deudor-biometria-box .firma-huella-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
-  margin-top: 14px;
-}
-
 .deudor-biometria-box .archivo-biometrico-box {
   min-width: 0;
   padding: 15px;
   background: #fff;
   border: 1px solid #d7d7d7;
   border-radius: 7px;
-}
-
-.deudor-biometria-box .archivo-biometrico-box>label {
-  display: block;
-  margin-bottom: 9px;
-  font-weight: 700;
-}
-
-.deudor-biometria-box .preview-biometrico {
-  margin-top: 12px;
-  padding: 12px;
-  text-align: center;
-  background: #fff;
-  border: 1px dashed #aaa;
-  border-radius: 6px;
-}
-
-.deudor-biometria-box .preview-biometrico img {
-  display: block;
-  width: 100%;
-  max-width: 360px;
-  max-height: 180px;
-  margin: 0 auto 12px;
-  object-fit: contain;
-}
-
-.deudor-biometria-box .preview-huella img {
-  max-width: 190px;
-  max-height: 220px;
 }
 
 @media (max-width: 1100px) {
@@ -1849,7 +1766,6 @@ hr {
   .credito-admin-detalle-acciones .btn {
     width: 100%;
   }
-
 }
 
 .credito-formalizacion-form select.form-control {
@@ -1869,31 +1785,11 @@ hr {
   color: #333;
 }
 
-.historico-estado-activo {
-  background: #dff0d8;
-  border-color: #b2dba1;
-  color: #3c763d;
-}
-
-.historico-estado-pagado {
-  background: #d9edf7;
-  border-color: #9acfea;
-  color: #31708f;
-}
-
-.historico-estado-cancelado {
-  background: #f2dede;
-  border-color: #dca7a7;
-  color: #a94442;
-}
-
 .credito-formalizado-acciones {
   display: flex;
   justify-content: flex-end;
   margin-bottom: 12px;
 }
-
-@media (max-width: 900px) {}
 
 .consulta-creditos {
   width: 100%;
@@ -1902,7 +1798,6 @@ hr {
 
 .consulta-creditos-card,
 .consulta-creditos-asociado,
-.consulta-credito-detalle,
 .consulta-creditos-grid,
 .consulta-creditos-mensaje {
   max-width: 1144px;
@@ -2012,8 +1907,7 @@ hr {
   margin-bottom: 12px;
 }
 
-.consulta-credito-card-header>div>span,
-.consulta-credito-label {
+.consulta-credito-card-header>div>span {
   display: block;
   font-size: 10px;
   color: #888;
@@ -2104,14 +1998,10 @@ hr {
   .consulta-creditos-grid {
     grid-template-columns: 1fr;
   }
-
-
 }
 
 @media (max-width: 600px) {
-
-  .consulta-creditos-asociado,
-  .consulta-credito-detalle-header {
+  .consulta-creditos-asociado {
     display: block;
   }
 
@@ -2120,7 +2010,6 @@ hr {
     text-align: left;
   }
 
-  .consulta-credito-detalle-grid,
   .consulta-credito-valores {
     grid-template-columns: 1fr;
   }
@@ -2437,18 +2326,8 @@ hr {
 }
 
 .solicitudes-afiliacion-toolbar {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 10px;
   width: 100%;
   margin-bottom: 12px;
-}
-
-.solicitudes-afiliacion-filtro {
-  display: flex;
-  align-items: center;
-  gap: 10px;
 }
 
 .solicitudes-afiliacion-filtro label {
@@ -2458,14 +2337,7 @@ hr {
 }
 
 .solicitudes-afiliacion-filtro select.form-control {
-  width: 180px;
-  min-width: 180px;
-  height: 40px !important;
-  min-height: 40px;
-  padding: 6px 34px 6px 12px;
-  margin: 0;
   line-height: 26px;
-  font-size: 14px;
   box-sizing: border-box;
 }
 
@@ -2822,17 +2694,13 @@ hr {
     padding-right: 15px;
   }
 
-  .importacion-femprobien-alerta {
-    margin-left: 15px;
-    margin-right: 15px;
-  }
-
   .importacion-femprobien-resumen {
     grid-template-columns: 1fr;
     padding-left: 15px;
     padding-right: 15px;
   }
 
+  .importacion-femprobien-alerta,
   .importacion-femprobien-mensaje {
     margin-left: 15px;
     margin-right: 15px;
@@ -2943,11 +2811,8 @@ hr {
 }
 
 @media (max-width: 600px) {
-  .importacion-procesar-panel {
-    margin-left: 15px;
-    margin-right: 15px;
-  }
 
+  .importacion-procesar-panel,
   .importacion-creditos-procesar-actions {
     margin-left: 15px;
     margin-right: 15px;
@@ -3620,7 +3485,6 @@ hr {
   font-weight: 600;
 }
 
-.container.content .btn-refrescar-creditos,
 .container.content .btn-refrescar-afiliaciones,
 .container.content .btn-cerrar,
 .container.content .biometria-crop-close {
@@ -4011,10 +3875,6 @@ hr {
   }
 }
 
-@media (max-width: 900px) {}
-
-@media (max-width: 600px) {}
-
 .campo-obligatorio-vacio {
   border-color: #dc3545 !important;
   background-color: #fff8f8 !important;
@@ -4215,9 +4075,6 @@ input[type="file"].campo-obligatorio-vacio {
 }
 
 @media (max-width: 600px) {
-  .modal-sin-aportes-cabecera {
-    padding: 18px;
-  }
 
   .modal-sin-aportes-icono {
     width: 46px;
@@ -4230,6 +4087,7 @@ input[type="file"].campo-obligatorio-vacio {
     font-size: 17px;
   }
 
+  .modal-sin-aportes-cabecera,
   .modal-sin-aportes-body {
     padding: 18px;
   }
@@ -4256,8 +4114,6 @@ input[type="file"].campo-obligatorio-vacio {
   font-size: 12px;
   font-weight: 400;
 }
-
-@media (max-width: 700px) {}
 
 .actualizacion-identidad-card {
   margin: 16px 0 4px;
@@ -4456,26 +4312,6 @@ input[type="file"].campo-obligatorio-vacio {
   line-height: 16px;
 }
 
-.actualizacion-comparacion-fecha-valores>div:not(.actualizacion-comparacion-fecha-flecha) {
-  padding: 9px 10px;
-  border: 1px solid #e2e7ea;
-  border-radius: 6px;
-  background: #fff;
-}
-
-@media (max-width: 600px) {}
-
-.solicitudes-afiliacion-toolbar {
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 16px;
-}
-
-.solicitudes-afiliacion-busqueda {
-  flex: 1 1 520px;
-  min-width: 260px;
-}
-
 .solicitudes-afiliacion-busqueda>label {
   display: block;
   margin: 0 0 6px;
@@ -4487,7 +4323,6 @@ input[type="file"].campo-obligatorio-vacio {
 .solicitudes-afiliacion-busqueda-control {
   position: relative;
   width: 100%;
-  max-width: 620px;
 }
 
 .solicitudes-afiliacion-busqueda-control input.form-control {
@@ -4538,15 +4373,7 @@ input[type="file"].campo-obligatorio-vacio {
 .solicitudes-afiliacion-busqueda-resultados {
   display: block;
   margin-top: 5px;
-  color: #777;
   font-size: 11px;
-}
-
-.solicitudes-afiliacion-toolbar-derecha {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: flex-end;
-  gap: 10px;
 }
 
 @media (max-width: 800px) {
@@ -4588,10 +4415,6 @@ input[type="file"].campo-obligatorio-vacio {
     width: 100%;
     min-width: 0;
   }
-}
-
-.solicitudes-afiliacion-busqueda-resultados {
-  color: #666;
 }
 
 .actualizacion-cambios {
@@ -4841,9 +4664,7 @@ input[type="file"].campo-obligatorio-vacio {
 }
 
 .solicitudes-afiliacion-columna-independiente .solicitud-afiliacion-ticket {
-  width: 100%;
   height: auto !important;
-  min-height: 0 !important;
   display: block !important;
   margin-bottom: 20px;
 }
@@ -4879,10 +4700,6 @@ input[type="file"].campo-obligatorio-vacio {
     width: 100%;
     float: none;
   }
-}
-
-.solicitudes-afiliacion-columna-independiente .solicitud-resumen-principal {
-  min-height: 116px;
 }
 
 .solicitud-resumen-principal p {
@@ -5064,11 +4881,6 @@ input[type="file"].campo-obligatorio-vacio {
 .solicitudes-afiliacion-filtro select.form-control {
   width: 150px;
   min-width: 150px;
-  height: 40px !important;
-  min-height: 40px;
-  padding: 6px 32px 6px 10px;
-  margin: 0;
-  font-size: 12px;
 }
 
 .btn-refrescar-afiliaciones {
@@ -5722,17 +5534,6 @@ input[type="file"].campo-obligatorio-vacio {
   transform: none;
 }
 
-.asociado-consulta-cabecera {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 22px;
-}
-
-.asociado-consulta-identidad {
-  min-width: 0;
-}
-
 .asociado-consulta-kicker {
   display: block;
   margin-bottom: 4px;
@@ -5743,7 +5544,6 @@ input[type="file"].campo-obligatorio-vacio {
 }
 
 .asociado-consulta-card .asociado-consulta-identidad h4 {
-  margin: 0 0 5px;
   color: #222;
   font-size: 18px;
   font-weight: 700;
@@ -5971,13 +5771,7 @@ input[type="file"].campo-obligatorio-vacio {
 
 .formulario-femprobien {
   width: 100%;
-  max-width: 1280px;
   margin: 0 auto 24px;
-  padding: 20px 22px 24px;
-  background: #fff;
-  border: 1px solid #dcdcdc;
-  border-radius: 8px;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, .06);
 }
 
 .formulario-femprobien:hover {
@@ -5988,23 +5782,6 @@ input[type="file"].campo-obligatorio-vacio {
 
 .formulario-femprobien .nuevo-afiliado-header {
   margin-bottom: 12px;
-}
-
-.formulario-femprobien .nuevo-afiliado-header h4 {
-  margin: 0;
-  padding: 13px 18px;
-  border-radius: 6px;
-  font-size: 18px;
-  line-height: 22px;
-  letter-spacing: .1px;
-  box-shadow: none;
-}
-
-.formulario-femprobien .nuevo-afiliado-header p {
-  margin: 10px 0 0;
-  color: #444;
-  font-size: 13px;
-  line-height: 19px;
 }
 
 .formulario-femprobien .accordion-section {
@@ -6719,7 +6496,6 @@ input[type="file"].campo-obligatorio-vacio {
     padding: 16px;
   }
 }
-
 
 @media (max-width: 800px) {
   .formulario-femprobien .nuevo-afiliado-header {
@@ -7661,14 +7437,8 @@ input[type="file"].campo-obligatorio-vacio {
   min-width: 150px;
 }
 
-.roles-admin-auditoria {
-  padding: 0;
-  overflow: hidden;
-}
-
 .roles-admin-auditoria-tabla {
   margin-bottom: 0;
-  font-size: 10px;
 }
 
 .roles-admin-auditoria-tabla th {
@@ -7677,10 +7447,8 @@ input[type="file"].campo-obligatorio-vacio {
 }
 
 @media (max-width: 900px) {
-  .roles-admin-grid {
-    grid-template-columns: 1fr;
-  }
 
+  .roles-admin-grid,
   .roles-admin-check-grid {
     grid-template-columns: 1fr;
   }
@@ -7714,10 +7482,7 @@ input[type="file"].campo-obligatorio-vacio {
     padding: 13px;
   }
 
-  .roles-admin-detalle-header {
-    flex-direction: column;
-  }
-
+  .roles-admin-detalle-header,
   .roles-admin-nuevo-usuario-form {
     flex-direction: column;
   }
@@ -8162,23 +7927,14 @@ input[type="file"].campo-obligatorio-vacio {
     min-height: 0 !important;
   }
 
-  .solicitudes-afiliacion-columna-independiente .solicitud-resumen-principal {
-    min-height: 0;
-  }
-
-  .solicitudes-afiliacion-columna-independiente .solicitud-afiliacion-ticket-contenido>.row:first-child {
-    min-height: 0;
-  }
-
+  .solicitudes-afiliacion-columna-independiente .solicitud-resumen-principal,
+  .solicitudes-afiliacion-columna-independiente .solicitud-afiliacion-ticket-contenido>.row:first-child,
   .solicitudes-afiliacion-columna-independiente .ticket-num {
     min-height: 0;
   }
 }
 
-.container.content {
-  font-family: Arial, Helvetica, sans-serif !important;
-}
-
+.container.content,
 .container.content input,
 .container.content select,
 .container.content textarea,
@@ -8192,10 +7948,7 @@ input[type="file"].campo-obligatorio-vacio {
 .container.content a,
 .container.content p,
 .container.content small,
-.container.content strong {
-  font-family: Arial, Helvetica, sans-serif !important;
-}
-
+.container.content strong,
 .container.content .roles-admin-auditoria-code-chip {
   font-family: Arial, Helvetica, sans-serif !important;
 }
@@ -8370,10 +8123,7 @@ input[type="file"].campo-obligatorio-vacio {
 }
 
 .container.content .simulador-femprobien #simFrecuencia {
-  height: auto;
   min-height: 44px;
-  padding: 8px 12px;
-  line-height: 1.4;
 }
 
 .simulador-frecuencia-ayuda {
@@ -9029,4 +8779,155 @@ input[type="file"].campo-obligatorio-vacio {
   .solicitud-credito-formulario .fila-vivienda-deudor {
     grid-template-columns: 1fr;
   }
+}
+
+.credito-envio-overlay {
+  z-index: 14000;
+  cursor: wait;
+}
+
+.credito-envio-card {
+  padding: 30px 24px;
+  text-align: center;
+}
+
+.credito-envio-spinner {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 18px;
+  border: 4px solid #eee;
+  border-top-color: #c90000;
+  border-radius: 50%;
+  animation: femprobien-refresh-spin .8s linear infinite;
+}
+
+.credito-envio-ayuda {
+  display: block;
+  margin-top: 12px;
+  color: #777;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .credito-envio-spinner {
+    animation: none;
+  }
+}
+
+.historico-saldos-card {
+  display: flex;
+  flex-direction: column;
+  max-width: 880px;
+  max-height: 90vh;
+  overflow: hidden;
+  padding: 22px;
+}
+
+.historico-saldos-header {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  padding-bottom: 12px;
+}
+
+.historico-saldos-contenido {
+  min-height: 0;
+  overflow: auto;
+}
+
+.historico-saldos-header .femprobien-modal-title {
+  margin: 0;
+  padding-right: 38px;
+}
+
+.historico-saldos-acciones {
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  width: 100%;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(128, 128, 128, .3);
+}
+
+.historico-saldos-acciones .btn {
+  margin: 0;
+  min-height: 32px;
+  padding: 6px 12px;
+  font-size: 12px;
+  line-height: 1.4;
+  white-space: normal;
+}
+
+.historico-saldos-cerrar {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.historico-saldos-cerrar:hover {
+  background: rgba(128, 128, 128, .15);
+}
+
+.historico-saldos-cerrar:focus {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+  .historico-saldos-acciones {
+    flex-direction: column;
+  }
+
+  .historico-saldos-acciones .btn {
+    width: 100%;
+  }
+}
+
+.historico-saldos-cuerpo {
+  margin-top: 16px;
+}
+
+.historico-saldos-cuerpo th {
+  position: sticky;
+  top: 0;
+  background: #f5f5f5;
+}
+
+.historico-saldos-cuerpo td {
+  white-space: nowrap;
+}
+
+.historico-saldos-resumen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.historico-saldos-resumen>div {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.historico-saldos-resumen strong,
+.historico-saldos-resumen span {
+  display: block;
 }

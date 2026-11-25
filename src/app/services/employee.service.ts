@@ -57,107 +57,122 @@ export class EmployeeService {
       .map(res => res.json());
   }
 
+  public consultarAsociadoFemprobien(documento: string) {
+    return this._http.get(this.urlBridge + '/femprobien/asociados/' + encodeURIComponent(documento));
+  }
+
+  public consultarAportesFemprobien(codAsp: string) {
+    return this._http.get(this.urlBridge + '/femprobien/asociados/' + encodeURIComponent(codAsp) + '/aportes');
+  }
+
   public validateAssociatedExistence(cardcode: string, birthdate: string) {
-    return this._http.get(this.urlBridge + '/femprobien/asociados/' + encodeURIComponent(cardcode))
+    return this.consultarAsociadoFemprobien(cardcode)
       .map(res => {
         const asociado = res.json();
         const fechaBackend = asociado && asociado.fec_nac ? asociado.fec_nac.toString().substring(0, 10) : '';
         const fechaIngresada = birthdate ? birthdate.toString().substring(0, 10) : '';
         const coincideFecha = fechaBackend !== '' && fechaIngresada !== '' && fechaBackend === fechaIngresada;
-
-        return {
-          code: coincideFecha ? 0 : 1,
-          content: coincideFecha ? asociado : null
-        };
+        return { code: coincideFecha ? 0 : 1, content: coincideFecha ? asociado : null };
       });
+  }
+
+  public consultarSolicitudesCredito(estado?: string) {
+    const filtro = estado ? '?estado=' + encodeURIComponent(estado) : '';
+    return this._http.get(this.urlBridge + '/femprobien/creditos/solicitudes' + filtro);
+  }
+
+  public consultarSolicitudCredito(numeroSolicitud: number) {
+    return this._http.get(this.urlBridge + '/femprobien/creditos/solicitudes/' + encodeURIComponent(numeroSolicitud.toString()));
+  }
+
+  public consultarSolicitudesAfiliacion(estado?: string) {
+    const filtro = estado ? '?estado=' + encodeURIComponent(estado) : '';
+    return this._http.get(this.urlBridge + '/femprobien/solicitudes-afiliacion' + filtro);
   }
 
   public loadAssociatedRequests() {
-    return this._http.get(this.urlBridge + '/femprobien/solicitudes-afiliacion?estado=PENDIENTE')
+    return this.consultarSolicitudesAfiliacion('PENDIENTE')
       .map(res => {
         const data = res.json();
-        return {
-          code: 0,
-          content: Array.isArray(data) ? data : []
-        };
+        return { code: 0, content: Array.isArray(data) ? data : [] };
       });
   }
 
+  public mapearCamposAfiliacion(s: any) {
+    return {
+      id: s.id,
+      tipoSolicitud: s.tipo_solicitud,
+      tipoIngreso: s.tipo_ingreso,
+      fecAfi: s.fecha_afiliacion,
+      periodoAporte: s.forma_desc,
+      cantPorcen: s.cant_porcen,
+      porcenAhorro: s.porcen_ahorro,
+      tipoDoc: s.tipo_documento,
+      codAfi: s.cod_asp,
+      nomAfi: s.nombres,
+      ap1Afi: s.primer_apellido,
+      ap2Afi: s.segundo_apellido,
+      estCiv: s.est_civil,
+      fecNac: s.fec_nac,
+      fecExp: s.fec_exp,
+      lugarExp: s.lugar_exp,
+      eMail: s.email_per,
+      dirRes: s.dir_res,
+      nomBar: s.ciudad_residencia,
+      tel: s.tel,
+      telCel: s.cel,
+      otroTel: s.otro_tel,
+      nivelEstudios: s.nivel_estudios,
+      nomEmp: s.nom_emp,
+      fecIng: s.fec_ing,
+      salBas: s.sal_bas,
+      promPres: s.prom_pres,
+      promBoni: s.prom_boni,
+      cargo: s.cargo,
+      profesion: s.profesion,
+      ctaTipo: s.tipo_cuenta,
+      fdoBan: s.banco,
+      ctaBan: s.n_cuenta,
+      manejaRecursosPublicos: s.maneja_recursos_publicos ? 'SI' : 'NO',
+      reconocimientoPublico: s.reconocimiento_publico ? 'SI' : 'NO',
+      nomConyuge: s.nom_conyuge,
+      telConyuge: s.tel_conyuge,
+      vehiculo: s.vehiculo ? 'SI' : 'NO',
+      tipoDocBen1: s.tipo_doc_ben1,
+      tipoDocBen2: s.tipo_doc_ben2,
+      tipoDocBen3: s.tipo_doc_ben3
+    };
+  }
+
   public loadAffiliatedEmployees() {
-    return this._http.get(this.urlBridge + '/femprobien/solicitudes-afiliacion?estado=' + encodeURIComponent('AFILIADO(A)'))
+    return this.consultarSolicitudesAfiliacion('AFILIADO(A)')
       .map(res => {
         const data = res.json();
         const solicitudes = Array.isArray(data) ? data : [];
         const asociados = solicitudes.map((s: any) => {
           const nombreCompleto = ((s.nombres || '') + ' ' + (s.primer_apellido || '') + ' ' + (s.segundo_apellido || '')).replace(/\s+/g, ' ').trim();
-
-          return {
-            id: s.id,
+          return Object.assign(this.mapearCamposAfiliacion(s), {
             codAso: s.cod_asp,
             nomAso: nombreCompleto,
-            tipoSolicitud: s.tipo_solicitud,
-            tipoIngreso: s.tipo_ingreso,
-            fecAfi: s.fecha_afiliacion,
-            periodoAporte: s.forma_desc,
-            cantPorcen: s.cant_porcen,
-            porcenAhorro: s.porcen_ahorro,
-            tipoDoc: s.tipo_documento,
-            codAfi: s.cod_asp,
-            nomAfi: s.nombres,
-            ap1Afi: s.primer_apellido,
-            ap2Afi: s.segundo_apellido,
-            estCiv: s.est_civil,
-            fecNac: s.fec_nac,
-            fecExp: s.fec_exp,
-            lugarExp: s.lugar_exp,
-            eMail: s.email_per,
-            dirRes: s.dir_res,
-            nomBar: s.ciudad_residencia,
-            tel: s.tel,
-            telCel: s.cel,
-            otroTel: s.otro_tel,
-            nivelEstudios: s.nivel_estudios,
-            nomEmp: s.nom_emp,
-            fecIng: s.fec_ing,
-            salBas: s.sal_bas,
-            promPres: s.prom_pres,
-            promBoni: s.prom_boni,
-            cargo: s.cargo,
-            profesion: s.profesion,
-            ctaTipo: s.tipo_cuenta,
-            fdoBan: s.banco,
-            ctaBan: s.n_cuenta,
-            manejaRecursosPublicos: s.maneja_recursos_publicos ? 'SI' : 'NO',
-            reconocimientoPublico: s.reconocimiento_publico ? 'SI' : 'NO',
-            nomConyuge: s.nom_conyuge,
             ocuConyuge: s.ocupacion_conyuge,
-            telConyuge: s.tel_conyuge,
             tipoDocConyuge: s.tipo_documento_conyuge,
             docConyuge: s.documento_conyuge,
             bienRaices: s.bien_raiz ? 'SI' : 'NO',
             bienesDir: s.direccion_bien,
-            vehiculo: s.vehiculo ? 'SI' : 'NO',
             marcaVeh: s.marca_vehiculo,
             modeloVeh: s.modelo_vehiculo,
-            tipoDocBen1: s.tipo_doc_ben1,
             codBen1: s.cod_ben1,
             nomBen1: s.nom_ben1,
             parBen1: s.par_ben1,
-            tipoDocBen2: s.tipo_doc_ben2,
             codBen2: s.cod_ben2,
             nomBen2: s.nom_ben2,
             parBen2: s.par_ben2,
-            tipoDocBen3: s.tipo_doc_ben3,
             codBen3: s.cod_ben3,
             nomBen3: s.nom_ben3,
             parBen3: s.par_ben3
-          };
+          });
         });
-
-        return {
-          code: 0,
-          content: asociados
-        };
+        return { code: 0, content: asociados };
       });
   }
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Http, Headers, RequestOptions } from '@angular/http';
+import { Http, Headers, RequestOptions, ResponseContentType } from '@angular/http';
 import { UserService } from '../../../services/user.service';
 import { EmployeeService } from '../../../services/employee.service';
 import { GLOBAL } from '../../../services/global';
@@ -51,15 +51,11 @@ export class EmployeeFemprobienComponent implements OnInit {
   public nuevoAfiliado: any = {};
   public datosActualizacionCargados = false;
   public cargandoDatosActualizacion = false;
-  public documentoActualizacionOriginal = '';
   public buscadorInhabilitado = false;
   public solicitudesAfiliacion: any[] = [];
   public columnasSolicitudesAfiliacion: number[] = [0, 1];
-  public solicitudesAbiertas: boolean[] = [];
   public accionesEnProgreso: boolean[] = [];
   public loadingSolicitudes = false;
-  public tarjetaEnConfirmacion: number | null = null;
-  public accionPendiente: EstadoSolicitud | null = null;
   public filtroEstadoAfiliacion = 'PENDIENTE';
   public filtroTipoSolicitudAfiliacion = 'TODAS';
   public filtroBusquedaSolicitudesAfiliacion = '';
@@ -79,7 +75,14 @@ export class EmployeeFemprobienComponent implements OnInit {
   public formalizacionCreditoAdmin: any = null;
   public mostrarFormularioFormalizacionCreditoAdmin = false;
   public formalizandoCreditoAdmin = false;
-  public formularioFormalizacionCreditoAdmin: any = { montoAprobado: null, plazoAprobado: null, numeroCuotas: null, valorCuota: null, fechaPrimeraCuota: '', periodicidad: 'QUINCENAL', observacion: '' };
+  public formularioFormalizacionCreditoAdmin: any = this.crearFormularioFormalizacionCreditoAdmin();
+  public creditoHistoricoSaldos: any = null;
+  public saldosHistoricos: any[] = [];
+  public cargandoHistoricoSaldos = false;
+  public generandoEstadoCuentaCredito = false;
+  public errorEstadoCuentaCredito = '';
+  public errorHistoricoSaldos = '';
+  private versionHistoricoSaldos = 0;
   public documentoHistoricoCredito = '';
   public historicoCreditos: any[] = [];
   public nombreHistoricoCredito = '';
@@ -99,6 +102,7 @@ export class EmployeeFemprobienComponent implements OnInit {
   public resultadoValidacionImportacion: any = null;
   public procesandoImportacion = false;
   public resultadoProcesamientoImportacion: any = null;
+  public periodoImportacionCreditos = '';
   public archivoImportacionCreditos: any = null;
   public nombreArchivoImportacionCreditos = '';
   public validandoImportacionCreditos = false;
@@ -120,15 +124,35 @@ export class EmployeeFemprobienComponent implements OnInit {
     { id: 'patrimonio', numero: 6, titulo: 'Bienes y vehículo', requerida: false },
     { id: 'beneficiarios', numero: 7, titulo: 'Beneficiarios', requerida: true }
   ];
-  private readonly camposEstadoAfiliacion: any = {
-    solicitud: ['tipoSolicitud', 'tipoIngreso', 'fecAfi', 'periodoAporte', 'cantPorcen', 'porcenAhorro'],
-    datosPersonales: ['tipoDoc', 'codAfi', 'nomAfi', 'ap1Afi', 'estCiv', 'fecNac', 'fecExp', 'lugarExp', 'eMail', 'dirRes', 'nomBar', 'telCel', 'nivelEstudios'],
-    informacionLaboral: ['nomEmp', 'fecIng', 'salBas', 'cargo', 'profesion'],
-    infoFinanciera: ['ctaTipo', 'fdoBan', 'ctaBan']
-  };
-  public mostrarModalAfiliado = false;
-  public solicitudSeleccionada: any = null;
-  public indexSeleccionado = -1;
+  private readonly camposObligatoriosAfiliacion: { campo: string, nombre: string, seccion: string, soloAfiliacion?: boolean }[] = [
+    { campo: 'tipoSolicitud', nombre: 'Tipo de solicitud', seccion: 'solicitud' },
+    { campo: 'tipoIngreso', nombre: 'Primera vez / Reingreso', seccion: 'solicitud', soloAfiliacion: true },
+    { campo: 'fecAfi', nombre: 'Fecha de afiliación', seccion: 'solicitud', soloAfiliacion: true },
+    { campo: 'periodoAporte', nombre: 'Forma de descuento', seccion: 'solicitud' },
+    { campo: 'cantPorcen', nombre: 'Ahorro mensual', seccion: 'solicitud' },
+    { campo: 'porcenAhorro', nombre: 'Porcentaje de ahorro', seccion: 'solicitud' },
+    { campo: 'tipoDoc', nombre: 'Tipo de documento', seccion: 'datosPersonales' },
+    { campo: 'codAfi', nombre: 'Número de documento', seccion: 'datosPersonales' },
+    { campo: 'nomAfi', nombre: 'Nombres', seccion: 'datosPersonales' },
+    { campo: 'estCiv', nombre: 'Estado civil', seccion: 'datosPersonales' },
+    { campo: 'fecNac', nombre: 'Fecha de nacimiento', seccion: 'datosPersonales' },
+    { campo: 'fecExp', nombre: 'Fecha de expedición', seccion: 'datosPersonales' },
+    { campo: 'lugarExp', nombre: 'Lugar de expedición', seccion: 'datosPersonales' },
+    { campo: 'eMail', nombre: 'Correo electrónico personal', seccion: 'datosPersonales' },
+    { campo: 'dirRes', nombre: 'Dirección de residencia', seccion: 'datosPersonales' },
+    { campo: 'nomBar', nombre: 'Ciudad de residencia', seccion: 'datosPersonales' },
+    { campo: 'telCel', nombre: 'Celular', seccion: 'datosPersonales' },
+    { campo: 'nivelEstudios', nombre: 'Nivel de estudios', seccion: 'datosPersonales' },
+    { campo: 'nomEmp', nombre: 'Empresa', seccion: 'informacionLaboral' },
+    { campo: 'fecIng', nombre: 'Fecha de ingreso a la empresa', seccion: 'informacionLaboral' },
+    { campo: 'salBas', nombre: 'Salario básico', seccion: 'informacionLaboral' },
+    { campo: 'cargo', nombre: 'Cargo', seccion: 'informacionLaboral' },
+    { campo: 'profesion', nombre: 'Profesión', seccion: 'informacionLaboral' },
+    { campo: 'ctaTipo', nombre: 'Tipo de cuenta', seccion: 'infoFinanciera' },
+    { campo: 'fdoBan', nombre: 'Banco', seccion: 'infoFinanciera' },
+    { campo: 'ctaBan', nombre: 'Número de cuenta', seccion: 'infoFinanciera' },
+    { campo: 'ap1Afi', nombre: 'Primer apellido', seccion: 'datosPersonales', soloAfiliacion: true }
+  ];
   public isSubmitting = false;
   public modoCredito = false;
   public mostrarFormularioCredito = false;
@@ -144,9 +168,7 @@ export class EmployeeFemprobienComponent implements OnInit {
   public mensajeTasaSimulador = '';
   private versionSolicitudSimulador = 0;
   public enviandoCredito = false;
-  public loadingCreditos = false;
   public formularioCredito: any = {};
-  public solicitudesCreditoAsociado: any[] = [];
   public firmaSolicitanteFile: any = null;
   public huellaSolicitanteFile: any = null;
   public firmaDeudor1File: any = null;
@@ -164,8 +186,6 @@ export class EmployeeFemprobienComponent implements OnInit {
   public recorteBiometricoEsHuella = false;
   public tamanoRecorteBiometrico = 70;
   public procesandoRecorteBiometrico = false;
-  private archivoOriginalRecorteBiometrico: any = null;
-  private previewOriginalRecorteBiometrico = '';
   private imagenRecorteObjeto: any = null;
   private canvasRecorteBiometrico: any = null;
   private contextoRecorteBiometrico: any = null;
@@ -196,17 +216,40 @@ export class EmployeeFemprobienComponent implements OnInit {
     { id: 'firmas', numero: 9, titulo: 'Firma y huella' },
     { id: 'fondo', numero: 10, titulo: 'Información del fondo' }
   ];
-  private readonly camposEstadoCredito: any = {
-    solicitante: [
-      'nombreCompletoSolicitante', 'tipoDocumentoSolicitante', 'numeroDocumentoSolicitante',
-      'profesionSolicitante', 'cargoSolicitante', 'telefonoOficinaSolicitante', 'antiguedadSolicitante',
-      'celularSolicitante', 'ciudadSolicitante', 'emailPersonalSolicitante', 'fechaNacimientoSolicitante',
-      'estadoCivilSolicitante', 'direccionResidenciaSolicitante', 'estratoSolicitante',
-      'telefonoResidenciaSolicitante', 'tipoViviendaSolicitante', 'tiempoResidenciaSolicitante'
-    ],
-    financiera: ['salarioSolicitante'],
-    deudor1: ['nombreCompletoDeudor1', 'numeroDocumentoDeudor1']
-  };
+  private readonly camposObligatoriosCredito: { campo: string, nombre: string, seccion: string }[] = [
+    { campo: 'montoSolicitado', nombre: 'Monto solicitado', seccion: 'solicitud' },
+    { campo: 'montoSolicitadoLetras', nombre: 'Monto en letras', seccion: 'solicitud' },
+    { campo: 'plazoMeses', nombre: 'Plazo', seccion: 'solicitud' },
+    { campo: 'destinoCredito', nombre: 'Destino del crédito', seccion: 'solicitud' },
+    { campo: 'formaDescuento', nombre: 'Forma de descuento', seccion: 'solicitud' },
+    { campo: 'nombreCompletoSolicitante', nombre: 'Nombre completo', seccion: 'solicitante' },
+    { campo: 'tipoDocumentoSolicitante', nombre: 'Tipo documento', seccion: 'solicitante' },
+    { campo: 'numeroDocumentoSolicitante', nombre: 'Número documento', seccion: 'solicitante' },
+    { campo: 'empresaGrupo', nombre: 'Empresa del grupo', seccion: 'solicitud' },
+    { campo: 'profesionSolicitante', nombre: 'Profesión', seccion: 'solicitante' },
+    { campo: 'cargoSolicitante', nombre: 'Cargo', seccion: 'solicitante' },
+    { campo: 'telefonoOficinaSolicitante', nombre: 'Teléfono oficina', seccion: 'solicitante' },
+    { campo: 'antiguedadSolicitante', nombre: 'Antigüedad', seccion: 'solicitante' },
+    { campo: 'celularSolicitante', nombre: 'Celular', seccion: 'solicitante' },
+    { campo: 'ciudadSolicitante', nombre: 'Ciudad', seccion: 'solicitante' },
+    { campo: 'emailPersonalSolicitante', nombre: 'E-mail personal', seccion: 'solicitante' },
+    { campo: 'fechaNacimientoSolicitante', nombre: 'Fecha nacimiento', seccion: 'solicitante' },
+    { campo: 'estadoCivilSolicitante', nombre: 'Estado civil', seccion: 'solicitante' },
+    { campo: 'direccionResidenciaSolicitante', nombre: 'Dirección residencia', seccion: 'solicitante' },
+    { campo: 'estratoSolicitante', nombre: 'Estrato', seccion: 'solicitante' },
+    { campo: 'telefonoResidenciaSolicitante', nombre: 'Teléfono residencia', seccion: 'solicitante' },
+    { campo: 'tipoViviendaSolicitante', nombre: 'Vivienda', seccion: 'solicitante' },
+    { campo: 'tiempoResidenciaSolicitante', nombre: 'Tiempo residencia', seccion: 'solicitante' },
+    { campo: 'salarioSolicitante', nombre: 'Salario', seccion: 'financiera' },
+    { campo: 'nombreReferenciaFamiliarSolicitante', nombre: 'Referencia familiar', seccion: 'referencias' },
+    { campo: 'parentescoReferenciaFamiliarSolicitante', nombre: 'Parentesco referencia familiar', seccion: 'referencias' },
+    { campo: 'direccionReferenciaFamiliarSolicitante', nombre: 'Dirección referencia familiar', seccion: 'referencias' },
+    { campo: 'telefonoReferenciaFamiliarSolicitante', nombre: 'Teléfono referencia familiar', seccion: 'referencias' },
+    { campo: 'nombreReferenciaPersonalSolicitante', nombre: 'Referencia personal', seccion: 'referencias' },
+    { campo: 'parentescoReferenciaPersonalSolicitante', nombre: 'Relación referencia personal', seccion: 'referencias' },
+    { campo: 'direccionReferenciaPersonalSolicitante', nombre: 'Dirección referencia personal', seccion: 'referencias' },
+    { campo: 'telefonoReferenciaPersonalSolicitante', nombre: 'Teléfono referencia personal', seccion: 'referencias' }
+  ];
   public tiposViviendaCredito: string[] = ['PROPIA', 'ARRIENDO', 'PADRES', 'OTRA'];
   public estratosCredito: number[] = [1, 2, 3, 4, 5, 6];
   public empresas: string[] = ['DSM', 'IGB', 'INVERSUR', 'MODULA', 'MOTOREPUESTOS', 'MOTOZONE', 'REDPLAS', 'WALI'];
@@ -742,19 +785,13 @@ export class EmployeeFemprobienComponent implements OnInit {
 
   public textoAccionAuditoria(accion: string) {
     const codigo = (accion || '').toString().trim().toUpperCase();
-    if (codigo === 'ASIGNAR_ROL_USUARIO') {
-      return 'Rol asignado';
-    }
-    if (codigo === 'QUITAR_ROL_USUARIO') {
-      return 'Rol retirado';
-    }
-    if (codigo === 'ASIGNAR_PERMISO_ROL') {
-      return 'Permiso asignado';
-    }
-    if (codigo === 'QUITAR_PERMISO_ROL') {
-      return 'Permiso retirado';
-    }
-    return accion ? accion : 'Movimiento';
+    const textos: { [codigo: string]: string } = {
+      ASIGNAR_ROL_USUARIO: 'Rol asignado',
+      QUITAR_ROL_USUARIO: 'Rol retirado',
+      ASIGNAR_PERMISO_ROL: 'Permiso asignado',
+      QUITAR_PERMISO_ROL: 'Permiso retirado'
+    };
+    return Object.prototype.hasOwnProperty.call(textos, codigo) ? textos[codigo] : accion || 'Movimiento';
   }
 
   public claseAccionAuditoria(accion: string) {
@@ -783,62 +820,13 @@ export class EmployeeFemprobienComponent implements OnInit {
 
   private crearFormularioAfiliacion() {
     return {
-      tipoSolicitud: 'AFILIACION',
-      tipoIngreso: 'PRIMERA_VEZ',
-      fecAfi: this.today,
-      periodoAporte: '',
-      cantPorcen: null,
-      porcenAhorro: null,
-      tipoDoc: 'CC',
-      codAfi: null,
-      nomAfi: '',
-      ap1Afi: '',
-      ap2Afi: '',
-      estCiv: '',
-      fecNac: '',
-      fecExp: '',
-      lugarExp: '',
-      eMail: '',
-      dirRes: '',
-      nomBar: '',
-      tel: '',
-      telCel: '',
-      otroTel: '',
-      nivelEstudios: '',
-      nomEmp: '',
-      fecIng: '',
-      salBas: null,
-      promPres: null,
-      promBoni: null,
-      cargo: '',
-      profesion: '',
-      ctaTipo: '',
-      fdoBan: '',
-      ctaBan: '',
-      manejaRecursosPublicos: 'NO',
-      reconocimientoPublico: 'NO',
-      nomConyuge: '',
-      ocuConyuge: '',
-      telConyuge: '',
-      tipoDocConyuge: '',
-      docConyuge: '',
-      bienRaices: 'NO',
-      bienesDir: '',
-      vehiculo: 'NO',
-      marcaVeh: '',
-      modeloVeh: '',
-      tipoDocBen1: '',
-      codBen1: '',
-      nomBen1: '',
-      parBen1: '',
-      tipoDocBen2: '',
-      codBen2: '',
-      nomBen2: '',
-      parBen2: '',
-      tipoDocBen3: '',
-      codBen3: '',
-      nomBen3: '',
-      parBen3: ''
+      tipoSolicitud: 'AFILIACION', tipoIngreso: 'PRIMERA_VEZ', fecAfi: this.today, periodoAporte: '', cantPorcen: null, porcenAhorro: null,
+      tipoDoc: 'CC', codAfi: null, nomAfi: '', ap1Afi: '', ap2Afi: '', estCiv: '', fecNac: '', fecExp: '', lugarExp: '', eMail: '',
+      dirRes: '', nomBar: '', tel: '', telCel: '', otroTel: '', nivelEstudios: '', nomEmp: '', fecIng: '', salBas: null, promPres: null,
+      promBoni: null, cargo: '', profesion: '', ctaTipo: '', fdoBan: '', ctaBan: '', manejaRecursosPublicos: 'NO',
+      reconocimientoPublico: 'NO', nomConyuge: '', ocuConyuge: '', telConyuge: '', tipoDocConyuge: '', docConyuge: '', bienRaices: 'NO',
+      bienesDir: '', vehiculo: 'NO', marcaVeh: '', modeloVeh: '', tipoDocBen1: '', codBen1: '', nomBen1: '', parBen1: '', tipoDocBen2: '',
+      codBen2: '', nomBen2: '', parBen2: '', tipoDocBen3: '', codBen3: '', nomBen3: '', parBen3: ''
     };
   }
 
@@ -850,23 +838,14 @@ export class EmployeeFemprobienComponent implements OnInit {
     return !this.esActualizacionDatos() || this.datosActualizacionCargados;
   }
 
-
-
   public reiniciarDatosActualizacion() {
     const formulario = this.crearFormularioAfiliacion();
     formulario.tipoSolicitud = 'ACTUALIZACION_DATOS';
     this.nuevoAfiliado = formulario;
     this.datosActualizacionCargados = false;
     this.cargandoDatosActualizacion = false;
-    this.documentoActualizacionOriginal = '';
     this.intentoEnviarAfiliacion = false;
-    this.seccionesAbiertas.solicitud = true;
-    this.seccionesAbiertas.datosPersonales = false;
-    this.seccionesAbiertas.informacionLaboral = false;
-    this.seccionesAbiertas.infoFinanciera = false;
-    this.seccionesAbiertas.conyuge = false;
-    this.seccionesAbiertas.patrimonio = false;
-    this.seccionesAbiertas.beneficiarios = false;
+    this.reiniciarSeccionesAfiliacion();
     this.clearError();
     this.irASeccionAfiliacion('solicitud');
   }
@@ -932,7 +911,6 @@ export class EmployeeFemprobienComponent implements OnInit {
         }
         this.cargarAsociadoEnFormularioActualizacion(asociado);
         this.datosActualizacionCargados = true;
-        this.documentoActualizacionOriginal = documento;
         this.successMessage = '';
         this.seccionesAbiertas.solicitud = true;
         this.seccionesAbiertas.datosPersonales = true;
@@ -940,7 +918,6 @@ export class EmployeeFemprobienComponent implements OnInit {
       }, error => {
         this.cargandoDatosActualizacion = false;
         this.datosActualizacionCargados = false;
-        this.documentoActualizacionOriginal = '';
 
         if (error && error.status === 404) {
           this.errorMessage = 'No se encontró un asociado con el documento y la fecha de nacimiento ingresados.';
@@ -1012,145 +989,48 @@ export class EmployeeFemprobienComponent implements OnInit {
     this.nuevoAfiliado.parBen3 = asociado.parentesco3 || '';
   }
 
-  private crearFormularioCredito() {
-    return {
-      fechaSolicitud: this.today,
-      empresaGrupo: '',
-      montoSolicitado: null,
-      montoSolicitadoLetras: '',
-      plazoMeses: null,
-      abonosExtraordinarios: false,
-      detalleAbonosExtraordinarios: '',
-      destinoCredito: '',
-      formaDescuento: '',
-      nombreCompletoSolicitante: '',
-      tipoDocumentoSolicitante: 'CC',
-      numeroDocumentoSolicitante: '',
-      profesionSolicitante: '',
-      cargoSolicitante: '',
-      telefonoOficinaSolicitante: '',
-      antiguedadSolicitante: '',
-      celularSolicitante: '',
-      ciudadSolicitante: '',
-      emailPersonalSolicitante: '',
-      fechaNacimientoSolicitante: '',
-      estadoCivilSolicitante: '',
-      numeroHijosSolicitante: 0,
-      direccionResidenciaSolicitante: '',
-      estratoSolicitante: null,
-      telefonoResidenciaSolicitante: '',
-      tipoViviendaSolicitante: '',
-      otraViviendaSolicitante: '',
-      tiempoResidenciaSolicitante: '',
-      valorArriendoSolicitante: 0,
-      salarioSolicitante: null,
-      otrosIngresosSolicitante: 0,
-      descripcionOtrosIngresosSolicitante: '',
-      egresosSolicitante: 0,
-      activosSolicitante: 0,
-      pasivosSolicitante: 0,
-      patrimonioSolicitante: 0,
-      autorizaDesembolsoBancario: false,
-      tipoCuentaBancaria: '',
-      bancoSolicitante: '',
-      numeroCuentaSolicitante: '',
-      nombreReferenciaFamiliarSolicitante: '',
-      parentescoReferenciaFamiliarSolicitante: '',
-      direccionReferenciaFamiliarSolicitante: '',
-      telefonoReferenciaFamiliarSolicitante: '',
-      nombreReferenciaPersonalSolicitante: '',
-      parentescoReferenciaPersonalSolicitante: '',
-      direccionReferenciaPersonalSolicitante: '',
-      telefonoReferenciaPersonalSolicitante: '',
-      tieneBienRaizSolicitante: false,
-      tipoBienSolicitante: '',
-      direccionBienSolicitante: '',
-      matriculaInmobiliariaSolicitante: '',
-      ciudadBienSolicitante: '',
-      valorComercialBienSolicitante: 0,
-      valorHipotecaSolicitante: 0,
-      hipotecaAFavorDeSolicitante: '',
-      patrimonioFamiliaSolicitante: false,
-      tieneVehiculoSolicitante: false,
-      modeloVehiculoSolicitante: '',
-      placaVehiculoSolicitante: '',
-      marcaVehiculoSolicitante: '',
-      valorComercialVehiculoSolicitante: 0,
-      vehiculoPignoradoSolicitante: false,
-      tipoServicioVehiculoSolicitante: '',
-      aplicaConyuge: false,
-      nombreCompletoConyuge: '',
-      tipoDocumentoConyuge: 'CC',
-      numeroDocumentoConyuge: '',
-      fechaNacimientoConyuge: '',
-      actividadConyuge: '',
-      empresaConyuge: '',
-      telefonoConyuge: '',
-      antiguedadConyuge: '',
-      ingresosConyuge: 0,
-      requiereDeudor1: false,
-      nombreCompletoDeudor1: '',
-      tipoDocumentoDeudor1: 'CC',
-      numeroDocumentoDeudor1: '',
-      empresaDeudor1: '',
-      profesionDeudor1: '',
-      cargoDeudor1: '',
-      antiguedadDeudor1: '',
-      direccionOficinaDeudor1: '',
-      telefonoDeudor1: '',
-      salarioDeudor1: 0,
-      otrosIngresosDeudor1: 0,
-      egresosDeudor1: 0,
-      activosDeudor1: 0,
-      pasivosDeudor1: 0,
-      patrimonioDeudor1: 0,
-      fechaNacimientoDeudor1: '',
-      estadoCivilDeudor1: '',
-      numeroHijosDeudor1: 0,
-      direccionResidenciaDeudor1: '',
-      estratoDeudor1: null,
-      telefonoResidenciaDeudor1: '',
-      tipoViviendaDeudor1: '',
-      otraViviendaDeudor1: '',
-      tiempoResidenciaDeudor1: '',
-      valorArriendoDeudor1: 0,
-      nombreReferenciaFamiliarDeudor1: '',
-      parentescoReferenciaFamiliarDeudor1: '',
-      direccionReferenciaFamiliarDeudor1: '',
-      telefonoReferenciaFamiliarDeudor1: '',
-      nombreReferenciaPersonalDeudor1: '',
-      parentescoReferenciaPersonalDeudor1: '',
-      direccionReferenciaPersonalDeudor1: '',
-      telefonoReferenciaPersonalDeudor1: '',
-      tieneBienRaizDeudor1: false,
-      tipoBienDeudor1: '',
-      direccionBienDeudor1: '',
-      matriculaInmobiliariaDeudor1: '',
-      ciudadBienDeudor1: '',
-      valorComercialBienDeudor1: 0,
-      valorHipotecaDeudor1: 0,
-      hipotecaAFavorDeDeudor1: '',
-      patrimonioFamiliaDeudor1: false,
-      tieneVehiculoDeudor1: false,
-      modeloVehiculoDeudor1: '',
-      placaVehiculoDeudor1: '',
-      marcaVehiculoDeudor1: '',
-      valorComercialVehiculoDeudor1: 0,
-      vehiculoPignoradoDeudor1: false,
-      tipoServicioVehiculoDeudor1: '',
-      autorizacionCentralRiesgo: false,
-      autorizacionTratamientoDatos: false,
-      autorizacionDescuentoNomina: false,
-      certificacionDestinoFondos: false,
-      valorCreditoAutorizacion: null,
-      cantidadCuotas: null,
-      valorCuota: null,
-      empresaAutorizadaDescuento: '',
-      tipoCuentaDescuento: '',
-      numeroCuentaDescuento: '',
-      bancoDescuento: '',
-      aceptaFirmaHuella: false
+  private crearDatosDeudorCredito(tipoDocumento: string) {
+    const valores: any = {
+      nombreCompleto: '', tipoDocumento: tipoDocumento, numeroDocumento: '', empresa: '', profesion: '', cargo: '', antiguedad: '',
+      direccionOficina: '', telefono: '', salario: 0, otrosIngresos: 0, egresos: 0, activos: 0, pasivos: 0, patrimonio: 0,
+      fechaNacimiento: '', estadoCivil: '', numeroHijos: 0, direccionResidencia: '', estrato: null, telefonoResidencia: '', tipoVivienda: '',
+      otraVivienda: '', tiempoResidencia: '', valorArriendo: 0, nombreReferenciaFamiliar: '', parentescoReferenciaFamiliar: '',
+      direccionReferenciaFamiliar: '', telefonoReferenciaFamiliar: '', nombreReferenciaPersonal: '', parentescoReferenciaPersonal: '',
+      direccionReferenciaPersonal: '', telefonoReferenciaPersonal: '', tieneBienRaiz: false, tipoBien: '', direccionBien: '',
+      matriculaInmobiliaria: '', ciudadBien: '', valorComercialBien: 0, valorHipoteca: 0, hipotecaAFavorDe: '', patrimonioFamilia: false,
+      tieneVehiculo: false, modeloVehiculo: '', placaVehiculo: '', marcaVehiculo: '', valorComercialVehiculo: 0, vehiculoPignorado: false,
+      tipoServicioVehiculo: ''
     };
+    const datos: any = {};
+    Object.keys(valores).forEach(campo => datos[campo + 'Deudor1'] = valores[campo]);
+    return datos;
+  }
+
+  private crearFormularioCredito() {
+    return Object.assign({
+      fechaSolicitud: this.today, empresaGrupo: '', montoSolicitado: null, montoSolicitadoLetras: '', plazoMeses: null,
+      abonosExtraordinarios: false, detalleAbonosExtraordinarios: '', destinoCredito: '', formaDescuento: '', nombreCompletoSolicitante: '',
+      tipoDocumentoSolicitante: 'CC', numeroDocumentoSolicitante: '', profesionSolicitante: '', cargoSolicitante: '',
+      telefonoOficinaSolicitante: '', antiguedadSolicitante: '', celularSolicitante: '', ciudadSolicitante: '', emailPersonalSolicitante: '',
+      fechaNacimientoSolicitante: '', estadoCivilSolicitante: '', numeroHijosSolicitante: 0, direccionResidenciaSolicitante: '',
+      estratoSolicitante: null, telefonoResidenciaSolicitante: '', tipoViviendaSolicitante: '', otraViviendaSolicitante: '',
+      tiempoResidenciaSolicitante: '', valorArriendoSolicitante: 0, salarioSolicitante: null, otrosIngresosSolicitante: 0,
+      descripcionOtrosIngresosSolicitante: '', egresosSolicitante: 0, activosSolicitante: 0, pasivosSolicitante: 0, patrimonioSolicitante: 0,
+      autorizaDesembolsoBancario: false, tipoCuentaBancaria: '', bancoSolicitante: '', numeroCuentaSolicitante: '',
+      nombreReferenciaFamiliarSolicitante: '', parentescoReferenciaFamiliarSolicitante: '', direccionReferenciaFamiliarSolicitante: '',
+      telefonoReferenciaFamiliarSolicitante: '', nombreReferenciaPersonalSolicitante: '', parentescoReferenciaPersonalSolicitante: '',
+      direccionReferenciaPersonalSolicitante: '', telefonoReferenciaPersonalSolicitante: '', tieneBienRaizSolicitante: false,
+      tipoBienSolicitante: '', direccionBienSolicitante: '', matriculaInmobiliariaSolicitante: '', ciudadBienSolicitante: '',
+      valorComercialBienSolicitante: 0, valorHipotecaSolicitante: 0, hipotecaAFavorDeSolicitante: '', patrimonioFamiliaSolicitante: false,
+      tieneVehiculoSolicitante: false, modeloVehiculoSolicitante: '', placaVehiculoSolicitante: '', marcaVehiculoSolicitante: '',
+      valorComercialVehiculoSolicitante: 0, vehiculoPignoradoSolicitante: false, tipoServicioVehiculoSolicitante: '', aplicaConyuge: false,
+      nombreCompletoConyuge: '', tipoDocumentoConyuge: 'CC', numeroDocumentoConyuge: '', fechaNacimientoConyuge: '', actividadConyuge: '',
+      empresaConyuge: '', telefonoConyuge: '', antiguedadConyuge: '', ingresosConyuge: 0, requiereDeudor1: false,
+    }, this.crearDatosDeudorCredito('CC'), {
+      autorizacionCentralRiesgo: false, autorizacionTratamientoDatos: false, autorizacionDescuentoNomina: false,
+      certificacionDestinoFondos: false, valorCreditoAutorizacion: null, cantidadCuotas: null, valorCuota: null,
+      empresaAutorizadaDescuento: '', tipoCuentaDescuento: '', numeroCuentaDescuento: '', bancoDescuento: '', aceptaFirmaHuella: false
+    });
   }
 
   public clearError() {
@@ -1206,14 +1086,8 @@ export class EmployeeFemprobienComponent implements OnInit {
   }
 
   private contarSeccionesCompletas(secciones: string[], credito: boolean) {
-    let completas = 0;
-    for (let i = 0; i < secciones.length; i++) {
-      const estado = credito ? this.estadoSeccionCredito(secciones[i]) : this.estadoSeccionAfiliacion(secciones[i]);
-      if (estado === 'completa') {
-        completas++;
-      }
-    }
-    return completas;
+    return secciones.filter(seccion =>
+      (credito ? this.estadoSeccionCredito(seccion) : this.estadoSeccionAfiliacion(seccion)) === 'completa').length;
   }
 
   private calcularPatrimonio(activos: any, pasivos: any) {
@@ -1230,68 +1104,104 @@ export class EmployeeFemprobienComponent implements OnInit {
     this.clearError();
   }
 
-  public seleccionarArchivoImportacion(event: any) {
+  public seleccionarArchivoImportacion(event: any, credito: boolean = false) {
+    const sufijo = credito ? 'Creditos' : '';
     this.clearError();
-    this.resultadoValidacionImportacion = null;
-    this.resultadoProcesamientoImportacion = null;
-    this.procesandoImportacion = false;
+    (this as any)['resultadoValidacionImportacion' + sufijo] = null;
+    (this as any)['resultadoProcesamientoImportacion' + sufijo] = null;
+    (this as any)['procesandoImportacion' + sufijo] = false;
     const seleccion = this.obtenerArchivoExcel(event);
-    this.archivoImportacion = seleccion ? seleccion.archivo : null;
-    this.nombreArchivoImportacion = seleccion ? seleccion.nombre : '';
+    (this as any)['archivoImportacion' + sufijo] = seleccion ? seleccion.archivo : null;
+    (this as any)['nombreArchivoImportacion' + sufijo] = seleccion ? seleccion.nombre : '';
   }
 
   public validarArchivoImportacion() {
+    this.validarImportacionExcel(false);
+  }
+
+  private validarImportacionExcel(credito: boolean) {
+    const sufijo = credito ? 'Creditos' : '';
+    const validando = 'validandoImportacion' + sufijo;
+    const resultado = 'resultadoValidacionImportacion' + sufijo;
+    const instancia: any = this;
+    const archivo = instancia['archivoImportacion' + sufijo];
     if (!this.puedeImportarDatos) {
-      this.errorMessage = 'No tienes permisos para importar información de FEMPROBIEN.';
+      this.errorMessage = credito ? 'No tienes permisos para importar la cartera de créditos.' : 'No tienes permisos para importar información de FEMPROBIEN.';
       return;
     }
-    if (!this.archivoImportacion) {
-      this.errorMessage = 'Debes seleccionar un archivo de Excel.';
+    if (!archivo) {
+      this.errorMessage = credito ? 'Debes seleccionar el archivo de cartera de créditos.' : 'Debes seleccionar un archivo de Excel.';
       return;
     }
-    if (this.validandoImportacion) {
+    if (instancia[validando] || (credito && this.procesandoImportacionCreditos)) {
       return;
     }
     this.clearError();
-    this.validandoImportacion = true;
-    this.resultadoValidacionImportacion = null;
-    this.resultadoProcesamientoImportacion = null;
-    this.procesandoImportacion = false;
-    const formData = this.crearFormDataImportacion(this.archivoImportacion);
-    const url = this.bridgeApiUrl + '/femprobien/importacion/validar';
-
+    instancia[validando] = true;
+    instancia[resultado] = null;
+    instancia['resultadoProcesamientoImportacion' + sufijo] = null;
+    if (!credito) { this.procesandoImportacion = false; }
+    const formData = this.crearFormDataImportacion(archivo);
+    if (credito) { formData.append('periodo', this.periodoImportacionCreditos); }
+    const url = this.bridgeApiUrl + '/femprobien/importacion/' + (credito ? 'creditos/' : '') + 'validar';
     this._http.post(url, formData).subscribe(
       response => {
-        this.validandoImportacion = false;
+        instancia[validando] = false;
         try {
           const data = response.json();
-          if (data &&
-            data.status === 200) {
-            this.resultadoValidacionImportacion = data;
-            this.successMessage = 'Archivo validado correctamente. ' + 'La base de datos todavía NO ha sido modificada.';
-          }
-          else {
-            this.resultadoValidacionImportacion = null;
-            this.errorMessage = data && data.message ? data.message : 'No fue posible validar el archivo.';
+          if (data && data.status === 200) {
+            if (credito && data.periodoCorte !== this.periodoImportacionCreditos) {
+              instancia[resultado] = null;
+              this.errorMessage = 'El corte devuelto no coincide con el seleccionado. Actualiza BridgeApi y vuelve a validar.'; return;
+            }
+            instancia[resultado] = data;
+            this.successMessage = credito ? 'Archivo de créditos validado correctamente. El corte seleccionado es ' + (data.etiquetaPeriodo || '') + '. La base de datos todavía NO ha sido modificada.' : 'Archivo validado correctamente. La base de datos todavía NO ha sido modificada.';
+          } else {
+            instancia[resultado] = null;
+            this.errorMessage = data && data.message ? data.message : 'No fue posible validar el archivo' + (credito ? ' de créditos' : '') + '.';
           }
         } catch (e) {
-          this.resultadoValidacionImportacion = null;
+          instancia[resultado] = null;
           this.errorMessage = 'No fue posible interpretar la respuesta del servidor.';
         }
       }, error => {
-        this.validandoImportacion = false;
-        this.resultadoValidacionImportacion = null;
+        instancia[validando] = false;
+        instancia[resultado] = null;
+        this.errorMessage = this.obtenerMensajeErrorCredito(error, 'Ocurrió un error al validar el archivo' + (credito ? ' de créditos' : '') + '.');
+      });
+  }
 
-        if (error && error._body) {
-          try {
-            const body = JSON.parse(error._body);
-            this.errorMessage = body && body.message ? body.message : 'Ocurrió un error al validar el archivo.';
-          } catch (e) {
-            this.errorMessage = 'Ocurrió un error al validar el archivo.';
+  private ejecutarProcesamientoImportacionExcel(credito: boolean) {
+    const sufijo = credito ? 'Creditos' : '';
+    const procesando = 'procesandoImportacion' + sufijo;
+    const resultado = 'resultadoProcesamientoImportacion' + sufijo;
+    const instancia: any = this;
+    this.clearError();
+    instancia[procesando] = true;
+    instancia[resultado] = null;
+    const formData = this.crearFormDataImportacion(instancia['archivoImportacion' + sufijo]);
+    if (credito) { formData.append('periodo', this.periodoImportacionCreditos); }
+    const url = this.bridgeApiUrl + '/femprobien/importacion/' + (credito ? 'creditos/' : '') + 'procesar';
+    this._http.post(url, formData).subscribe(
+      response => {
+        instancia[procesando] = false;
+        try {
+          const data = response.json();
+          if (data && data.status === 200) {
+            instancia[resultado] = data;
+            this.successMessage = data.message || (credito ? 'La cartera de créditos fue actualizada correctamente.' : 'El archivo fue procesado correctamente.');
+          } else {
+            instancia[resultado] = null;
+            this.errorMessage = data && data.message ? data.message : 'No fue posible procesar ' + (credito ? 'la cartera de créditos.' : 'el archivo.');
           }
-        } else {
-          this.errorMessage = 'Ocurrió un error al validar el archivo.';
+        } catch (e) {
+          instancia[resultado] = null;
+          this.errorMessage = 'No fue posible interpretar la respuesta del servidor.';
         }
+      }, error => {
+        instancia[procesando] = false;
+        instancia[resultado] = null;
+        this.errorMessage = this.obtenerMensajeErrorCredito(error, 'Ocurrió un error al procesar ' + (credito ? 'la cartera de créditos.' : 'el archivo.'));
       });
   }
 
@@ -1322,54 +1232,23 @@ export class EmployeeFemprobienComponent implements OnInit {
         ' Esta operación realizará INSERT y UPDATE según corresponda.', 'Procesar y actualizar', () => this.procesarArchivoImportacion(true), 'warning', 'btn-danger');
       return;
     }
+    this.ejecutarProcesamientoImportacionExcel(false);
+  }
+
+  private limpiarImportacionExcel(credito: boolean) {
+    const sufijo = credito ? 'Creditos' : '';
+    (this as any)['archivoImportacion' + sufijo] = null;
+    (this as any)['nombreArchivoImportacion' + sufijo] = '';
+    (this as any)['resultadoValidacionImportacion' + sufijo] = null;
+    (this as any)['resultadoProcesamientoImportacion' + sufijo] = null;
+    (this as any)['validandoImportacion' + sufijo] = false;
+    (this as any)['procesandoImportacion' + sufijo] = false;
     this.clearError();
-    this.procesandoImportacion = true;
-    this.resultadoProcesamientoImportacion = null;
-    const formData = this.crearFormDataImportacion(this.archivoImportacion);
-    const url = this.bridgeApiUrl + '/femprobien/importacion/procesar';
-
-    this._http.post(url, formData).subscribe(
-      response => {
-        this.procesandoImportacion = false;
-        try {
-          const data = response.json();
-          if (data && data.status === 200) {
-            this.resultadoProcesamientoImportacion = data;
-            this.successMessage = data.message || 'El archivo fue procesado correctamente.';
-          } else {
-            this.resultadoProcesamientoImportacion = null;
-            this.errorMessage = data && data.message ? data.message : 'No fue posible procesar el archivo.';
-          }
-        } catch (e) {
-          this.resultadoProcesamientoImportacion = null;
-          this.errorMessage = 'No fue posible interpretar la respuesta del servidor.';
-        }
-      }, error => {
-        this.procesandoImportacion = false;
-        this.resultadoProcesamientoImportacion = null;
-
-        if (error && error._body) {
-          try {
-            const body = JSON.parse(error._body);
-            this.errorMessage = body && body.message ? body.message : 'Ocurrió un error al procesar el archivo.';
-          } catch (e) {
-            this.errorMessage = 'Ocurrió un error al procesar el archivo.';
-          }
-        } else {
-          this.errorMessage = 'Ocurrió un error al procesar el archivo.';
-        }
-      });
+    this.limpiarInputArchivo('archivoImportacion' + sufijo + 'Femprobien');
   }
 
   public limpiarImportacionDatos() {
-    this.archivoImportacion = null;
-    this.nombreArchivoImportacion = '';
-    this.resultadoValidacionImportacion = null;
-    this.resultadoProcesamientoImportacion = null;
-    this.validandoImportacion = false;
-    this.procesandoImportacion = false;
-    this.clearError();
-    this.limpiarInputArchivo('archivoImportacionFemprobien');
+    this.limpiarImportacionExcel(false);
   }
 
   public seleccionarImportacionAportes() {
@@ -1388,55 +1267,18 @@ export class EmployeeFemprobienComponent implements OnInit {
   }
 
   public seleccionarArchivoImportacionCreditos(event: any) {
-    this.clearError();
+    this.seleccionarArchivoImportacion(event, true);
+  }
+
+  public cambiarPeriodoImportacionCreditos() {
     this.resultadoValidacionImportacionCreditos = null;
     this.resultadoProcesamientoImportacionCreditos = null;
-    this.procesandoImportacionCreditos = false;
-    const seleccion = this.obtenerArchivoExcel(event);
-    this.archivoImportacionCreditos = seleccion ? seleccion.archivo : null;
-    this.nombreArchivoImportacionCreditos = seleccion ? seleccion.nombre : '';
+    this.clearError();
   }
 
   public validarArchivoImportacionCreditos() {
-    if (!this.puedeImportarDatos) {
-      this.errorMessage = 'No tienes permisos para importar la cartera de créditos.';
-      return;
-    }
-    if (!this.archivoImportacionCreditos) {
-      this.errorMessage = 'Debes seleccionar el archivo de cartera de créditos.';
-      return;
-    }
-    if (this.validandoImportacionCreditos || this.procesandoImportacionCreditos) {
-      return;
-    }
-    this.clearError();
-    this.validandoImportacionCreditos = true;
-    this.resultadoValidacionImportacionCreditos = null;
-    this.resultadoProcesamientoImportacionCreditos = null;
-    const formData = this.crearFormDataImportacion(this.archivoImportacionCreditos);
-    const url = this.bridgeApiUrl + '/femprobien/importacion/creditos/validar';
-
-    this._http.post(url, formData).subscribe(
-      response => {
-        this.validandoImportacionCreditos = false;
-        try {
-          const data = response.json();
-          if (data && data.status === 200) {
-            this.resultadoValidacionImportacionCreditos = data;
-            this.successMessage = 'Archivo de créditos validado correctamente. ' + 'El corte detectado es ' + (data.etiquetaPeriodo || '') + '. La base de datos todavía NO ha sido modificada.';
-          } else {
-            this.resultadoValidacionImportacionCreditos = null;
-            this.errorMessage = data && data.message ? data.message : 'No fue posible validar el archivo de créditos.';
-          }
-        } catch (e) {
-          this.resultadoValidacionImportacionCreditos = null;
-          this.errorMessage = 'No fue posible interpretar la respuesta del servidor.';
-        }
-      }, error => {
-        this.validandoImportacionCreditos = false;
-        this.resultadoValidacionImportacionCreditos = null;
-        this.errorMessage = this.obtenerMensajeErrorCredito(error, 'Ocurrió un error al validar el archivo de créditos.');
-      });
+    if (!this.periodoImportacionCreditos) { this.errorMessage = 'Selecciona el mes de corte del archivo.'; return; }
+    this.validarImportacionExcel(true);
   }
 
   public procesarArchivoImportacionCreditos(confirmado?: boolean) {
@@ -1451,6 +1293,9 @@ export class EmployeeFemprobienComponent implements OnInit {
     if (!this.resultadoValidacionImportacionCreditos) {
       this.errorMessage = 'Primero debes validar el archivo de créditos.';
       return;
+    }
+    if (this.resultadoValidacionImportacionCreditos.periodoCorte !== this.periodoImportacionCreditos) {
+      this.errorMessage = 'El corte cambió. Debes volver a validar el archivo.'; return;
     }
     if (Number(this.resultadoValidacionImportacionCreditos.errores || 0) > 0) {
       this.errorMessage = 'El archivo contiene errores. Corrígelos antes de procesarlo.';
@@ -1469,44 +1314,12 @@ export class EmployeeFemprobienComponent implements OnInit {
       this.confirmarFemprobien('Confirmar actualización de cartera', 'Estás a punto de modificar la cartera de créditos de FEMPROBIEN.', detalle + ' La operación realizará INSERT y UPDATE en tblAporteCredito sin modificar la estructura de la tabla.', 'Procesar y actualizar', () => this.procesarArchivoImportacionCreditos(true), 'warning', 'btn-danger');
       return;
     }
-    this.clearError();
-    this.procesandoImportacionCreditos = true;
-    this.resultadoProcesamientoImportacionCreditos = null;
-    const formData = this.crearFormDataImportacion(this.archivoImportacionCreditos);
-    const url = this.bridgeApiUrl + '/femprobien/importacion/creditos/procesar';
-
-    this._http.post(url, formData).subscribe(
-      response => {
-        this.procesandoImportacionCreditos = false;
-        try {
-          const data = response.json();
-          if (data && data.status === 200) {
-            this.resultadoProcesamientoImportacionCreditos = data;
-            this.successMessage = data.message || 'La cartera de créditos fue actualizada correctamente.';
-          } else {
-            this.resultadoProcesamientoImportacionCreditos = null;
-            this.errorMessage = data && data.message ? data.message : 'No fue posible procesar la cartera de créditos.';
-          }
-        } catch (e) {
-          this.resultadoProcesamientoImportacionCreditos = null;
-          this.errorMessage = 'No fue posible interpretar la respuesta del servidor.';
-        }
-      }, error => {
-        this.procesandoImportacionCreditos = false;
-        this.resultadoProcesamientoImportacionCreditos = null;
-        this.errorMessage = this.obtenerMensajeErrorCredito(error, 'Ocurrió un error al procesar la cartera de créditos.');
-      });
+    this.ejecutarProcesamientoImportacionExcel(true);
   }
 
   public limpiarImportacionCreditos() {
-    this.archivoImportacionCreditos = null;
-    this.nombreArchivoImportacionCreditos = '';
-    this.resultadoValidacionImportacionCreditos = null;
-    this.resultadoProcesamientoImportacionCreditos = null;
-    this.validandoImportacionCreditos = false;
-    this.procesandoImportacionCreditos = false;
-    this.clearError();
-    this.limpiarInputArchivo('archivoImportacionCreditosFemprobien');
+    this.periodoImportacionCreditos = '';
+    this.limpiarImportacionExcel(true);
   }
 
   public abrirSolicitudes() {
@@ -1537,9 +1350,7 @@ export class EmployeeFemprobienComponent implements OnInit {
       this.cantidadSolicitudesCreditoPendientes = 0;
       return;
     }
-    const url = this.bridgeApiUrl + '/femprobien/creditos/solicitudes?estado=PENDIENTE';
-
-    this._http.get(url).subscribe(
+    this._employeeService.consultarSolicitudesCredito('PENDIENTE').subscribe(
       response => {
         try {
           const data = response.json();
@@ -1560,9 +1371,7 @@ export class EmployeeFemprobienComponent implements OnInit {
     }
     this.loadingSolicitudesCreditoAdmin = true;
     this.errorMessage = '';
-    const url = this.bridgeApiUrl + '/femprobien/creditos/solicitudes';
-
-    this._http.get(url).subscribe(
+    this._employeeService.consultarSolicitudesCredito().subscribe(
       response => {
         this.loadingSolicitudesCreditoAdmin = false;
         try {
@@ -1592,35 +1401,33 @@ export class EmployeeFemprobienComponent implements OnInit {
     this.filtroBusquedaSolicitudesCreditoAdmin = '';
   }
 
-  public obtenerSolicitudesCreditoAdminFiltradas() {
-    const solicitudes = this.solicitudesCreditoAdmin || [];
-    const filtroBusqueda = this.filtroBusquedaSolicitudesCreditoAdmin ? this.filtroBusquedaSolicitudesCreditoAdmin.toString().trim().toUpperCase() : '';
+  private filtrarSolicitudes(solicitudes: any[], busqueda: any, contenido: (solicitud: any) => any[], filtros: any[]) {
+    const texto = busqueda ? busqueda.toString().trim().toUpperCase() : '';
+    if (texto) {
+      return solicitudes.filter(solicitud => contenido(solicitud).join(' ').toUpperCase().indexOf(texto) >= 0);
+    }
+    return filtros.reduce((resultado, filtro) => filtro[1] && filtro[1] !== 'TODAS' ?
+      resultado.filter((solicitud: any) => solicitud[filtro[0]] === filtro[1]) : resultado, solicitudes);
+  }
 
-    if (filtroBusqueda) {
-      return solicitudes.filter((solicitud: any) => {
-        const estadoCredito = solicitud.estado_credito ? solicitud.estado_credito.toString().replace(/_/g, ' ') : '';
-        const contenido = [
-          solicitud.numero_solicitud || '',
-          solicitud.nombre_completo_solicitante || '',
-          solicitud.nom_aso || '',
-          solicitud.numero_documento_solicitante || '',
-          solicitud.cod_asp || '',
-          solicitud.email_personal_solicitante || '',
-          solicitud.celular_solicitante || '',
-          solicitud.empresa_grupo || '',
-          solicitud.destino_credito || '',
-          solicitud.monto_solicitado || '',
-          solicitud.plazo_meses || '',
-          estadoCredito
-        ].join(' ').toUpperCase();
-        return contenido.indexOf(filtroBusqueda) >= 0;
-      });
-    }
-    if (this.filtroEstadoCreditoAdmin &&
-      this.filtroEstadoCreditoAdmin !== 'TODAS') {
-      return solicitudes.filter((solicitud: any) => solicitud.estado_credito === this.filtroEstadoCreditoAdmin);
-    }
-    return solicitudes;
+  public obtenerSolicitudesCreditoAdminFiltradas() {
+    return this.filtrarSolicitudes(this.solicitudesCreditoAdmin || [], this.filtroBusquedaSolicitudesCreditoAdmin, solicitud => {
+      const estadoCredito = solicitud.estado_credito ? solicitud.estado_credito.toString().replace(/_/g, ' ') : '';
+      return [
+        solicitud.numero_solicitud || '',
+        solicitud.nombre_completo_solicitante || '',
+        solicitud.nom_aso || '',
+        solicitud.numero_documento_solicitante || '',
+        solicitud.cod_asp || '',
+        solicitud.email_personal_solicitante || '',
+        solicitud.celular_solicitante || '',
+        solicitud.empresa_grupo || '',
+        solicitud.destino_credito || '',
+        solicitud.monto_solicitado || '',
+        solicitud.plazo_meses || '',
+        estadoCredito
+      ];
+    }, [['estado_credito', this.filtroEstadoCreditoAdmin]]);
   }
 
   public verFormatoCreditoAdmin(numeroSolicitud: number) {
@@ -1656,16 +1463,8 @@ export class EmployeeFemprobienComponent implements OnInit {
     this.clearError();
     this.loadingDetalleCreditoAdmin = true;
     this.irADetalleSolicitudCreditoAdmin();
-    this.solicitudCreditoSeleccionadaAdmin = null;
-    this.estadoArchivosCreditoAdmin = null;
-    this.comentarioCreditoAdmin = '';
-    this.loadingFormalizacionCreditoAdmin = false;
-    this.formalizacionCreditoAdmin = null;
-    this.mostrarFormularioFormalizacionCreditoAdmin = false;
-    this.formalizandoCreditoAdmin = false;
-    const url = this.bridgeApiUrl + '/femprobien/creditos/solicitudes/' + encodeURIComponent(numeroSolicitud.toString());
-
-    this._http.get(url).subscribe(
+    this.reiniciarDetalleCreditoAdmin();
+    this._employeeService.consultarSolicitudCredito(numeroSolicitud).subscribe(
       response => {
         this.loadingDetalleCreditoAdmin = false;
         try {
@@ -1714,6 +1513,13 @@ export class EmployeeFemprobienComponent implements OnInit {
       });
   }
 
+  private crearFormularioFormalizacionCreditoAdmin() {
+    return {
+      montoAprobado: null, plazoAprobado: null, numeroCuotas: null, valorCuota: null, fechaPrimeraCuota: '', periodicidad: 'QUINCENAL',
+      observacion: ''
+    };
+  }
+
   public abrirFormalizacionCreditoAdmin() {
     this.clearError();
     if (!this.solicitudCreditoSeleccionadaAdmin || !this.solicitudCreditoSeleccionadaAdmin.numero_solicitud) {
@@ -1735,9 +1541,7 @@ export class EmployeeFemprobienComponent implements OnInit {
       plazoAprobado: this.solicitudCreditoSeleccionadaAdmin.plazo_meses !== null && this.solicitudCreditoSeleccionadaAdmin.plazo_meses !== undefined ? Number(this.solicitudCreditoSeleccionadaAdmin.plazo_meses) : null,
       numeroCuotas: this.solicitudCreditoSeleccionadaAdmin.cantidad_cuotas !== null && this.solicitudCreditoSeleccionadaAdmin.cantidad_cuotas !== undefined ? Number(this.solicitudCreditoSeleccionadaAdmin.cantidad_cuotas) : null,
       valorCuota: this.solicitudCreditoSeleccionadaAdmin.valor_cuota !== null && this.solicitudCreditoSeleccionadaAdmin.valor_cuota !== undefined ? Number(this.solicitudCreditoSeleccionadaAdmin.valor_cuota) : null,
-      fechaPrimeraCuota: '',
-      periodicidad: 'QUINCENAL',
-      observacion: ''
+      fechaPrimeraCuota: '', periodicidad: 'QUINCENAL', observacion: ''
     };
     this.mostrarFormularioFormalizacionCreditoAdmin = true;
   }
@@ -1747,15 +1551,7 @@ export class EmployeeFemprobienComponent implements OnInit {
       return;
     }
     this.mostrarFormularioFormalizacionCreditoAdmin = false;
-    this.formularioFormalizacionCreditoAdmin = {
-      montoAprobado: null,
-      plazoAprobado: null,
-      numeroCuotas: null,
-      valorCuota: null,
-      fechaPrimeraCuota: '',
-      periodicidad: 'QUINCENAL',
-      observacion: ''
-    };
+    this.formularioFormalizacionCreditoAdmin = this.crearFormularioFormalizacionCreditoAdmin();
     this.clearError();
   }
 
@@ -1802,13 +1598,8 @@ export class EmployeeFemprobienComponent implements OnInit {
     const numeroSolicitud = Number(this.solicitudCreditoSeleccionadaAdmin.numero_solicitud);
     const url = this.bridgeApiUrl + '/femprobien/creditos/solicitudes/' + encodeURIComponent(numeroSolicitud.toString()) + '/formalizar';
     const body = {
-      montoAprobado: montoAprobado,
-      plazoAprobado: plazoAprobado,
-      numeroCuotas: numeroCuotas,
-      valorCuota: valorCuota,
-      fechaPrimeraCuota: f.fechaPrimeraCuota,
-      periodicidad: periodicidad,
-      observacion: f.observacion ? f.observacion.toString().trim() : '',
+      montoAprobado: montoAprobado, plazoAprobado: plazoAprobado, numeroCuotas: numeroCuotas, valorCuota: valorCuota,
+      fechaPrimeraCuota: f.fechaPrimeraCuota, periodicidad: periodicidad, observacion: f.observacion ? f.observacion.toString().trim() : '',
       usuario: this.identity && this.identity.username ? this.identity.username : ''
     };
     if (!confirmado) {
@@ -1855,10 +1646,7 @@ export class EmployeeFemprobienComponent implements OnInit {
       });
   }
 
-  public cerrarSolicitudCreditoAdmin() {
-    if (this.actualizandoEstadoCreditoAdmin) {
-      return;
-    }
+  private reiniciarDetalleCreditoAdmin() {
     this.solicitudCreditoSeleccionadaAdmin = null;
     this.estadoArchivosCreditoAdmin = null;
     this.comentarioCreditoAdmin = '';
@@ -1866,15 +1654,14 @@ export class EmployeeFemprobienComponent implements OnInit {
     this.formalizacionCreditoAdmin = null;
     this.mostrarFormularioFormalizacionCreditoAdmin = false;
     this.formalizandoCreditoAdmin = false;
-    this.formularioFormalizacionCreditoAdmin = {
-      montoAprobado: null,
-      plazoAprobado: null,
-      numeroCuotas: null,
-      valorCuota: null,
-      fechaPrimeraCuota: '',
-      periodicidad: 'QUINCENAL',
-      observacion: ''
-    };
+  }
+
+  public cerrarSolicitudCreditoAdmin() {
+    if (this.actualizandoEstadoCreditoAdmin) {
+      return;
+    }
+    this.reiniciarDetalleCreditoAdmin();
+    this.formularioFormalizacionCreditoAdmin = this.crearFormularioFormalizacionCreditoAdmin();
     this.clearError();
   }
 
@@ -2053,20 +1840,16 @@ export class EmployeeFemprobienComponent implements OnInit {
     this.filtroTipoMisSolicitudes = tipo ? tipo : 'TODAS';
   }
 
-  public obtenerSolicitudesMisSolicitudesFiltradas() {
-    if (!this.filtroTipoMisSolicitudes || this.filtroTipoMisSolicitudes === 'TODAS') {
+  public obtenerSolicitudesMisSolicitudesFiltradas(tipo: string = this.filtroTipoMisSolicitudes) {
+    if (!tipo || tipo === 'TODAS') {
       return this.solicitudesMisSolicitudes;
     }
     return this.solicitudesMisSolicitudes.filter((solicitud: any) => solicitud &&
-      solicitud.tipo === this.filtroTipoMisSolicitudes);
+      solicitud.tipo === tipo);
   }
 
   public cantidadMisSolicitudesPorTipo(tipo: string): number {
-    if (!tipo || tipo === 'TODAS') {
-      return this.solicitudesMisSolicitudes.length;
-    }
-    return this.solicitudesMisSolicitudes.filter((solicitud: any) => solicitud &&
-      solicitud.tipo === tipo).length;
+    return this.obtenerSolicitudesMisSolicitudesFiltradas(tipo || 'TODAS').length;
   }
 
   public toggleSeguimientoMisSolicitud(solicitud: any) {
@@ -2088,23 +1871,15 @@ export class EmployeeFemprobienComponent implements OnInit {
       solicitud._errorHistorial = 'No fue posible validar los datos para consultar el seguimiento.';
       return;
     }
-    let identificador: any = null;
-    let url = '';
-    if (solicitud.tipo === 'CREDITO') {
-      identificador = solicitud.numero_solicitud;
-      if (!identificador) {
-        solicitud._errorHistorial = 'No fue posible identificar la solicitud de crédito.';
-        return;
-      }
-      url = this.bridgeApiUrl + '/femprobien/mis-solicitudes/creditos/' + encodeURIComponent(identificador.toString()) + '/historial';
-    } else {
-      identificador = solicitud.id;
-      if (!identificador) {
-        solicitud._errorHistorial = 'No fue posible identificar la solicitud.';
-        return;
-      }
-      url = this.bridgeApiUrl + '/femprobien/mis-solicitudes/afiliaciones/' + encodeURIComponent(identificador.toString()) + '/historial';
+    const credito = solicitud.tipo === 'CREDITO';
+    const identificador = credito ? solicitud.numero_solicitud : solicitud.id;
+    if (!identificador) {
+      solicitud._errorHistorial = credito
+        ? 'No fue posible identificar la solicitud de crédito.' : 'No fue posible identificar la solicitud.';
+      return;
     }
+    const recurso = credito ? 'creditos/' : 'afiliaciones/';
+    const url = this.bridgeApiUrl + '/femprobien/mis-solicitudes/' + recurso + encodeURIComponent(identificador.toString()) + '/historial';
     solicitud._loadingHistorial = true;
     const body: any = { codAsp: documento, fechaNacimiento: fechaNacimiento };
 
@@ -2134,16 +1909,12 @@ export class EmployeeFemprobienComponent implements OnInit {
 
   public etiquetaTipoMisSolicitud(tipo: any) {
     const valor = tipo === null || tipo === undefined ? '' : tipo.toString().trim().toUpperCase();
-    if (valor === 'CREDITO') {
-      return 'SOLICITUD DE CRÉDITO';
-    }
-    if (valor === 'ACTUALIZACION_DATOS') {
-      return 'ACTUALIZACIÓN DE DATOS';
-    }
-    if (valor === 'AFILIACION') {
-      return 'SOLICITUD DE AFILIACIÓN';
-    }
-    return valor || 'SOLICITUD';
+    const etiquetas: { [clave: string]: string } = {
+      CREDITO: 'SOLICITUD DE CRÉDITO',
+      ACTUALIZACION_DATOS: 'ACTUALIZACIÓN DE DATOS',
+      AFILIACION: 'SOLICITUD DE AFILIACIÓN'
+    };
+    return Object.prototype.hasOwnProperty.call(etiquetas, valor) ? etiquetas[valor] : valor || 'SOLICITUD';
   }
 
   private etiquetaEstadoMisSolicitud(tipo: any, estado: any) {
@@ -2152,37 +1923,14 @@ export class EmployeeFemprobienComponent implements OnInit {
     if (valor === 'PENDIENTE') {
       return 'Solicitud enviada';
     }
-    if (tipoValor === 'CREDITO') {
-      if (valor === 'EN_ESTUDIO') {
-        return 'En estudio';
-      }
-      if (valor === 'APROBADA') {
-        return 'Solicitud aprobada';
-      }
-      if (valor === 'APLAZADA') {
-        return 'Solicitud aplazada';
-      }
-      if (valor === 'NEGADA') {
-        return 'Solicitud no aprobada';
-      }
-    }
-    if (tipoValor === 'AFILIACION') {
-      if (valor === 'AFILIADO(A)') {
-        return 'Afiliación aprobada';
-      }
-      if (valor === 'RECHAZADO(A)') {
-        return 'Afiliación no aprobada';
-      }
-    }
-    if (tipoValor === 'ACTUALIZACION_DATOS') {
-      if (valor === 'AFILIADO(A)') {
-        return 'Datos actualizados';
-      }
-      if (valor === 'RECHAZADO(A)') {
-        return 'Actualización no aprobada';
-      }
-    }
-    return valor || 'Sin estado';
+    const etiquetas: { [clave: string]: string } = {
+      'CREDITO:EN_ESTUDIO': 'En estudio', 'CREDITO:APROBADA': 'Solicitud aprobada', 'CREDITO:APLAZADA': 'Solicitud aplazada',
+      'CREDITO:NEGADA': 'Solicitud no aprobada', 'AFILIACION:AFILIADO(A)': 'Afiliación aprobada',
+      'AFILIACION:RECHAZADO(A)': 'Afiliación no aprobada', 'ACTUALIZACION_DATOS:AFILIADO(A)': 'Datos actualizados',
+      'ACTUALIZACION_DATOS:RECHAZADO(A)': 'Actualización no aprobada'
+    };
+    const clave = tipoValor + ':' + valor;
+    return Object.prototype.hasOwnProperty.call(etiquetas, clave) ? etiquetas[clave] : valor || 'Sin estado';
   }
 
   public abrirHistoricoCreditos() {
@@ -2232,6 +1980,90 @@ export class EmployeeFemprobienComponent implements OnInit {
       });
   }
 
+  public verHistoricoSaldos(credito: any) {
+    this.errorEstadoCuentaCredito = '';
+    this.creditoHistoricoSaldos = credito;
+    this.saldosHistoricos = [];
+    this.errorHistoricoSaldos = '';
+    this.cargandoHistoricoSaldos = true;
+    const version = ++this.versionHistoricoSaldos;
+    this._http.get(this.bridgeApiUrl + '/femprobien/creditos/historico/detalle/' + credito.id).subscribe(
+      response => {
+        if (version !== this.versionHistoricoSaldos) { return; }
+        this.cargandoHistoricoSaldos = false;
+        try {
+          const data = response.json();
+          if (!data || !Array.isArray(data.saldos)) { throw new Error(); }
+          this.creditoHistoricoSaldos = data;
+          this.saldosHistoricos = data.saldos.slice().sort((a: any, b: any) => new Date(a.periodo).getTime() - new Date(b.periodo).getTime());
+        } catch (e) { this.errorHistoricoSaldos = 'El servicio no devolvió un histórico de saldos válido.'; }
+      }, error => {
+        if (version !== this.versionHistoricoSaldos) { return; }
+        this.cargandoHistoricoSaldos = false;
+        this.errorHistoricoSaldos = this.obtenerMensajeErrorCredito(error, 'No fue posible consultar el histórico de saldos.');
+      });
+  }
+
+  public cuotaProgramadaHistorico(periodo: string): string {
+    const inicio = /^(\d{4})-(\d{2})/.exec(String(this.creditoHistoricoSaldos.inicio_dcto || ''));
+    const corte = /^(\d{4})-(\d{2})/.exec(String(periodo || ''));
+    if (!inicio || !corte || +inicio[1] <= 1900 || +inicio[2] < 1 || +inicio[2] > 12 || +corte[2] < 1 || +corte[2] > 12) { return '—'; }
+    const cuota = (+corte[1] - +inicio[1]) * 12 + +corte[2] - +inicio[2] + 1;
+    if (cuota <= 0) { return '—'; }
+    const plazo = +this.creditoHistoricoSaldos.plazo;
+    return plazo > 0 && cuota > plazo ? 'Fuera del plazo original' : 'Cuota ' + cuota;
+  }
+
+  public cuotasDescontadasAlCorte(): string {
+    const plazo = +this.creditoHistoricoSaldos.plazo;
+    if (!this.saldosHistoricos.length || !isFinite(plazo) || plazo <= 0 || plazo % 1 !== 0) { return 'Sin información'; }
+    const cuota = /^Cuota (\d+)$/.exec(this.cuotaProgramadaHistorico(this.saldosHistoricos[this.saldosHistoricos.length - 1].periodo));
+    return cuota ? cuota[1] + '/' + plazo : 'Sin información';
+  }
+
+  public generarEstadoCuentaCredito() {
+    if (!this.creditoHistoricoSaldos || this.cargandoHistoricoSaldos || this.generandoEstadoCuentaCredito) { return; }
+    this.errorEstadoCuentaCredito = '';
+    const ventana = window.open('', '_blank');
+    if (!ventana) {
+      this.errorEstadoCuentaCredito = 'Permite las ventanas emergentes para ver el estado de cuenta.';
+      return;
+    }
+    ventana.opener = null;
+    ventana.document.title = 'Generando estado de cuenta del crédito…';
+    ventana.document.body.textContent = 'Generando estado de cuenta del crédito…';
+    const id = this.creditoHistoricoSaldos.id;
+    const version = this.versionHistoricoSaldos;
+    this.generandoEstadoCuentaCredito = true;
+    this._http.get(this.bridgeApiUrl + '/femprobien/creditos/historico/detalle/' + id + '/estado-cuenta',
+      new RequestOptions({ responseType: ResponseContentType.Blob })).subscribe(response => {
+        this.generandoEstadoCuentaCredito = false;
+        try {
+          const pdf = response.blob();
+          if (!pdf.size || ((response.headers && response.headers.get('Content-Type')) || '').indexOf('application/pdf') < 0) { throw new Error(); }
+          if (ventana.closed) { return; }
+          const url = window.URL.createObjectURL(pdf);
+          ventana.location.href = url;
+          const limpieza = setInterval(() => {
+            if (ventana.closed) { window.URL.revokeObjectURL(url); clearInterval(limpieza); }
+          }, 1000);
+        } catch (e) {
+          ventana.close();
+          if (version === this.versionHistoricoSaldos) { this.errorEstadoCuentaCredito = 'No fue posible mostrar el estado de cuenta.'; }
+        }
+      }, error => {
+        this.generandoEstadoCuentaCredito = false;
+        ventana.close();
+        if (version === this.versionHistoricoSaldos) { this.errorEstadoCuentaCredito = 'No fue posible generar el estado de cuenta. Intenta nuevamente.'; }
+      });
+  }
+
+  public cerrarHistoricoSaldos() {
+    this.versionHistoricoSaldos++;
+    this.creditoHistoricoSaldos = null;
+    this.saldosHistoricos = [];
+  }
+
   public limpiarHistoricoCreditos() {
     this.documentoHistoricoCredito = '';
     this.historicoCreditos = [];
@@ -2267,25 +2099,29 @@ export class EmployeeFemprobienComponent implements OnInit {
     }
   }
 
+  private reiniciarSeccionesAfiliacion() {
+    this.seccionesAfiliacionConfig.forEach(seccion => {
+      this.seccionesAbiertas[seccion.id] = seccion.id === 'solicitud';
+    });
+  }
+
   public toggleSeccion(seccion: string) {
     this.seccionAfiliacionActiva = seccion;
     this.seccionesAbiertas[seccion] = !this.seccionesAbiertas[seccion];
   }
 
+  private cambiarEstadoSeccionesAfiliacion(abrir: boolean) {
+    const identidadPendiente = this.esActualizacionDatos() && !this.datosActualizacionCargados;
+    this.cambiarEstadoSecciones(this.seccionesAfiliacionConfig, this.seccionesAbiertas, abrir && !identidadPendiente);
+    if (identidadPendiente) this.seccionesAbiertas.solicitud = true;
+  }
+
   public expandirTodasSeccionesAfiliacion() {
-    if (this.esActualizacionDatos() && !this.datosActualizacionCargados) {
-      this.cambiarEstadoSecciones(this.seccionesAfiliacionConfig, this.seccionesAbiertas, false);
-      this.seccionesAbiertas.solicitud = true;
-      return;
-    }
-    this.cambiarEstadoSecciones(this.seccionesAfiliacionConfig, this.seccionesAbiertas, true);
+    this.cambiarEstadoSeccionesAfiliacion(true);
   }
 
   public contraerTodasSeccionesAfiliacion() {
-    this.cambiarEstadoSecciones(this.seccionesAfiliacionConfig, this.seccionesAbiertas, false);
-    if (this.esActualizacionDatos() && !this.datosActualizacionCargados) {
-      this.seccionesAbiertas.solicitud = true;
-    }
+    this.cambiarEstadoSeccionesAfiliacion(false);
   }
 
   public irASeccionAfiliacion(seccion: string) {
@@ -2295,48 +2131,16 @@ export class EmployeeFemprobienComponent implements OnInit {
   }
 
   private obtenerCamposBeneficiario(numero: number) {
-    if (numero === 1) {
-      return [
-        this.nuevoAfiliado.tipoDocBen1,
-        this.nuevoAfiliado.codBen1,
-        this.nuevoAfiliado.nomBen1,
-        this.nuevoAfiliado.parBen1
-      ];
-    }
-    if (numero === 2) {
-      return [
-        this.nuevoAfiliado.tipoDocBen2,
-        this.nuevoAfiliado.codBen2,
-        this.nuevoAfiliado.nomBen2,
-        this.nuevoAfiliado.parBen2
-      ];
-    }
-    return [
-      this.nuevoAfiliado.tipoDocBen3,
-      this.nuevoAfiliado.codBen3,
-      this.nuevoAfiliado.nomBen3,
-      this.nuevoAfiliado.parBen3
-    ];
+    const indice = numero === 1 ? 1 : numero === 2 ? 2 : 3;
+    return ['tipoDocBen', 'codBen', 'nomBen', 'parBen'].map(campo => this.nuevoAfiliado[campo + indice]);
   }
 
   public beneficiarioTieneDatos(numero: number) {
-    const campos = this.obtenerCamposBeneficiario(numero);
-    for (let i = 0; i < campos.length; i++) {
-      if (!this.estaVacio(campos[i])) {
-        return true;
-      }
-    }
-    return false;
+    return this.obtenerCamposBeneficiario(numero).some(campo => !this.estaVacio(campo));
   }
 
   public beneficiarioCompleto(numero: number) {
-    const campos = this.obtenerCamposBeneficiario(numero);
-    for (let i = 0; i < campos.length; i++) {
-      if (this.estaVacio(campos[i])) {
-        return false;
-      }
-    }
-    return true;
+    return this.obtenerCamposBeneficiario(numero).every(campo => !this.estaVacio(campo));
   }
 
   public tieneBeneficiarioCompleto() {
@@ -2344,56 +2148,26 @@ export class EmployeeFemprobienComponent implements OnInit {
   }
 
   public tieneBeneficiarioParcial() {
-    for (let numero = 1; numero <= 3; numero++) {
-      if (this.beneficiarioTieneDatos(numero) &&
-        !this.beneficiarioCompleto(numero)) {
-        return true;
-      }
-    }
-    return false;
+    return [1, 2, 3].some(numero => this.beneficiarioTieneDatos(numero) && !this.beneficiarioCompleto(numero));
   }
 
   public campoBeneficiarioInvalido(numero: number, valor: any) {
     if (!this.intentoEnviarAfiliacion) {
       return false;
     }
-    if (!this.tieneBeneficiarioCompleto() &&
-      numero === 1) {
-      return this.estaVacio(valor);
-    }
-    if (this.beneficiarioTieneDatos(numero)) {
-      return this.estaVacio(valor);
-    }
-    return false;
+    return ((!this.tieneBeneficiarioCompleto() && numero === 1) || this.beneficiarioTieneDatos(numero))
+      ? this.estaVacio(valor) : false;
+  }
+
+  private obtenerCamposObligatoriosAfiliacion(seccion?: string) {
+    const esActualizacion = this.esActualizacionDatos();
+    return this.camposObligatoriosAfiliacion.filter(campo =>
+      (!seccion || campo.seccion === seccion) && (!esActualizacion || !campo.soloAfiliacion));
   }
 
   public estadoSeccionAfiliacion(seccion: string) {
     if (seccion === 'conyuge' || seccion === 'patrimonio') {
       return 'si-aplica';
-    }
-    if (this.esActualizacionDatos() && seccion === 'solicitud') {
-      return this.estadoCamposObjeto(this.nuevoAfiliado || {}, [
-        'tipoSolicitud',
-        'periodoAporte',
-        'cantPorcen',
-        'porcenAhorro'
-      ]);
-    }
-    if (this.esActualizacionDatos() && seccion === 'datosPersonales') {
-      return this.estadoCamposObjeto(this.nuevoAfiliado || {}, [
-        'tipoDoc',
-        'codAfi',
-        'nomAfi',
-        'estCiv',
-        'fecNac',
-        'fecExp',
-        'lugarExp',
-        'eMail',
-        'dirRes',
-        'nomBar',
-        'telCel',
-        'nivelEstudios'
-      ]);
     }
     if (seccion === 'beneficiarios') {
       if (this.tieneBeneficiarioCompleto() && !this.tieneBeneficiarioParcial()) {
@@ -2404,7 +2178,7 @@ export class EmployeeFemprobienComponent implements OnInit {
       }
       return 'sin-diligenciar';
     }
-    return this.camposEstadoAfiliacion[seccion] ? this.estadoCamposObjeto(this.nuevoAfiliado || {}, this.camposEstadoAfiliacion[seccion]) : 'sin-diligenciar';
+    return seccion ? this.estadoCamposObjeto(this.nuevoAfiliado || {}, this.obtenerCamposObligatoriosAfiliacion(seccion).map(campo => campo.campo)) : 'sin-diligenciar';
   }
 
   public cantidadSeccionesAfiliacionCompletas(): number {
@@ -2429,11 +2203,7 @@ export class EmployeeFemprobienComponent implements OnInit {
 
   public textoEstadoSeccion(estado: string) {
     const textos: any = {
-      'completa': 'Completa',
-      'pendiente': 'Pendiente',
-      'si-aplica': 'Si aplica',
-      'opcional': 'Opcional',
-      'no-requerida': 'No requerida',
+      'completa': 'Completa', 'pendiente': 'Pendiente', 'si-aplica': 'Si aplica', 'opcional': 'Opcional', 'no-requerida': 'No requerida',
       'fondo': 'Uso del fondo'
     };
     return textos[estado] || 'Sin diligenciar';
@@ -2441,24 +2211,12 @@ export class EmployeeFemprobienComponent implements OnInit {
 
   public campoObligatorioVacio(valor: any) { return this.estaVacio(valor); }
 
-
-
-
-
-  private normalizarFechaConsulta(valor: any) {
-    if (valor === null || valor === undefined) {
-      return '';
-    }
-    const texto = valor.toString().trim();
-    if (!texto) {
-      return '';
-    }
-    const coincidencia = texto.match(/^(\d{4}-\d{2}-\d{2})/);
-    if (coincidencia &&
-      coincidencia.length > 1) {
-      return coincidencia[1];
-    }
-    return texto.substring(0, 10);
+  private limpiarDatosAsociado() {
+    this.datosEmpleado = null;
+    this.datosAportes = null;
+    this.loadingAportes = false;
+    this.validado = false;
+    this.vista = null;
   }
 
   public validarEmpleado() {
@@ -2471,10 +2229,9 @@ export class EmployeeFemprobienComponent implements OnInit {
     }
     const documento = this.documento.toString().trim();
     const fechaNacimiento = this.fechaNacimiento.toString().trim();
-    const url = this.bridgeApiUrl + '/femprobien/asociados/' + encodeURIComponent(documento);
     this.loading = true;
 
-    this._http.get(url).subscribe(
+    this._employeeService.consultarAsociadoFemprobien(documento).subscribe(
       response => {
         this.loading = false;
         let registro: any = null;
@@ -2485,22 +2242,14 @@ export class EmployeeFemprobienComponent implements OnInit {
           return;
         }
         if (!registro || registro.id_aso === null || registro.id_aso === undefined || !registro.cod_asp || !registro.nom_aso) {
-          this.datosEmpleado = null;
-          this.datosAportes = null;
-          this.loadingAportes = false;
-          this.validado = false;
-          this.vista = null;
+          this.limpiarDatosAsociado();
           this.errorMessage = 'No se encontró un asociado con los datos ingresados.';
           return;
         }
-        const fechaBackend = this.normalizarFechaConsulta(registro.fec_nac);
-        const fechaIngresada = this.normalizarFechaConsulta(fechaNacimiento);
+        const fechaBackend = this.fechaParaInput(registro.fec_nac);
+        const fechaIngresada = this.fechaParaInput(fechaNacimiento);
         if (!fechaBackend || !fechaIngresada || fechaBackend !== fechaIngresada) {
-          this.datosEmpleado = null;
-          this.datosAportes = null;
-          this.loadingAportes = false;
-          this.validado = false;
-          this.vista = null;
+          this.limpiarDatosAsociado();
           this.errorMessage = 'No se encontró un asociado con los datos ingresados.';
           return;
         }
@@ -2511,11 +2260,7 @@ export class EmployeeFemprobienComponent implements OnInit {
         this.cargarAportes(this.datosEmpleado.codAso);
       }, error => {
         this.loading = false;
-        this.datosEmpleado = null;
-        this.datosAportes = null;
-        this.loadingAportes = false;
-        this.validado = false;
-        this.vista = null;
+        this.limpiarDatosAsociado();
         this.modalSinAportesVisible = false;
         this.asociadoSinAportes = null;
         if (error && error.status === 404) {
@@ -2531,47 +2276,17 @@ export class EmployeeFemprobienComponent implements OnInit {
       return null;
     }
     return {
-      id: registro.id_aso,
-      codAso: registro.cod_asp,
-      nomAso: registro.nom_aso || '',
-      ap1Aso: '',
-      ap2Aso: '',
-      fecNac: registro.fec_nac || '',
-      fecIng: registro.fec_ing || '',
-      fecRet: registro.fecha_retiro || null,
-      activo: registro.activo,
-      estCivil: registro.est_civil || '',
-      dirRes: registro.dir_res || '',
-      nomBar: registro.nom_bar || '',
-      tel: registro.tel || '',
-      telCel: registro.cel || '',
-      cel: registro.cel || '',
-      email: registro.email_per || '',
-      eMail: registro.email_per || '',
-      nomEmp: registro.nom_emp || '',
-      nomCar: registro.cargo || '',
-      cargo: registro.cargo || '',
-      profesion: registro.profesion || '',
-      salBas: registro.sal_bas,
-      ctaTipo: registro.tipo_cuenta || '',
-      tipoCuenta: registro.tipo_cuenta || '',
-      fdoBan: registro.banco || '',
-      banco: registro.banco || '',
-      ctaBan: registro.n_cuenta || '',
-      nCuenta: registro.n_cuenta || '',
-      tipoDoc: registro.tipo_documento || 'CC',
-      formaDesc: registro.forma_desc || '',
-      apMes: registro.cant_porcen,
-      cantPorcen: registro.cant_porcen,
-      porcenAhorro: registro.porcen_ahorro,
-      ingPre: registro.prom_pres,
-      ingNoPre: registro.prom_boni,
-      nomBen1: registro.ben_nom1 || '',
-      codBen1: registro.ben_doc1 || '',
-      parBen1: registro.parentesco1 || '',
-      nomBen2: registro.ben_nom2 || '',
-      codBen2: registro.ben_doc2 || '',
-      parBen2: registro.parentesco2 || ''
+      id: registro.id_aso, codAso: registro.cod_asp, nomAso: registro.nom_aso || '', ap1Aso: '', ap2Aso: '', fecNac: registro.fec_nac || '',
+      fecIng: registro.fec_ing || '', fecRet: registro.fecha_retiro || null, activo: registro.activo, estCivil: registro.est_civil || '',
+      dirRes: registro.dir_res || '', nomBar: registro.nom_bar || '', tel: registro.tel || '', telCel: registro.cel || '',
+      cel: registro.cel || '', email: registro.email_per || '', eMail: registro.email_per || '', nomEmp: registro.nom_emp || '',
+      nomCar: registro.cargo || '', cargo: registro.cargo || '', profesion: registro.profesion || '', salBas: registro.sal_bas,
+      ctaTipo: registro.tipo_cuenta || '', tipoCuenta: registro.tipo_cuenta || '', fdoBan: registro.banco || '', banco: registro.banco || '',
+      ctaBan: registro.n_cuenta || '', nCuenta: registro.n_cuenta || '', tipoDoc: registro.tipo_documento || 'CC',
+      formaDesc: registro.forma_desc || '', apMes: registro.cant_porcen, cantPorcen: registro.cant_porcen,
+      porcenAhorro: registro.porcen_ahorro, ingPre: registro.prom_pres, ingNoPre: registro.prom_boni, nomBen1: registro.ben_nom1 || '',
+      codBen1: registro.ben_doc1 || '', parBen1: registro.parentesco1 || '', nomBen2: registro.ben_nom2 || '',
+      codBen2: registro.ben_doc2 || '', parBen2: registro.parentesco2 || ''
     };
   }
 
@@ -2587,9 +2302,7 @@ export class EmployeeFemprobienComponent implements OnInit {
     this.datosAportes = null;
     this.asociadoSinAportes = null;
     this.modalSinAportesVisible = false;
-    const url = this.bridgeApiUrl + '/femprobien/asociados/' + encodeURIComponent(codAsp) + '/aportes';
-
-    this._http.get(url).subscribe(
+    this._employeeService.consultarAportesFemprobien(codAsp).subscribe(
       response => {
         this.loadingAportes = false;
         try {
@@ -2661,16 +2374,7 @@ export class EmployeeFemprobienComponent implements OnInit {
           pdfWindow.close();
         }
 
-        if (error && error._body) {
-          try {
-            const body = JSON.parse(error._body);
-            this.errorMessage = body && body.message ? body.message : 'Error al generar el estado de cuenta.';
-          } catch (e) {
-            this.errorMessage = 'Error al generar el estado de cuenta.';
-          }
-        } else {
-          this.errorMessage = 'Error al generar el estado de cuenta.';
-        }
+        this.errorMessage = this.obtenerMensajeErrorCredito(error, 'Error al generar el estado de cuenta.');
       });
   }
 
@@ -2691,15 +2395,11 @@ export class EmployeeFemprobienComponent implements OnInit {
     this.modoCredito = false;
     this.mostrarFormularioCredito = false;
     this.enviandoCredito = false;
-    this.loadingCreditos = false;
-    this.solicitudesCreditoAsociado = [];
     this.formularioCredito = this.crearFormularioCredito();
     this.mostrarFormularioAfiliado = false;
     this.nuevoAfiliado = this.crearFormularioAfiliacion();
     this.clearError();
   }
-
-
 
   public toggleSeccionCredito(seccion: string) {
     this.seccionCreditoActiva = seccion;
@@ -2750,25 +2450,6 @@ export class EmployeeFemprobienComponent implements OnInit {
     if (seccion === 'patrimonio' || seccion === 'conyuge') {
       return 'si-aplica';
     }
-    if (seccion === 'solicitud') {
-      const campos = ['empresaGrupo', 'montoSolicitado', 'montoSolicitadoLetras', 'plazoMeses', 'destinoCredito', 'formaDescuento'];
-      if (f.abonosExtraordinarios) {
-        campos.push('detalleAbonosExtraordinarios');
-      }
-      return this.estadoCamposObjeto(f, campos);
-    }
-    if (seccion === 'referencias') {
-      const campos = [
-        'nombreReferenciaFamiliarSolicitante', 'parentescoReferenciaFamiliarSolicitante',
-        'direccionReferenciaFamiliarSolicitante', 'telefonoReferenciaFamiliarSolicitante',
-        'nombreReferenciaPersonalSolicitante', 'parentescoReferenciaPersonalSolicitante',
-        'direccionReferenciaPersonalSolicitante', 'telefonoReferenciaPersonalSolicitante'
-      ];
-      if (f.autorizaDesembolsoBancario) {
-        campos.push('tipoCuentaBancaria', 'bancoSolicitante', 'numeroCuentaSolicitante');
-      }
-      return this.estadoCamposObjeto(f, campos);
-    }
     if (seccion === 'autorizaciones') {
       const autorizaciones = [
         f.autorizacionCentralRiesgo, f.autorizacionTratamientoDatos,
@@ -2788,7 +2469,17 @@ export class EmployeeFemprobienComponent implements OnInit {
       const diligenciados = firmas.filter(valor => valor).length;
       return diligenciados === 0 ? 'sin-diligenciar' : diligenciados === firmas.length ? 'completa' : 'pendiente';
     }
-    return this.camposEstadoCredito[seccion] ? this.estadoCamposObjeto(f, this.camposEstadoCredito[seccion]) : 'sin-diligenciar';
+    const campos = this.camposObligatoriosCredito.filter(campo => campo.seccion === seccion).map(campo => campo.campo);
+    if (seccion === 'solicitud' && f.abonosExtraordinarios) {
+      campos.push('detalleAbonosExtraordinarios');
+    }
+    if (seccion === 'referencias' && f.autorizaDesembolsoBancario) {
+      campos.push('tipoCuentaBancaria', 'bancoSolicitante', 'numeroCuentaSolicitante');
+    }
+    if (seccion === 'deudor1') {
+      campos.push('nombreCompletoDeudor1', 'numeroDocumentoDeudor1');
+    }
+    return this.estadoCamposObjeto(f, campos);
   }
 
   public cantidadSeccionesCreditoRequeridas() {
@@ -2853,14 +2544,7 @@ export class EmployeeFemprobienComponent implements OnInit {
     this.nuevoAfiliado = formulario;
     this.datosActualizacionCargados = false;
     this.cargandoDatosActualizacion = false;
-    this.documentoActualizacionOriginal = '';
-    this.seccionesAbiertas.solicitud = true;
-    this.seccionesAbiertas.datosPersonales = false;
-    this.seccionesAbiertas.informacionLaboral = false;
-    this.seccionesAbiertas.infoFinanciera = false;
-    this.seccionesAbiertas.conyuge = false;
-    this.seccionesAbiertas.patrimonio = false;
-    this.seccionesAbiertas.beneficiarios = false;
+    this.reiniciarSeccionesAfiliacion();
     this.seccionAfiliacionActiva = 'solicitud';
     this.mostrarFormularioAfiliado = true;
     this.irASeccionAfiliacion('solicitud');
@@ -2953,11 +2637,8 @@ export class EmployeeFemprobienComponent implements OnInit {
   public solicitarCreditoConSimulacion() {
     if (!this.resultadoSimulador || this.cargandoSimulador) { return; }
     this.simulacionPendiente = {
-      monto: this.resultadoSimulador.monto,
-      plazoMeses: this.resultadoSimulador.plazoMeses,
-      frecuencia: this.resultadoSimulador.frecuencia,
-      cuota: this.resultadoSimulador.cuota,
-      tasaMensual: this.resultadoSimulador.tasaMensual,
+      monto: this.resultadoSimulador.monto, plazoMeses: this.resultadoSimulador.plazoMeses, frecuencia: this.resultadoSimulador.frecuencia,
+      cuota: this.resultadoSimulador.cuota, tasaMensual: this.resultadoSimulador.tasaMensual,
       cantidadCuotas: this.resultadoSimulador.cantidadCuotas
     };
     this.adminTab = 'datosIngreso';
@@ -3030,9 +2711,8 @@ export class EmployeeFemprobienComponent implements OnInit {
     this.successMessage = '';
     const documento = this.documento ? this.documento.toString().trim() : '';
     const fechaNacimiento = this.fechaNacimiento ? this.fechaNacimiento.toString().trim() : '';
-    const url = this.bridgeApiUrl + '/femprobien/asociados/' + encodeURIComponent(documento);
 
-    this._http.get(url).subscribe(
+    this._employeeService.consultarAsociadoFemprobien(documento).subscribe(
       response => {
         this.loading = false;
         let registro: any = null;
@@ -3045,22 +2725,14 @@ export class EmployeeFemprobienComponent implements OnInit {
         const fechaBackend = registro && registro.fec_nac ? registro.fec_nac.toString().substring(0, 10) : '';
         const fechaIngresada = fechaNacimiento.substring(0, 10);
         if (!registro || registro.id_aso === null || registro.id_aso === undefined || !registro.cod_asp || !registro.nom_aso || fechaBackend !== fechaIngresada) {
-          this.datosEmpleado = null;
-          this.datosAportes = null;
-          this.loadingAportes = false;
-          this.validado = false;
-          this.vista = null;
+          this.limpiarDatosAsociado();
           this.modoCredito = false;
           this.mostrarFormularioCredito = false;
           this.errorMessage = 'No se encontró un asociado con los datos ingresados. Si aún no perteneces al fondo puedes utilizar Nuevo Asociado.';
           return;
         }
         if (registro.activo === false || registro.activo === 0) {
-          this.datosEmpleado = null;
-          this.datosAportes = null;
-          this.loadingAportes = false;
-          this.validado = false;
-          this.vista = null;
+          this.limpiarDatosAsociado();
           this.modoCredito = false;
           this.mostrarFormularioCredito = false;
           this.errorMessage = 'El asociado se encuentra inactivo y no puede solicitar un crédito.';
@@ -3073,18 +2745,11 @@ export class EmployeeFemprobienComponent implements OnInit {
         this.loadingAportes = false;
         this.modoCredito = true;
         this.mostrarFormularioCredito = true;
-        this.formularioCredito = this.crearFormularioCredito();
-        this.limpiarArchivosCredito();
-        this.numeroSolicitudPendienteArchivos = null;
-        this.cargarDatosAsociadoEnCredito();
+        this.prepararFormularioCredito();
         this.aplicarSimulacionPendiente();
       }, error => {
         this.loading = false;
-        this.datosEmpleado = null;
-        this.datosAportes = null;
-        this.loadingAportes = false;
-        this.validado = false;
-        this.vista = null;
+        this.limpiarDatosAsociado();
         this.modoCredito = false;
         this.mostrarFormularioCredito = false;
         if (error &&
@@ -3107,6 +2772,10 @@ export class EmployeeFemprobienComponent implements OnInit {
     this.mostrarFormularioCredito = true;
     this.datosAportes = null;
     this.loadingAportes = false;
+    this.prepararFormularioCredito();
+  }
+
+  private prepararFormularioCredito() {
     this.formularioCredito = this.crearFormularioCredito();
     this.limpiarArchivosCredito();
     this.numeroSolicitudPendienteArchivos = null;
@@ -3150,16 +2819,10 @@ export class EmployeeFemprobienComponent implements OnInit {
     this.modoCredito = false;
     this.mostrarFormularioCredito = false;
     this.enviandoCredito = false;
-    this.loadingCreditos = false;
     this.formularioCredito = this.crearFormularioCredito();
     this.limpiarArchivosCredito();
     this.numeroSolicitudPendienteArchivos = null;
-    this.solicitudesCreditoAsociado = [];
-    this.datosEmpleado = null;
-    this.datosAportes = null;
-    this.loadingAportes = false;
-    this.validado = false;
-    this.vista = null;
+    this.limpiarDatosAsociado();
     this.documento = null;
     this.fechaNacimiento = '';
     this.mostrarFormularioAfiliado = false;
@@ -3173,14 +2836,9 @@ export class EmployeeFemprobienComponent implements OnInit {
       return;
     }
     this.intentoEnviarCredito = false;
-    this.formularioCredito = this.crearFormularioCredito();
-    this.limpiarArchivosCredito();
-    this.numeroSolicitudPendienteArchivos = null;
-    this.cargarDatosAsociadoEnCredito();
+    this.prepararFormularioCredito();
     this.clearError();
   }
-
-
 
   public seleccionarArchivoCredito(event: any, tipo: string) {
     this.clearError();
@@ -3205,7 +2863,7 @@ export class EmployeeFemprobienComponent implements OnInit {
     const reader = new FileReader();
     reader.onload = (e: any) => {
       const preview = e && e.target ? e.target.result : '';
-      this.abrirRecorteBiometrico(tipo, archivo, preview);
+      this.abrirRecorteBiometrico(tipo, preview);
     };
     reader.onerror = () => {
       this.errorMessage = 'No fue posible leer la imagen seleccionada.';
@@ -3215,10 +2873,8 @@ export class EmployeeFemprobienComponent implements OnInit {
     reader.readAsDataURL(archivo);
   }
 
-  private abrirRecorteBiometrico(tipo: string, archivo: any, preview: string) {
+  private abrirRecorteBiometrico(tipo: string, preview: string) {
     this.tipoRecorteBiometrico = tipo;
-    this.archivoOriginalRecorteBiometrico = archivo;
-    this.previewOriginalRecorteBiometrico = preview;
     this.recorteBiometricoEsHuella = tipo.indexOf('huella') === 0;
     this.tituloRecorteBiometrico = this.recorteBiometricoEsHuella ? 'Ajustar huella' : 'Ajustar firma';
     this.mensajeRecorteBiometrico = this.recorteBiometricoEsHuella ? 'Ubica únicamente la huella dentro del recuadro. Evita incluir demasiado papel o elementos alrededor.' : 'Ubica únicamente la firma dentro del recuadro horizontal. Evita incluir toda la hoja, líneas o márgenes innecesarios.';
@@ -3247,7 +2903,7 @@ export class EmployeeFemprobienComponent implements OnInit {
     if (!archivo || !preview) {
       return;
     }
-    this.abrirRecorteBiometrico(tipo, archivo, preview);
+    this.abrirRecorteBiometrico(tipo, preview);
   }
 
   private inicializarCanvasRecorteBiometrico() {
@@ -3518,8 +3174,6 @@ export class EmployeeFemprobienComponent implements OnInit {
     this.mensajeRecorteBiometrico = '';
     this.recorteBiometricoEsHuella = false;
     this.procesandoRecorteBiometrico = false;
-    this.archivoOriginalRecorteBiometrico = null;
-    this.previewOriginalRecorteBiometrico = '';
     this.imagenRecorteObjeto = null;
     this.canvasRecorteBiometrico = null;
     this.contextoRecorteBiometrico = null;
@@ -3565,28 +3219,10 @@ export class EmployeeFemprobienComponent implements OnInit {
     }
     const f = this.formularioCredito;
     f.requiereDeudor1 = false;
-    const valores: any = {
-      nombreCompleto: '', tipoDocumento: '', numeroDocumento: '', empresa: '', profesion: '', cargo: '',
-      antiguedad: '', direccionOficina: '', telefono: '', salario: 0, otrosIngresos: 0, egresos: 0,
-      activos: 0, pasivos: 0, patrimonio: 0, fechaNacimiento: '', estadoCivil: '', numeroHijos: 0,
-      direccionResidencia: '', estrato: null, telefonoResidencia: '', tipoVivienda: '', otraVivienda: '',
-      tiempoResidencia: '', valorArriendo: 0, nombreReferenciaFamiliar: '', parentescoReferenciaFamiliar: '',
-      direccionReferenciaFamiliar: '', telefonoReferenciaFamiliar: '', nombreReferenciaPersonal: '',
-      parentescoReferenciaPersonal: '', direccionReferenciaPersonal: '', telefonoReferenciaPersonal: '',
-      tieneBienRaiz: false, tipoBien: '', direccionBien: '', matriculaInmobiliaria: '', ciudadBien: '',
-      valorComercialBien: 0, valorHipoteca: 0, hipotecaAFavorDe: '', patrimonioFamilia: false,
-      tieneVehiculo: false, modeloVehiculo: '', placaVehiculo: '', marcaVehiculo: '',
-      valorComercialVehiculo: 0, vehiculoPignorado: false, tipoServicioVehiculo: ''
-    };
-    for (let numero = 1; numero <= 1; numero++) {
-      const campos = Object.keys(valores);
-      for (let i = 0; i < campos.length; i++) {
-        const campo = campos[i];
-        f[campo + 'Deudor' + numero] = valores[campo];
-      }
-      this.eliminarArchivoCredito('firmaDeudor' + numero);
-      this.eliminarArchivoCredito('huellaDeudor' + numero);
-    }
+    const valores = this.crearDatosDeudorCredito('');
+    Object.keys(valores).forEach(campo => f[campo] = valores[campo]);
+    this.eliminarArchivoCredito('firmaDeudor1');
+    this.eliminarArchivoCredito('huellaDeudor1');
   }
 
   private validarDatosDeudoresSolidarios() {
@@ -3610,11 +3246,7 @@ export class EmployeeFemprobienComponent implements OnInit {
   }
 
   public eliminarArchivoCredito(tipo: string) {
-    if (this.tiposArchivoCredito.indexOf(tipo) === -1) {
-      return;
-    }
-    (this as any)[tipo + 'File'] = null;
-    (this as any)[tipo + 'Preview'] = '';
+    this.asignarArchivoCredito(tipo, null, '');
   }
 
   private limpiarArchivosCredito() {
@@ -3652,17 +3284,6 @@ export class EmployeeFemprobienComponent implements OnInit {
       return;
     }
     this.subirArchivosCredito(this.numeroSolicitudPendienteArchivos);
-  }
-
-  private infoArchivoBiometrico(archivo: any) {
-    if (!archivo) {
-      return null;
-    }
-    return {
-      name: archivo.name || '',
-      type: archivo.type || '',
-      size: archivo.size || 0
-    };
   }
 
   private subirArchivosCredito(numeroSolicitud: number) {
@@ -3725,14 +3346,50 @@ export class EmployeeFemprobienComponent implements OnInit {
     this.modoCredito = false;
     this.mostrarFormularioCredito = false;
     this.formularioCredito = this.crearFormularioCredito();
-    this.solicitudesCreditoAsociado = [];
-    this.datosEmpleado = null;
-    this.datosAportes = null;
-    this.loadingAportes = false;
-    this.validado = false;
-    this.vista = null;
+    this.limpiarDatosAsociado();
     this.documento = null;
     this.fechaNacimiento = '';
+  }
+
+  private mapearDatosPersonaCredito(formulario: any, persona: 'Solicitante' | 'Deudor1') {
+    const numericos = [
+      'salario', 'otrosIngresos', 'egresos', 'activos', 'pasivos', 'patrimonio',
+      'numeroHijos', 'estrato', 'valorArriendo', 'valorComercialBien', 'valorHipoteca', 'valorComercialVehiculo'
+    ];
+    const textos = [
+      'nombreCompleto', 'tipoDocumento', 'numeroDocumento',
+      'profesion', 'cargo', 'antiguedad',
+      'estadoCivil', 'direccionResidencia', 'telefonoResidencia',
+      'tipoVivienda', 'otraVivienda', 'tiempoResidencia',
+      'nombreReferenciaFamiliar', 'parentescoReferenciaFamiliar', 'direccionReferenciaFamiliar',
+      'telefonoReferenciaFamiliar', 'nombreReferenciaPersonal', 'parentescoReferenciaPersonal',
+      'direccionReferenciaPersonal', 'telefonoReferenciaPersonal', 'tipoBien',
+      'direccionBien', 'matriculaInmobiliaria', 'ciudadBien',
+      'hipotecaAFavorDe', 'modeloVehiculo', 'placaVehiculo',
+      'marcaVehiculo', 'tipoServicioVehiculo'
+    ];
+    const sufijo = persona === 'Solicitante' ? 'solicitante' : 'deudor1';
+    const datos: any = {};
+    numericos.concat(textos).forEach(campo => {
+      const nombre = campo.replace(/[A-Z]/g, letra => '_' + letra.toLowerCase());
+      const valor = formulario[campo + persona];
+      datos[nombre + '_' + sufijo] = numericos.indexOf(campo) >= 0 ? this.numeroCredito(valor) : this.textoCredito(valor);
+    });
+    datos['fecha_nacimiento_' + sufijo] = formulario['fechaNacimiento' + persona] || null;
+    datos['patrimonio_familia_' + sufijo] = !!formulario['patrimonioFamilia' + persona];
+    datos['vehiculo_pignorado_' + sufijo] = !!formulario['vehiculoPignorado' + persona];
+    return datos;
+  }
+
+  private crearCamposCompatibilidadDeudor(datos: any) {
+    const vacios: any = {};
+    Object.keys(datos).forEach(campo => {
+      if (!/_deudor1$/.test(campo)) { return; }
+      const valor = datos[campo];
+      vacios[campo.replace(/1$/, '2')] = campo === 'fecha_nacimiento_deudor1' ? null :
+        typeof valor === 'number' ? 0 : typeof valor === 'boolean' ? false : '';
+    });
+    return vacios;
   }
 
   public guardarSolicitudCredito(confirmado?: boolean) {
@@ -3751,46 +3408,9 @@ export class EmployeeFemprobienComponent implements OnInit {
     }
     const f = this.formularioCredito;
     this.onChangeMontoSolicitado(f.montoSolicitado);
-    const obligatorios: any[] = [
-      ['Monto solicitado', f.montoSolicitado],
-      ['Monto en letras', f.montoSolicitadoLetras],
-      ['Plazo', f.plazoMeses],
-      ['Destino del crédito', f.destinoCredito],
-      ['Forma de descuento', f.formaDescuento],
-      ['Nombre completo', f.nombreCompletoSolicitante],
-      ['Tipo documento', f.tipoDocumentoSolicitante],
-      ['Número documento', f.numeroDocumentoSolicitante],
-      ['Empresa del grupo', f.empresaGrupo],
-      ['Profesión', f.profesionSolicitante],
-      ['Cargo', f.cargoSolicitante],
-      ['Teléfono oficina', f.telefonoOficinaSolicitante],
-      ['Antigüedad', f.antiguedadSolicitante],
-      ['Celular', f.celularSolicitante],
-      ['Ciudad', f.ciudadSolicitante],
-      ['E-mail personal', f.emailPersonalSolicitante],
-      ['Fecha nacimiento', f.fechaNacimientoSolicitante],
-      ['Estado civil', f.estadoCivilSolicitante],
-      ['Dirección residencia', f.direccionResidenciaSolicitante],
-      ['Estrato', f.estratoSolicitante],
-      ['Teléfono residencia', f.telefonoResidenciaSolicitante],
-      ['Vivienda', f.tipoViviendaSolicitante],
-      ['Tiempo residencia', f.tiempoResidenciaSolicitante],
-      ['Salario', f.salarioSolicitante],
-      ['Referencia familiar', f.nombreReferenciaFamiliarSolicitante],
-      ['Parentesco referencia familiar', f.parentescoReferenciaFamiliarSolicitante],
-      ['Dirección referencia familiar', f.direccionReferenciaFamiliarSolicitante],
-      ['Teléfono referencia familiar', f.telefonoReferenciaFamiliarSolicitante],
-      ['Referencia personal', f.nombreReferenciaPersonalSolicitante],
-      ['Relación referencia personal', f.parentescoReferenciaPersonalSolicitante],
-      ['Dirección referencia personal', f.direccionReferenciaPersonalSolicitante],
-      ['Teléfono referencia personal', f.telefonoReferenciaPersonalSolicitante]
-    ];
-    const faltantes: string[] = [];
-    for (let i = 0; i < obligatorios.length; i++) {
-      if (this.estaVacio(obligatorios[i][1])) {
-        faltantes.push(obligatorios[i][0]);
-      }
-    }
+    const faltantes = this.camposObligatoriosCredito
+      .filter(campo => this.estaVacio(f[campo.campo]))
+      .map(campo => campo.nombre);
     if (faltantes.length > 0) {
       this.errorMessage = 'Faltan por diligenciar: ' + faltantes.join(', ') + '.';
       return;
@@ -3846,186 +3466,36 @@ export class EmployeeFemprobienComponent implements OnInit {
       f.empresaAutorizadaDescuento = f.empresaGrupo;
     }
     const body: any = {
-      tasa_confirmada: f.condicionesCalculadas.tasaMensual,
-      empresa_grupo: this.textoCredito(f.empresaGrupo),
-      monto_solicitado: this.numeroCredito(f.montoSolicitado),
-      monto_solicitado_letras: this.textoCredito(f.montoSolicitadoLetras),
-      plazo_meses: this.numeroCredito(f.plazoMeses),
-      abonos_extraordinarios: !!f.abonosExtraordinarios,
+      tasa_confirmada: f.condicionesCalculadas.tasaMensual, empresa_grupo: this.textoCredito(f.empresaGrupo),
+      monto_solicitado: this.numeroCredito(f.montoSolicitado), monto_solicitado_letras: this.textoCredito(f.montoSolicitadoLetras),
+      plazo_meses: this.numeroCredito(f.plazoMeses), abonos_extraordinarios: !!f.abonosExtraordinarios,
       detalle_abonos_extraordinarios: this.textoCredito(f.detalleAbonosExtraordinarios),
-      destino_credito: this.textoCredito(f.destinoCredito),
-      descuento_primera_quincena: f.formaDescuento === 'Q1',
-      descuento_segunda_quincena: f.formaDescuento === 'Q2',
-      descuento_ambas_quincenas: f.formaDescuento === 'AMBAS',
-      nombre_completo_solicitante: this.textoCredito(f.nombreCompletoSolicitante),
-      tipo_documento_solicitante: this.textoCredito(f.tipoDocumentoSolicitante),
-      numero_documento_solicitante: this.textoCredito(f.numeroDocumentoSolicitante),
-      profesion_solicitante: this.textoCredito(f.profesionSolicitante),
-      cargo_solicitante: this.textoCredito(f.cargoSolicitante),
+      destino_credito: this.textoCredito(f.destinoCredito), descuento_primera_quincena: f.formaDescuento === 'Q1',
+      descuento_segunda_quincena: f.formaDescuento === 'Q2', descuento_ambas_quincenas: f.formaDescuento === 'AMBAS',
       telefono_oficina_solicitante: this.textoCredito(f.telefonoOficinaSolicitante),
-      antiguedad_solicitante: this.textoCredito(f.antiguedadSolicitante),
-      celular_solicitante: this.textoCredito(f.celularSolicitante),
-      ciudad_solicitante: this.textoCredito(f.ciudadSolicitante),
+      celular_solicitante: this.textoCredito(f.celularSolicitante), ciudad_solicitante: this.textoCredito(f.ciudadSolicitante),
       email_personal_solicitante: f.emailPersonalSolicitante ? String(f.emailPersonalSolicitante).trim() : '',
-      fecha_nacimiento_solicitante: f.fechaNacimientoSolicitante || null,
-      estado_civil_solicitante: this.textoCredito(f.estadoCivilSolicitante),
-      numero_hijos_solicitante: this.numeroCredito(f.numeroHijosSolicitante),
-      direccion_residencia_solicitante: this.textoCredito(f.direccionResidenciaSolicitante),
-      estrato_solicitante: this.numeroCredito(f.estratoSolicitante),
-      telefono_residencia_solicitante: this.textoCredito(f.telefonoResidenciaSolicitante),
-      tipo_vivienda_solicitante: this.textoCredito(f.tipoViviendaSolicitante),
-      otra_vivienda_solicitante: this.textoCredito(f.otraViviendaSolicitante),
-      tiempo_residencia_solicitante: this.textoCredito(f.tiempoResidenciaSolicitante),
-      valor_arriendo_solicitante: this.numeroCredito(f.valorArriendoSolicitante),
-      salario_solicitante: this.numeroCredito(f.salarioSolicitante),
-      otros_ingresos_solicitante: this.numeroCredito(f.otrosIngresosSolicitante),
       descripcion_otros_ingresos_solicitante: this.textoCredito(f.descripcionOtrosIngresosSolicitante),
-      egresos_solicitante: this.numeroCredito(f.egresosSolicitante),
-      activos_solicitante: this.numeroCredito(f.activosSolicitante),
-      pasivos_solicitante: this.numeroCredito(f.pasivosSolicitante),
-      patrimonio_solicitante: this.numeroCredito(f.patrimonioSolicitante),
       autoriza_desembolso_bancario_solicitante: !!f.autorizaDesembolsoBancario,
-      tipo_cuenta_bancaria_solicitante: this.textoCredito(f.tipoCuentaBancaria),
-      banco_solicitante: this.textoCredito(f.bancoSolicitante),
+      tipo_cuenta_bancaria_solicitante: this.textoCredito(f.tipoCuentaBancaria), banco_solicitante: this.textoCredito(f.bancoSolicitante),
       numero_cuenta_solicitante: this.textoCredito(f.numeroCuentaSolicitante),
-      nombre_referencia_familiar_solicitante: this.textoCredito(f.nombreReferenciaFamiliarSolicitante),
-      parentesco_referencia_familiar_solicitante: this.textoCredito(f.parentescoReferenciaFamiliarSolicitante),
-      direccion_referencia_familiar_solicitante: this.textoCredito(f.direccionReferenciaFamiliarSolicitante),
-      telefono_referencia_familiar_solicitante: this.textoCredito(f.telefonoReferenciaFamiliarSolicitante),
-      nombre_referencia_personal_solicitante: this.textoCredito(f.nombreReferenciaPersonalSolicitante),
-      parentesco_referencia_personal_solicitante: this.textoCredito(f.parentescoReferenciaPersonalSolicitante),
-      direccion_referencia_personal_solicitante: this.textoCredito(f.direccionReferenciaPersonalSolicitante),
-      telefono_referencia_personal_solicitante: this.textoCredito(f.telefonoReferenciaPersonalSolicitante),
-      tipo_bien_solicitante: this.textoCredito(f.tipoBienSolicitante),
-      direccion_bien_solicitante: this.textoCredito(f.direccionBienSolicitante),
-      matricula_inmobiliaria_solicitante: this.textoCredito(f.matriculaInmobiliariaSolicitante),
-      ciudad_bien_solicitante: this.textoCredito(f.ciudadBienSolicitante),
-      valor_comercial_bien_solicitante: this.numeroCredito(f.valorComercialBienSolicitante),
-      valor_hipoteca_solicitante: this.numeroCredito(f.valorHipotecaSolicitante),
-      hipoteca_a_favor_de_solicitante: this.textoCredito(f.hipotecaAFavorDeSolicitante),
-      patrimonio_familia_solicitante: !!f.patrimonioFamiliaSolicitante,
-      modelo_vehiculo_solicitante: this.textoCredito(f.modeloVehiculoSolicitante),
-      placa_vehiculo_solicitante: this.textoCredito(f.placaVehiculoSolicitante),
-      marca_vehiculo_solicitante: this.textoCredito(f.marcaVehiculoSolicitante),
-      valor_comercial_vehiculo_solicitante: this.numeroCredito(f.valorComercialVehiculoSolicitante),
-      vehiculo_pignorado_solicitante: !!f.vehiculoPignoradoSolicitante,
-      tipo_servicio_vehiculo_solicitante: this.textoCredito(f.tipoServicioVehiculoSolicitante),
-      nombre_completo_conyuge: this.textoCredito(f.nombreCompletoConyuge),
-      tipo_documento_conyuge: this.textoCredito(f.tipoDocumentoConyuge),
-      numero_documento_conyuge: this.textoCredito(f.numeroDocumentoConyuge),
-      fecha_nacimiento_conyuge: f.fechaNacimientoConyuge || null,
-      actividad_conyuge: this.textoCredito(f.actividadConyuge),
-      empresa_conyuge: this.textoCredito(f.empresaConyuge),
-      telefono_conyuge: this.textoCredito(f.telefonoConyuge),
-      antiguedad_conyuge: this.textoCredito(f.antiguedadConyuge),
-      ingresos_conyuge: this.numeroCredito(f.ingresosConyuge),
-      autorizacion_central_riesgo: !!f.autorizacionCentralRiesgo,
-      autorizacion_tratamiento_datos: !!f.autorizacionTratamientoDatos,
-      certificacion_destino_fondos: !!f.certificacionDestinoFondos,
+      nombre_completo_conyuge: this.textoCredito(f.nombreCompletoConyuge), tipo_documento_conyuge: this.textoCredito(f.tipoDocumentoConyuge),
+      numero_documento_conyuge: this.textoCredito(f.numeroDocumentoConyuge), fecha_nacimiento_conyuge: f.fechaNacimientoConyuge || null,
+      actividad_conyuge: this.textoCredito(f.actividadConyuge), empresa_conyuge: this.textoCredito(f.empresaConyuge),
+      telefono_conyuge: this.textoCredito(f.telefonoConyuge), antiguedad_conyuge: this.textoCredito(f.antiguedadConyuge),
+      ingresos_conyuge: this.numeroCredito(f.ingresosConyuge), autorizacion_central_riesgo: !!f.autorizacionCentralRiesgo,
+      autorizacion_tratamiento_datos: !!f.autorizacionTratamientoDatos, certificacion_destino_fondos: !!f.certificacionDestinoFondos,
       autorizacion_descuento_nomina: !!f.autorizacionDescuentoNomina,
-      valor_credito_autorizacion: this.numeroCredito(f.valorCreditoAutorizacion),
-      cantidad_cuotas: this.numeroCredito(f.cantidadCuotas),
-      valor_cuota: this.numeroCredito(f.valorCuota),
-      empresa_autorizada_descuento: this.textoCredito(f.empresaAutorizadaDescuento),
-      tipo_cuenta_descuento: this.textoCredito(f.tipoCuentaDescuento),
-      numero_cuenta_descuento: this.textoCredito(f.numeroCuentaDescuento),
-      banco_descuento: this.textoCredito(f.bancoDescuento),
-      nombre_completo_deudor1: this.textoCredito(f.nombreCompletoDeudor1),
-      tipo_documento_deudor1: this.textoCredito(f.tipoDocumentoDeudor1),
-      numero_documento_deudor1: this.textoCredito(f.numeroDocumentoDeudor1),
-      empresa_deudor1: this.textoCredito(f.empresaDeudor1),
-      profesion_deudor1: this.textoCredito(f.profesionDeudor1),
-      cargo_deudor1: this.textoCredito(f.cargoDeudor1),
-      antiguedad_deudor1: this.textoCredito(f.antiguedadDeudor1),
-      direccion_oficina_deudor1: this.textoCredito(f.direccionOficinaDeudor1),
-      telefono_deudor1: this.textoCredito(f.telefonoDeudor1),
-      salario_deudor1: this.numeroCredito(f.salarioDeudor1),
-      otros_ingresos_deudor1: this.numeroCredito(f.otrosIngresosDeudor1),
-      egresos_deudor1: this.numeroCredito(f.egresosDeudor1),
-      activos_deudor1: this.numeroCredito(f.activosDeudor1),
-      pasivos_deudor1: this.numeroCredito(f.pasivosDeudor1),
-      patrimonio_deudor1: this.numeroCredito(f.patrimonioDeudor1),
-      fecha_nacimiento_deudor1: f.fechaNacimientoDeudor1 || null,
-      estado_civil_deudor1: this.textoCredito(f.estadoCivilDeudor1),
-      numero_hijos_deudor1: this.numeroCredito(f.numeroHijosDeudor1),
-      direccion_residencia_deudor1: this.textoCredito(f.direccionResidenciaDeudor1),
-      estrato_deudor1: this.numeroCredito(f.estratoDeudor1),
-      telefono_residencia_deudor1: this.textoCredito(f.telefonoResidenciaDeudor1),
-      tipo_vivienda_deudor1: this.textoCredito(f.tipoViviendaDeudor1),
-      otra_vivienda_deudor1: this.textoCredito(f.otraViviendaDeudor1),
-      tiempo_residencia_deudor1: this.textoCredito(f.tiempoResidenciaDeudor1),
-      valor_arriendo_deudor1: this.numeroCredito(f.valorArriendoDeudor1),
-      nombre_referencia_familiar_deudor1: this.textoCredito(f.nombreReferenciaFamiliarDeudor1),
-      parentesco_referencia_familiar_deudor1: this.textoCredito(f.parentescoReferenciaFamiliarDeudor1),
-      direccion_referencia_familiar_deudor1: this.textoCredito(f.direccionReferenciaFamiliarDeudor1),
-      telefono_referencia_familiar_deudor1: this.textoCredito(f.telefonoReferenciaFamiliarDeudor1),
-      nombre_referencia_personal_deudor1: this.textoCredito(f.nombreReferenciaPersonalDeudor1),
-      parentesco_referencia_personal_deudor1: this.textoCredito(f.parentescoReferenciaPersonalDeudor1),
-      direccion_referencia_personal_deudor1: this.textoCredito(f.direccionReferenciaPersonalDeudor1),
-      telefono_referencia_personal_deudor1: this.textoCredito(f.telefonoReferenciaPersonalDeudor1),
-      tipo_bien_deudor1: this.textoCredito(f.tipoBienDeudor1),
-      direccion_bien_deudor1: this.textoCredito(f.direccionBienDeudor1),
-      matricula_inmobiliaria_deudor1: this.textoCredito(f.matriculaInmobiliariaDeudor1),
-      ciudad_bien_deudor1: this.textoCredito(f.ciudadBienDeudor1),
-      valor_comercial_bien_deudor1: this.numeroCredito(f.valorComercialBienDeudor1),
-      valor_hipoteca_deudor1: this.numeroCredito(f.valorHipotecaDeudor1),
-      hipoteca_a_favor_de_deudor1: this.textoCredito(f.hipotecaAFavorDeDeudor1),
-      patrimonio_familia_deudor1: !!f.patrimonioFamiliaDeudor1,
-      modelo_vehiculo_deudor1: this.textoCredito(f.modeloVehiculoDeudor1),
-      placa_vehiculo_deudor1: this.textoCredito(f.placaVehiculoDeudor1),
-      marca_vehiculo_deudor1: this.textoCredito(f.marcaVehiculoDeudor1),
-      valor_comercial_vehiculo_deudor1: this.numeroCredito(f.valorComercialVehiculoDeudor1),
-      vehiculo_pignorado_deudor1: !!f.vehiculoPignoradoDeudor1,
-      tipo_servicio_vehiculo_deudor1: this.textoCredito(f.tipoServicioVehiculoDeudor1),
-      nombre_completo_deudor2: this.textoCredito(f.nombreCompletoDeudor2),
-      tipo_documento_deudor2: this.textoCredito(f.tipoDocumentoDeudor2),
-      numero_documento_deudor2: this.textoCredito(f.numeroDocumentoDeudor2),
-      empresa_deudor2: this.textoCredito(f.empresaDeudor2),
-      profesion_deudor2: this.textoCredito(f.profesionDeudor2),
-      cargo_deudor2: this.textoCredito(f.cargoDeudor2),
-      antiguedad_deudor2: this.textoCredito(f.antiguedadDeudor2),
-      direccion_oficina_deudor2: this.textoCredito(f.direccionOficinaDeudor2),
-      telefono_deudor2: this.textoCredito(f.telefonoDeudor2),
-      salario_deudor2: this.numeroCredito(f.salarioDeudor2),
-      otros_ingresos_deudor2: this.numeroCredito(f.otrosIngresosDeudor2),
-      egresos_deudor2: this.numeroCredito(f.egresosDeudor2),
-      activos_deudor2: this.numeroCredito(f.activosDeudor2),
-      pasivos_deudor2: this.numeroCredito(f.pasivosDeudor2),
-      patrimonio_deudor2: this.numeroCredito(f.patrimonioDeudor2),
-      fecha_nacimiento_deudor2: f.fechaNacimientoDeudor2 || null,
-      estado_civil_deudor2: this.textoCredito(f.estadoCivilDeudor2),
-      numero_hijos_deudor2: this.numeroCredito(f.numeroHijosDeudor2),
-      direccion_residencia_deudor2: this.textoCredito(f.direccionResidenciaDeudor2),
-      estrato_deudor2: this.numeroCredito(f.estratoDeudor2),
-      telefono_residencia_deudor2: this.textoCredito(f.telefonoResidenciaDeudor2),
-      tipo_vivienda_deudor2: this.textoCredito(f.tipoViviendaDeudor2),
-      otra_vivienda_deudor2: this.textoCredito(f.otraViviendaDeudor2),
-      tiempo_residencia_deudor2: this.textoCredito(f.tiempoResidenciaDeudor2),
-      valor_arriendo_deudor2: this.numeroCredito(f.valorArriendoDeudor2),
-      nombre_referencia_familiar_deudor2: this.textoCredito(f.nombreReferenciaFamiliarDeudor2),
-      parentesco_referencia_familiar_deudor2: this.textoCredito(f.parentescoReferenciaFamiliarDeudor2),
-      direccion_referencia_familiar_deudor2: this.textoCredito(f.direccionReferenciaFamiliarDeudor2),
-      telefono_referencia_familiar_deudor2: this.textoCredito(f.telefonoReferenciaFamiliarDeudor2),
-      nombre_referencia_personal_deudor2: this.textoCredito(f.nombreReferenciaPersonalDeudor2),
-      parentesco_referencia_personal_deudor2: this.textoCredito(f.parentescoReferenciaPersonalDeudor2),
-      direccion_referencia_personal_deudor2: this.textoCredito(f.direccionReferenciaPersonalDeudor2),
-      telefono_referencia_personal_deudor2: this.textoCredito(f.telefonoReferenciaPersonalDeudor2),
-      tipo_bien_deudor2: this.textoCredito(f.tipoBienDeudor2),
-      direccion_bien_deudor2: this.textoCredito(f.direccionBienDeudor2),
-      matricula_inmobiliaria_deudor2: this.textoCredito(f.matriculaInmobiliariaDeudor2),
-      ciudad_bien_deudor2: this.textoCredito(f.ciudadBienDeudor2),
-      valor_comercial_bien_deudor2: this.numeroCredito(f.valorComercialBienDeudor2),
-      valor_hipoteca_deudor2: this.numeroCredito(f.valorHipotecaDeudor2),
-      hipoteca_a_favor_de_deudor2: this.textoCredito(f.hipotecaAFavorDeDeudor2),
-      patrimonio_familia_deudor2: !!f.patrimonioFamiliaDeudor2,
-      modelo_vehiculo_deudor2: this.textoCredito(f.modeloVehiculoDeudor2),
-      placa_vehiculo_deudor2: this.textoCredito(f.placaVehiculoDeudor2),
-      marca_vehiculo_deudor2: this.textoCredito(f.marcaVehiculoDeudor2),
-      valor_comercial_vehiculo_deudor2: this.numeroCredito(f.valorComercialVehiculoDeudor2),
-      vehiculo_pignorado_deudor2: !!f.vehiculoPignoradoDeudor2,
-      tipo_servicio_vehiculo_deudor2: this.textoCredito(f.tipoServicioVehiculoDeudor2),
-      usuario: this.identity && this.identity.username ? this.identity.username : ''
+      valor_credito_autorizacion: this.numeroCredito(f.valorCreditoAutorizacion), cantidad_cuotas: this.numeroCredito(f.cantidadCuotas),
+      valor_cuota: this.numeroCredito(f.valorCuota), empresa_autorizada_descuento: this.textoCredito(f.empresaAutorizadaDescuento),
+      tipo_cuenta_descuento: this.textoCredito(f.tipoCuentaDescuento), numero_cuenta_descuento: this.textoCredito(f.numeroCuentaDescuento),
+      banco_descuento: this.textoCredito(f.bancoDescuento), empresa_deudor1: this.textoCredito(f.empresaDeudor1),
+      direccion_oficina_deudor1: this.textoCredito(f.direccionOficinaDeudor1), telefono_deudor1: this.textoCredito(f.telefonoDeudor1),
     };
+    Object.assign(body, this.mapearDatosPersonaCredito(f, 'Solicitante'), this.mapearDatosPersonaCredito(f, 'Deudor1'));
+    Object.assign(body, this.crearCamposCompatibilidadDeudor(body), {
+      usuario: this.identity && this.identity.username ? this.identity.username : ''
+    });
     const codAsp = this.datosEmpleado.codAso.toString();
     const url = this.bridgeApiUrl + '/femprobien/creditos/asociados/' + encodeURIComponent(codAsp) + '/solicitudes';
     if (!confirmado) {
@@ -4034,13 +3504,20 @@ export class EmployeeFemprobienComponent implements OnInit {
     }
     this.enviandoCredito = true;
 
-    this._http.post(url, body).subscribe(
+    const formData = new FormData();
+    formData.append('datos', new Blob([JSON.stringify(body)], { type: 'application/json' }), 'datos.json');
+    formData.append('firmaSolicitante', this.firmaSolicitanteFile, this.firmaSolicitanteFile.name);
+    formData.append('huellaSolicitante', this.huellaSolicitanteFile, this.huellaSolicitanteFile.name);
+    if (this.deudoresSolidariosObligatorios()) {
+      formData.append('firmaDeudor1', this.firmaDeudor1File, this.firmaDeudor1File.name);
+      formData.append('huellaDeudor1', this.huellaDeudor1File, this.huellaDeudor1File.name);
+    }
+    this._http.post(url, formData).subscribe(
       response => {
         this.enviandoCredito = false;
         const data = response.json();
         if (data && data.status === 201) {
-          this.numeroSolicitudPendienteArchivos = data.numero_solicitud;
-          this.subirArchivosCredito(data.numero_solicitud);
+          this.finalizarSolicitudCreditoExitosa(data.numero_solicitud);
         }
         else {
           this.errorMessage = data && data.message ? data.message : 'No fue posible crear la solicitud de crédito.';
@@ -4048,17 +3525,7 @@ export class EmployeeFemprobienComponent implements OnInit {
       }, error => {
         this.enviandoCredito = false;
 
-        if (error && error._body) {
-          try {
-            const bodyError = JSON.parse(error._body);
-            this.errorMessage = bodyError && bodyError.message ? bodyError.message : 'Error creando la solicitud de crédito.';
-          } catch (e) {
-            this.errorMessage = 'Error creando la solicitud de crédito.';
-          }
-        }
-        else {
-          this.errorMessage = 'Error creando la solicitud de crédito.';
-        }
+        this.errorMessage = this.obtenerMensajeErrorCredito(error, 'Error creando la solicitud de crédito.');
       });
   }
 
@@ -4112,124 +3579,44 @@ export class EmployeeFemprobienComponent implements OnInit {
     this.filtroBusqueda = '';
   }
 
-
-
   public loadSolicitudesAfiliacion() {
     if (!this.puedeAprobarSolicitudes) {
       this.solicitudesAfiliacion = [];
-      this.solicitudesAbiertas = [];
       this.accionesEnProgreso = [];
       this.loadingSolicitudes = false;
       return;
     }
     this.loadingSolicitudes = true;
     this.errorMessage = '';
-    const url = this.bridgeApiUrl + '/femprobien/solicitudes-afiliacion';
-
-    this._http.get(url).subscribe(
+    this._employeeService.consultarSolicitudesAfiliacion().subscribe(
       response => {
         this.loadingSolicitudes = false;
         let solicitudes: any[] = [];
         try {
           const data = response.json();
-          if (Array.isArray(data)) {
-            solicitudes = data;
-          } else {
-            solicitudes = [];
-          }
+          solicitudes = Array.isArray(data) ? data : [];
         } catch (e) {
           this.solicitudesAfiliacion = [];
-          this.solicitudesAbiertas = [];
           this.accionesEnProgreso = [];
           this.errorMessage = 'La respuesta del servidor no tiene el formato esperado.';
           return;
         }
-        this.solicitudesAfiliacion = solicitudes.map((s: any, indiceOriginal: number) => ({
-          indiceOriginal: indiceOriginal,
-          id: s.id,
-          tipoSolicitud: s.tipo_solicitud,
-          tipoIngreso: s.tipo_ingreso,
-          fecAfi: s.fecha_afiliacion,
-          periodoAporte: s.forma_desc,
-          cantPorcen: s.cant_porcen,
-          porcenAhorro: s.porcen_ahorro,
-          tipoDoc: s.tipo_documento,
-          codAfi: s.cod_asp,
-          nomAfi: s.nombres,
-          ap1Afi: s.primer_apellido,
-          ap2Afi: s.segundo_apellido,
-          estCiv: s.est_civil,
-          fecNac: s.fec_nac,
-          fecExp: s.fec_exp,
-          lugarExp: s.lugar_exp,
-          eMail: s.email_per,
-          dirRes: s.dir_res,
-          nomBar: s.ciudad_residencia,
-          tel: s.tel,
-          telCel: s.cel,
-          otroTel: s.otro_tel,
-          nivelEstudios: s.nivel_estudios,
-          nomEmp: s.nom_emp,
-          fecIng: s.fec_ing,
-          salBas: s.sal_bas,
-          promPres: s.prom_pres,
-          promBoni: s.prom_boni,
-          cargo: s.cargo,
-          profesion: s.profesion,
-          ctaTipo: s.tipo_cuenta,
-          fdoBan: s.banco,
-          ctaBan: s.n_cuenta,
-          manejaRecursosPublicos: s.maneja_recursos_publicos ? 'SI' : 'NO',
-          reconocimientoPublico: s.reconocimiento_publico ? 'SI' : 'NO',
-          nomConyuge: s.nom_conyuge,
-          ocuConyuge: s.ocu_conyuge,
-          telConyuge: s.tel_conyuge,
-          tipoDocConyuge: s.tipo_doc_conyuge,
-          docConyuge: s.doc_conyuge,
-          bienRaices: s.bien_raices ? 'SI' : 'NO',
-          bienesDir: s.bienes_dir,
-          vehiculo: s.vehiculo ? 'SI' : 'NO',
-          marcaVeh: s.marca_veh,
-          modeloVeh: s.modelo_veh,
-          tipoDocBen1: s.tipo_doc_ben1,
-          codBen1: s.ben_doc1,
-          nomBen1: s.ben_nom1,
-          parBen1: s.parentesco1,
-          tipoDocBen2: s.tipo_doc_ben2,
-          codBen2: s.ben_doc2,
-          nomBen2: s.ben_nom2,
-          parBen2: s.parentesco2,
-          tipoDocBen3: s.tipo_doc_ben3,
-          codBen3: s.ben_doc3,
-          nomBen3: s.ben_nom3,
-          parBen3: s.parentesco3,
-          creadoPor: s.creado_por,
-          fecha: s.fecha_solicitud,
-          status: s.estado,
-          cambios: this.mapearCambiosSolicitud(Array.isArray(s.cambios) ? s.cambios : []),
-          mostrarCambios: false,
+        this.solicitudesAfiliacion = solicitudes.map((s: any, indiceOriginal: number) => Object.assign(this._employeeService.mapearCamposAfiliacion(s), {
+          indiceOriginal: indiceOriginal, ocuConyuge: s.ocu_conyuge, tipoDocConyuge: s.tipo_doc_conyuge, docConyuge: s.doc_conyuge,
+          bienRaices: s.bien_raices ? 'SI' : 'NO', bienesDir: s.bienes_dir, marcaVeh: s.marca_veh, modeloVeh: s.modelo_veh,
+          codBen1: s.ben_doc1, nomBen1: s.ben_nom1, parBen1: s.parentesco1, codBen2: s.ben_doc2, nomBen2: s.ben_nom2, parBen2: s.parentesco2,
+          codBen3: s.ben_doc3, nomBen3: s.ben_nom3, parBen3: s.parentesco3, creadoPor: s.creado_por, fecha: s.fecha_solicitud,
+          status: s.estado, cambios: this.mapearCambiosSolicitud(Array.isArray(s.cambios) ? s.cambios : []), mostrarCambios: false,
           mostrarDetalle: false
         }));
-        this.solicitudesAbiertas = this.solicitudesAfiliacion.map(() => false);
         this.accionesEnProgreso = this.solicitudesAfiliacion.map(() => false);
         this.cantidadSolicitudesAfiliacionPendientes = this.solicitudesAfiliacion.filter((solicitud: any) => solicitud.status === 'PENDIENTE').length;
       }, error => {
         this.loadingSolicitudes = false;
         this.solicitudesAfiliacion = [];
-        this.solicitudesAbiertas = [];
         this.accionesEnProgreso = [];
 
-        if (error && error._body) {
-          try {
-            const body = JSON.parse(error._body);
-            this.errorMessage = body && body.message ? body.message : 'Ocurrió un error al cargar las solicitudes de afiliación.';
-          } catch (e) {
-            this.errorMessage = 'Ocurrió un error al cargar las solicitudes de afiliación.';
-          }
-        }
-        else {
-          this.errorMessage = 'Ocurrió un error al cargar las solicitudes de afiliación.';
-        }
+        this.errorMessage = this.obtenerMensajeErrorCredito(error, 'Ocurrió un error al cargar las solicitudes de afiliación.');
       });
   }
 
@@ -4248,56 +3635,20 @@ export class EmployeeFemprobienComponent implements OnInit {
 
   private obtenerEtiquetaCampoCambio(campo: string) {
     const etiquetas: any = {
-      nom_aso: 'Nombre completo',
-      forma_desc: 'Forma de descuento',
-      cant_porcen: 'Ahorro mensual',
-      porcen_ahorro: 'Porcentaje de ahorro',
-      tipo_documento: 'Tipo de documento',
-      est_civil: 'Estado civil',
-      fec_nac: 'Fecha de nacimiento',
-      fec_exp: 'Fecha de expedición',
-      lugar_exp: 'Lugar de expedición',
-      email_per: 'Correo electrónico',
-      dir_res: 'Dirección de residencia',
-      nom_bar: 'Ciudad de residencia',
-      tel: 'Teléfono',
-      cel: 'Celular',
-      otro_tel: 'Otro teléfono',
-      nivel_estudios: 'Nivel de estudios',
-      nom_emp: 'Empresa',
-      fec_ing: 'Fecha de ingreso',
-      sal_bas: 'Salario básico',
-      prom_pres: 'Promedio prestaciones',
-      prom_boni: 'Promedio bonificaciones',
-      cargo: 'Cargo',
-      profesion: 'Profesión',
-      tipo_cuenta: 'Tipo de cuenta',
-      banco: 'Banco',
-      n_cuenta: 'Número de cuenta',
-      maneja_recursos_publicos: 'Maneja recursos públicos',
-      reconocimiento_publico: 'Reconocimiento público',
-      nom_conyuge: 'Nombre del cónyuge',
-      ocu_conyuge: 'Ocupación del cónyuge',
-      tel_conyuge: 'Teléfono del cónyuge',
-      tip_doc: 'Tipo documento del cónyuge',
-      doc_conyuge: 'Documento del cónyuge',
-      bien_raices: 'Bienes raíces',
-      bienes_dic: 'Descripción de bienes',
-      vehiculo: 'Vehículo',
-      marca_veh: 'Marca del vehículo',
-      modelo_veh: 'Modelo del vehículo',
-      tipo_doc_ben1: 'Tipo documento beneficiario 1',
-      ben_doc1: 'Documento beneficiario 1',
-      ben_nom1: 'Nombre beneficiario 1',
-      parentesco1: 'Parentesco beneficiario 1',
-      tipo_doc_ben2: 'Tipo documento beneficiario 2',
-      ben_doc2: 'Documento beneficiario 2',
-      ben_nom2: 'Nombre beneficiario 2',
-      parentesco2: 'Parentesco beneficiario 2',
-      tipo_doc_ben3: 'Tipo documento beneficiario 3',
-      ben_doc3: 'Documento beneficiario 3',
-      ben_nom3: 'Nombre beneficiario 3',
-      parentesco3: 'Parentesco beneficiario 3'
+      nom_aso: 'Nombre completo', forma_desc: 'Forma de descuento', cant_porcen: 'Ahorro mensual', porcen_ahorro: 'Porcentaje de ahorro',
+      tipo_documento: 'Tipo de documento', est_civil: 'Estado civil', fec_nac: 'Fecha de nacimiento', fec_exp: 'Fecha de expedición',
+      lugar_exp: 'Lugar de expedición', email_per: 'Correo electrónico', dir_res: 'Dirección de residencia', nom_bar: 'Ciudad de residencia',
+      tel: 'Teléfono', cel: 'Celular', otro_tel: 'Otro teléfono', nivel_estudios: 'Nivel de estudios', nom_emp: 'Empresa',
+      fec_ing: 'Fecha de ingreso', sal_bas: 'Salario básico', prom_pres: 'Promedio prestaciones', prom_boni: 'Promedio bonificaciones',
+      cargo: 'Cargo', profesion: 'Profesión', tipo_cuenta: 'Tipo de cuenta', banco: 'Banco', n_cuenta: 'Número de cuenta',
+      maneja_recursos_publicos: 'Maneja recursos públicos', reconocimiento_publico: 'Reconocimiento público',
+      nom_conyuge: 'Nombre del cónyuge', ocu_conyuge: 'Ocupación del cónyuge', tel_conyuge: 'Teléfono del cónyuge',
+      tip_doc: 'Tipo documento del cónyuge', doc_conyuge: 'Documento del cónyuge', bien_raices: 'Bienes raíces',
+      bienes_dic: 'Descripción de bienes', vehiculo: 'Vehículo', marca_veh: 'Marca del vehículo', modelo_veh: 'Modelo del vehículo',
+      tipo_doc_ben1: 'Tipo documento beneficiario 1', ben_doc1: 'Documento beneficiario 1', ben_nom1: 'Nombre beneficiario 1',
+      parentesco1: 'Parentesco beneficiario 1', tipo_doc_ben2: 'Tipo documento beneficiario 2', ben_doc2: 'Documento beneficiario 2',
+      ben_nom2: 'Nombre beneficiario 2', parentesco2: 'Parentesco beneficiario 2', tipo_doc_ben3: 'Tipo documento beneficiario 3',
+      ben_doc3: 'Documento beneficiario 3', ben_nom3: 'Nombre beneficiario 3', parentesco3: 'Parentesco beneficiario 3'
     };
     if (campo &&
       etiquetas[campo]) {
@@ -4357,37 +3708,22 @@ export class EmployeeFemprobienComponent implements OnInit {
   }
 
   public obtenerSolicitudesAfiliacionFiltradas() {
-    const solicitudes = this.solicitudesAfiliacion || [];
-    const filtroBusqueda = this.filtroBusquedaSolicitudesAfiliacion ? this.filtroBusquedaSolicitudesAfiliacion.toString().trim().toUpperCase() : '';
-    if (filtroBusqueda) {
-      return solicitudes.filter((solicitud: any) => {
-        const nombreCompleto = ((solicitud.nomAfi || '') +
-          ' ' +
-          (solicitud.ap1Afi || '') +
-          ' ' +
-          (solicitud.ap2Afi || '')).replace(/\s+/g, ' ').trim();
-        const tipoSolicitud = solicitud.tipoSolicitud === 'ACTUALIZACION_DATOS' ? 'ACTUALIZACION ACTUALIZACIÓN ACTUALIZACION DE DATOS ACTUALIZACIÓN DE DATOS' : 'AFILIACION AFILIACIÓN';
-        let estado = 'SIN APROBAR PENDIENTE PENDIENTES';
-        if (solicitud.status === 'AFILIADO(A)') {
-          estado = 'APROBADA APROBADO APROBADAS AFILIADO';
-        }
-        if (solicitud.status === 'RECHAZADO(A)') {
-          estado = 'RECHAZADA RECHAZADO RECHAZADAS';
-        }
-        const contenido = [nombreCompleto, solicitud.codAfi || '', solicitud.eMail || '', solicitud.telCel || '', solicitud.nomEmp || '', tipoSolicitud, estado].join(' ').toUpperCase();
-        return contenido.indexOf(filtroBusqueda) >= 0;
-      });
-    }
-    let resultado = solicitudes.slice();
-    if (this.filtroTipoSolicitudAfiliacion &&
-      this.filtroTipoSolicitudAfiliacion !== 'TODAS') {
-      resultado = resultado.filter((solicitud: any) => solicitud.tipoSolicitud === this.filtroTipoSolicitudAfiliacion);
-    }
-    if (this.filtroEstadoAfiliacion &&
-      this.filtroEstadoAfiliacion !== 'TODAS') {
-      resultado = resultado.filter((solicitud: any) => solicitud.status === this.filtroEstadoAfiliacion);
-    }
-    return resultado;
+    return this.filtrarSolicitudes((this.solicitudesAfiliacion || []).slice(), this.filtroBusquedaSolicitudesAfiliacion, solicitud => {
+      const nombreCompleto = ((solicitud.nomAfi || '') +
+        ' ' +
+        (solicitud.ap1Afi || '') +
+        ' ' +
+        (solicitud.ap2Afi || '')).replace(/\s+/g, ' ').trim();
+      const tipoSolicitud = solicitud.tipoSolicitud === 'ACTUALIZACION_DATOS' ? 'ACTUALIZACION ACTUALIZACIÓN ACTUALIZACION DE DATOS ACTUALIZACIÓN DE DATOS' : 'AFILIACION AFILIACIÓN';
+      let estado = 'SIN APROBAR PENDIENTE PENDIENTES';
+      if (solicitud.status === 'AFILIADO(A)') {
+        estado = 'APROBADA APROBADO APROBADAS AFILIADO';
+      }
+      if (solicitud.status === 'RECHAZADO(A)') {
+        estado = 'RECHAZADA RECHAZADO RECHAZADAS';
+      }
+      return [nombreCompleto, solicitud.codAfi || '', solicitud.eMail || '', solicitud.telCel || '', solicitud.nomEmp || '', tipoSolicitud, estado];
+    }, [['tipoSolicitud', this.filtroTipoSolicitudAfiliacion], ['status', this.filtroEstadoAfiliacion]]);
   }
 
   public obtenerSolicitudesAfiliacionColumna(columna: number) {
@@ -4401,21 +3737,15 @@ export class EmployeeFemprobienComponent implements OnInit {
 
   public cambiarFiltroTipoSolicitudAfiliacion(tipoSolicitud: string) {
     this.filtroTipoSolicitudAfiliacion = tipoSolicitud;
-    this.tarjetaEnConfirmacion = null;
-    this.accionPendiente = null;
     this.clearError();
   }
 
   public cambiarFiltroEstadoAfiliacion(estado: string) {
     this.filtroEstadoAfiliacion = estado;
-    this.tarjetaEnConfirmacion = null;
-    this.accionPendiente = null;
     this.clearError();
   }
 
   public refrescarSolicitudesAfiliacion() {
-    this.tarjetaEnConfirmacion = null;
-    this.accionPendiente = null;
     this.clearError();
     this.loadSolicitudesAfiliacion();
     if (this.filtroEstadoAfiliacion !== 'PENDIENTE') {
@@ -4428,16 +3758,9 @@ export class EmployeeFemprobienComponent implements OnInit {
       this.cantidadSolicitudesAfiliacionPendientes = 0;
       return;
     }
-    const url = this.bridgeApiUrl + '/femprobien/solicitudes-afiliacion?estado=PENDIENTE';
-
-    this._http.get(url).subscribe(
-      response => {
-        try {
-          const data = response.json();
-          this.cantidadSolicitudesAfiliacionPendientes = Array.isArray(data) ? data.length : 0;
-        } catch (e) {
-          this.cantidadSolicitudesAfiliacionPendientes = 0;
-        }
+    this._employeeService.loadAssociatedRequests().subscribe(
+      data => {
+        this.cantidadSolicitudesAfiliacionPendientes = data.content.length;
       }, error => {
         this.cantidadSolicitudesAfiliacionPendientes = 0;
       });
@@ -4465,8 +3788,6 @@ export class EmployeeFemprobienComponent implements OnInit {
       (solicitud.ap1Afi || '') +
       ' ' +
       (solicitud.ap2Afi || '')).trim();
-    this.tarjetaEnConfirmacion = null;
-    this.accionPendiente = null;
     const esActualizacion = solicitud.tipoSolicitud === 'ACTUALIZACION_DATOS';
     const tipoTexto = esActualizacion ? 'actualización de datos' : 'afiliación';
     this.confirmarFemprobien(esAprobacion ? 'Confirmar aprobación' : 'Confirmar rechazo', esAprobacion ? '¿Deseas aprobar la solicitud de ' + tipoTexto + '?' : '¿Deseas rechazar la solicitud de ' + tipoTexto + '?', nombre ? 'Asociado: ' + nombre + '.' : 'Confirma la operación antes de continuar.', esAprobacion ? 'Aprobar solicitud' : 'Rechazar solicitud', () => this.cambiarEstadoSolicitud(index, accion), esAprobacion ? 'success' : 'error', esAprobacion ? 'btn-success' : 'btn-danger');
@@ -4492,8 +3813,6 @@ export class EmployeeFemprobienComponent implements OnInit {
         const data = response.json();
         if (data &&
           data.status === 200) {
-          this.tarjetaEnConfirmacion = null;
-          this.accionPendiente = null;
           this.successMessage = 'Solicitud actualizada a ' +
             status +
             ' correctamente.';
@@ -4504,16 +3823,7 @@ export class EmployeeFemprobienComponent implements OnInit {
         }
       }, error => {
         this.accionesEnProgreso[index] = false;
-        if (error && error._body) {
-          try {
-            const bodyError = JSON.parse(error._body);
-            this.errorMessage = bodyError && bodyError.message ? bodyError.message : 'Ocurrió un error al actualizar la solicitud.';
-          } catch (e) {
-            this.errorMessage = 'Ocurrió un error al actualizar la solicitud.';
-          }
-        } else {
-          this.errorMessage = 'Ocurrió un error al actualizar la solicitud.';
-        }
+        this.errorMessage = this.obtenerMensajeErrorCredito(error, 'Ocurrió un error al actualizar la solicitud.');
       });
   }
 
@@ -4531,44 +3841,9 @@ export class EmployeeFemprobienComponent implements OnInit {
       this.errorMessage = 'Antes de enviar una actualización debes validar el documento y la fecha de nacimiento para cargar tus datos actuales.';
       return;
     }
-    const camposObligatorios: any[] = [
-      { valor: this.nuevoAfiliado.tipoSolicitud, nombre: 'Tipo de solicitud' },
-      { valor: this.nuevoAfiliado.periodoAporte, nombre: 'Forma de descuento' },
-      { valor: this.nuevoAfiliado.cantPorcen, nombre: 'Ahorro mensual' },
-      { valor: this.nuevoAfiliado.porcenAhorro, nombre: 'Porcentaje de ahorro' },
-      { valor: this.nuevoAfiliado.tipoDoc, nombre: 'Tipo de documento' },
-      { valor: this.nuevoAfiliado.codAfi, nombre: 'Número de documento' },
-      { valor: this.nuevoAfiliado.nomAfi, nombre: esActualizacion ? 'Nombre completo' : 'Nombres' },
-      { valor: this.nuevoAfiliado.estCiv, nombre: 'Estado civil' },
-      { valor: this.nuevoAfiliado.fecNac, nombre: 'Fecha de nacimiento' },
-      { valor: this.nuevoAfiliado.fecExp, nombre: 'Fecha de expedición' },
-      { valor: this.nuevoAfiliado.lugarExp, nombre: 'Lugar de expedición' },
-      { valor: this.nuevoAfiliado.eMail, nombre: 'Correo electrónico personal' },
-      { valor: this.nuevoAfiliado.dirRes, nombre: 'Dirección de residencia' },
-      { valor: this.nuevoAfiliado.nomBar, nombre: 'Ciudad de residencia' },
-      { valor: this.nuevoAfiliado.telCel, nombre: 'Celular' },
-      { valor: this.nuevoAfiliado.nivelEstudios, nombre: 'Nivel de estudios' },
-      { valor: this.nuevoAfiliado.nomEmp, nombre: 'Empresa' },
-      { valor: this.nuevoAfiliado.fecIng, nombre: 'Fecha de ingreso a la empresa' },
-      { valor: this.nuevoAfiliado.salBas, nombre: 'Salario básico' },
-      { valor: this.nuevoAfiliado.cargo, nombre: 'Cargo' },
-      { valor: this.nuevoAfiliado.profesion, nombre: 'Profesión' },
-      { valor: this.nuevoAfiliado.ctaTipo, nombre: 'Tipo de cuenta' },
-      { valor: this.nuevoAfiliado.fdoBan, nombre: 'Banco' },
-      { valor: this.nuevoAfiliado.ctaBan, nombre: 'Número de cuenta' }
-    ];
-    if (!esActualizacion) {
-      camposObligatorios.splice(1, 0, { valor: this.nuevoAfiliado.tipoIngreso, nombre: 'Primera vez / Reingreso' }, { valor: this.nuevoAfiliado.fecAfi, nombre: 'Fecha de afiliación' });
-      camposObligatorios.push({
-        valor: this.nuevoAfiliado.ap1Afi,
-        nombre: 'Primer apellido'
-      });
-    }
-    const faltantes = camposObligatorios.filter(function (c: any) {
-      return c.valor === null || c.valor === undefined || String(c.valor).trim() === '';
-    }).map(function (c: any) {
-      return c.nombre;
-    });
+    const faltantes = this.obtenerCamposObligatoriosAfiliacion()
+      .filter(campo => this.estaVacio(this.nuevoAfiliado[campo.campo]))
+      .map(campo => esActualizacion && campo.campo === 'nomAfi' ? 'Nombre completo' : campo.nombre);
     if (faltantes.length > 0) {
       this.errorMessage = 'Faltan por completar los siguientes campos: ' +
         faltantes.join(', ') +
@@ -4602,12 +3877,9 @@ export class EmployeeFemprobienComponent implements OnInit {
       return;
     }
     const solicitud = this.transformarAfiliado(this.nuevoAfiliado);
-    const url = this.bridgeApiUrl + '/femprobien/solicitudes-afiliacion';
-
-    this._http.post(url, solicitud).subscribe(
-      response => {
+    this._employeeService.addAfiliadoFemprobien(solicitud).subscribe(
+      data => {
         this.isSubmitting = false;
-        const data = response.json();
         if (data && data.status === 201) {
           this.mostrarFormularioAfiliado = false; this.limpiarFormularioAfiliado(); this.loadSolicitudesAfiliacion();
           this.successMessage = esActualizacion ? 'Solicitud de actualización enviada correctamente. FEMPROBIEN revisará los cambios antes de aplicarlos.' : 'Solicitud de afiliación enviada correctamente. FEMPROBIEN revisará la información antes de aprobarla.';
@@ -4616,77 +3888,26 @@ export class EmployeeFemprobienComponent implements OnInit {
         }
       }, error => {
         this.isSubmitting = false;
-        if (error && error._body) {
-          try {
-            const body = JSON.parse(error._body);
-            this.errorMessage = body && body.message ? body.message : 'Error registrando la solicitud.';
-          } catch (e) {
-            this.errorMessage = 'Error registrando la solicitud.';
-          }
-        } else {
-          this.errorMessage = 'Error registrando la solicitud.';
-        }
+        this.errorMessage = this.obtenerMensajeErrorCredito(error, 'Error registrando la solicitud.');
       });
   }
 
   private transformarAfiliado(form: any) {
     return {
-      tipo_solicitud: form.tipoSolicitud,
-      tipo_ingreso: form.tipoIngreso,
-      fecha_afiliacion: form.fecAfi,
-      forma_desc: form.periodoAporte,
-      cant_porcen: form.cantPorcen,
-      porcen_ahorro: form.porcenAhorro,
-      tipo_documento: form.tipoDoc,
-      cod_asp: form.codAfi !== null && form.codAfi !== undefined ? form.codAfi.toString() : null,
-      nombres: form.nomAfi,
-      primer_apellido: form.ap1Afi,
-      segundo_apellido: form.ap2Afi,
-      est_civil: form.estCiv,
-      fec_nac: form.fecNac,
-      fec_exp: form.fecExp,
-      lugar_exp: form.lugarExp,
-      email_per: form.eMail,
-      dir_res: form.dirRes,
-      ciudad_residencia: form.nomBar,
-      tel: form.tel,
-      cel: form.telCel,
-      otro_tel: form.otroTel,
-      nivel_estudios: form.nivelEstudios,
-      nom_emp: form.nomEmp,
-      fec_ing: form.fecIng,
-      sal_bas: form.salBas,
-      prom_pres: form.promPres ? form.promPres : 0,
-      prom_boni: form.promBoni ? form.promBoni : 0,
-      cargo: form.cargo,
-      profesion: form.profesion,
-      tipo_cuenta: form.ctaTipo,
-      banco: form.fdoBan,
-      n_cuenta: form.ctaBan,
-      maneja_recursos_publicos: form.manejaRecursosPublicos === 'SI',
-      reconocimiento_publico: form.reconocimientoPublico === 'SI',
-      nom_conyuge: form.nomConyuge,
-      ocu_conyuge: form.ocuConyuge,
-      tel_conyuge: form.telConyuge,
-      tipo_doc_conyuge: form.tipoDocConyuge,
-      doc_conyuge: form.docConyuge,
-      bien_raices: form.bienRaices === 'SI',
-      bienes_dir: form.bienesDir,
-      vehiculo: form.vehiculo === 'SI',
-      marca_veh: form.marcaVeh,
-      modelo_veh: form.modeloVeh,
-      tipo_doc_ben1: form.tipoDocBen1,
-      ben_doc1: form.codBen1,
-      ben_nom1: form.nomBen1,
-      parentesco1: form.parBen1,
-      tipo_doc_ben2: form.tipoDocBen2,
-      ben_doc2: form.codBen2,
-      ben_nom2: form.nomBen2,
-      parentesco2: form.parBen2,
-      tipo_doc_ben3: form.tipoDocBen3,
-      ben_doc3: form.codBen3,
-      ben_nom3: form.nomBen3,
-      parentesco3: form.parBen3,
+      tipo_solicitud: form.tipoSolicitud, tipo_ingreso: form.tipoIngreso, fecha_afiliacion: form.fecAfi, forma_desc: form.periodoAporte,
+      cant_porcen: form.cantPorcen, porcen_ahorro: form.porcenAhorro, tipo_documento: form.tipoDoc,
+      cod_asp: form.codAfi !== null && form.codAfi !== undefined ? form.codAfi.toString() : null, nombres: form.nomAfi,
+      primer_apellido: form.ap1Afi, segundo_apellido: form.ap2Afi, est_civil: form.estCiv, fec_nac: form.fecNac, fec_exp: form.fecExp,
+      lugar_exp: form.lugarExp, email_per: form.eMail, dir_res: form.dirRes, ciudad_residencia: form.nomBar, tel: form.tel, cel: form.telCel,
+      otro_tel: form.otroTel, nivel_estudios: form.nivelEstudios, nom_emp: form.nomEmp, fec_ing: form.fecIng, sal_bas: form.salBas,
+      prom_pres: form.promPres ? form.promPres : 0, prom_boni: form.promBoni ? form.promBoni : 0, cargo: form.cargo,
+      profesion: form.profesion, tipo_cuenta: form.ctaTipo, banco: form.fdoBan, n_cuenta: form.ctaBan,
+      maneja_recursos_publicos: form.manejaRecursosPublicos === 'SI', reconocimiento_publico: form.reconocimientoPublico === 'SI',
+      nom_conyuge: form.nomConyuge, ocu_conyuge: form.ocuConyuge, tel_conyuge: form.telConyuge, tipo_doc_conyuge: form.tipoDocConyuge,
+      doc_conyuge: form.docConyuge, bien_raices: form.bienRaices === 'SI', bienes_dir: form.bienesDir, vehiculo: form.vehiculo === 'SI',
+      marca_veh: form.marcaVeh, modelo_veh: form.modeloVeh, tipo_doc_ben1: form.tipoDocBen1, ben_doc1: form.codBen1, ben_nom1: form.nomBen1,
+      parentesco1: form.parBen1, tipo_doc_ben2: form.tipoDocBen2, ben_doc2: form.codBen2, ben_nom2: form.nomBen2, parentesco2: form.parBen2,
+      tipo_doc_ben3: form.tipoDocBen3, ben_doc3: form.codBen3, ben_nom3: form.nomBen3, parentesco3: form.parBen3,
       creado_por: this.identity && this.identity.username ? this.identity.username : ''
     };
   }
@@ -4696,16 +3917,9 @@ export class EmployeeFemprobienComponent implements OnInit {
     this.intentoEnviarAfiliacion = false;
     this.datosActualizacionCargados = false;
     this.cargandoDatosActualizacion = false;
-    this.documentoActualizacionOriginal = '';
     this.nuevoAfiliado = this.crearFormularioAfiliacion();
     this.nuevoAfiliado.tipoSolicitud = tipoSolicitud;
-    this.seccionesAbiertas.solicitud = true;
-    this.seccionesAbiertas.datosPersonales = false;
-    this.seccionesAbiertas.informacionLaboral = false;
-    this.seccionesAbiertas.infoFinanciera = false;
-    this.seccionesAbiertas.conyuge = false;
-    this.seccionesAbiertas.patrimonio = false;
-    this.seccionesAbiertas.beneficiarios = false;
+    this.reiniciarSeccionesAfiliacion();
     this.seccionAfiliacionActiva = 'solicitud';
     this.clearError();
   }
@@ -4719,9 +3933,7 @@ export class EmployeeFemprobienComponent implements OnInit {
       this.nuevoAfiliado = this.crearFormularioAfiliacion();
       this.datosActualizacionCargados = false;
       this.cargandoDatosActualizacion = false;
-      this.documentoActualizacionOriginal = '';
       this.seccionesAbiertas.solicitud = true;
     }
   }
 }
-
